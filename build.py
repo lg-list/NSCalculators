@@ -3,6 +3,7 @@ from datetime import date
 from html import escape
 from pathlib import Path
 import json
+import os
 import re
 import shutil
 
@@ -11,6 +12,8 @@ SRC = ROOT / "src" / "data" / "calculators.json"
 DIST = ROOT / "dist"
 KEYWORD_STATS = ROOT / "exports" / "keyword-stats-positive.json"
 SEO_STRATEGY = ROOT / "exports" / "seo-keyword-strategy-2026-09-05.json"
+PUBLIC_BASE_PATH = os.environ.get("PUBLIC_BASE_PATH", "").strip().rstrip("/")
+PUBLIC_SITE_DOMAIN = os.environ.get("PUBLIC_SITE_DOMAIN", "").strip()
 
 CATEGORY_ORDER = [
     "Automotive",
@@ -221,6 +224,16 @@ def site_url(site, path):
     return site["domain"].rstrip("/") + path
 
 
+def apply_base_path(html):
+    if not PUBLIC_BASE_PATH:
+        return html
+    return (
+        html.replace('href="/', f'href="{PUBLIC_BASE_PATH}/')
+        .replace('src="/', f'src="{PUBLIC_BASE_PATH}/')
+        .replace('action="/', f'action="{PUBLIC_BASE_PATH}/')
+    )
+
+
 def breadcrumb_schema(site, crumbs):
     return {
         "@context": "https://schema.org",
@@ -311,12 +324,13 @@ def page(site, title, desc, path, body, keywords=None, extra_schema=None, page_t
         schema["keywords"] = keywords
     keyword_meta = f'<meta name="keywords" content="{h(", ".join(keywords))}">' if keywords else ""
     schema_html = "\n".join(json_ld(item) for item in [schema] + extra_schema)
-    return f"""<!doctype html><html lang="{h(site['language'])}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+    html = f"""<!doctype html><html lang="{h(site['language'])}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{h(title)}</title><meta name="description" content="{h(desc)}">{keyword_meta}
 <meta property="og:type" content="website"><meta property="og:title" content="{h(title)}"><meta property="og:description" content="{h(desc)}"><meta property="og:url" content="{h(site_url(site, path))}">
 <meta name="twitter:card" content="summary"><meta name="twitter:title" content="{h(title)}"><meta name="twitter:description" content="{h(desc)}">
 <link rel="canonical" href="{h(site_url(site, path))}"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="/apple-touch-icon.svg"><link rel="stylesheet" href="/assets/site.css">
-{schema_html}</head><body>{nav()}{body}{footer()}</body></html>"""
+{schema_html}<script>window.NORTHSTAR_BASE_PATH={json.dumps(PUBLIC_BASE_PATH)};</script></head><body>{nav()}{body}{footer()}</body></html>"""
+    return apply_base_path(html)
 
 
 def category_desc(cat):
@@ -1208,6 +1222,7 @@ CSS = r'''
 SEARCH_JS = r'''
 (function(){
   const items = window.NORTHSTAR_ITEMS || [];
+  const basePath = window.NORTHSTAR_BASE_PATH || "";
   const q = document.getElementById("siteSearch");
   const box = document.getElementById("searchResults");
   if (!q || !box) return;
@@ -1219,7 +1234,7 @@ SEARCH_JS = r'''
       return;
     }
     const r = items.filter(x => (x.title + " " + x.desc + " " + x.cat + " " + (x.keyword || "")).toLowerCase().includes(s)).slice(0, 8);
-    box.innerHTML = r.map(x => `<a href="/${x.slug}/"><strong>${x.title}</strong><small>${x.cat}: ${x.desc}</small></a>`).join("");
+    box.innerHTML = r.map(x => `<a href="${basePath}/${x.slug}/"><strong>${x.title}</strong><small>${x.cat}: ${x.desc}</small></a>`).join("");
     box.style.display = r.length ? "block" : "none";
   });
 })();
@@ -1983,7 +1998,9 @@ LOGO_SVG = r'''
 
 def build():
     data = read_data()
-    site = data["site"]
+    site = dict(data["site"])
+    if PUBLIC_SITE_DOMAIN:
+        site["domain"] = PUBLIC_SITE_DOMAIN
     calculators = base_and_supplemental(data)
     if DIST.exists():
         shutil.rmtree(DIST, ignore_errors=True)
