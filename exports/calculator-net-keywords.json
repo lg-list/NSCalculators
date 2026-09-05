@@ -1,0 +1,1746 @@
+[
+  {
+    "keyword": "Financial Calculator",
+    "slug": "financial-calculator.html",
+    "url": "https://www.calculator.net/financial-calculator.html",
+    "category": "Other",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Mortgage Calculator",
+    "slug": "mortgage-calculator.html",
+    "url": "https://www.calculator.net/mortgage-calculator.html",
+    "category": "Financial",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Loan Calculator",
+    "slug": "loan-calculator.html",
+    "url": "https://www.calculator.net/loan-calculator.html",
+    "category": "Financial",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Auto Loan Calculator",
+    "slug": "auto-loan-calculator.html",
+    "url": "https://www.calculator.net/auto-loan-calculator.html",
+    "category": "Financial",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Interest Calculator",
+    "slug": "interest-calculator.html",
+    "url": "https://www.calculator.net/interest-calculator.html",
+    "category": "Financial",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Payment Calculator",
+    "slug": "payment-calculator.html",
+    "url": "https://www.calculator.net/payment-calculator.html",
+    "category": "Financial",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Retirement Calculator",
+    "slug": "retirement-calculator.html",
+    "url": "https://www.calculator.net/retirement-calculator.html",
+    "category": "Financial",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Amortization Calculator",
+    "slug": "amortization-calculator.html",
+    "url": "https://www.calculator.net/amortization-calculator.html",
+    "category": "Financial",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Investment Calculator",
+    "slug": "investment-calculator.html",
+    "url": "https://www.calculator.net/investment-calculator.html",
+    "category": "Financial",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Currency Calculator",
+    "slug": "currency-calculator.html",
+    "url": "https://www.calculator.net/currency-calculator.html",
+    "category": "Financial",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Inflation Calculator",
+    "slug": "inflation-calculator.html",
+    "url": "https://www.calculator.net/inflation-calculator.html",
+    "category": "Financial",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Finance Calculator",
+    "slug": "finance-calculator.html",
+    "url": "https://www.calculator.net/finance-calculator.html",
+    "category": "Financial",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Mortgage Payoff Calculator",
+    "slug": "mortgage-payoff-calculator.html",
+    "url": "https://www.calculator.net/mortgage-payoff-calculator.html",
+    "category": "Financial",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Tax Calculator",
+    "slug": "tax-calculator.html",
+    "url": "https://www.calculator.net/tax-calculator.html",
+    "category": "Financial",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Compound Interest Calculator",
+    "slug": "compound-interest-calculator.html",
+    "url": "https://www.calculator.net/compound-interest-calculator.html",
+    "category": "Financial",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Salary Calculator",
+    "slug": "salary-calculator.html",
+    "url": "https://www.calculator.net/salary-calculator.html",
+    "category": "Financial",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "401k Calculator",
+    "slug": "401k-calculator.html",
+    "url": "https://www.calculator.net/401k-calculator.html",
+    "category": "Financial",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Interest Rate Calculator",
+    "slug": "interest-rate-calculator.html",
+    "url": "https://www.calculator.net/interest-rate-calculator.html",
+    "category": "Financial",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Sales Tax Calculator",
+    "slug": "sales-tax-calculator.html",
+    "url": "https://www.calculator.net/sales-tax-calculator.html",
+    "category": "Financial",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Fitness and Health Calculator",
+    "slug": "fitness-and-health-calculator.html",
+    "url": "https://www.calculator.net/fitness-and-health-calculator.html",
+    "category": "Other",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "BMI Calculator",
+    "slug": "bmi-calculator.html",
+    "url": "https://www.calculator.net/bmi-calculator.html",
+    "category": "Fitness & Health",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Calorie Calculator",
+    "slug": "calorie-calculator.html",
+    "url": "https://www.calculator.net/calorie-calculator.html",
+    "category": "Fitness & Health",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Body Fat Calculator",
+    "slug": "body-fat-calculator.html",
+    "url": "https://www.calculator.net/body-fat-calculator.html",
+    "category": "Fitness & Health",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "BMR Calculator",
+    "slug": "bmr-calculator.html",
+    "url": "https://www.calculator.net/bmr-calculator.html",
+    "category": "Fitness & Health",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Macro Calculator",
+    "slug": "macro-calculator.html",
+    "url": "https://www.calculator.net/macro-calculator.html",
+    "category": "Fitness & Health",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Ideal Weight Calculator",
+    "slug": "ideal-weight-calculator.html",
+    "url": "https://www.calculator.net/ideal-weight-calculator.html",
+    "category": "Fitness & Health",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Pregnancy Calculator",
+    "slug": "pregnancy-calculator.html",
+    "url": "https://www.calculator.net/pregnancy-calculator.html",
+    "category": "Fitness & Health",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Pregnancy Weight Gain Calculator",
+    "slug": "pregnancy-weight-gain-calculator.html",
+    "url": "https://www.calculator.net/pregnancy-weight-gain-calculator.html",
+    "category": "Fitness & Health",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Pregnancy Conception Calculator",
+    "slug": "pregnancy-conception-calculator.html",
+    "url": "https://www.calculator.net/pregnancy-conception-calculator.html",
+    "category": "Fitness & Health",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Due Date Calculator",
+    "slug": "due-date-calculator.html",
+    "url": "https://www.calculator.net/due-date-calculator.html",
+    "category": "Fitness & Health",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Pace Calculator",
+    "slug": "pace-calculator.html",
+    "url": "https://www.calculator.net/pace-calculator.html",
+    "category": "Fitness & Health",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Math Calculator",
+    "slug": "math-calculator.html",
+    "url": "https://www.calculator.net/math-calculator.html",
+    "category": "Other",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Scientific Calculator",
+    "slug": "scientific-calculator.html",
+    "url": "https://www.calculator.net/scientific-calculator.html",
+    "category": "Math",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Fraction Calculator",
+    "slug": "fraction-calculator.html",
+    "url": "https://www.calculator.net/fraction-calculator.html",
+    "category": "Math",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Percent Calculator",
+    "slug": "percent-calculator.html",
+    "url": "https://www.calculator.net/percent-calculator.html",
+    "category": "Math",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Triangle Calculator",
+    "slug": "triangle-calculator.html",
+    "url": "https://www.calculator.net/triangle-calculator.html",
+    "category": "Math",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Volume Calculator",
+    "slug": "volume-calculator.html",
+    "url": "https://www.calculator.net/volume-calculator.html",
+    "category": "Other",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Standard Deviation Calculator",
+    "slug": "standard-deviation-calculator.html",
+    "url": "https://www.calculator.net/standard-deviation-calculator.html",
+    "category": "Math",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Random Number Generator",
+    "slug": "random-number-generator.html",
+    "url": "https://www.calculator.net/random-number-generator.html",
+    "category": "Math",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Other Calculator",
+    "slug": "other-calculator.html",
+    "url": "https://www.calculator.net/other-calculator.html",
+    "category": "Other",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Age Calculator",
+    "slug": "age-calculator.html",
+    "url": "https://www.calculator.net/age-calculator.html",
+    "category": "Other",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Date Calculator",
+    "slug": "date-calculator.html",
+    "url": "https://www.calculator.net/date-calculator.html",
+    "category": "Other",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Time Calculator",
+    "slug": "time-calculator.html",
+    "url": "https://www.calculator.net/time-calculator.html",
+    "category": "Other",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Hours Calculator",
+    "slug": "hours-calculator.html",
+    "url": "https://www.calculator.net/hours-calculator.html",
+    "category": "Other",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "GPA Calculator",
+    "slug": "gpa-calculator.html",
+    "url": "https://www.calculator.net/gpa-calculator.html",
+    "category": "Other",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Grade Calculator",
+    "slug": "grade-calculator.html",
+    "url": "https://www.calculator.net/grade-calculator.html",
+    "category": "Other",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Height Calculator",
+    "slug": "height-calculator.html",
+    "url": "https://www.calculator.net/height-calculator.html",
+    "category": "Conversion & Science",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Concrete Calculator",
+    "slug": "concrete-calculator.html",
+    "url": "https://www.calculator.net/concrete-calculator.html",
+    "category": "Construction",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "IP Subnet Calculator",
+    "slug": "ip-subnet-calculator.html",
+    "url": "https://www.calculator.net/ip-subnet-calculator.html",
+    "category": "Technical & Electrical",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Bra Size Calculator",
+    "slug": "bra-size-calculator.html",
+    "url": "https://www.calculator.net/bra-size-calculator.html",
+    "category": "Other",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Password Generator",
+    "slug": "password-generator.html",
+    "url": "https://www.calculator.net/password-generator.html",
+    "category": "Other",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Dice Roller",
+    "slug": "dice-roller.html",
+    "url": "https://www.calculator.net/dice-roller.html",
+    "category": "Other",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Conversion Calculator",
+    "slug": "conversion-calculator.html",
+    "url": "https://www.calculator.net/conversion-calculator.html",
+    "category": "Conversion & Science",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Calculators widget",
+    "slug": "calculators-for-your-site.html",
+    "url": "https://www.calculator.net/calculators-for-your-site.html",
+    "category": "Other",
+    "page_type": "widget",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Mortgage Calculator widget",
+    "slug": "mortgage-calculator-for-your-site.html",
+    "url": "https://www.calculator.net/mortgage-calculator-for-your-site.html",
+    "category": "Financial",
+    "page_type": "widget",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Math Calculator widget",
+    "slug": "math-calculator-for-your-site.html",
+    "url": "https://www.calculator.net/math-calculator-for-your-site.html",
+    "category": "Other",
+    "page_type": "widget",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Scientific Calculator widget",
+    "slug": "scientific-calculator-for-your-site.html",
+    "url": "https://www.calculator.net/scientific-calculator-for-your-site.html",
+    "category": "Math",
+    "page_type": "widget",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Love Calculator widget",
+    "slug": "love-calculator-for-your-site.html",
+    "url": "https://www.calculator.net/love-calculator-for-your-site.html",
+    "category": "Other",
+    "page_type": "widget",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Concrete Calculator widget",
+    "slug": "concrete-calculator-for-your-site.html",
+    "url": "https://www.calculator.net/concrete-calculator-for-your-site.html",
+    "category": "Construction",
+    "page_type": "widget",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "House Affordability Calculator",
+    "slug": "house-affordability-calculator.html",
+    "url": "https://www.calculator.net/house-affordability-calculator.html",
+    "category": "Financial",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Savings Calculator",
+    "slug": "savings-calculator.html",
+    "url": "https://www.calculator.net/savings-calculator.html",
+    "category": "Financial",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Rent Calculator",
+    "slug": "rent-calculator.html",
+    "url": "https://www.calculator.net/rent-calculator.html",
+    "category": "Financial",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Marriage Calculator",
+    "slug": "marriage-calculator.html",
+    "url": "https://www.calculator.net/marriage-calculator.html",
+    "category": "Other",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Estate Tax Calculator",
+    "slug": "estate-tax-calculator.html",
+    "url": "https://www.calculator.net/estate-tax-calculator.html",
+    "category": "Financial",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Pension Calculator",
+    "slug": "pension-calculator.html",
+    "url": "https://www.calculator.net/pension-calculator.html",
+    "category": "Financial",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Social Security Calculator",
+    "slug": "social-security-calculator.html",
+    "url": "https://www.calculator.net/social-security-calculator.html",
+    "category": "Financial",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Annuity Calculator",
+    "slug": "annuity-calculator.html",
+    "url": "https://www.calculator.net/annuity-calculator.html",
+    "category": "Financial",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Annuity Payout Calculator",
+    "slug": "annuity-payout-calculator.html",
+    "url": "https://www.calculator.net/annuity-payout-calculator.html",
+    "category": "Financial",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Credit Card Calculator",
+    "slug": "credit-card-calculator.html",
+    "url": "https://www.calculator.net/credit-card-calculator.html",
+    "category": "Financial",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Credit Card Payoff Calculator",
+    "slug": "credit-card-payoff-calculator.html",
+    "url": "https://www.calculator.net/credit-card-payoff-calculator.html",
+    "category": "Financial",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Debt Payoff Calculator",
+    "slug": "debt-payoff-calculator.html",
+    "url": "https://www.calculator.net/debt-payoff-calculator.html",
+    "category": "Financial",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Debt Consolidation Calculator",
+    "slug": "debt-consolidation-calculator.html",
+    "url": "https://www.calculator.net/debt-consolidation-calculator.html",
+    "category": "Financial",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Repayment Calculator",
+    "slug": "repayment-calculator.html",
+    "url": "https://www.calculator.net/repayment-calculator.html",
+    "category": "Financial",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Student Loan Calculator",
+    "slug": "student-loan-calculator.html",
+    "url": "https://www.calculator.net/student-loan-calculator.html",
+    "category": "Financial",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "College Cost Calculator",
+    "slug": "college-cost-calculator.html",
+    "url": "https://www.calculator.net/college-cost-calculator.html",
+    "category": "Other",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Simple Interest Calculator",
+    "slug": "simple-interest-calculator.html",
+    "url": "https://www.calculator.net/simple-interest-calculator.html",
+    "category": "Financial",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "CD Calculator",
+    "slug": "cd-calculator.html",
+    "url": "https://www.calculator.net/cd-calculator.html",
+    "category": "Other",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Bond Calculator",
+    "slug": "bond-calculator.html",
+    "url": "https://www.calculator.net/bond-calculator.html",
+    "category": "Other",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Mutual Fund Calculator",
+    "slug": "mutual-fund-calculator.html",
+    "url": "https://www.calculator.net/mutual-fund-calculator.html",
+    "category": "Other",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Roth IRA Calculator",
+    "slug": "roth-ira-calculator.html",
+    "url": "https://www.calculator.net/roth-ira-calculator.html",
+    "category": "Financial",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "IRA Calculator",
+    "slug": "ira-calculator.html",
+    "url": "https://www.calculator.net/ira-calculator.html",
+    "category": "Financial",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "RMD Calculator",
+    "slug": "rmd-calculator.html",
+    "url": "https://www.calculator.net/rmd-calculator.html",
+    "category": "Financial",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "VAT Calculator",
+    "slug": "vat-calculator.html",
+    "url": "https://www.calculator.net/vat-calculator.html",
+    "category": "Financial",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Cash Back or Low Interest Calculator",
+    "slug": "cash-back-or-low-interest-calculator.html",
+    "url": "https://www.calculator.net/cash-back-or-low-interest-calculator.html",
+    "category": "Financial",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Auto Lease Calculator",
+    "slug": "auto-lease-calculator.html",
+    "url": "https://www.calculator.net/auto-lease-calculator.html",
+    "category": "Financial",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Depreciation Calculator",
+    "slug": "depreciation-calculator.html",
+    "url": "https://www.calculator.net/depreciation-calculator.html",
+    "category": "Other",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Average Return Calculator",
+    "slug": "average-return-calculator.html",
+    "url": "https://www.calculator.net/average-return-calculator.html",
+    "category": "Math",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Margin Calculator",
+    "slug": "margin-calculator.html",
+    "url": "https://www.calculator.net/margin-calculator.html",
+    "category": "Other",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Discount Calculator",
+    "slug": "discount-calculator.html",
+    "url": "https://www.calculator.net/discount-calculator.html",
+    "category": "Other",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Business Loan Calculator",
+    "slug": "business-loan-calculator.html",
+    "url": "https://www.calculator.net/business-loan-calculator.html",
+    "category": "Financial",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Debt Ratio Calculator",
+    "slug": "debt-ratio-calculator.html",
+    "url": "https://www.calculator.net/debt-ratio-calculator.html",
+    "category": "Financial",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Real Estate Calculator",
+    "slug": "real-estate-calculator.html",
+    "url": "https://www.calculator.net/real-estate-calculator.html",
+    "category": "Other",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Take Home Pay Calculator",
+    "slug": "take-home-pay-calculator.html",
+    "url": "https://www.calculator.net/take-home-pay-calculator.html",
+    "category": "Other",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Personal Loan Calculator",
+    "slug": "personal-loan-calculator.html",
+    "url": "https://www.calculator.net/personal-loan-calculator.html",
+    "category": "Financial",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Boat Loan Calculator",
+    "slug": "boat-loan-calculator.html",
+    "url": "https://www.calculator.net/boat-loan-calculator.html",
+    "category": "Financial",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Lease Calculator",
+    "slug": "lease-calculator.html",
+    "url": "https://www.calculator.net/lease-calculator.html",
+    "category": "Financial",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Refinance Calculator",
+    "slug": "refinance-calculator.html",
+    "url": "https://www.calculator.net/refinance-calculator.html",
+    "category": "Financial",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Budget Calculator",
+    "slug": "budget-calculator.html",
+    "url": "https://www.calculator.net/budget-calculator.html",
+    "category": "Financial",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Rental Property Calculator",
+    "slug": "rental-property-calculator.html",
+    "url": "https://www.calculator.net/rental-property-calculator.html",
+    "category": "Financial",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "IRR Calculator",
+    "slug": "irr-calculator.html",
+    "url": "https://www.calculator.net/irr-calculator.html",
+    "category": "Financial",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "ROI Calculator",
+    "slug": "roi-calculator.html",
+    "url": "https://www.calculator.net/roi-calculator.html",
+    "category": "Financial",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "APR Calculator",
+    "slug": "apr-calculator.html",
+    "url": "https://www.calculator.net/apr-calculator.html",
+    "category": "Financial",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "FHA Loan Calculator",
+    "slug": "fha-loan-calculator.html",
+    "url": "https://www.calculator.net/fha-loan-calculator.html",
+    "category": "Financial",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "VA Mortgage Calculator",
+    "slug": "va-mortgage-calculator.html",
+    "url": "https://www.calculator.net/va-mortgage-calculator.html",
+    "category": "Financial",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Home Equity Loan Calculator",
+    "slug": "home-equity-loan-calculator.html",
+    "url": "https://www.calculator.net/home-equity-loan-calculator.html",
+    "category": "Financial",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "HELOC Calculator",
+    "slug": "heloc-calculator.html",
+    "url": "https://www.calculator.net/heloc-calculator.html",
+    "category": "Other",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Down Payment Calculator",
+    "slug": "down-payment-calculator.html",
+    "url": "https://www.calculator.net/down-payment-calculator.html",
+    "category": "Financial",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Rent vs Buy Calculator",
+    "slug": "rent-vs-buy-calculator.html",
+    "url": "https://www.calculator.net/rent-vs-buy-calculator.html",
+    "category": "Financial",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Payback Period Calculator",
+    "slug": "payback-period-calculator.html",
+    "url": "https://www.calculator.net/payback-period-calculator.html",
+    "category": "Financial",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Present Value Calculator",
+    "slug": "present-value-calculator.html",
+    "url": "https://www.calculator.net/present-value-calculator.html",
+    "category": "Other",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Future Value Calculator",
+    "slug": "future-value-calculator.html",
+    "url": "https://www.calculator.net/future-value-calculator.html",
+    "category": "Other",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Commission Calculator",
+    "slug": "commission-calculator.html",
+    "url": "https://www.calculator.net/commission-calculator.html",
+    "category": "Financial",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Army Body Fat Calculator",
+    "slug": "army-body-fat-calculator.html",
+    "url": "https://www.calculator.net/army-body-fat-calculator.html",
+    "category": "Fitness & Health",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Carbohydrate Calculator",
+    "slug": "carbohydrate-calculator.html",
+    "url": "https://www.calculator.net/carbohydrate-calculator.html",
+    "category": "Fitness & Health",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Lean Body Mass Calculator",
+    "slug": "lean-body-mass-calculator.html",
+    "url": "https://www.calculator.net/lean-body-mass-calculator.html",
+    "category": "Fitness & Health",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Healthy Weight Calculator",
+    "slug": "healthy-weight-calculator.html",
+    "url": "https://www.calculator.net/healthy-weight-calculator.html",
+    "category": "Fitness & Health",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Calories Burned Calculator",
+    "slug": "calories-burned-calculator.html",
+    "url": "https://www.calculator.net/calories-burned-calculator.html",
+    "category": "Fitness & Health",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "One Rep Max Calculator",
+    "slug": "one-rep-max-calculator.html",
+    "url": "https://www.calculator.net/one-rep-max-calculator.html",
+    "category": "Other",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Target Heart Rate Calculator",
+    "slug": "target-heart-rate-calculator.html",
+    "url": "https://www.calculator.net/target-heart-rate-calculator.html",
+    "category": "Fitness & Health",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Protein Calculator",
+    "slug": "protein-calculator.html",
+    "url": "https://www.calculator.net/protein-calculator.html",
+    "category": "Fitness & Health",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Fat Intake Calculator",
+    "slug": "fat-intake-calculator.html",
+    "url": "https://www.calculator.net/fat-intake-calculator.html",
+    "category": "Other",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "TDEE Calculator",
+    "slug": "tdee-calculator.html",
+    "url": "https://www.calculator.net/tdee-calculator.html",
+    "category": "Fitness & Health",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Ovulation Calculator",
+    "slug": "ovulation-calculator.html",
+    "url": "https://www.calculator.net/ovulation-calculator.html",
+    "category": "Fitness & Health",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Conception Calculator",
+    "slug": "conception-calculator.html",
+    "url": "https://www.calculator.net/conception-calculator.html",
+    "category": "Fitness & Health",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Period Calculator",
+    "slug": "period-calculator.html",
+    "url": "https://www.calculator.net/period-calculator.html",
+    "category": "Fitness & Health",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "GFR Calculator",
+    "slug": "gfr-calculator.html",
+    "url": "https://www.calculator.net/gfr-calculator.html",
+    "category": "Fitness & Health",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Body Type Calculator",
+    "slug": "body-type-calculator.html",
+    "url": "https://www.calculator.net/body-type-calculator.html",
+    "category": "Other",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Body Surface Area Calculator",
+    "slug": "body-surface-area-calculator.html",
+    "url": "https://www.calculator.net/body-surface-area-calculator.html",
+    "category": "Fitness & Health",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "BAC Calculator",
+    "slug": "bac-calculator.html",
+    "url": "https://www.calculator.net/bac-calculator.html",
+    "category": "Fitness & Health",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Number Sequence Calculator",
+    "slug": "number-sequence-calculator.html",
+    "url": "https://www.calculator.net/number-sequence-calculator.html",
+    "category": "Math",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Percent Error Calculator",
+    "slug": "percent-error-calculator.html",
+    "url": "https://www.calculator.net/percent-error-calculator.html",
+    "category": "Math",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Exponent Calculator",
+    "slug": "exponent-calculator.html",
+    "url": "https://www.calculator.net/exponent-calculator.html",
+    "category": "Math",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Binary Calculator",
+    "slug": "binary-calculator.html",
+    "url": "https://www.calculator.net/binary-calculator.html",
+    "category": "Math",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Hex Calculator",
+    "slug": "hex-calculator.html",
+    "url": "https://www.calculator.net/hex-calculator.html",
+    "category": "Math",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Half Life Calculator",
+    "slug": "half-life-calculator.html",
+    "url": "https://www.calculator.net/half-life-calculator.html",
+    "category": "Other",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Quadratic Formula Calculator",
+    "slug": "quadratic-formula-calculator.html",
+    "url": "https://www.calculator.net/quadratic-formula-calculator.html",
+    "category": "Math",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Slope Calculator",
+    "slug": "slope-calculator.html",
+    "url": "https://www.calculator.net/slope-calculator.html",
+    "category": "Math",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Log Calculator",
+    "slug": "log-calculator.html",
+    "url": "https://www.calculator.net/log-calculator.html",
+    "category": "Math",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Area Calculator",
+    "slug": "area-calculator.html",
+    "url": "https://www.calculator.net/area-calculator.html",
+    "category": "Math",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Sample Size Calculator",
+    "slug": "sample-size-calculator.html",
+    "url": "https://www.calculator.net/sample-size-calculator.html",
+    "category": "Math",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Probability Calculator",
+    "slug": "probability-calculator.html",
+    "url": "https://www.calculator.net/probability-calculator.html",
+    "category": "Math",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Statistics Calculator",
+    "slug": "statistics-calculator.html",
+    "url": "https://www.calculator.net/statistics-calculator.html",
+    "category": "Math",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Mean Median Mode Range Calculator",
+    "slug": "mean-median-mode-range-calculator.html",
+    "url": "https://www.calculator.net/mean-median-mode-range-calculator.html",
+    "category": "Math",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Permutation and Combination Calculator",
+    "slug": "permutation-and-combination-calculator.html",
+    "url": "https://www.calculator.net/permutation-and-combination-calculator.html",
+    "category": "Math",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Z Score Calculator",
+    "slug": "z-score-calculator.html",
+    "url": "https://www.calculator.net/z-score-calculator.html",
+    "category": "Math",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Confidence Interval Calculator",
+    "slug": "confidence-interval-calculator.html",
+    "url": "https://www.calculator.net/confidence-interval-calculator.html",
+    "category": "Math",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Ratio Calculator",
+    "slug": "ratio-calculator.html",
+    "url": "https://www.calculator.net/ratio-calculator.html",
+    "category": "Math",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Distance Calculator",
+    "slug": "distance-calculator.html",
+    "url": "https://www.calculator.net/distance-calculator.html",
+    "category": "Math",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Circle Calculator",
+    "slug": "circle-calculator.html",
+    "url": "https://www.calculator.net/circle-calculator.html",
+    "category": "Math",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Surface Area Calculator",
+    "slug": "surface-area-calculator.html",
+    "url": "https://www.calculator.net/surface-area-calculator.html",
+    "category": "Math",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Pythagorean Theorem Calculator",
+    "slug": "pythagorean-theorem-calculator.html",
+    "url": "https://www.calculator.net/pythagorean-theorem-calculator.html",
+    "category": "Math",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Right Triangle Calculator",
+    "slug": "right-triangle-calculator.html",
+    "url": "https://www.calculator.net/right-triangle-calculator.html",
+    "category": "Math",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Root Calculator",
+    "slug": "root-calculator.html",
+    "url": "https://www.calculator.net/root-calculator.html",
+    "category": "Math",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "LCM Calculator",
+    "slug": "lcm-calculator.html",
+    "url": "https://www.calculator.net/lcm-calculator.html",
+    "category": "Math",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "GCF Calculator",
+    "slug": "gcf-calculator.html",
+    "url": "https://www.calculator.net/gcf-calculator.html",
+    "category": "Math",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Factor Calculator",
+    "slug": "factor-calculator.html",
+    "url": "https://www.calculator.net/factor-calculator.html",
+    "category": "Math",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Rounding Calculator",
+    "slug": "rounding-calculator.html",
+    "url": "https://www.calculator.net/rounding-calculator.html",
+    "category": "Math",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Matrix Calculator",
+    "slug": "matrix-calculator.html",
+    "url": "https://www.calculator.net/matrix-calculator.html",
+    "category": "Math",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Scientific Notation Calculator",
+    "slug": "scientific-notation-calculator.html",
+    "url": "https://www.calculator.net/scientific-notation-calculator.html",
+    "category": "Math",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Big Number Calculator",
+    "slug": "big-number-calculator.html",
+    "url": "https://www.calculator.net/big-number-calculator.html",
+    "category": "Math",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Fuel Cost Calculator",
+    "slug": "fuel-cost-calculator.html",
+    "url": "https://www.calculator.net/fuel-cost-calculator.html",
+    "category": "Conversion & Science",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Voltage Drop Calculator",
+    "slug": "voltage-drop-calculator.html",
+    "url": "https://www.calculator.net/voltage-drop-calculator.html",
+    "category": "Technical & Electrical",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "BTU Calculator",
+    "slug": "btu-calculator.html",
+    "url": "https://www.calculator.net/btu-calculator.html",
+    "category": "Other",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Square Footage Calculator",
+    "slug": "square-footage-calculator.html",
+    "url": "https://www.calculator.net/square-footage-calculator.html",
+    "category": "Construction",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Time Card Calculator",
+    "slug": "time-card-calculator.html",
+    "url": "https://www.calculator.net/time-card-calculator.html",
+    "category": "Other",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Time Zone Calculator",
+    "slug": "time-zone-calculator.html",
+    "url": "https://www.calculator.net/time-zone-calculator.html",
+    "category": "Other",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Love Calculator",
+    "slug": "love-calculator.html",
+    "url": "https://www.calculator.net/love-calculator.html",
+    "category": "Other",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "GDP Calculator",
+    "slug": "gdp-calculator.html",
+    "url": "https://www.calculator.net/gdp-calculator.html",
+    "category": "Other",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Gas Mileage Calculator",
+    "slug": "gas-mileage-calculator.html",
+    "url": "https://www.calculator.net/gas-mileage-calculator.html",
+    "category": "Conversion & Science",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Horsepower Calculator",
+    "slug": "horsepower-calculator.html",
+    "url": "https://www.calculator.net/horsepower-calculator.html",
+    "category": "Other",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Engine Horsepower Calculator",
+    "slug": "engine-horsepower-calculator.html",
+    "url": "https://www.calculator.net/engine-horsepower-calculator.html",
+    "category": "Other",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Stair Calculator",
+    "slug": "stair-calculator.html",
+    "url": "https://www.calculator.net/stair-calculator.html",
+    "category": "Construction",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Resistor Calculator",
+    "slug": "resistor-calculator.html",
+    "url": "https://www.calculator.net/resistor-calculator.html",
+    "category": "Technical & Electrical",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Ohms Law Calculator",
+    "slug": "ohms-law-calculator.html",
+    "url": "https://www.calculator.net/ohms-law-calculator.html",
+    "category": "Technical & Electrical",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Electricity Calculator",
+    "slug": "electricity-calculator.html",
+    "url": "https://www.calculator.net/electricity-calculator.html",
+    "category": "Technical & Electrical",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Shoe Size Conversion",
+    "slug": "shoe-size-conversion.html",
+    "url": "https://www.calculator.net/shoe-size-conversion.html",
+    "category": "Conversion & Science",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Tip Calculator",
+    "slug": "tip-calculator.html",
+    "url": "https://www.calculator.net/tip-calculator.html",
+    "category": "Other",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Mileage Calculator",
+    "slug": "mileage-calculator.html",
+    "url": "https://www.calculator.net/mileage-calculator.html",
+    "category": "Conversion & Science",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Density Calculator",
+    "slug": "density-calculator.html",
+    "url": "https://www.calculator.net/density-calculator.html",
+    "category": "Conversion & Science",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Mass Calculator",
+    "slug": "mass-calculator.html",
+    "url": "https://www.calculator.net/mass-calculator.html",
+    "category": "Conversion & Science",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Weight Calculator",
+    "slug": "weight-calculator.html",
+    "url": "https://www.calculator.net/weight-calculator.html",
+    "category": "Fitness & Health",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Speed Calculator",
+    "slug": "speed-calculator.html",
+    "url": "https://www.calculator.net/speed-calculator.html",
+    "category": "Conversion & Science",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Molarity Calculator",
+    "slug": "molarity-calculator.html",
+    "url": "https://www.calculator.net/molarity-calculator.html",
+    "category": "Conversion & Science",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Molecular Weight Calculator",
+    "slug": "molecular-weight-calculator.html",
+    "url": "https://www.calculator.net/molecular-weight-calculator.html",
+    "category": "Fitness & Health",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Roman Numeral Converter",
+    "slug": "roman-numeral-converter.html",
+    "url": "https://www.calculator.net/roman-numeral-converter.html",
+    "category": "Conversion & Science",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Golf Handicap Calculator",
+    "slug": "golf-handicap-calculator.html",
+    "url": "https://www.calculator.net/golf-handicap-calculator.html",
+    "category": "Other",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Sleep Calculator",
+    "slug": "sleep-calculator.html",
+    "url": "https://www.calculator.net/sleep-calculator.html",
+    "category": "Fitness & Health",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Tire Size Calculator",
+    "slug": "tire-size-calculator.html",
+    "url": "https://www.calculator.net/tire-size-calculator.html",
+    "category": "Other",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Roofing Calculator",
+    "slug": "roofing-calculator.html",
+    "url": "https://www.calculator.net/roofing-calculator.html",
+    "category": "Construction",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Tile Calculator",
+    "slug": "tile-calculator.html",
+    "url": "https://www.calculator.net/tile-calculator.html",
+    "category": "Construction",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Mulch Calculator",
+    "slug": "mulch-calculator.html",
+    "url": "https://www.calculator.net/mulch-calculator.html",
+    "category": "Construction",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Gravel Calculator",
+    "slug": "gravel-calculator.html",
+    "url": "https://www.calculator.net/gravel-calculator.html",
+    "category": "Construction",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Wind Chill Calculator",
+    "slug": "wind-chill-calculator.html",
+    "url": "https://www.calculator.net/wind-chill-calculator.html",
+    "category": "Other",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Heat Index Calculator",
+    "slug": "heat-index-calculator.html",
+    "url": "https://www.calculator.net/heat-index-calculator.html",
+    "category": "Other",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Dew Point Calculator",
+    "slug": "dew-point-calculator.html",
+    "url": "https://www.calculator.net/dew-point-calculator.html",
+    "category": "Other",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Bandwidth Calculator",
+    "slug": "bandwidth-calculator.html",
+    "url": "https://www.calculator.net/bandwidth-calculator.html",
+    "category": "Technical & Electrical",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Base64 Encode Decode",
+    "slug": "base64-encode-decode.html",
+    "url": "https://www.calculator.net/base64-encode-decode.html",
+    "category": "Technical & Electrical",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "URL Encode Decode",
+    "slug": "url-encode-decode.html",
+    "url": "https://www.calculator.net/url-encode-decode.html",
+    "category": "Technical & Electrical",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Time Duration Calculator",
+    "slug": "time-duration-calculator.html",
+    "url": "https://www.calculator.net/time-duration-calculator.html",
+    "category": "Math",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Day Counter",
+    "slug": "day-counter.html",
+    "url": "https://www.calculator.net/day-counter.html",
+    "category": "Other",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Day Of The Week Calculator",
+    "slug": "day-of-the-week-calculator.html",
+    "url": "https://www.calculator.net/day-of-the-week-calculator.html",
+    "category": "Other",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Mortgage Calculator UK",
+    "slug": "mortgage-calculator-uk.html",
+    "url": "https://www.calculator.net/mortgage-calculator-uk.html",
+    "category": "Financial",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Canadian Mortgage Calculator",
+    "slug": "canadian-mortgage-calculator.html",
+    "url": "https://www.calculator.net/canadian-mortgage-calculator.html",
+    "category": "Financial",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Mortgage Amortization Calculator",
+    "slug": "mortgage-amortization-calculator.html",
+    "url": "https://www.calculator.net/mortgage-amortization-calculator.html",
+    "category": "Financial",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Percent Off Calculator",
+    "slug": "percent-off-calculator.html",
+    "url": "https://www.calculator.net/percent-off-calculator.html",
+    "category": "Math",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Anorexic BMI Calculator",
+    "slug": "anorexic-bmi-calculator.html",
+    "url": "https://www.calculator.net/anorexic-bmi-calculator.html",
+    "category": "Fitness & Health",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Weight Watchers Points Calculator",
+    "slug": "weight-watchers-points-calculator.html",
+    "url": "https://www.calculator.net/weight-watchers-points-calculator.html",
+    "category": "Fitness & Health",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Overweight Calculator",
+    "slug": "overweight-calculator.html",
+    "url": "https://www.calculator.net/overweight-calculator.html",
+    "category": "Fitness & Health",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Prime Factorization Calculator",
+    "slug": "prime-factorization-calculator.html",
+    "url": "https://www.calculator.net/prime-factorization-calculator.html",
+    "category": "Math",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Common Factor Calculator",
+    "slug": "common-factor-calculator.html",
+    "url": "https://www.calculator.net/common-factor-calculator.html",
+    "category": "Math",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Basic Calculator",
+    "slug": "basic-calculator.html",
+    "url": "https://www.calculator.net/basic-calculator.html",
+    "category": "Other",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Long Division Calculator",
+    "slug": "long-division-calculator.html",
+    "url": "https://www.calculator.net/long-division-calculator.html",
+    "category": "Math",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Average Calculator",
+    "slug": "average-calculator.html",
+    "url": "https://www.calculator.net/average-calculator.html",
+    "category": "Math",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "P Value Calculator",
+    "slug": "p-value-calculator.html",
+    "url": "https://www.calculator.net/p-value-calculator.html",
+    "category": "Math",
+    "page_type": "tool",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "BMI Calculator Widget",
+    "slug": "bmi-calculator-widget.php",
+    "url": "https://www.calculator.net/projects/bmi-calculator-widget.php",
+    "category": "Fitness & Health",
+    "page_type": "widget",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Love Calculator Widget",
+    "slug": "love-calculator-widget.php",
+    "url": "https://www.calculator.net/projects/love-calculator-widget.php",
+    "category": "Other",
+    "page_type": "widget",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Math Calculator Widget",
+    "slug": "math-calculator-widget.php",
+    "url": "https://www.calculator.net/projects/math-calculator-widget.php",
+    "category": "Other",
+    "page_type": "widget",
+    "is_tool_keyword": true
+  },
+  {
+    "keyword": "Mortgage Calculator Widget",
+    "slug": "mortgage-calculator-widget.php",
+    "url": "https://www.calculator.net/projects/mortgage-calculator-widget.php",
+    "category": "Financial",
+    "page_type": "widget",
+    "is_tool_keyword": true
+  }
+]

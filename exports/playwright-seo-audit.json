@@ -1,0 +1,139 @@
+[
+  {
+    "path": "/",
+    "status": 200,
+    "consoleErrors": [],
+    "title": "Free Online Calculators | Mortgage, Loan & Unit Converters",
+    "titleLength": 58,
+    "descriptionLength": 147,
+    "canonical": "https://your-domain.com/",
+    "h1Count": 1,
+    "h1": "Calculator Tools",
+    "schemaTypes": [
+      "WebPage",
+      "WebSite"
+    ],
+    "hasCalculator": false,
+    "calculatorTop": null,
+    "calculatorVisibleInFirstScreen": false,
+    "result": "",
+    "horizontalOverflow": false,
+    "jsonLdCount": 2
+  },
+  {
+    "path": "/mortgage-calculator/",
+    "status": 200,
+    "consoleErrors": [],
+    "title": "Mortgage Calculator | Free Online Calculator",
+    "titleLength": 44,
+    "descriptionLength": 121,
+    "canonical": "https://your-domain.com/mortgage-calculator/",
+    "h1Count": 1,
+    "h1": "Mortgage Calculator",
+    "schemaTypes": [
+      "WebPage",
+      "BreadcrumbList",
+      "SoftwareApplication"
+    ],
+    "hasCalculator": true,
+    "calculatorTop": -459,
+    "calculatorVisibleInFirstScreen": true,
+    "result": "$2,088.29 / month",
+    "horizontalOverflow": false,
+    "jsonLdCount": 3
+  },
+  {
+    "path": "/loan-calculator/",
+    "status": 200,
+    "consoleErrors": [],
+    "title": "Loan Calculator | Free Online Calculator",
+    "titleLength": 40,
+    "descriptionLength": 117,
+    "canonical": "https://your-domain.com/loan-calculator/",
+    "h1Count": 1,
+    "h1": "Loan Calculator",
+    "schemaTypes": [
+      "WebPage",
+      "BreadcrumbList",
+      "SoftwareApplication"
+    ],
+    "hasCalculator": true,
+    "calculatorTop": 305,
+    "calculatorVisibleInFirstScreen": true,
+    "result": "$1,110.21 / month",
+    "horizontalOverflow": false,
+    "jsonLdCount": 3
+  },
+  {
+    "path": "/auto-loan-calculator/",
+    "status": 200,
+    "consoleErrors": [],
+    "title": "Auto Loan Calculator | Free Online Calculator",
+    "titleLength": 45,
+    "descriptionLength": 122,
+    "canonical": "https://your-domain.com/auto-loan-calculator/",
+    "h1Count": 1,
+    "h1": "Auto Loan Calculator",
+    "schemaTypes": [
+      "WebPage",
+      "BreadcrumbList",
+      "SoftwareApplication"
+    ],
+    "hasCalculator": true,
+    "calculatorTop": 305,
+    "calculatorVisibleInFirstScreen": true,
+    "result": "$754.85 / month",
+    "horizontalOverflow": false,
+    "jsonLdCount": 3
+  },
+  {
+    "path": "/feet-to-meters-calculator/",
+    "status": 200,
+    "consoleErrors": [],
+    "title": "Feet To Meters Calculator | Free Online Calculator",
+    "titleLength": 50,
+    "descriptionLength": 129,
+    "canonical": "https://your-domain.com/feet-to-meters-calculator/",
+    "h1Count": 1,
+    "h1": "Feet To Meters Calculator",
+    "schemaTypes": [
+      "WebPage",
+      "BreadcrumbList",
+      "SoftwareApplication"
+    ],
+    "hasCalculator": true,
+    "calculatorTop": 540,
+    "calculatorVisibleInFirstScreen": true,
+    "result": "0.3048 meters",
+    "horizontalOverflow": false,
+    "jsonLdCount": 3
+  },
+  {
+    "path": "/financial-calculators/",
+    "status": 200,
+    "consoleErrors": [],
+    "title": "Free Financial Calculators | NS Calculators",
+    "titleLength": 43,
+    "descriptionLength": 100,
+    "canonical": "https://your-domain.com/financial-calculators/",
+    "h1Count": 1,
+    "h1": "Financial Calculators",
+    "schemaTypes": [
+      "CollectionPage",
+      "BreadcrumbList"
+    ],
+    "hasCalculator": false,
+    "calculatorTop": null,
+    "calculatorVisibleInFirstScreen": false,
+    "result": "",
+    "horizontalOverflow": false,
+    "jsonLdCount": 2
+  },
+  {
+    "path": "/mortgage-calculator/ mobile",
+    "horizontalOverflow": false,
+    "h1": "Mortgage Calculator",
+    "calcTop": 324,
+    "resultVisible": true
+  }
+]

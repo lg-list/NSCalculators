@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Northstar Calculators">
+  <rect width="512" height="512" rx="116" fill="#173f73"/>
+  <rect x="128" y="72" width="256" height="368" rx="54" fill="#fff"/>
+  <rect x="162" y="112" width="188" height="58" rx="18" fill="#e8f0fb"/>
+  <circle cx="180" cy="230" r="24" fill="#173f73"/>
+  <circle cx="256" cy="230" r="24" fill="#173f73"/>
+  <circle cx="332" cy="230" r="24" fill="#b4232a"/>
+  <circle cx="180" cy="306" r="24" fill="#173f73"/>
+  <circle cx="256" cy="306" r="24" fill="#173f73"/>
+  <circle cx="332" cy="306" r="24" fill="#173f73"/>
+  <rect x="162" y="360" width="188" height="42" rx="21" fill="#b4232a"/>
+</svg>

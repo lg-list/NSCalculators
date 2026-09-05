@@ -1,0 +1,826 @@
+{
+  "source_file": "C:\\Users\\Administrator\\Downloads\\Keyword Stats 2026-09-02 at 10_40_43.csv",
+  "forecast_file": "C:\\Users\\Administrator\\Downloads\\Keyword Forecasts 2026-09-05 at 09_28_21.csv",
+  "valid_keywords": 175,
+  "total_monthly_searches": 9650.0,
+  "top_keywords": [
+    {
+      "keyword": "compound interest calculator",
+      "avg_monthly_searches": 500.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 1000.0
+    },
+    {
+      "keyword": "feet to meters calculator",
+      "avg_monthly_searches": 500.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 1000.0
+    },
+    {
+      "keyword": "acres to hectares calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "acres to square feet calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "acres to square meters calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "acres to square miles calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "amps to watts calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "bar to psi calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "bits to bytes calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "board foot calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "breaker size calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "bytes to gigabytes calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "bytes to megabytes calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "calories to joules calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "calories to kilocalories calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "calories to kilojoules calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "car depreciation calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "car resale value calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "car trade in value calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "centimeters to feet calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "centimeters to inches calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "centimeters to kilometers calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "centimeters to meters calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "centimeters to millimeters calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "concrete volume calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "cubic feet to cubic meters calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "cubic feet to liters calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "cubic meters to cubic feet calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "days to hours calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "days to months calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "days to seconds calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "days to weeks calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "days to years calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "decimeters to centimeters calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "decimeters to meters calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "deck board calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "degrees to radians calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "discount calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "electrical load calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "feet to centimeters calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "feet to inches calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "feet to miles calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "feet to yards calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "flooring calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "gallons to cups calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "gallons to liters calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "gallons to quarts calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "geodesic dome calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "gigabytes to bytes calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "gigabytes to megabytes calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "grains to grams calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "grains to ounces calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "grams to grains calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "grams to kilograms calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "grams to micrograms calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "grams to milligrams calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "grams to ounces calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "grams to pounds calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "grams to troy ounces calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "hectares to acres calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "horsepower calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "horsepower to kilowatts calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "hours to minutes calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "hours to years calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "inches to centimeters calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "inches to meters calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "inches to miles calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "inches to millimeters calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "inches to yards calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "joules to calories calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "kilobytes to gigabytes calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "kilocalories to calories calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "kilograms to grams calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "kilograms to ounces calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "kilograms to pounds calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "kilograms to stones calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "kilojoules to calories calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "kilometers per hour to miles per hour calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "kilometers to feet calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    },
+    {
+      "keyword": "kilometers to meters calculator",
+      "avg_monthly_searches": 50.0,
+      "bid_low": 0.0,
+      "bid_high": 0.0,
+      "competition_index": 0.0,
+      "seo_score": 100.0
+    }
+  ],
+  "clusters": {
+    "financial": {
+      "count": 3,
+      "monthly_searches": 600.0,
+      "top_keywords": [
+        {
+          "keyword": "compound interest calculator",
+          "avg": 500.0,
+          "score": 1000.0
+        },
+        {
+          "keyword": "loan payment calculator",
+          "avg": 50.0,
+          "score": 100.0
+        },
+        {
+          "keyword": "salary increase calculator",
+          "avg": 50.0,
+          "score": 100.0
+        }
+      ]
+    },
+    "health": {
+      "count": 6,
+      "monthly_searches": 300.0,
+      "top_keywords": [
+        {
+          "keyword": "calories to joules calculator",
+          "avg": 50.0,
+          "score": 100.0
+        },
+        {
+          "keyword": "calories to kilocalories calculator",
+          "avg": 50.0,
+          "score": 100.0
+        },
+        {
+          "keyword": "calories to kilojoules calculator",
+          "avg": 50.0,
+          "score": 100.0
+        },
+        {
+          "keyword": "joules to calories calculator",
+          "avg": 50.0,
+          "score": 100.0
+        },
+        {
+          "keyword": "kilocalories to calories calculator",
+          "avg": 50.0,
+          "score": 100.0
+        },
+        {
+          "keyword": "kilojoules to calories calculator",
+          "avg": 50.0,
+          "score": 100.0
+        }
+      ]
+    },
+    "math": {
+      "count": 0,
+      "monthly_searches": 0,
+      "top_keywords": []
+    },
+    "conversion": {
+      "count": 96,
+      "monthly_searches": 5250.0,
+      "top_keywords": [
+        {
+          "keyword": "feet to meters calculator",
+          "avg": 500.0,
+          "score": 1000.0
+        },
+        {
+          "keyword": "acres to hectares calculator",
+          "avg": 50.0,
+          "score": 100.0
+        },
+        {
+          "keyword": "acres to square feet calculator",
+          "avg": 50.0,
+          "score": 100.0
+        },
+        {
+          "keyword": "acres to square meters calculator",
+          "avg": 50.0,
+          "score": 100.0
+        },
+        {
+          "keyword": "acres to square miles calculator",
+          "avg": 50.0,
+          "score": 100.0
+        },
+        {
+          "keyword": "centimeters to feet calculator",
+          "avg": 50.0,
+          "score": 100.0
+        },
+        {
+          "keyword": "centimeters to inches calculator",
+          "avg": 50.0,
+          "score": 100.0
+        },
+        {
+          "keyword": "centimeters to kilometers calculator",
+          "avg": 50.0,
+          "score": 100.0
+        },
+        {
+          "keyword": "centimeters to meters calculator",
+          "avg": 50.0,
+          "score": 100.0
+        },
+        {
+          "keyword": "centimeters to millimeters calculator",
+          "avg": 50.0,
+          "score": 100.0
+        },
+        {
+          "keyword": "cubic feet to cubic meters calculator",
+          "avg": 50.0,
+          "score": 100.0
+        },
+        {
+          "keyword": "cubic feet to liters calculator",
+          "avg": 50.0,
+          "score": 100.0
+        }
+      ]
+    },
+    "auto": {
+      "count": 5,
+      "monthly_searches": 250.0,
+      "top_keywords": [
+        {
+          "keyword": "mpg calculator",
+          "avg": 50.0,
+          "score": 100.0
+        },
+        {
+          "keyword": "tire size calculator",
+          "avg": 50.0,
+          "score": 100.0
+        },
+        {
+          "keyword": "towing capacity calculator",
+          "avg": 50.0,
+          "score": 100.0
+        },
+        {
+          "keyword": "trip fuel cost calculator",
+          "avg": 50.0,
+          "score": 100.0
+        },
+        {
+          "keyword": "truck payload calculator",
+          "avg": 50.0,
+          "score": 100.0
+        }
+      ]
+    }
+  },
+  "strategy": {
+    "primary_market": "United States",
+    "priority_order": [
+      "Financial calculators",
+      "Health calculators",
+      "Math calculators",
+      "Conversion calculators",
+      "Automotive calculators"
+    ],
+    "implementation_notes": [
+      "Use exact-match calculator keyword in H1 and title for core pages.",
+      "Use US wording and USD defaults for finance pages.",
+      "Put the calculator above explanatory copy so users see the tool immediately.",
+      "Build internal links from category hubs to high-volume core tools and supporting long-tail pages.",
+      "Avoid creating thin pages for zero-volume unit conversions unless they support a cluster."
+    ]
+  }
+}

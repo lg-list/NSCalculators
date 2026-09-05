@@ -1,0 +1,1535 @@
+{
+  "site": {
+    "name": "Northstar Calculators",
+    "domain": "https://YOUR-DOMAIN.com",
+    "market": "United States",
+    "language": "en-US"
+  },
+  "calculators": [
+    {
+      "slug": "car-trade-in-value-calculator",
+      "title": "Car Trade-In Value Calculator",
+      "cat": "Automotive",
+      "engine": "trade_value",
+      "desc": "Estimate a vehicle's trade-in value from original price, age, mileage, and condition.",
+      "formula": "Estimated value = original price \u00d7 age depreciation factor \u00d7 mileage factor \u00d7 condition factor.",
+      "example": "A $40,000 vehicle that is 3 years old with 36,000 miles and good condition produces an illustrative market estimate.",
+      "inputs": [
+        [
+          "price",
+          "Original / benchmark value ($)",
+          "number",
+          40000
+        ],
+        [
+          "age",
+          "Vehicle age (years)",
+          "number",
+          3
+        ],
+        [
+          "miles",
+          "Mileage",
+          "number",
+          36000
+        ],
+        [
+          "condition",
+          "Condition",
+          "select",
+          [
+            [
+              "0.82",
+              "Fair"
+            ],
+            [
+              "0.92",
+              "Good"
+            ],
+            [
+              "1.00",
+              "Very good"
+            ],
+            [
+              "1.06",
+              "Excellent"
+            ]
+          ]
+        ]
+      ],
+      "keyword_data": {
+        "monthly_searches": 50000,
+        "ads_competition": "Low",
+        "competition_index": 5,
+        "bid_low": 1.07,
+        "bid_high": 4.14,
+        "yoy": "+900%"
+      }
+    },
+    {
+      "slug": "f150-bed-dimensions",
+      "title": "F-150 Bed Dimensions",
+      "cat": "Automotive",
+      "engine": "f150_bed",
+      "desc": "Compare common Ford F-150 bed lengths and approximate inside bed dimensions.",
+      "formula": "This is a specification lookup, not an arithmetic formula. Select a common bed length to view reference dimensions.",
+      "example": "Choose 5.5 ft, 6.5 ft, or 8 ft to compare approximate inside length and cargo volume reference values.",
+      "inputs": [
+        [
+          "bed",
+          "Bed length",
+          "select",
+          [
+            [
+              "5.5",
+              "5.5 ft bed"
+            ],
+            [
+              "6.5",
+              "6.5 ft bed"
+            ],
+            [
+              "8",
+              "8 ft bed"
+            ]
+          ]
+        ]
+      ],
+      "keyword_data": {
+        "monthly_searches": 5000,
+        "ads_competition": "Medium",
+        "competition_index": 34,
+        "bid_low": 1.78,
+        "bid_high": 5.97
+      }
+    },
+    {
+      "slug": "used-car-value-calculator",
+      "title": "Used Car Value Calculator",
+      "cat": "Automotive",
+      "engine": "trade_value",
+      "desc": "Estimate an illustrative used-car value using age, mileage and condition adjustments.",
+      "formula": "Estimated value = benchmark value \u00d7 age factor \u00d7 mileage factor \u00d7 condition factor.",
+      "example": "Use a realistic benchmark price and current mileage to compare how age and condition affect an estimated value.",
+      "inputs": [
+        [
+          "price",
+          "Benchmark value ($)",
+          "number",
+          30000
+        ],
+        [
+          "age",
+          "Age (years)",
+          "number",
+          4
+        ],
+        [
+          "miles",
+          "Mileage",
+          "number",
+          48000
+        ],
+        [
+          "condition",
+          "Condition",
+          "select",
+          [
+            [
+              "0.82",
+              "Fair"
+            ],
+            [
+              "0.92",
+              "Good"
+            ],
+            [
+              "1.00",
+              "Very good"
+            ],
+            [
+              "1.06",
+              "Excellent"
+            ]
+          ]
+        ]
+      ],
+      "keyword_data": {}
+    },
+    {
+      "slug": "car-depreciation-calculator",
+      "title": "Car Depreciation Calculator",
+      "cat": "Automotive",
+      "engine": "depreciation",
+      "desc": "Estimate a vehicle's future value using an annual depreciation rate.",
+      "formula": "Future value = current value \u00d7 (1 \u2212 annual depreciation rate)^years.",
+      "example": "A $35,000 car depreciating at 15% per year for 4 years is worth about $18,267 under this simplified model.",
+      "inputs": [
+        [
+          "price",
+          "Current value ($)",
+          "number",
+          35000
+        ],
+        [
+          "rate",
+          "Annual depreciation (%)",
+          "number",
+          15
+        ],
+        [
+          "years",
+          "Years",
+          "number",
+          4
+        ]
+      ],
+      "keyword_data": {}
+    },
+    {
+      "slug": "car-resale-value-calculator",
+      "title": "Car Resale Value Calculator",
+      "cat": "Automotive",
+      "engine": "depreciation",
+      "desc": "Estimate a future resale value from current value, holding period and expected depreciation.",
+      "formula": "Estimated resale value = current value \u00d7 (1 \u2212 depreciation rate)^holding period.",
+      "example": "Compare several annual depreciation assumptions to see a potential resale range.",
+      "inputs": [
+        [
+          "price",
+          "Current value ($)",
+          "number",
+          42000
+        ],
+        [
+          "rate",
+          "Annual depreciation (%)",
+          "number",
+          14
+        ],
+        [
+          "years",
+          "Years until resale",
+          "number",
+          3
+        ]
+      ],
+      "keyword_data": {}
+    },
+    {
+      "slug": "private-party-car-value-calculator",
+      "title": "Private Party Car Value Calculator",
+      "cat": "Automotive",
+      "engine": "trade_value",
+      "desc": "Create an illustrative private-party value estimate using age, mileage and condition.",
+      "formula": "Estimate = benchmark value \u00d7 age factor \u00d7 mileage factor \u00d7 condition factor.",
+      "example": "Start with a recent local-market benchmark rather than the original MSRP for a more realistic comparison.",
+      "inputs": [
+        [
+          "price",
+          "Local benchmark value ($)",
+          "number",
+          25000
+        ],
+        [
+          "age",
+          "Age (years)",
+          "number",
+          5
+        ],
+        [
+          "miles",
+          "Mileage",
+          "number",
+          60000
+        ],
+        [
+          "condition",
+          "Condition",
+          "select",
+          [
+            [
+              "0.86",
+              "Fair"
+            ],
+            [
+              "0.96",
+              "Good"
+            ],
+            [
+              "1.02",
+              "Very good"
+            ],
+            [
+              "1.08",
+              "Excellent"
+            ]
+          ]
+        ]
+      ],
+      "keyword_data": {}
+    },
+    {
+      "slug": "vehicle-payload-calculator",
+      "title": "Vehicle Payload Calculator",
+      "cat": "Automotive",
+      "engine": "payload",
+      "desc": "Calculate remaining payload from GVWR, curb weight, occupants and cargo already loaded.",
+      "formula": "Remaining payload = GVWR \u2212 curb weight \u2212 occupants \u2212 existing cargo.",
+      "example": "A 7,000 lb GVWR vehicle with 5,000 lb curb weight, 400 lb occupants and 250 lb cargo has 1,350 lb remaining payload.",
+      "inputs": [
+        [
+          "gvwr",
+          "GVWR (lb)",
+          "number",
+          7000
+        ],
+        [
+          "curb",
+          "Curb weight (lb)",
+          "number",
+          5000
+        ],
+        [
+          "people",
+          "Occupants (lb)",
+          "number",
+          400
+        ],
+        [
+          "cargo",
+          "Existing cargo (lb)",
+          "number",
+          250
+        ]
+      ],
+      "keyword_data": {
+        "monthly_searches": 50,
+        "ads_competition": "Low",
+        "competition_index": 3
+      }
+    },
+    {
+      "slug": "truck-payload-calculator",
+      "title": "Truck Payload Calculator",
+      "cat": "Automotive",
+      "engine": "payload",
+      "desc": "Estimate remaining truck payload after passengers and cargo.",
+      "formula": "Remaining payload = GVWR \u2212 curb weight \u2212 occupant weight \u2212 cargo weight.",
+      "example": "Use the door-jamb payload label when available because actual equipment changes curb weight.",
+      "inputs": [
+        [
+          "gvwr",
+          "Truck GVWR (lb)",
+          "number",
+          7200
+        ],
+        [
+          "curb",
+          "Truck curb weight (lb)",
+          "number",
+          5200
+        ],
+        [
+          "people",
+          "Occupants (lb)",
+          "number",
+          450
+        ],
+        [
+          "cargo",
+          "Cargo (lb)",
+          "number",
+          300
+        ]
+      ],
+      "keyword_data": {}
+    },
+    {
+      "slug": "payload-capacity-calculator",
+      "title": "Payload Capacity Calculator",
+      "cat": "Automotive",
+      "engine": "payload",
+      "desc": "Calculate payload headroom for a loaded vehicle.",
+      "formula": "Payload headroom = GVWR \u2212 curb weight \u2212 passengers \u2212 cargo.",
+      "example": "This helps compare remaining capacity before adding hitch weight or additional cargo.",
+      "inputs": [
+        [
+          "gvwr",
+          "GVWR (lb)",
+          "number",
+          6800
+        ],
+        [
+          "curb",
+          "Curb weight (lb)",
+          "number",
+          4900
+        ],
+        [
+          "people",
+          "Passengers (lb)",
+          "number",
+          350
+        ],
+        [
+          "cargo",
+          "Cargo (lb)",
+          "number",
+          200
+        ]
+      ],
+      "keyword_data": {}
+    },
+    {
+      "slug": "gvwr-calculator",
+      "title": "GVWR Payload Calculator",
+      "cat": "Automotive",
+      "engine": "payload",
+      "desc": "Use GVWR and loaded components to estimate remaining weight capacity.",
+      "formula": "Remaining capacity = GVWR \u2212 curb weight \u2212 occupants \u2212 cargo.",
+      "example": "GVWR is a manufacturer limit; do not treat this calculator as permission to exceed axle, tire or hitch limits.",
+      "inputs": [
+        [
+          "gvwr",
+          "GVWR (lb)",
+          "number",
+          6500
+        ],
+        [
+          "curb",
+          "Curb weight (lb)",
+          "number",
+          4700
+        ],
+        [
+          "people",
+          "Occupants (lb)",
+          "number",
+          350
+        ],
+        [
+          "cargo",
+          "Cargo (lb)",
+          "number",
+          150
+        ]
+      ],
+      "keyword_data": {}
+    },
+    {
+      "slug": "trailer-weight-calculator",
+      "title": "Trailer Weight Calculator",
+      "cat": "Automotive",
+      "engine": "trailer_weight",
+      "desc": "Calculate loaded trailer weight from empty trailer weight and cargo.",
+      "formula": "Loaded trailer weight = empty trailer weight + cargo + fluids/gear.",
+      "example": "A 2,800 lb empty trailer carrying 1,000 lb of cargo has an estimated loaded weight of 3,800 lb.",
+      "inputs": [
+        [
+          "empty",
+          "Empty trailer weight (lb)",
+          "number",
+          2800
+        ],
+        [
+          "cargo",
+          "Cargo / gear (lb)",
+          "number",
+          1000
+        ]
+      ],
+      "keyword_data": {
+        "monthly_searches": 500,
+        "ads_competition": "Low",
+        "competition_index": 0,
+        "yoy": "+900%"
+      }
+    },
+    {
+      "slug": "trailer-tongue-weight-calculator",
+      "title": "Trailer Tongue Weight Calculator",
+      "cat": "Automotive",
+      "engine": "tongue_weight",
+      "desc": "Estimate trailer tongue weight from loaded trailer weight and a target percentage.",
+      "formula": "Tongue weight = loaded trailer weight \u00d7 tongue-weight percentage.",
+      "example": "At 12%, a 5,000 lb loaded trailer has about 600 lb of tongue weight.",
+      "inputs": [
+        [
+          "trailer",
+          "Loaded trailer weight (lb)",
+          "number",
+          5000
+        ],
+        [
+          "percent",
+          "Target tongue weight (%)",
+          "number",
+          12
+        ]
+      ],
+      "keyword_data": {
+        "monthly_searches": 500,
+        "ads_competition": "Low",
+        "competition_index": 5,
+        "bid_low": 0.12,
+        "bid_high": 1.08
+      }
+    },
+    {
+      "slug": "trailer-payload-calculator",
+      "title": "Trailer Payload Calculator",
+      "cat": "Automotive",
+      "engine": "trailer_payload",
+      "desc": "Calculate trailer cargo capacity from trailer GVWR and empty weight.",
+      "formula": "Trailer payload = trailer GVWR \u2212 empty trailer weight.",
+      "example": "A 7,000 lb GVWR trailer weighing 2,500 lb empty has about 4,500 lb theoretical payload before other limits.",
+      "inputs": [
+        [
+          "gvwr",
+          "Trailer GVWR (lb)",
+          "number",
+          7000
+        ],
+        [
+          "empty",
+          "Empty trailer weight (lb)",
+          "number",
+          2500
+        ]
+      ],
+      "keyword_data": {}
+    },
+    {
+      "slug": "tongue-weight-percentage-calculator",
+      "title": "Tongue Weight Percentage Calculator",
+      "cat": "Automotive",
+      "engine": "tongue_pct",
+      "desc": "Calculate tongue weight as a percentage of loaded trailer weight.",
+      "formula": "Tongue-weight percentage = tongue weight \u00f7 loaded trailer weight \u00d7 100.",
+      "example": "600 lb tongue weight on a 5,000 lb loaded trailer equals 12%.",
+      "inputs": [
+        [
+          "tongue",
+          "Tongue weight (lb)",
+          "number",
+          600
+        ],
+        [
+          "trailer",
+          "Loaded trailer weight (lb)",
+          "number",
+          5000
+        ]
+      ],
+      "keyword_data": {}
+    },
+    {
+      "slug": "car-towing-capacity-calculator",
+      "title": "Car Towing Capacity Calculator",
+      "cat": "Automotive",
+      "engine": "towing",
+      "desc": "Compare a stated towing rating with GCWR-based remaining capacity.",
+      "formula": "Estimated allowable trailer weight = min(manufacturer tow rating, GCWR \u2212 loaded vehicle weight).",
+      "example": "If the tow rating is 7,500 lb but GCWR leaves only 6,800 lb, use the lower 6,800 lb before checking other limits.",
+      "inputs": [
+        [
+          "rating",
+          "Manufacturer tow rating (lb)",
+          "number",
+          7500
+        ],
+        [
+          "gcwr",
+          "GCWR (lb)",
+          "number",
+          13000
+        ],
+        [
+          "vehicle",
+          "Loaded vehicle weight (lb)",
+          "number",
+          6200
+        ]
+      ],
+      "keyword_data": {
+        "monthly_searches": 50,
+        "ads_competition": "Low",
+        "competition_index": 5,
+        "yoy": "-90%"
+      }
+    },
+    {
+      "slug": "towing-capacity-calculator",
+      "title": "Towing Capacity Calculator",
+      "cat": "Automotive",
+      "engine": "towing",
+      "desc": "Estimate a towing ceiling using a manufacturer rating and GCWR headroom.",
+      "formula": "Estimated towing ceiling = min(tow rating, GCWR \u2212 loaded vehicle weight).",
+      "example": "Always also check hitch, axle, tire, payload and trailer ratings.",
+      "inputs": [
+        [
+          "rating",
+          "Tow rating (lb)",
+          "number",
+          9000
+        ],
+        [
+          "gcwr",
+          "GCWR (lb)",
+          "number",
+          15000
+        ],
+        [
+          "vehicle",
+          "Loaded vehicle weight (lb)",
+          "number",
+          6500
+        ]
+      ],
+      "keyword_data": {}
+    },
+    {
+      "slug": "car-fuel-cost-calculator",
+      "title": "Car Fuel Cost Calculator",
+      "cat": "Automotive",
+      "engine": "fuel_cost",
+      "desc": "Estimate fuel cost from trip distance, MPG and fuel price.",
+      "formula": "Fuel cost = distance \u00f7 MPG \u00d7 price per gallon.",
+      "example": "300 miles at 25 MPG and $3.50/gal costs about $42 in fuel.",
+      "inputs": [
+        [
+          "distance",
+          "Distance (miles)",
+          "number",
+          300
+        ],
+        [
+          "mpg",
+          "Fuel economy (MPG)",
+          "number",
+          25
+        ],
+        [
+          "fuelprice",
+          "Fuel price ($/gal)",
+          "number",
+          3.5
+        ]
+      ],
+      "keyword_data": {}
+    },
+    {
+      "slug": "mpg-calculator",
+      "title": "MPG Calculator",
+      "cat": "Automotive",
+      "engine": "mpg",
+      "desc": "Calculate miles per gallon from miles driven and gallons used.",
+      "formula": "MPG = miles driven \u00f7 gallons used.",
+      "example": "300 miles on 12 gallons equals 25 MPG.",
+      "inputs": [
+        [
+          "miles",
+          "Miles driven",
+          "number",
+          300
+        ],
+        [
+          "gallons",
+          "Gallons used",
+          "number",
+          12
+        ]
+      ],
+      "keyword_data": {}
+    },
+    {
+      "slug": "trip-fuel-cost-calculator",
+      "title": "Trip Fuel Cost Calculator",
+      "cat": "Automotive",
+      "engine": "fuel_cost",
+      "desc": "Estimate road-trip fuel spending from distance, MPG and gas price.",
+      "formula": "Trip fuel cost = trip miles \u00f7 MPG \u00d7 fuel price.",
+      "example": "Use round-trip mileage if you want a full-trip estimate.",
+      "inputs": [
+        [
+          "distance",
+          "Trip distance (miles)",
+          "number",
+          650
+        ],
+        [
+          "mpg",
+          "Vehicle MPG",
+          "number",
+          28
+        ],
+        [
+          "fuelprice",
+          "Fuel price ($/gal)",
+          "number",
+          3.6
+        ]
+      ],
+      "keyword_data": {}
+    },
+    {
+      "slug": "tire-size-calculator",
+      "title": "Tire Size Calculator",
+      "cat": "Automotive",
+      "engine": "tire",
+      "desc": "Calculate tire sidewall height, overall diameter and circumference from metric tire size.",
+      "formula": "Sidewall = width \u00d7 aspect ratio; diameter = wheel diameter + 2 \u00d7 sidewall; circumference = \u03c0 \u00d7 diameter.",
+      "example": "A 225/65R17 tire is about 28.5 inches in overall diameter.",
+      "inputs": [
+        [
+          "width",
+          "Tire width (mm)",
+          "number",
+          225
+        ],
+        [
+          "aspect",
+          "Aspect ratio (%)",
+          "number",
+          65
+        ],
+        [
+          "wheel",
+          "Wheel diameter (in)",
+          "number",
+          17
+        ]
+      ],
+      "keyword_data": {}
+    },
+    {
+      "slug": "wheel-offset-calculator",
+      "title": "Wheel Offset Calculator",
+      "cat": "Automotive",
+      "engine": "offset",
+      "desc": "Estimate wheel offset from wheel width and backspacing.",
+      "formula": "Offset (mm) \u2248 (backspacing \u2212 nominal wheel centerline) \u00d7 25.4.",
+      "example": "A wider backspacing measurement generally moves the mounting face outward relative to wheel centerline.",
+      "inputs": [
+        [
+          "width",
+          "Wheel width (in)",
+          "number",
+          8
+        ],
+        [
+          "backspacing",
+          "Backspacing (in)",
+          "number",
+          5
+        ]
+      ],
+      "keyword_data": {}
+    },
+    {
+      "slug": "wheel-backspacing-calculator",
+      "title": "Wheel Backspacing Calculator",
+      "cat": "Automotive",
+      "engine": "backspacing",
+      "desc": "Estimate wheel backspacing from width and offset.",
+      "formula": "Backspacing (in) \u2248 wheel centerline + offset(mm) \u00f7 25.4.",
+      "example": "Use manufacturer wheel drawings for exact fitment because nominal wheel width excludes outer lips.",
+      "inputs": [
+        [
+          "width",
+          "Wheel width (in)",
+          "number",
+          8
+        ],
+        [
+          "offset",
+          "Offset (mm)",
+          "number",
+          25
+        ]
+      ],
+      "keyword_data": {}
+    },
+    {
+      "slug": "bolt-pattern-calculator",
+      "title": "Bolt Pattern Calculator",
+      "cat": "Automotive",
+      "engine": "bolt_pattern",
+      "desc": "Estimate bolt-circle diameter from lug count and adjacent-lug center distance.",
+      "formula": "Bolt circle diameter = adjacent chord length \u00f7 sin(\u03c0 \u00f7 lug count).",
+      "example": "For five lugs, an adjacent center-to-center measurement can be converted to an approximate bolt-circle diameter.",
+      "inputs": [
+        [
+          "lugs",
+          "Number of lugs",
+          "number",
+          5
+        ],
+        [
+          "adjacent",
+          "Adjacent lug center distance (in)",
+          "number",
+          2.645
+        ]
+      ],
+      "keyword_data": {}
+    },
+    {
+      "slug": "horsepower-calculator",
+      "title": "Horsepower Calculator",
+      "cat": "Automotive",
+      "engine": "horsepower",
+      "desc": "Calculate horsepower from torque and RPM.",
+      "formula": "Horsepower = torque (lb-ft) \u00d7 RPM \u00f7 5252.",
+      "example": "300 lb-ft at 4,000 RPM is about 228.5 horsepower.",
+      "inputs": [
+        [
+          "torque",
+          "Torque (lb-ft)",
+          "number",
+          300
+        ],
+        [
+          "rpm",
+          "RPM",
+          "number",
+          4000
+        ]
+      ],
+      "keyword_data": {}
+    },
+    {
+      "slug": "power-to-weight-ratio-calculator",
+      "title": "Power-to-Weight Ratio Calculator",
+      "cat": "Automotive",
+      "engine": "power_weight",
+      "desc": "Calculate horsepower per pound and pounds per horsepower.",
+      "formula": "HP/lb = horsepower \u00f7 weight; lb/HP = weight \u00f7 horsepower.",
+      "example": "300 hp in a 3,600 lb car equals 0.0833 hp/lb or 12 lb per hp.",
+      "inputs": [
+        [
+          "hp",
+          "Horsepower",
+          "number",
+          300
+        ],
+        [
+          "weight",
+          "Vehicle weight (lb)",
+          "number",
+          3600
+        ]
+      ],
+      "keyword_data": {}
+    },
+    {
+      "slug": "car-loan-payment-calculator-with-taxes",
+      "title": "Car Loan Payment Calculator With Taxes",
+      "cat": "Finance",
+      "engine": "car_loan",
+      "desc": "Estimate a monthly auto loan payment including sales tax, fees, down payment and trade-in.",
+      "formula": "Financed amount = price + tax + fees \u2212 down payment \u2212 trade-in; payment uses the standard amortizing-loan formula.",
+      "example": "Compare a 60-month and 72-month term to see how payment and total interest change.",
+      "inputs": [
+        [
+          "price",
+          "Vehicle price ($)",
+          "number",
+          35000
+        ],
+        [
+          "tax",
+          "Sales tax (%)",
+          "number",
+          7
+        ],
+        [
+          "fees",
+          "Fees ($)",
+          "number",
+          800
+        ],
+        [
+          "down",
+          "Down payment ($)",
+          "number",
+          5000
+        ],
+        [
+          "trade",
+          "Trade-in credit ($)",
+          "number",
+          0
+        ],
+        [
+          "apr",
+          "APR (%)",
+          "number",
+          6.9
+        ],
+        [
+          "months",
+          "Term (months)",
+          "number",
+          60
+        ]
+      ],
+      "keyword_data": {
+        "monthly_searches": 50,
+        "ads_competition": "Medium",
+        "competition_index": 41,
+        "bid_low": 0.2,
+        "bid_high": 1.99
+      }
+    },
+    {
+      "slug": "loan-payment-calculator",
+      "title": "Loan Payment Calculator",
+      "cat": "Finance",
+      "engine": "loan",
+      "desc": "Calculate the monthly payment and total interest for a fixed-rate amortizing loan.",
+      "formula": "Payment = P \u00d7 r(1+r)^n \u00f7 ((1+r)^n \u2212 1).",
+      "example": "A $25,000 loan at 7% APR for 60 months has a payment around the high-$400s per month.",
+      "inputs": [
+        [
+          "amount",
+          "Loan amount ($)",
+          "number",
+          25000
+        ],
+        [
+          "apr",
+          "APR (%)",
+          "number",
+          7
+        ],
+        [
+          "months",
+          "Term (months)",
+          "number",
+          60
+        ]
+      ],
+      "keyword_data": {}
+    },
+    {
+      "slug": "compound-interest-calculator",
+      "title": "Compound Interest Calculator",
+      "cat": "Finance",
+      "engine": "compound",
+      "desc": "Calculate compound growth with optional recurring monthly contributions.",
+      "formula": "Future value combines compound growth of the initial principal with the future value of recurring contributions.",
+      "example": "$10,000 at 6% for 10 years grows substantially more when monthly contributions are added.",
+      "inputs": [
+        [
+          "principal",
+          "Starting principal ($)",
+          "number",
+          10000
+        ],
+        [
+          "rate",
+          "Annual return (%)",
+          "number",
+          6
+        ],
+        [
+          "years",
+          "Years",
+          "number",
+          10
+        ],
+        [
+          "monthly",
+          "Monthly contribution ($)",
+          "number",
+          200
+        ]
+      ],
+      "keyword_data": {}
+    },
+    {
+      "slug": "discount-calculator",
+      "title": "Discount Calculator",
+      "cat": "Finance",
+      "engine": "discount",
+      "desc": "Calculate final sale price and savings after a percentage discount.",
+      "formula": "Sale price = original price \u00d7 (1 \u2212 discount percentage).",
+      "example": "20% off $100 gives a final price of $80 and savings of $20.",
+      "inputs": [
+        [
+          "price",
+          "Original price ($)",
+          "number",
+          100
+        ],
+        [
+          "discount",
+          "Discount (%)",
+          "number",
+          20
+        ]
+      ],
+      "keyword_data": {}
+    },
+    {
+      "slug": "salary-increase-calculator",
+      "title": "Salary Increase Calculator",
+      "cat": "Finance",
+      "engine": "salary",
+      "desc": "Calculate a new salary and annual increase from a percentage raise.",
+      "formula": "New salary = current salary \u00d7 (1 + raise percentage).",
+      "example": "A 5% raise on $60,000 increases annual pay by $3,000 to $63,000.",
+      "inputs": [
+        [
+          "salary",
+          "Current annual salary ($)",
+          "number",
+          60000
+        ],
+        [
+          "increase",
+          "Raise (%)",
+          "number",
+          5
+        ]
+      ],
+      "keyword_data": {}
+    },
+    {
+      "slug": "geodesic-dome-calculator",
+      "title": "Geodesic Dome Calculator",
+      "cat": "Construction",
+      "engine": "dome",
+      "desc": "Estimate hemisphere surface area and enclosed volume from dome diameter.",
+      "formula": "For a hemisphere: surface area = 2\u03c0r\u00b2; volume = 2/3\u03c0r\u00b3.",
+      "example": "A 20 ft diameter hemispherical dome has about 628 sq ft of curved surface area.",
+      "inputs": [
+        [
+          "diameter",
+          "Dome diameter (ft)",
+          "number",
+          20
+        ]
+      ],
+      "keyword_data": {
+        "monthly_searches": 5000,
+        "ads_competition": "Low",
+        "competition_index": 0,
+        "bid_low": 0.34,
+        "bid_high": 3.18
+      }
+    },
+    {
+      "slug": "geodesic-dome-size-calculator",
+      "title": "Geodesic Dome Size Calculator",
+      "cat": "Construction",
+      "engine": "dome",
+      "desc": "Estimate basic hemispherical dome area and volume from diameter.",
+      "formula": "Radius = diameter \u00f7 2; hemisphere area = 2\u03c0r\u00b2; volume = 2/3\u03c0r\u00b3.",
+      "example": "Try multiple diameters to compare material area and interior volume.",
+      "inputs": [
+        [
+          "diameter",
+          "Dome diameter (ft)",
+          "number",
+          24
+        ]
+      ],
+      "keyword_data": {}
+    },
+    {
+      "slug": "geodesic-dome-surface-area-calculator",
+      "title": "Geodesic Dome Surface Area Calculator",
+      "cat": "Construction",
+      "engine": "dome",
+      "desc": "Calculate approximate curved surface area for a hemispherical dome.",
+      "formula": "Curved surface area = 2\u03c0r\u00b2.",
+      "example": "A 30 ft diameter hemisphere has about 1,414 sq ft of curved surface area.",
+      "inputs": [
+        [
+          "diameter",
+          "Dome diameter (ft)",
+          "number",
+          30
+        ]
+      ],
+      "keyword_data": {}
+    },
+    {
+      "slug": "geodesic-dome-material-calculator",
+      "title": "Geodesic Dome Material Calculator",
+      "cat": "Construction",
+      "engine": "dome_material",
+      "desc": "Estimate covering material from dome diameter and waste allowance.",
+      "formula": "Material area = hemispherical surface area \u00d7 (1 + waste allowance).",
+      "example": "Add 10\u201315% waste for seams, trimming and mistakes depending on material.",
+      "inputs": [
+        [
+          "diameter",
+          "Dome diameter (ft)",
+          "number",
+          20
+        ],
+        [
+          "waste",
+          "Waste allowance (%)",
+          "number",
+          10
+        ]
+      ],
+      "keyword_data": {}
+    },
+    {
+      "slug": "concrete-volume-calculator",
+      "title": "Concrete Volume Calculator",
+      "cat": "Construction",
+      "engine": "concrete",
+      "desc": "Calculate concrete volume in cubic feet and cubic yards for a rectangular slab.",
+      "formula": "Volume = length \u00d7 width \u00d7 thickness; cubic yards = cubic feet \u00f7 27.",
+      "example": "A 20 \u00d7 10 ft slab at 4 inches thick needs about 2.47 cubic yards before waste.",
+      "inputs": [
+        [
+          "length",
+          "Length (ft)",
+          "number",
+          20
+        ],
+        [
+          "width",
+          "Width (ft)",
+          "number",
+          10
+        ],
+        [
+          "depth",
+          "Thickness (in)",
+          "number",
+          4
+        ],
+        [
+          "waste",
+          "Waste allowance (%)",
+          "number",
+          10
+        ]
+      ],
+      "keyword_data": {}
+    },
+    {
+      "slug": "square-footage-calculator",
+      "title": "Square Footage Calculator",
+      "cat": "Construction",
+      "engine": "area",
+      "desc": "Calculate rectangular area in square feet.",
+      "formula": "Square footage = length \u00d7 width.",
+      "example": "A 20 ft by 12 ft room is 240 sq ft.",
+      "inputs": [
+        [
+          "length",
+          "Length (ft)",
+          "number",
+          20
+        ],
+        [
+          "width",
+          "Width (ft)",
+          "number",
+          12
+        ]
+      ],
+      "keyword_data": {}
+    },
+    {
+      "slug": "board-foot-calculator",
+      "title": "Board Foot Calculator",
+      "cat": "Construction",
+      "engine": "board_foot",
+      "desc": "Calculate lumber board feet from thickness, width, length and quantity.",
+      "formula": "Board feet = thickness(in) \u00d7 width(in) \u00d7 length(ft) \u00f7 12 \u00d7 quantity.",
+      "example": "Ten boards measuring 1 \u00d7 8 \u00d7 10 ft total about 66.67 board feet.",
+      "inputs": [
+        [
+          "thickness",
+          "Thickness (in)",
+          "number",
+          1
+        ],
+        [
+          "width",
+          "Width (in)",
+          "number",
+          8
+        ],
+        [
+          "length",
+          "Length (ft)",
+          "number",
+          10
+        ],
+        [
+          "qty",
+          "Quantity",
+          "number",
+          10
+        ]
+      ],
+      "keyword_data": {}
+    },
+    {
+      "slug": "stud-spacing-calculator",
+      "title": "Stud Spacing Calculator",
+      "cat": "Construction",
+      "engine": "studs",
+      "desc": "Estimate the number of wall studs from wall length and on-center spacing.",
+      "formula": "Stud count \u2248 ceil(wall length in inches \u00f7 spacing) + 1.",
+      "example": "A 20 ft wall at 16 in on-center needs about 16 studs before corners, openings and special framing.",
+      "inputs": [
+        [
+          "wall",
+          "Wall length (ft)",
+          "number",
+          20
+        ],
+        [
+          "spacing",
+          "Spacing on center (in)",
+          "number",
+          16
+        ]
+      ],
+      "keyword_data": {}
+    },
+    {
+      "slug": "roof-pitch-calculator",
+      "title": "Roof Pitch Calculator",
+      "cat": "Construction",
+      "engine": "roof_pitch",
+      "desc": "Calculate roof pitch, slope percentage and angle from rise and run.",
+      "formula": "Pitch ratio = rise \u00f7 run; slope % = ratio \u00d7 100; angle = atan(rise \u00f7 run).",
+      "example": "A 6-in rise over 12-in run is a 6:12 pitch, 50% slope, about 26.6\u00b0.",
+      "inputs": [
+        [
+          "rise",
+          "Rise (in)",
+          "number",
+          6
+        ],
+        [
+          "run",
+          "Run (in)",
+          "number",
+          12
+        ]
+      ],
+      "keyword_data": {}
+    },
+    {
+      "slug": "rafter-length-calculator",
+      "title": "Rafter Length Calculator",
+      "cat": "Construction",
+      "engine": "rafter",
+      "desc": "Estimate common rafter length from horizontal run, rise and overhang.",
+      "formula": "Rafter length = \u221a(run\u00b2 + rise\u00b2), with optional overhang added along the slope.",
+      "example": "A 12 ft run with 6 ft rise has a base rafter length of about 13.42 ft.",
+      "inputs": [
+        [
+          "run",
+          "Horizontal run (ft)",
+          "number",
+          12
+        ],
+        [
+          "rise",
+          "Vertical rise (ft)",
+          "number",
+          6
+        ],
+        [
+          "overhang",
+          "Overhang along slope (ft)",
+          "number",
+          1
+        ]
+      ],
+      "keyword_data": {}
+    },
+    {
+      "slug": "flooring-calculator",
+      "title": "Flooring Calculator",
+      "cat": "Construction",
+      "engine": "flooring",
+      "desc": "Estimate flooring coverage including a waste allowance.",
+      "formula": "Order area = length \u00d7 width \u00d7 (1 + waste percentage).",
+      "example": "A 20 \u00d7 12 ft room with 10% waste requires about 264 sq ft of flooring.",
+      "inputs": [
+        [
+          "length",
+          "Room length (ft)",
+          "number",
+          20
+        ],
+        [
+          "width",
+          "Room width (ft)",
+          "number",
+          12
+        ],
+        [
+          "waste",
+          "Waste (%)",
+          "number",
+          10
+        ]
+      ],
+      "keyword_data": {}
+    },
+    {
+      "slug": "tile-calculator",
+      "title": "Tile Calculator",
+      "cat": "Construction",
+      "engine": "tile",
+      "desc": "Estimate tile quantity from project area, tile dimensions and waste allowance.",
+      "formula": "Tile count = project area \u00d7 (1 + waste) \u00f7 area per tile.",
+      "example": "For 200 sq ft using 12 \u00d7 12 in tiles with 10% waste, plan for about 220 tiles.",
+      "inputs": [
+        [
+          "area",
+          "Project area (sq ft)",
+          "number",
+          200
+        ],
+        [
+          "tilew",
+          "Tile width (in)",
+          "number",
+          12
+        ],
+        [
+          "tileh",
+          "Tile height (in)",
+          "number",
+          12
+        ],
+        [
+          "waste",
+          "Waste (%)",
+          "number",
+          10
+        ]
+      ],
+      "keyword_data": {}
+    },
+    {
+      "slug": "tile-spacer-calculator",
+      "title": "Tile Spacer Calculator",
+      "cat": "Construction",
+      "engine": "tile_layout",
+      "desc": "Estimate tiles per row and joint count from row length, tile width and grout-joint width.",
+      "formula": "Tiles per row \u2248 floor((row length + joint) \u00f7 (tile width + joint)).",
+      "example": "A 120 in row with 12 in tiles and 1/8 in joints fits about 9 full tiles before cuts.",
+      "inputs": [
+        [
+          "row",
+          "Row length (in)",
+          "number",
+          120
+        ],
+        [
+          "tile",
+          "Tile width (in)",
+          "number",
+          12
+        ],
+        [
+          "joint",
+          "Grout joint (in)",
+          "number",
+          0.125
+        ]
+      ],
+      "keyword_data": {}
+    },
+    {
+      "slug": "deck-board-calculator",
+      "title": "Deck Board Calculator",
+      "cat": "Construction",
+      "engine": "deck",
+      "desc": "Estimate deck board count from deck width, board width and gap.",
+      "formula": "Board count \u2248 ceil(deck width \u00f7 (board width + gap)).",
+      "example": "A 20 ft deck using 5.5 in boards with 1/8 in gaps requires roughly 43 boards across the width.",
+      "inputs": [
+        [
+          "deckwidth",
+          "Deck width (ft)",
+          "number",
+          20
+        ],
+        [
+          "boardwidth",
+          "Board width (in)",
+          "number",
+          5.5
+        ],
+        [
+          "gap",
+          "Gap (in)",
+          "number",
+          0.125
+        ]
+      ],
+      "keyword_data": {}
+    },
+    {
+      "slug": "voltage-drop-calculator",
+      "title": "Voltage Drop Calculator",
+      "cat": "Electrical",
+      "engine": "voltage_drop",
+      "desc": "Estimate DC or single-phase voltage drop using conductor resistance, current and one-way length.",
+      "formula": "Voltage drop \u2248 2 \u00d7 one-way length \u00d7 current \u00d7 conductor resistance per 1000 ft \u00f7 1000.",
+      "example": "Use the actual conductor resistance for the gauge and material you are evaluating.",
+      "inputs": [
+        [
+          "length",
+          "One-way length (ft)",
+          "number",
+          100
+        ],
+        [
+          "amps",
+          "Current (A)",
+          "number",
+          15
+        ],
+        [
+          "resistance",
+          "Resistance (ohms/1000 ft)",
+          "number",
+          1.93
+        ],
+        [
+          "voltage",
+          "System voltage (V)",
+          "number",
+          120
+        ]
+      ],
+      "keyword_data": {}
+    },
+    {
+      "slug": "wire-size-calculator",
+      "title": "Wire Size Calculator",
+      "cat": "Electrical",
+      "engine": "wire_size",
+      "desc": "Suggest a basic copper wire size from current using a simplified reference ampacity table.",
+      "formula": "The tool chooses the first reference gauge whose simplified ampacity is at least the entered current.",
+      "example": "This is a planning aid only; installation requirements depend on insulation, temperature, terminals, bundling and code rules.",
+      "inputs": [
+        [
+          "amps",
+          "Load current (A)",
+          "number",
+          20
+        ]
+      ],
+      "keyword_data": {}
+    },
+    {
+      "slug": "breaker-size-calculator",
+      "title": "Breaker Size Calculator",
+      "cat": "Electrical",
+      "engine": "breaker",
+      "desc": "Estimate a minimum breaker size for a continuous load using a 125% planning factor.",
+      "formula": "Planning current = continuous load \u00d7 1.25, then select the next standard breaker size.",
+      "example": "A 16 A continuous load gives 20 A after the 125% factor.",
+      "inputs": [
+        [
+          "amps",
+          "Continuous load (A)",
+          "number",
+          16
+        ]
+      ],
+      "keyword_data": {}
+    },
+    {
+      "slug": "amps-to-watts-calculator",
+      "title": "Amps to Watts Calculator",
+      "cat": "Electrical",
+      "engine": "amps_watts",
+      "desc": "Convert amps and volts to watts for a simple DC or resistive single-phase calculation.",
+      "formula": "Watts = volts \u00d7 amps.",
+      "example": "10 A at 120 V equals 1,200 W.",
+      "inputs": [
+        [
+          "amps",
+          "Current (A)",
+          "number",
+          10
+        ],
+        [
+          "volts",
+          "Voltage (V)",
+          "number",
+          120
+        ]
+      ],
+      "keyword_data": {}
+    },
+    {
+      "slug": "watts-to-amps-calculator",
+      "title": "Watts to Amps Calculator",
+      "cat": "Electrical",
+      "engine": "watts_amps",
+      "desc": "Convert watts and volts to amps for a simple DC or resistive single-phase calculation.",
+      "formula": "Amps = watts \u00f7 volts.",
+      "example": "1,200 W at 120 V equals 10 A.",
+      "inputs": [
+        [
+          "watts",
+          "Power (W)",
+          "number",
+          1200
+        ],
+        [
+          "volts",
+          "Voltage (V)",
+          "number",
+          120
+        ]
+      ],
+      "keyword_data": {}
+    },
+    {
+      "slug": "electrical-load-calculator",
+      "title": "Electrical Load Calculator",
+      "cat": "Electrical",
+      "engine": "electrical_load",
+      "desc": "Estimate current from total watts and voltage, with an optional continuous-load planning factor.",
+      "formula": "Current = watts \u00f7 volts; planning current = current \u00d7 continuous-load factor.",
+      "example": "2,400 W at 120 V is 20 A; applying a 125% continuous-load planning factor gives 25 A.",
+      "inputs": [
+        [
+          "watts",
+          "Total load (W)",
+          "number",
+          2400
+        ],
+        [
+          "volts",
+          "Voltage (V)",
+          "number",
+          120
+        ],
+        [
+          "factor",
+          "Planning factor (%)",
+          "number",
+          125
+        ]
+      ],
+      "keyword_data": {}
+    }
+  ]
+}
