@@ -1,3 +1,3 @@
 User-agent: *
 Allow: /
-Sitemap: https://YOUR-DOMAIN.com/sitemap.xml
+Sitemap: https://lg-list.github.io/NSCalculators/sitemap.xml

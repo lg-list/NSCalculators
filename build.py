@@ -749,12 +749,7 @@ def seo_description(calc):
 
 
 def keyword_section(calc):
-    kd = calc.get("keyword_data") or {}
-    if not kd.get("monthly_searches"):
-        return ""
-    chips = "".join(f"<span>{h(item)}</span>" for item in seo_keywords(calc)[:5])
-    monthly = int(kd.get("monthly_searches") or 0)
-    return f"""<section class="seo-keywords" aria-label="Related search terms"><div><h2>Related Search Terms</h2><p>Primary Google keyword signal: <strong>{h(primary_keyword(calc))}</strong> with about <strong>{monthly:,}</strong> average monthly searches in the supplied data.</p></div><div class="keyword-chip-list">{chips}</div></section>"""
+    return ""
 
 
 
@@ -768,14 +763,10 @@ def keyword_score(calc):
 
 
 def card(calc, label=None, compact=False):
-    kd = calc.get("keyword_data") or {}
-    metric = ""
-    if kd.get("monthly_searches"):
-        metric = f"""<span class="metric">{int(kd["monthly_searches"]):,} searches/mo</span>"""
     pill_label = label or calc["cat"]
     label_html = f'<span class="pill icon-pill">{category_icon(calc["cat"], "pill-icon")}{h(pill_label)}</span>'
     klass = "tool-card compact" if compact else "tool-card"
-    return f"""<a class="{klass}" href="/{h(calc['slug'])}/">{label_html}<h3>{h(calc['title'])}</h3><p>{h(calc['desc'])}</p>{metric}</a>"""
+    return f"""<a class="{klass}" href="/{h(calc['slug'])}/">{label_html}<h3>{h(calc['title'])}</h3><p>{h(calc['desc'])}</p></a>"""
 
 
 def input_html(field):
@@ -887,60 +878,11 @@ def mortgage_input_html():
 
 
 def opportunity_notice(calc):
-    kd = calc.get("keyword_data") or {}
-    if not kd.get("monthly_searches"):
-        return ""
-    bits = [f"{int(kd['monthly_searches']):,} average monthly searches"]
-    if kd.get("ads_competition"):
-        bits.append(f"{kd['ads_competition']} Google Ads competition")
-    if kd.get("bid_low") and kd.get("bid_high"):
-        bits.append(f"${kd['bid_low']}-${kd['bid_high']} top-of-page bid")
-    if kd.get("yoy"):
-        bits.append(f"{kd['yoy']} YoY trend")
-    return f'<div class="notice"><strong>Keyword signal:</strong> {h(", ".join(bits))}. Ad competition is not organic SEO difficulty.</div>'
+    return ""
 
 
 def home(site, calculators):
-    cats = Counter(c["cat"] for c in calculators)
-    by_cat = defaultdict(list)
-    for calc in calculators:
-        by_cat[calc["cat"]].append(calc)
-    featured = sorted(calculators, key=keyword_score, reverse=True)[:8]
-    opportunity = [c for c in featured if (c.get("keyword_data") or {}).get("monthly_searches")][:5]
-    all_items_json = json.dumps(
-        [{"title": c["title"], "slug": c["slug"], "desc": c["desc"], "cat": c["cat"]} for c in calculators],
-        ensure_ascii=False,
-    )
-    category_cards = "".join(
-        f"""<a class="category-card" href="/{slugify_cat(cat)}/">{category_icon(cat, "card-icon")}<span>{h(count)} tools</span><h3>{h(cat)} calculators</h3><p>{h(category_desc(cat))}</p></a>"""
-        for cat in CATEGORY_ORDER
-        if (count := cats.get(cat, 0))
-    )
-    featured_cards = "".join(card(c, "Featured") for c in featured)
-    opportunity_rows = "".join(
-        f"""<a class="opportunity-row" href="/{h(c['slug'])}/"><span>{h(c['title'])}</span><b>{int((c.get('keyword_data') or {}).get('monthly_searches') or 0):,}/mo</b></a>"""
-        for c in opportunity
-    )
-    directory_groups = "".join(
-        f"""<section class="directory-group"><h3>{h(cat)}</h3><div class="directory-links">{''.join(f'<a href="{h(subgroup_path(cat, group))}">{h(display_group(group))}</a>' for group in sorted({calculator_group(c) for c in items}))}</div></section>"""
-        for cat in CATEGORY_ORDER
-        if (items := by_cat.get(cat))
-    )
-    body = f"""<main>
-<section class="hero"><div class="wrap hero-grid">
-<div class="hero-copy"><span class="eyebrow">Calculator library for US searches</span><h1>Find the right calculator before the math slows you down.</h1><p>Browse {len(calculators):,} focused tools with formulas, examples, assumptions, and related calculators.</p><div class="hero-actions"><a class="btn primary" href="#calculators">Browse calculators</a><a class="btn secondary" href="/scientific-calculator/">Use scientific calculator</a></div></div>
-<div class="search-panel" aria-label="Calculator search"><label for="siteSearch">Search calculators</label><div class="search-wrap"><input id="siteSearch" class="search" placeholder="Try trade-in, concrete, watts, towing" aria-label="Search calculators"><div id="searchResults" class="search-results"></div></div><div class="quick-links">{''.join(f'<a href="/{h(c["slug"])}/">{h(c["title"])}</a>' for c in featured[:4])}</div></div>
-</div></section>
-<section class="stat-band"><div class="wrap stats"><div><b>{len(calculators)}</b><span>calculator pages</span></div><div><b>{len(cats)}</b><span>topic categories</span></div><div><b>{sum(1 for c in calculators if c.get('keyword_data'))}</b><span>keyword-backed pages</span></div><div><b>0</b><span>signup steps</span></div></div></section>
-<section class="section" id="calculators"><div class="wrap"><div class="section-head stack"><h2>Browse by category</h2><p>Choose a top-level category first, then use its subcategory page to find the exact calculator.</p></div><div class="category-grid">{category_cards}</div></div></section>
-<section class="section alt"><div class="wrap feature-layout"><div><h2>High-opportunity tools</h2><p>These pages carry the strongest available keyword signals in the JSON file and deserve internal links from the homepage.</p><div class="opportunity-list">{opportunity_rows}</div></div><div class="method-card"><h3>How pages are prioritized</h3><p>Search volume, ad competition, YoY trend, page usefulness, and calculator specificity all influence homepage placement.</p><a class="text-link" href="/methodology/">Read the quality rules</a></div></div></section>
-<section class="section"><div class="wrap scientific-home"><div><h2>Scientific calculator</h2><p>Use the built-in calculator for quick arithmetic, percentages, exponents, roots, trig functions, and logarithms.</p></div><div class="mini-calc"><input id="sciExpression" value="sqrt(144)+25%" aria-label="Scientific expression"><button class="btn primary" id="sciRun" type="button">Calculate</button><div id="sciResult" class="mini-result">Ready</div></div></div></section>
-<section class="section"><div class="wrap"><div class="section-head stack"><h2>Featured calculators</h2><p>Start with calculators that combine strong search demand with practical, answer-first utility.</p></div><div class="tool-grid">{featured_cards}</div></div></section>
-<section class="section proof"><div class="wrap proof-grid"><div><h2>Built for search intent, not page count.</h2><p>Every calculator needs a distinct task, real inputs, a visible formula or lookup, and useful related links.</p></div><div class="proof-points"><div><b>Formula visible</b><span>Users can see the math and assumptions behind the result.</span></div><div><b>Clustered links</b><span>Related pages keep users moving through the right topic.</span></div><div><b>Safety caveats</b><span>Critical finance, towing, fitment, construction, and electrical results ask users to verify authoritative sources.</span></div></div></div></section>
-<section class="section directory"><div class="wrap"><div class="section-head stack"><h2>Calculator sections</h2><p>Use these second-level menus before opening individual calculator pages.</p></div>{directory_groups}</div></section>
-<section class="section faq-section"><div class="wrap"><div class="section-head stack"><h2>Frequently asked questions</h2><p>Helpful details for users and ad review teams evaluating the site.</p></div><div class="faq-grid"><div><h3>Is Northstar Calculators free?</h3><p>Yes. The calculator pages are free to use in the browser.</p></div><div><h3>Are results professional advice?</h3><p>No. Results are planning aids. Verify financial, safety, legal, code, medical, or manufacturer-specific decisions with qualified sources.</p></div><div><h3>How is the site organized?</h3><p>The homepage links to top-level categories. Each category links to subcategories. Subcategories list individual calculators.</p></div></div></div></section>
-</main><script>window.NORTHSTAR_ITEMS={all_items_json};</script><script src="/assets/search.js"></script><script src="/assets/scientific.js"></script>"""
-    return page(site, "Free Online Calculators | Northstar Calculators", f"{len(calculators)} US-focused online calculators for automotive, construction, finance and electrical tasks.", "/", body)
+    return home_new(site, calculators)
 
 
 def home_new(site, calculators):
@@ -954,7 +896,7 @@ def home_new(site, calculators):
         ensure_ascii=False,
     )
     popular_links = "".join(
-        f"""<a href="/{h(c['slug'])}/"><span>{h(c['title'])}</span><small>{int((c.get('keyword_data') or {}).get('monthly_searches') or 0):,}/mo</small></a>"""
+        f"""<a href="/{h(c['slug'])}/"><span>{h(c['title'])}</span></a>"""
         for c in featured[:12]
     )
     category_cards = "".join(
@@ -1174,9 +1116,9 @@ def info_pages(site):
 <h2>Changes</h2><p>We may update these terms as the site changes. Continued use of the site means you accept the current terms.</p>
 """)
     contact = simple_page(site, "/contact/", "Contact", "Contact Northstar Calculators about calculator issues, corrections, privacy questions, or general feedback.", """
-<h2>How to reach us</h2><p>For corrections, feedback, privacy questions, or general inquiries, email: contact@YOUR-DOMAIN.com.</p>
+<h2>How to reach us</h2><p>For corrections, feedback, privacy questions, or general inquiries, open an issue in the public project repository: <a href="https://github.com/lg-list/NSCalculators/issues">NS Calculators issues</a>.</p>
 <h2>What to include</h2><p>Please include the calculator URL, the values you entered, the result you expected, and any authoritative source that supports the correction. This helps us review issues faster.</p>
-<h2>Advertising and partnerships</h2><p>For advertising, partnership, or business inquiries, use the same contact email and include a clear subject line.</p>
+<h2>Advertising and partnerships</h2><p>For advertising, partnership, or business inquiries, use the same project issue tracker and include a clear subject line.</p>
 """)
     return {"/about/": about, "/privacy-policy/": privacy, "/terms/": terms, "/contact/": contact}
 
