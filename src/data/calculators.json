@@ -1530,6 +1530,143 @@
         ]
       ],
       "keyword_data": {}
+    },
+    {
+      "slug": "bottleneck-calculator",
+      "title": "Bottleneck Calculator",
+      "cat": "Electrical",
+      "group": "Computing & AI",
+      "engine": "bottleneck",
+      "desc": "Estimate whether a PC build is more likely to be CPU-bound or GPU-bound for gaming, streaming, or general workloads.",
+      "formula": "Bottleneck index compares weighted CPU performance, GPU performance, target resolution, refresh rate, and workload demand.",
+      "example": "A mid-range CPU paired with a high-end GPU at 1080p high refresh can show a higher CPU bottleneck than the same build at 4K.",
+      "inputs": [
+        ["cpu_score", "CPU benchmark score", "number", 26000],
+        ["gpu_score", "GPU benchmark score", "number", 32000],
+        ["resolution", "Resolution", "select", [["1080", "1080p"], ["1440", "1440p"], ["2160", "4K"]]],
+        ["refresh", "Target refresh rate (Hz)", "number", 144],
+        ["workload", "Workload", "select", [["gaming", "Gaming"], ["streaming", "Gaming + streaming"], ["productivity", "Productivity"]]]
+      ],
+      "keyword_data": {
+        "monthly_searches": 0,
+        "ads_competition": "Trend validated",
+        "competition_index": 0
+      }
+    },
+    {
+      "slug": "gpu-calculator",
+      "title": "GPU Calculator",
+      "cat": "Electrical",
+      "group": "Computing & AI",
+      "engine": "gpu_compute",
+      "desc": "Calculate estimated GPU compute performance, TFLOPS, memory bandwidth, and power efficiency from hardware specifications.",
+      "formula": "FP32 TFLOPS = cores × boost clock GHz × operations per cycle ÷ 1,000. Bandwidth = memory clock × bus width × DDR factor ÷ 8.",
+      "example": "A GPU with 6,144 cores at 2.5 GHz and 2 FP32 operations per cycle estimates about 30.7 FP32 TFLOPS.",
+      "inputs": [
+        ["cores", "GPU cores / shader units", "number", 6144],
+        ["clock", "Boost clock (MHz)", "number", 2500],
+        ["ops", "Operations per cycle", "select", [["2", "2 - FP32 FMA"], ["1", "1"], ["4", "4 - tensor/packed estimate"]]],
+        ["memory_clock", "Memory effective speed (Gbps)", "number", 21],
+        ["bus", "Memory bus width (bit)", "number", 256],
+        ["power", "Board power (W)", "number", 320]
+      ],
+      "keyword_data": {
+        "monthly_searches": 0,
+        "ads_competition": "Trend validated",
+        "competition_index": 0
+      }
+    },
+    {
+      "slug": "ai-compute-calculator",
+      "title": "AI Compute Calculator",
+      "cat": "Electrical",
+      "group": "Computing & AI",
+      "engine": "ai_compute",
+      "desc": "Estimate AI training compute, PFLOP-days, GPU hours, and training time from model size, training tokens, GPU count, and hardware throughput.",
+      "formula": "Training FLOPs ≈ 6 × model parameters × training tokens. Training time = total FLOPs ÷ effective GPU FLOPs per second.",
+      "example": "A 7B parameter model trained on 300B tokens needs about 12.6e21 FLOPs before accounting for GPU throughput and utilization.",
+      "inputs": [
+        ["params_b", "Model parameters (billions)", "number", 7],
+        ["tokens_b", "Training tokens (billions)", "number", 300],
+        ["gpu_count", "GPU count", "number", 64],
+        ["gpu_tflops", "Per-GPU throughput (TFLOPS)", "number", 989],
+        ["utilization", "Hardware utilization (%)", "number", 35],
+        ["power_kw", "Cluster power (kW)", "number", 80]
+      ],
+      "keyword_data": {
+        "monthly_searches": 0,
+        "ads_competition": "Trend validated",
+        "competition_index": 0
+      }
+    },
+    {
+      "slug": "ai-cost-calculator",
+      "title": "AI Cost Calculator",
+      "cat": "Financial",
+      "group": "AI & API Costs",
+      "engine": "ai_cost",
+      "desc": "Estimate monthly AI API cost from input tokens, output tokens, model pricing, requests, and expected usage.",
+      "formula": "Monthly cost = requests × days × ((input tokens ÷ 1,000,000 × input price) + (output tokens ÷ 1,000,000 × output price)).",
+      "example": "10,000 daily requests with 1,000 input tokens and 300 output tokens can be modeled against any per-million-token pricing.",
+      "inputs": [
+        ["requests", "Requests per day", "number", 10000],
+        ["input_tokens", "Average input tokens", "number", 1000],
+        ["output_tokens", "Average output tokens", "number", 300],
+        ["input_price", "Input price per 1M tokens ($)", "number", 2.5],
+        ["output_price", "Output price per 1M tokens ($)", "number", 10],
+        ["days", "Billing days", "number", 30]
+      ],
+      "keyword_data": {
+        "monthly_searches": 0,
+        "ads_competition": "Trend validated",
+        "competition_index": 0
+      }
+    },
+    {
+      "slug": "mining-calculator",
+      "title": "Mining Calculator",
+      "cat": "Financial",
+      "group": "Crypto & Mining",
+      "engine": "mining_profit",
+      "desc": "Estimate crypto mining revenue, electricity cost, daily profit, and hardware payback period.",
+      "formula": "Profit = expected daily revenue - power usage kWh × electricity rate - pool fees. Payback = hardware cost ÷ daily profit.",
+      "example": "A 3,000 W miner running all day uses 72 kWh; at $0.12 per kWh, electricity costs $8.64 per day before fees.",
+      "inputs": [
+        ["revenue", "Estimated mining revenue ($/day)", "number", 18],
+        ["power", "Miner power draw (W)", "number", 3000],
+        ["electricity", "Electricity cost ($/kWh)", "number", 0.12],
+        ["pool_fee", "Pool / service fee (%)", "number", 2],
+        ["hardware", "Hardware cost ($)", "number", 3500],
+        ["uptime", "Uptime (%)", "number", 95]
+      ],
+      "keyword_data": {
+        "monthly_searches": 0,
+        "ads_competition": "Trend validated",
+        "competition_index": 0
+      }
+    },
+    {
+      "slug": "power-supply-calculator",
+      "title": "Power Supply Calculator",
+      "cat": "Electrical",
+      "group": "Computing & AI",
+      "engine": "power_supply",
+      "desc": "Estimate recommended PC power supply wattage from CPU, GPU, drives, fans, peripherals, and safety headroom.",
+      "formula": "Recommended PSU = component wattage total × (1 + headroom percentage).",
+      "example": "A 125 W CPU and 320 W GPU with 90 W of other load and 30% headroom recommends about a 700 W PSU.",
+      "inputs": [
+        ["cpu_watts", "CPU power (W)", "number", 125],
+        ["gpu_watts", "GPU power (W)", "number", 320],
+        ["drives", "Drives and storage (W)", "number", 30],
+        ["fans", "Fans, cooling, RGB (W)", "number", 40],
+        ["other", "Other devices (W)", "number", 20],
+        ["headroom", "Headroom (%)", "number", 30]
+      ],
+      "keyword_data": {
+        "monthly_searches": 0,
+        "ads_competition": "Trend validated",
+        "competition_index": 0
+      }
     }
   ]
 }
