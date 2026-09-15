@@ -2023,8 +2023,27 @@ def build():
         shutil.copy2(verification_file, DIST / verification_file.name)
 
     urls = ["/"] + [f"/{slugify_cat(cat)}/" for cat in CATEGORY_ORDER if by_cat.get(cat)] + [f"/{c['slug']}/" for c in calculators] + ["/scientific-calculator/", "/about/", "/methodology/", "/privacy-policy/", "/terms/", "/contact/"]
-    sitemap = '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' + "".join(f"<url><loc>{h(site_url(site, u))}</loc><lastmod>{date.today().isoformat()}</lastmod></url>" for u in urls) + "</urlset>"
-    write(DIST / "sitemap.xml", sitemap)
+    today = date.today().isoformat()
+    sitemap_files = []
+    chunk_size = 1000
+    for index, start in enumerate(range(0, len(urls), chunk_size), 1):
+        chunk = urls[start:start + chunk_size]
+        name = f"sitemap-pages-{index}.xml"
+        sitemap_files.append(name)
+        sitemap = [
+            '<?xml version="1.0" encoding="UTF-8"?>',
+            '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+        ]
+        sitemap.extend(f"  <url><loc>{h(site_url(site, u))}</loc><lastmod>{today}</lastmod></url>" for u in chunk)
+        sitemap.append("</urlset>")
+        write(DIST / name, "\n".join(sitemap) + "\n")
+    sitemap_index = [
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+    ]
+    sitemap_index.extend(f"  <sitemap><loc>{h(site_url(site, '/' + name))}</loc><lastmod>{today}</lastmod></sitemap>" for name in sitemap_files)
+    sitemap_index.append("</sitemapindex>")
+    write(DIST / "sitemap.xml", "\n".join(sitemap_index) + "\n")
     print(f"Built {len(calculators)} calculator pages plus homepage and hubs.")
 
 
