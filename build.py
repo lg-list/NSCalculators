@@ -2044,6 +2044,15 @@ def build():
     sitemap_index.extend(f"  <sitemap><loc>{h(site_url(site, '/' + name))}</loc><lastmod>{today}</lastmod></sitemap>" for name in sitemap_files)
     sitemap_index.append("</sitemapindex>")
     write(DIST / "sitemap.xml", "\n".join(sitemap_index) + "\n")
+
+    test_urls = ["/", "/mortgage-calculator/", "/loan-calculator/", "/ai-compute-calculator/", "/about/", "/contact/"]
+    test_sitemap = [
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+    ]
+    test_sitemap.extend(f"  <url><loc>{h(site_url(site, u))}</loc><lastmod>{today}</lastmod></url>" for u in test_urls)
+    test_sitemap.append("</urlset>")
+    write(DIST / "sitemap-test.xml", "\n".join(test_sitemap) + "\n")
     print(f"Built {len(calculators)} calculator pages plus homepage and hubs.")
 
 
