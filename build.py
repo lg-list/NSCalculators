@@ -98,7 +98,7 @@ CALCULATOR_GROUPS = {
     "electrical-load-calculator": "Load & Voltage Drop",
 }
 
-# Full static generator for the Northstar calculator site.
+# Full static generator for the NS Calculators site.
 def read_data():
     return json.loads(SRC.read_text(encoding="utf-8"))
 
@@ -271,6 +271,7 @@ def calculator_schema(site, calc):
         "url": site_url(site, f"/{calc['slug']}/"),
         "description": seo_description(calc),
         "keywords": keywords,
+        "creator": {"@id": site_url(site, "/#organization")},
         "isAccessibleForFree": True,
         "offers": {
             "@type": "Offer",
@@ -284,13 +285,22 @@ def website_schema(site):
     return {
         "@context": "https://schema.org",
         "@type": "WebSite",
+        "@id": site_url(site, "/#website"),
+        "name": site["name"],
+        "alternateName": "NS Calculators",
+        "url": site_url(site, "/"),
+        "publisher": {"@id": site_url(site, "/#organization")},
+    }
+
+
+def organization_schema(site):
+    return {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "@id": site_url(site, "/#organization"),
         "name": site["name"],
         "url": site_url(site, "/"),
-        "potentialAction": {
-            "@type": "SearchAction",
-            "target": site_url(site, "/") + "?q={search_term_string}",
-            "query-input": "required name=search_term_string",
-        },
+        "logo": site_url(site, "/favicon.svg"),
     }
 
 
@@ -319,23 +329,24 @@ def json_ld(payload):
     return '<script type="application/ld+json">' + json.dumps(payload, ensure_ascii=False, separators=(",", ":")) + "</script>"
 
 
-def page(site, title, desc, path, body, keywords=None, extra_schema=None, page_type="WebPage"):
+def page(site, title, desc, path, body, keywords=None, extra_schema=None, page_type="WebPage", indexable=True):
     keywords = keywords or []
     extra_schema = extra_schema or []
     schema = {
         "@context": "https://schema.org",
         "@type": page_type,
-        "name": title.replace(" | Northstar Calculators", ""),
+        "name": title.replace(" | NS Calculators", ""),
         "description": desc,
         "url": site_url(site, path),
+        "isPartOf": {"@id": site_url(site, "/#website")},
     }
     if keywords:
         schema["keywords"] = keywords
-    keyword_meta = f'<meta name="keywords" content="{h(", ".join(keywords))}">' if keywords else ""
+    robots_meta = "" if indexable else '<meta name="robots" content="noindex,follow">'
     schema_html = "\n".join(json_ld(item) for item in [schema] + extra_schema)
     html = f"""<!doctype html><html lang="{h(site['language'])}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>{h(title)}</title><meta name="description" content="{h(desc)}">{keyword_meta}
-<meta property="og:type" content="website"><meta property="og:title" content="{h(title)}"><meta property="og:description" content="{h(desc)}"><meta property="og:url" content="{h(site_url(site, path))}">
+<title>{h(title)}</title><meta name="description" content="{h(desc)}">{robots_meta}<meta name="theme-color" content="#173f73">
+<meta property="og:type" content="website"><meta property="og:site_name" content="NS Calculators"><meta property="og:locale" content="en_US"><meta property="og:title" content="{h(title)}"><meta property="og:description" content="{h(desc)}"><meta property="og:url" content="{h(site_url(site, path))}">
 <meta name="twitter:card" content="summary"><meta name="twitter:title" content="{h(title)}"><meta name="twitter:description" content="{h(desc)}">
 <link rel="canonical" href="{h(site_url(site, path))}"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="/apple-touch-icon.svg"><link rel="stylesheet" href="/assets/site.css">
 {schema_html}<script>window.NORTHSTAR_BASE_PATH={json.dumps(PUBLIC_BASE_PATH)};</script></head><body>{nav()}{body}{footer()}</body></html>"""
@@ -693,6 +704,10 @@ def base_and_supplemental(data):
     metrics = load_google_keyword_metrics()
     for calc in calculators:
         match = metrics.get(calc["slug"])
+        if not match:
+            expanded_slug = re.sub(r"(^|-)sq-", r"\1square-", calc["slug"])
+            expanded_slug = re.sub(r"(^|-)cu-", r"\1cubic-", expanded_slug)
+            match = metrics.get(expanded_slug)
         if not match and not calc.get("generated"):
             match = metrics.get(slugify_text(calc["title"]))
         if match:
@@ -710,6 +725,11 @@ def base_and_supplemental(data):
 
 def primary_keyword(calc):
     return calc.get("seo_keyword") or str(calc["title"]).lower()
+
+
+def is_indexable_calculator(calc):
+    searches = int((calc.get("keyword_data") or {}).get("monthly_searches") or 0)
+    return searches > 0 or not calc.get("generated") or calc.get("source") == "calculator.net keyword model"
 
 
 def seo_keywords(calc):
@@ -750,11 +770,12 @@ def seo_title(calc):
 
 def seo_description(calc):
     keyword = primary_keyword(calc)
+    context = f" for {display_group(calculator_group(calc)).lower()}" if calc.get("seo_context_label") else ""
     if calc.get("engine") == "linear_convert":
         return f"Use this free {keyword} to convert units instantly with the formula, example, and related conversion calculators."
     if calc.get("engine") in ("cn_mortgage", "loan_page", "car_loan"):
-        return f"Use this free {keyword} for US planning with instant results, payment details, charts, formulas, and no signup."
-    return f"Use this free {keyword} for instant answers with clear inputs, formulas, examples, related tools, and no signup."
+        return f"Use this free {keyword}{context} for US planning with instant results, payment details, charts, formulas, and no signup."
+    return f"Use this free {keyword}{context} for instant answers with clear inputs, formulas, examples, related tools, and no signup."
 
 
 def keyword_section(calc):
@@ -900,10 +921,6 @@ def home_new(site, calculators):
     for calc in calculators:
         by_cat[calc["cat"]].append(calc)
     featured = sorted(calculators, key=keyword_score, reverse=True)[:24]
-    all_items_json = json.dumps(
-        [{"title": c["title"], "slug": c["slug"], "desc": c["desc"], "cat": c["cat"], "keyword": primary_keyword(c)} for c in calculators],
-        ensure_ascii=False,
-    )
     popular_links = "".join(
         f"""<a href="/{h(c['slug'])}/"><span>{h(c['title'])}</span></a>"""
         for c in featured[:12]
@@ -932,7 +949,7 @@ def home_new(site, calculators):
     )
     body = f"""<main>
 <section class="home-hero"><div class="wrap hero-stack">
-<div class="hero-copy"><h1>Calculator Tools</h1><p>Free calculators for mortgage, loans, compound interest, BMI, auto loans, and unit conversions. Built for fast answers with formulas and no signup.</p></div>
+<div class="hero-copy"><h1>Free Online Calculators</h1><p>Calculate mortgage payments, loans, compound interest, BMI, auto costs, and unit conversions with clear formulas, examples, and no signup.</p></div>
 <div class="search-panel wide-search" aria-label="Calculator search"><label for="siteSearch">Search calculators</label><div class="search-wrap"><input id="siteSearch" class="search" placeholder="Search calculators..." aria-label="Search calculators"><div id="searchResults" class="search-results"></div></div></div>
 </div></section>
 <section class="home-block"><div class="wrap"><h2>Calculator Categories</h2><div class="category-filter"><input id="categoryFilter" type="search" placeholder="Filter categories..." aria-label="Filter categories"></div><div class="home-category-grid">{category_cards}</div></div></section>
@@ -941,11 +958,11 @@ def home_new(site, calculators):
 <section class="home-block popular-block"><div class="wrap"><h2>Most Popular Calculators</h2><div class="popular-list">{popular_links}</div></div></section>
 <section class="home-block faq-section"><div class="wrap"><h2>Common Questions</h2><div class="faq-list">{faq_list}</div></div></section>
 <section class="ad-band"><div class="wrap"><div class="ad-slot">Advertisement</div></div></section>
-</main><script>window.NORTHSTAR_ITEMS={all_items_json};</script><script src="/assets/search.js"></script><script src="/assets/scientific.js"></script><script src="/assets/home.js"></script>"""
-    return page(site, "Free Online Calculators | Mortgage, Loan & Unit Converters", "Free US-focused calculators for mortgage, loan, auto loan, compound interest, BMI, and unit conversions with instant answers, charts, and formulas.", "/", body, ["free online calculators", "mortgage calculator", "loan calculator", "auto loan calculator", "compound interest calculator", "unit converter"], [website_schema(site)])
+</main><script src="/assets/search.js"></script><script src="/assets/scientific.js"></script><script src="/assets/home.js"></script>"""
+    return page(site, "Free Online Calculators | Mortgage, Loan & Unit Converters", "Free US-focused calculators for mortgage, loan, auto loan, compound interest, BMI, and unit conversions with instant answers, charts, and formulas.", "/", body, ["free online calculators", "mortgage calculator", "loan calculator", "auto loan calculator", "compound interest calculator", "unit converter"], [website_schema(site), organization_schema(site)])
 
 
-def category_page(site, cat, items):
+def category_page(site, cat, items, indexable=True):
     title = f"Free {cat} Calculators | NS Calculators"
     desc = f"Free {cat.lower()} calculators for US users with instant answers, formulas, examples, and related tools."
     groups = defaultdict(list)
@@ -966,7 +983,7 @@ def category_page(site, cat, items):
 <section class="article wide category-directory"><div class="page-title-icon">{category_icon(cat, "title-icon")}<h1>{h(cat)} Calculators</h1></div><p class="lead">{h(category_desc(cat))}</p><nav class="category-jump-nav" aria-label="{h(cat)} calculator groups">{jump_links}</nav><div class="category-tools">{sections}</div></section></div></main>"""
     keywords = [f"{cat.lower()} calculators", f"free {cat.lower()} calculators", "online calculator", "calculator tools"]
     crumbs = [("Home", "/"), (f"{cat} Calculators", f"/{slugify_cat(cat)}/")]
-    return page(site, title, desc, f"/{slugify_cat(cat)}/", body, keywords, [breadcrumb_schema(site, crumbs)], "CollectionPage")
+    return page(site, title, desc, f"/{slugify_cat(cat)}/", body, keywords, [breadcrumb_schema(site, crumbs)], "CollectionPage", indexable=indexable)
 
 
 def subgroup_desc(cat, group, items):
@@ -989,11 +1006,21 @@ def conversion_copy(calc):
             factor = str(field[3])
     if not source or not target:
         return None
+    try:
+        numeric_factor = float(factor)
+        common_rows = "".join(
+            f"<tr><td>{value:g} {h(source)}</td><td>{value * numeric_factor:.8g} {h(target)}</td></tr>"
+            for value in (1, 5, 10, 25, 100)
+        )
+        common_values = f"""<h2>Common {h(source)} to {h(target)} conversions</h2><div class="table-scroll"><table class="data-table"><thead><tr><th>{h(source)}</th><th>{h(target)}</th></tr></thead><tbody>{common_rows}</tbody></table></div>"""
+    except (TypeError, ValueError):
+        common_values = ""
     return f"""
 <h2>What this calculator does</h2><p>This tool converts a value entered in {h(source)} into {h(target)}. It is useful for quick checks, comparison tables, shopping, building estimates, recipes, science homework, and everyday unit changes.</p>
 <h2>How to use it</h2><p>Enter the number of {h(source)} you want to convert. The calculator multiplies that value by the stored conversion factor and returns the answer in {h(target)}.</p>
 <h2>Formula</h2><p class="formula">{h(calc['formula'])}</p>
 <h2>Worked example</h2><p>{h(calc['example'])} For example, entering 10 gives 10 × {h(factor)}, expressed in {h(target)}.</p>
+{common_values}
 <h2>When to verify</h2><p>For scientific reporting, regulated work, medical dosing, engineering, construction, or commercial transactions, confirm rounding rules and source units with an authoritative reference.</p>
 <h2>Frequently asked questions</h2><h3>Can I enter decimals?</h3><p>Yes. Decimal values are supported, which helps with small measurements and precise conversions.</p><h3>Why is the result rounded?</h3><p>The result is rounded for readability in the browser. Use the formula if you need more precision for a specialist workflow.</p>"""
 
@@ -1049,7 +1076,7 @@ def analysis_extra_html(calc):
 
 def subgroup_page(site, cat, group, items):
     shown_group = display_group(group)
-    title = f"{shown_group} Calculators | Northstar Calculators"
+    title = f"{shown_group} Calculators | NS Calculators"
     desc = f"Browse {len(items):,} {shown_group.lower()} calculators in the {cat.lower()} category."
     cards = "".join(card(c, c["cat"]) for c in items)
     body = f"""<main class="main"><div class="wrap"><div class="crumb"><a href="/">Home</a> / <a href="/{slugify_cat(cat)}/">{h(cat)}</a> / {h(group)}</div>
@@ -1086,17 +1113,17 @@ def calculator_page(site, calc, related):
         (display_group(group), f"/{slugify_cat(calc['cat'])}/#{group_slug(group)}"),
         (calc["title"], f"/{calc['slug']}/"),
     ]
-    return page(site, title, desc, f"/{calc['slug']}/", body, seo_keywords(calc), [breadcrumb_schema(site, crumbs), calculator_schema(site, calc)])
+    return page(site, title, desc, f"/{calc['slug']}/", body, seo_keywords(calc), [breadcrumb_schema(site, crumbs), calculator_schema(site, calc)], indexable=is_indexable_calculator(calc))
 
 
 def simple_page(site, path, title, desc, content):
     body = f"""<main class="main"><div class="wrap"><article class="article"><h1>{h(title)}</h1><p class="lead">{h(desc)}</p><div class="prose">{content}</div></article></div></main>"""
-    return page(site, f"{title} | Northstar Calculators", desc, path, body)
+    return page(site, f"{title} | NS Calculators", desc, path, body)
 
 
 def scientific_page(site):
     body = """<main class="main"><div class="wrap"><article class="article"><div class="crumb"><a href="/">Home</a> / Scientific Calculator</div><span class="pill">Math calculator</span><h1>Scientific Calculator</h1><p class="lead">Run arithmetic, percentages, powers, square roots, trigonometry, and logarithms in your browser.</p><section class="calc scientific-page"><h2>Calculator</h2><div class="mini-calc full"><input id="sciExpression" value="sqrt(144)+25%" aria-label="Scientific expression"><button class="btn primary" id="sciRun" type="button">Calculate</button><div id="sciResult" class="mini-result">Ready</div></div></section><div class="prose"><h2>Supported syntax</h2><p>Use operators such as +, -, *, /, ^, parentheses, percentages, sqrt(), sin(), cos(), tan(), log(), ln(), pi, and e.</p><h2>Example</h2><p>Entering sqrt(144)+25% returns 12.25.</p></div></article></div></main><script src="/assets/scientific.js"></script>"""
-    return page(site, "Scientific Calculator | Northstar Calculators", "Free browser-based scientific calculator for arithmetic, percentages, powers, roots, trig, and logarithms.", "/scientific-calculator/", body)
+    return page(site, "Scientific Calculator | NS Calculators", "Free browser-based scientific calculator for arithmetic, percentages, powers, roots, trig, and logarithms.", "/scientific-calculator/", body)
 
 
 def redirect_page(site, from_path, to_path, title):
@@ -1104,27 +1131,27 @@ def redirect_page(site, from_path, to_path, title):
 
 
 def info_pages(site):
-    about = simple_page(site, "/about/", "About Northstar Calculators", "Northstar Calculators publishes practical, browser-based calculators and unit converters for everyday questions.", """
-<h2>What we publish</h2><p>Northstar Calculators is a free calculator library for users who need quick estimates, unit conversions, formulas, and examples. The site includes automotive, construction, conversion, cooking, electrical, financial, health, math, pets, science, time and date, and video tools.</p>
+    about = simple_page(site, "/about/", "About NS Calculators", "NS Calculators publishes practical, browser-based calculators and unit converters for everyday questions.", """
+<h2>What we publish</h2><p>NS Calculators is a free calculator library for users who need quick estimates, unit conversions, formulas, and examples. The site includes automotive, construction, conversion, cooking, electrical, financial, health, math, pets, science, time and date, and video tools.</p>
 <h2>Our editorial approach</h2><p>Pages are built around a clear user task. Each calculator includes a visible formula or conversion factor, a worked example, and related tools so users can continue researching a topic without guessing what to open next.</p>
 <h2>Important limitations</h2><p>Calculator results are planning aids. They are not financial, legal, medical, engineering, electrical, construction, automotive, or safety advice. Always verify important decisions with qualified professionals, manufacturers, official standards, or other authoritative sources.</p>
 """)
-    privacy = simple_page(site, "/privacy-policy/", "Privacy Policy", "This Privacy Policy explains how Northstar Calculators handles information when you use the website.", """
+    privacy = simple_page(site, "/privacy-policy/", "Privacy Policy", "This Privacy Policy explains how NS Calculators handles information when you use the website.", """
 <h2>Information you enter</h2><p>Calculator inputs are processed in your browser for the purpose of showing a result. The static calculator pages do not require account registration.</p>
 <h2>Usage data</h2><p>Like many websites, hosting providers, analytics tools, or advertising partners may process basic technical information such as page URL, browser type, device type, approximate location, referring page, and interaction data.</p>
-<h2>Cookies and advertising</h2><p>Northstar Calculators may use cookies or similar technologies for analytics, site performance, advertising measurement, and ad personalization where allowed by law. Third-party advertising partners, including Google, may use cookies to serve ads based on a user's visits to this and other websites.</p>
+<h2>Cookies and advertising</h2><p>NS Calculators may use cookies or similar technologies for analytics, site performance, advertising measurement, and ad personalization where allowed by law. Third-party advertising partners, including Google, may use cookies to serve ads based on a user's visits to this and other websites.</p>
 <h2>Your choices</h2><p>You can control cookies through your browser settings. You can also review Google's advertising settings and choices through Google's own privacy and ads controls.</p>
 <h2>Children's privacy</h2><p>This website is intended for a general audience and is not designed to collect personal information from children.</p>
 <h2>Contact</h2><p>Questions about this policy can be sent through the contact page.</p>
 """)
-    terms = simple_page(site, "/terms/", "Terms of Use", "These Terms of Use describe the rules for using Northstar Calculators.", """
+    terms = simple_page(site, "/terms/", "Terms of Use", "These Terms of Use describe the rules for using NS Calculators.", """
 <h2>Use of the site</h2><p>You may use the calculators and converters for personal, educational, and general planning purposes. You agree not to misuse the site, interfere with its operation, or attempt to access systems without permission.</p>
 <h2>No professional advice</h2><p>Results are estimates based on the values entered and the assumptions shown. The site does not provide professional advice. Verify financial, health, construction, electrical, vehicle, legal, and safety-related decisions with appropriate professionals or official sources.</p>
 <h2>Accuracy</h2><p>We aim to provide useful formulas, conversion factors, and examples, but errors or omissions may occur. We do not guarantee that every result is complete, current, or suitable for your specific situation.</p>
 <h2>Advertising and third-party links</h2><p>The site may display advertisements or link to third-party resources. We are not responsible for third-party websites, services, claims, or policies.</p>
 <h2>Changes</h2><p>We may update these terms as the site changes. Continued use of the site means you accept the current terms.</p>
 """)
-    contact = simple_page(site, "/contact/", "Contact", "Contact Northstar Calculators about calculator issues, corrections, privacy questions, or general feedback.", """
+    contact = simple_page(site, "/contact/", "Contact", "Contact NS Calculators about calculator issues, corrections, privacy questions, or general feedback.", """
 <h2>How to reach us</h2><p>For corrections, feedback, privacy questions, or general inquiries, open an issue in the public project repository: <a href="https://github.com/lg-list/NSCalculators/issues">NS Calculators issues</a>.</p>
 <h2>What to include</h2><p>Please include the calculator URL, the values you entered, the result you expected, and any authoritative source that supports the correction. This helps us review issues faster.</p>
 <h2>Advertising and partnerships</h2><p>For advertising, partnership, or business inquiries, use the same project issue tracker and include a clear subject line.</p>
@@ -1168,22 +1195,37 @@ CSS = r'''
 @media(max-width:1100px){.category-tools{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:900px){.hero-grid,.feature-layout,.proof-grid,.scientific-home,.browse-panel,.scientific-panel,.chart-grid,.calculator-layout.split-analysis,.seo-keywords{grid-template-columns:1fr}.calculator-pane{position:static}.keyword-chip-list{justify-content:flex-start}.category-grid,.tool-grid,.home-category-grid,.popular-list,.summary-grid{grid-template-columns:repeat(2,1fr)}.category-tools{grid-template-columns:repeat(2,1fr)}.directory-links{grid-template-columns:repeat(2,1fr)}.proof-points,.faq-grid,.faq-list,.related{grid-template-columns:1fr 1fr}.search-panel{box-shadow:none}.stats{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:560px){.nav{min-height:64px;gap:10px}.brand{font-size:16px}.brand-mark{width:34px;height:34px}.category-nav-link{padding:6px 7px}.category-nav-link .nav-icon{display:none}.all-calculators-menu .submenu{grid-template-columns:1fr;right:-4px;max-height:72vh;overflow:auto}.hero{padding:32px 0 26px}.hero h1{font-size:36px}.home-hero{padding:30px 0 24px}.home-hero h1{font-size:38px}.hero-actions,.footer-grid,.mini-calc,.mini-calc.full{display:grid;grid-template-columns:1fr}.category-grid,.tool-grid,.home-category-grid,.fields,.directory-links,.proof-points,.faq-grid,.faq-list,.popular-list,.related,.calculator-link-grid,.summary-grid{grid-template-columns:1fr}.section{padding:42px 0}.section.tight,.home-block{padding:28px 0}.section-row{align-items:start}.article h1{font-size:36px}.calculator-article h1{font-size:30px}.calculator-article .lead{font-size:15px;margin-bottom:10px}.calculator-article .calc{padding:14px;margin:10px 0 20px}.calculator-article .calc h2{font-size:20px}.calculator-article .field input,.calculator-article .field select{height:40px}.page-title-icon{align-items:flex-start}.title-icon{width:48px;height:48px}.category-section{padding:18px}.category-section-head{grid-template-columns:1fr}.stats{gap:12px}.carousel{grid-auto-columns:82vw}.sci-keypad{grid-template-columns:repeat(4,1fr)}.ad-slot{min-height:76px}}
+@media(max-width:900px){.calculator-article:has(#mortgageSummary) .calculator-layout.split-analysis,.calculator-article:has(.loan-results) .calculator-layout.split-analysis{grid-template-columns:minmax(0,1fr)}.calculator-article:has(#mortgageSummary) .analysis-pane .chart-grid,.loan-chart-row{grid-template-columns:minmax(0,1fr)}.calculator-article:has(#mortgageSummary) .analysis-pane .summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.calculator-pane,.analysis-pane,.chart-card,.table-card,.mortgage-dashboard,.loan-results{min-width:0}}
+@media(max-width:560px){.calculator-article:has(#mortgageSummary) .analysis-pane .summary-grid,.loan-result-panel .summary-grid{grid-template-columns:minmax(0,1fr)}}
 '''
 
 SEARCH_JS = r'''
 (function(){
-  const items = window.NORTHSTAR_ITEMS || [];
+  let items = window.NORTHSTAR_ITEMS || [];
+  let loading = null;
   const basePath = window.NORTHSTAR_BASE_PATH || "";
   const q = document.getElementById("siteSearch");
   const box = document.getElementById("searchResults");
   if (!q || !box) return;
-  q.addEventListener("input", () => {
+  function loadItems() {
+    if (items.length) return Promise.resolve(items);
+    if (!loading) {
+      loading = fetch(basePath + "/assets/search-index.json")
+        .then(response => response.ok ? response.json() : [])
+        .then(data => { items = Array.isArray(data) ? data : []; return items; })
+        .catch(() => []);
+    }
+    return loading;
+  }
+  q.addEventListener("input", async () => {
     const s = q.value.toLowerCase().trim();
     if (!s) {
       box.style.display = "none";
       box.innerHTML = "";
       return;
     }
+    await loadItems();
+    if (q.value.toLowerCase().trim() !== s) return;
     const r = items.filter(x => (x.title + " " + x.desc + " " + x.cat + " " + (x.keyword || "")).toLowerCase().includes(s)).slice(0, 8);
     box.innerHTML = r.map(x => `<a href="${basePath}/${x.slug}/"><strong>${x.title}</strong><small>${x.cat}: ${x.desc}</small></a>`).join("");
     box.style.display = r.length ? "block" : "none";
@@ -1968,7 +2010,7 @@ SCIENTIFIC_JS = r'''
 '''
 
 LOGO_SVG = r'''
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Northstar Calculators">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="NS Calculators">
   <rect width="512" height="512" rx="116" fill="#173f73"/>
   <rect x="128" y="72" width="256" height="368" rx="54" fill="#fff"/>
   <rect x="162" y="112" width="188" height="58" rx="18" fill="#e8f0fb"/>
@@ -1996,6 +2038,11 @@ def build():
     write(DIST / "assets" / "home.js", HOME_JS.strip() + "\n")
     write(DIST / "assets" / "scientific.js", SCIENTIFIC_JS.strip() + "\n")
     write(DIST / "assets" / "calculator.js", CALC_JS.strip() + "\n")
+    search_index = [
+        {"title": c["title"], "slug": c["slug"], "desc": c["desc"], "cat": c["cat"], "keyword": primary_keyword(c)}
+        for c in calculators
+    ]
+    write(DIST / "assets" / "search-index.json", json.dumps(search_index, ensure_ascii=False, separators=(",", ":")) + "\n")
     write(DIST / "favicon.svg", LOGO_SVG.strip() + "\n")
     write(DIST / "apple-touch-icon.svg", LOGO_SVG.strip() + "\n")
     write(DIST / "index.html", home_new(site, calculators))
@@ -2004,57 +2051,51 @@ def build():
     for calc in calculators:
         by_cat[calc["cat"]].append(calc)
     for cat in CATEGORY_ORDER:
-        items = by_cat.get(cat, [])
-        if not items:
+        all_category_items = by_cat.get(cat, [])
+        if not all_category_items:
             continue
-        write(DIST / slugify_cat(cat) / "index.html", category_page(site, cat, items))
+        indexable_items = [c for c in all_category_items if is_indexable_calculator(c)]
+        visible_items = indexable_items or all_category_items
+        write(DIST / slugify_cat(cat) / "index.html", category_page(site, cat, visible_items, indexable=bool(indexable_items)))
     for calc in calculators:
-        rel = [c for c in by_cat[calc["cat"]] if c["slug"] != calc["slug"] and calculator_group(c) == calculator_group(calc)][:6]
+        rel = [c for c in by_cat[calc["cat"]] if c["slug"] != calc["slug"] and calculator_group(c) == calculator_group(calc) and is_indexable_calculator(c)][:6]
         write(DIST / calc["slug"] / "index.html", calculator_page(site, calc, rel))
 
     write(DIST / "scientific-calculator" / "index.html", scientific_page(site))
     for path, html in info_pages(site).items():
         write(DIST / path.strip("/") / "index.html", html)
-    write(DIST / "methodology" / "index.html", simple_page(site, "/methodology/", "Methodology", "How Northstar chooses, builds, and links calculator pages.", "<p>Every new calculator should have a distinct search intent, real inputs, a formula or verified lookup, visible assumptions, a worked example, and relevant internal links.</p><p>For safety-critical, financial, construction, fitment, towing, and electrical decisions, users should verify results with authoritative sources.</p>"))
+    write(DIST / "methodology" / "index.html", simple_page(site, "/methodology/", "Methodology", "How NS Calculators chooses, builds, reviews, and links calculator pages.", "<h2>How calculators are selected</h2><p>We prioritize calculators with a distinct user task, measurable search demand, or a clear practical use. Low-demand variations remain available through site search but are not automatically submitted for indexing.</p><h2>Calculation standards</h2><p>Every indexable calculator should provide real inputs, a transparent formula or documented lookup, visible assumptions, a worked example, and relevant internal links. Unit converters use stated conversion factors, while financial tools expose the rates, periods, and recurring costs used in the result.</p><h2>Review and corrections</h2><p>We test representative inputs before publication and review reported errors against authoritative standards or product documentation. For safety-critical, financial, construction, fitment, towing, medical, and electrical decisions, users should verify results with a qualified professional or authoritative source.</p>"))
     write(DIST / "privacy" / "index.html", redirect_page(site, "/privacy/", "/privacy-policy/", "Privacy Policy"))
-    write(DIST / "404.html", page(site, "Page Not Found | Northstar Calculators", "The requested calculator page could not be found.", "/404.html", '<main class="main"><div class="wrap"><article class="article"><h1>Page not found</h1><p class="lead">Try the homepage search to find the calculator you need.</p><a class="btn primary" href="/">Go to homepage</a></article></div></main>'))
+    write(DIST / "404.html", page(site, "Page Not Found | NS Calculators", "The requested calculator page could not be found.", "/404.html", '<main class="main"><div class="wrap"><article class="article"><h1>Page not found</h1><p class="lead">Try the homepage search to find the calculator you need.</p><a class="btn primary" href="/">Go to homepage</a></article></div></main>', indexable=False))
     write(DIST / "robots.txt", f"User-agent: *\nAllow: /\nSitemap: {site_url(site, '/sitemap.xml')}\n")
     write(DIST / "CNAME", "nscalculators.com\n")
     for verification_file in ROOT.glob("google*.html"):
         shutil.copy2(verification_file, DIST / verification_file.name)
 
-    urls = ["/"] + [f"/{slugify_cat(cat)}/" for cat in CATEGORY_ORDER if by_cat.get(cat)] + [f"/{c['slug']}/" for c in calculators] + ["/scientific-calculator/", "/about/", "/methodology/", "/privacy-policy/", "/terms/", "/contact/"]
-    today = date.today().isoformat()
-    sitemap_files = []
-    chunk_size = 1000
-    for index, start in enumerate(range(0, len(urls), chunk_size), 1):
-        chunk = urls[start:start + chunk_size]
-        name = f"sitemap-pages-{index}.xml"
-        sitemap_files.append(name)
-        sitemap = [
-            '<?xml version="1.0" encoding="UTF-8"?>',
-            '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
-        ]
-        sitemap.extend(f"  <url><loc>{h(site_url(site, u))}</loc><lastmod>{today}</lastmod></url>" for u in chunk)
-        sitemap.append("</urlset>")
-        write(DIST / name, "\n".join(sitemap) + "\n")
-    sitemap_index = [
-        '<?xml version="1.0" encoding="UTF-8"?>',
-        '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
-    ]
-    sitemap_index.extend(f"  <sitemap><loc>{h(site_url(site, '/' + name))}</loc><lastmod>{today}</lastmod></sitemap>" for name in sitemap_files)
-    sitemap_index.append("</sitemapindex>")
-    write(DIST / "sitemap.xml", "\n".join(sitemap_index) + "\n")
-
-    test_urls = ["/", "/mortgage-calculator/", "/loan-calculator/", "/ai-compute-calculator/", "/about/", "/contact/"]
-    test_sitemap = [
+    indexable_calculators = [c for c in calculators if is_indexable_calculator(c)]
+    urls = ["/"] + [f"/{slugify_cat(cat)}/" for cat in CATEGORY_ORDER if any(is_indexable_calculator(c) for c in by_cat.get(cat, []))] + [f"/{c['slug']}/" for c in indexable_calculators] + ["/scientific-calculator/", "/about/", "/methodology/", "/privacy-policy/", "/terms/", "/contact/"]
+    urls = list(dict.fromkeys(urls))
+    sitemap = [
         '<?xml version="1.0" encoding="UTF-8"?>',
         '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
     ]
-    test_sitemap.extend(f"  <url><loc>{h(site_url(site, u))}</loc><lastmod>{today}</lastmod></url>" for u in test_urls)
-    test_sitemap.append("</urlset>")
-    write(DIST / "sitemap-test.xml", "\n".join(test_sitemap) + "\n")
-    print(f"Built {len(calculators)} calculator pages plus homepage and hubs.")
+    sitemap.extend(f"  <url><loc>{h(site_url(site, u))}</loc></url>" for u in urls)
+    sitemap.append("</urlset>")
+    write(DIST / "sitemap.xml", "\n".join(sitemap) + "\n")
+
+    keyword_map = [
+        {
+            "keyword": c["keyword_data"]["keyword"],
+            "monthly_searches": c["keyword_data"]["monthly_searches"],
+            "competition_index": c["keyword_data"]["competition_index"],
+            "category": c["cat"],
+            "page": site_url(site, f"/{c['slug']}/"),
+        }
+        for c in sorted((item for item in calculators if item.get("keyword_data")), key=keyword_score, reverse=True)
+    ]
+    write(ROOT / "exports" / "keyword-page-map.json", json.dumps(keyword_map, ensure_ascii=False, indent=2) + "\n")
+
+    print(f"Built {len(calculators)} calculator pages; {len(indexable_calculators)} are included in the sitemap.")
 
 
 if __name__ == "__main__":
