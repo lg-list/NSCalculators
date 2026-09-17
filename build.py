@@ -14,7 +14,7 @@ KEYWORD_STATS = ROOT / "exports" / "keyword-stats-positive.json"
 SEO_STRATEGY = ROOT / "exports" / "seo-keyword-strategy-2026-09-05.json"
 PUBLIC_BASE_PATH = os.environ.get("PUBLIC_BASE_PATH", "").strip().rstrip("/")
 PUBLIC_SITE_DOMAIN = os.environ.get("PUBLIC_SITE_DOMAIN", "").strip()
-ASSET_VERSION = "20260917b"
+ASSET_VERSION = "20260917c"
 
 CATEGORY_ORDER = [
     "Automotive",
@@ -969,18 +969,21 @@ def category_page(site, cat, items, indexable=True):
     groups = defaultdict(list)
     for item in items:
         groups[calculator_group(item)].append(item)
-    ordered_groups = GROUP_LABELS.get(cat) or sorted(groups)
+    configured_groups = GROUP_LABELS.get(cat) or []
+    group_names = {group.casefold(): group for group in groups}
+    ordered_groups = [group_names.pop(label.casefold()) for label in configured_groups if label.casefold() in group_names]
+    ordered_groups.extend(sorted(group_names.values()))
     jump_links = "".join(
-        f"""<a href="#{h(group_slug(group))}">{category_icon(cat, "jump-icon")}{h(display_group(group))}</a>"""
+        f"""<a href="#{h(group_slug(group))}">{h(display_group(group))}</a>"""
         for group in ordered_groups
         if groups.get(group)
     )
     sections = "".join(
-        f"""<section class="category-section" id="{h(group_slug(group))}"><div class="category-section-head">{category_icon(cat, "section-icon")}<div><h2>{h(display_group(group))}</h2><p><strong>{len(groups[group]):,} calculators.</strong> {h(subgroup_desc(cat, group, groups[group]))}</p></div></div><div class="calculator-link-grid">{''.join(f'<a href="/{h(calc["slug"])}/">{h(calc["title"])}</a>' for calc in sorted(groups[group], key=lambda c: c["title"]))}</div></section>"""
+        f"""<section class="category-section" id="{h(group_slug(group))}"><div class="category-section-head"><h2>{h(display_group(group))}</h2><span class="category-count">{len(groups[group]):,} tools</span></div><div class="calculator-link-grid">{''.join(f'<a href="/{h(calc["slug"])}/" aria-label="{h(calc["title"])}">{h(re.sub(r" Calculator$", "", calc["title"]))}</a>' for calc in sorted(groups[group], key=lambda c: c["title"]))}</div></section>"""
         for group in ordered_groups
         if groups.get(group)
     )
-    body = f"""<main class="main"><div class="wrap"><div class="crumb"><a href="/">Home</a> / {h(cat)} Calculators</div>
+    body = f"""<main class="main category-main"><div class="wrap"><div class="crumb"><a href="/">Home</a> / {h(cat)} Calculators</div>
 <section class="article wide category-directory"><div class="page-title-icon">{category_icon(cat, "title-icon")}<h1>{h(cat)} Calculators</h1></div><p class="lead">{h(category_desc(cat))}</p><nav class="category-jump-nav" aria-label="{h(cat)} calculator groups">{jump_links}</nav><div class="category-tools">{sections}</div></section></div></main>"""
     keywords = [f"{cat.lower()} calculators", f"free {cat.lower()} calculators", "online calculator", "calculator tools"]
     crumbs = [("Home", "/"), (f"{cat} Calculators", f"/{slugify_cat(cat)}/")]
@@ -1210,6 +1213,8 @@ CSS = r'''
 .category-directory .lead{margin-bottom:12px}.category-jump-nav{gap:6px;margin:10px 0 14px}.category-jump-nav a{min-height:32px;padding:5px 8px;font-size:12px}.category-jump-nav .jump-icon{display:none}.category-tools{gap:10px;margin-top:14px}.category-section{padding:12px;border-radius:10px}.category-section-head{display:block;margin-bottom:9px}.category-section-head .section-icon{display:none}.category-section-head h2{margin-bottom:3px;font-size:18px;letter-spacing:0}.category-section-head p{font-size:12px;line-height:1.4}.calculator-link-grid{gap:6px}.category-directory .calculator-link-grid a{padding:7px 8px;font-size:13px;line-height:1.25}
 .prose h2,.calculator-article>h2{font-size:21px;letter-spacing:0}.prose h3{font-size:17px}.prose p,.prose li{font-size:14px;line-height:1.55}.related{gap:8px}.related a{padding:11px}
 }
+.category-main{padding-top:22px}.category-main .crumb{margin-bottom:16px}.category-directory .page-title-icon{gap:10px;margin-bottom:7px}.category-directory h1{font-size:38px;line-height:1.08;letter-spacing:0}.category-directory .title-icon{width:40px;height:40px;border-radius:9px}.category-directory .title-icon svg{width:22px;height:22px}.category-directory .lead{max-width:780px;margin-bottom:12px;font-size:15px;line-height:1.45}.category-jump-nav{gap:6px;margin:10px 0 16px}.category-jump-nav a{min-height:32px;padding:5px 9px;font-size:13px}.category-tools{align-items:start;gap:12px;margin-top:16px}.category-section{align-self:start;padding:14px;border-radius:10px}.category-section-head{display:flex;grid-template-columns:none;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:10px}.category-section-head h2{margin:0;font-size:18px;line-height:1.2;letter-spacing:0}.category-section-head .category-count{display:inline;width:auto;height:auto;border-radius:0;background:transparent;place-items:normal;flex:0 0 auto;color:var(--muted);font-size:12px;font-weight:750}.category-directory .calculator-link-grid{gap:6px}.category-directory .calculator-link-grid a{min-height:0;padding:8px 9px;font-size:13px;line-height:1.22}
+@media(max-width:560px){.category-main{padding-top:14px}.category-main .crumb{margin-bottom:10px}.category-directory h1{font-size:24px}.category-directory .title-icon{width:30px;height:30px}.category-directory .title-icon svg{width:17px;height:17px}.category-directory .page-title-icon{gap:7px;margin-bottom:4px}.category-directory .lead{margin-bottom:8px;font-size:13px}.category-jump-nav{margin:8px 0 10px}.category-tools{gap:8px;margin-top:10px}.category-section{padding:10px}.category-section-head{margin-bottom:7px}.category-section-head h2{font-size:16px}.category-count{font-size:11px}.category-directory .calculator-link-grid a{padding:7px;font-size:12px}}
 '''
 
 SEARCH_JS = r'''
