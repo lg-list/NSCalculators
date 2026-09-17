@@ -14,7 +14,7 @@ KEYWORD_STATS = ROOT / "exports" / "keyword-stats-positive.json"
 SEO_STRATEGY = ROOT / "exports" / "seo-keyword-strategy-2026-09-05.json"
 PUBLIC_BASE_PATH = os.environ.get("PUBLIC_BASE_PATH", "").strip().rstrip("/")
 PUBLIC_SITE_DOMAIN = os.environ.get("PUBLIC_SITE_DOMAIN", "").strip()
-ASSET_VERSION = "20260917i"
+ASSET_VERSION = "20260917j"
 
 CATEGORY_ORDER = [
     "Automotive",
@@ -784,6 +784,10 @@ def seo_description(calc):
         return "Estimate a transparent car trade-in value, loan equity, possible sales-tax benefit, and effective trade value from a local comparable listing."
     if calc.get("slug") == "used-car-value-calculator":
         return "Estimate used-car retail, private-party, and trade-in ranges from a local comparable price, mileage, condition, options, and market adjustments."
+    if calc.get("slug") == "tire-size-calculator":
+        return "Compare two tire sizes for diameter, sidewall, circumference, revolutions per mile, speedometer error, and ground-clearance change."
+    if calc.get("slug") == "wheel-offset-calculator":
+        return "Compare current and new wheel width, offset, and spacer size to estimate inner clearance, outer poke, track change, and backspacing."
     if calc.get("engine") == "linear_convert":
         return f"Use this free {keyword} to convert units instantly with the formula, example, and related conversion calculators."
     if calc.get("engine") in ("cn_mortgage", "loan_page", "car_loan"):
@@ -911,6 +915,32 @@ def used_car_value_input_html():
 <div class="field"><label for="options_adjustment">Options and history adjustment</label><div class="input-unit"><input id="options_adjustment" type="number" step="any" value="0"><span>$</span></div></div>
 <div class="field"><label for="regional_adjustment">Local market adjustment</label><div class="input-unit"><input id="regional_adjustment" type="number" step="any" value="0"><span>%</span></div></div>
 <div class="field"><label for="dealer_spread">Retail-to-trade spread</label><div class="input-unit"><input id="dealer_spread" type="number" step="any" min="0" value="12"><span>%</span></div></div>
+</div>"""
+
+
+def tire_size_input_html():
+    return """<div class="fields fitment-fields tire-size-fields">
+<div class="field-group-label">Original tire</div>
+<div class="field"><label for="original_width">Section width</label><div class="input-unit"><input id="original_width" type="number" step="1" min="1" value="225"><span>mm</span></div></div>
+<div class="field"><label for="original_aspect">Aspect ratio</label><div class="input-unit"><input id="original_aspect" type="number" step="1" min="1" value="65"><span>%</span></div></div>
+<div class="field"><label for="original_rim">Wheel diameter</label><div class="input-unit"><input id="original_rim" type="number" step="0.5" min="1" value="17"><span>in</span></div></div>
+<div class="field-group-label">New tire</div>
+<div class="field"><label for="new_width">Section width</label><div class="input-unit"><input id="new_width" type="number" step="1" min="1" value="235"><span>mm</span></div></div>
+<div class="field"><label for="new_aspect">Aspect ratio</label><div class="input-unit"><input id="new_aspect" type="number" step="1" min="1" value="60"><span>%</span></div></div>
+<div class="field"><label for="new_rim">Wheel diameter</label><div class="input-unit"><input id="new_rim" type="number" step="0.5" min="1" value="18"><span>in</span></div></div>
+<div class="field field-wide"><label for="indicated_speed">Indicated speed</label><div class="input-unit"><input id="indicated_speed" type="number" step="1" min="0" value="60"><span>mph</span></div></div>
+</div>"""
+
+
+def wheel_offset_input_html():
+    return """<div class="fields fitment-fields wheel-offset-fields">
+<div class="field-group-label">Current wheel</div>
+<div class="field"><label for="current_width">Wheel width</label><div class="input-unit"><input id="current_width" type="number" step="0.5" min="1" value="8"><span>in</span></div></div>
+<div class="field"><label for="current_offset">Offset</label><div class="input-unit"><input id="current_offset" type="number" step="1" value="45"><span>mm</span></div></div>
+<div class="field-group-label">New wheel</div>
+<div class="field"><label for="new_wheel_width">Wheel width</label><div class="input-unit"><input id="new_wheel_width" type="number" step="0.5" min="1" value="9"><span>in</span></div></div>
+<div class="field"><label for="new_offset">Offset</label><div class="input-unit"><input id="new_offset" type="number" step="1" value="35"><span>mm</span></div></div>
+<div class="field field-wide"><label for="spacer">Spacer thickness per wheel</label><div class="input-unit"><input id="spacer" type="number" step="1" min="0" value="0"><span>mm</span></div></div>
 </div>"""
 
 
@@ -1204,6 +1234,24 @@ def high_value_calculator_copy(calc):
 <h2>Vehicle condition</h2><p>Most vehicles should not be rated excellent. Consider mechanical condition, warning lights, tires, glass, paint, interior wear, accident and title history, maintenance records, odors, and required repairs. Be consistent with the condition of your benchmark vehicle.</p>
 <h2>Independent comparison</h2><p>This calculator has no live VIN or transaction feed. Use it to reconcile listings and offers, then compare with a professional valuation. The <a href="https://www.kbb.com/faq/values/" rel="external noopener">Kelley Blue Book value FAQ</a> notes that age, mileage, equipment, condition, and location affect value.</p>
 <h2>Frequently asked questions</h2><h3>Why is the value shown as a range?</h3><p>Real transactions vary with negotiation, local supply, buyer demand, inspection results, and timing. A range is more honest than false single-dollar precision.</p><h3>Does the calculator know my VIN?</h3><p>No. You supply the comparable market price and adjustments. Use a VIN-based valuation provider for vehicle-specific market data.</p><h3>Can an accident change the estimate?</h3><p>Yes. Enter a negative options and history adjustment based on comparable vehicles or documented appraisal evidence.</p>"""
+    if calc.get("slug") == "tire-size-calculator":
+        return """
+<h2>How to compare tire sizes</h2><p>A metric tire code such as 225/65R17 describes a 225 mm nominal section width, a sidewall height equal to 65% of that width, radial construction, and a 17-inch wheel. Enter the original and proposed sizes to compare their calculated geometry.</p>
+<p class="formula">overall diameter = wheel diameter + 2 x (section width x aspect ratio / 100) / 25.4</p>
+<h2>Speedometer and ride-height changes</h2><p>A larger tire travels farther per revolution. The calculator multiplies the indicated speed by the new-to-original diameter ratio. Half of the diameter change is the approximate change in static ground clearance. Odometer distance changes by the same ratio.</p>
+<h2>Tire-size example</h2><p>Changing from 225/65R17 to 235/60R18 increases calculated diameter from about 28.52 to 29.10 inches, a difference of about 2.06%. At an indicated 60 mph, calculated road speed is about 61.23 mph, and static ground clearance rises about 0.29 inch.</p>
+<h2>Is a 3% diameter difference safe?</h2><p>Three percent is a common comparison guideline, not a universal fitment or safety approval. Vehicle systems, gearing, wheel width, load capacity, clearances, tire construction, and manufacturer requirements all matter. Actual mounted dimensions also vary by tire model, measuring rim, pressure, load, and tread wear.</p>
+<h2>Verify the replacement size</h2><p><a href="https://www.nhtsa.gov/vehicle-safety/tires" rel="external noopener">NHTSA TireWise</a> advises checking the owner's manual or Tire and Loading Information Label and using the original size or another size recommended by the vehicle manufacturer. Also verify load index, speed rating, inflation pressure, wheel-width range, and full steering and suspension clearance with a qualified tire professional.</p>
+<h2>Frequently asked questions</h2><h3>Why can the listed diameter differ from this result?</h3><p>The formula uses nominal size-code dimensions. Consult the tire manufacturer's specification sheet for measured overall diameter and revolutions per mile.</p><h3>Does this calculator confirm wheel fitment?</h3><p>No. It compares tire geometry only. Bolt pattern, wheel offset, hub bore, brake clearance, fender clearance, suspension clearance, and load ratings require separate verification.</p>"""
+    if calc.get("slug") == "wheel-offset-calculator":
+        return """
+<h2>How wheel offset changes fitment</h2><p>Wheel offset is the distance from the wheel centerline to its hub-mounting face. Positive offset moves the wheel inward; lower or negative offset usually moves the outer face farther toward the fender. Width and offset must be compared together.</p>
+<p class="formula">inner position = half wheel width + effective offset; outer position = half wheel width - effective offset</p>
+<h2>Wheel-offset example</h2><p>Compared with an 8-inch ET45 wheel, a 9-inch ET35 wheel sits about 22.7 mm farther outward and has about 2.7 mm less inner clearance. Across both sides of an axle, the estimated track increases about 45.4 mm.</p>
+<h2>How spacers affect offset</h2><p>A spacer moves the wheel outward. The calculator treats effective offset as the new wheel offset minus spacer thickness. A 5 mm spacer on an ET35 wheel therefore behaves like approximately ET30 for these position calculations.</p>
+<h2>Backspacing estimate</h2><p>Backspacing is measured from the hub-mounting face to the inner wheel edge. The calculator adds one inch to nominal wheel width as a common approximation for both rim lips, then adds offset. Published wheel specifications should be used when exact overall width is available.</p>
+<h2>Fitment limitations</h2><p>This geometry comparison does not verify bolt pattern, center bore, lug-seat type, stud engagement, brake-caliper clearance, tire bulge, suspension travel, steering lock, fender clearance, alignment, or wheel and tire load ratings. Measure the vehicle and confirm the setup with the wheel manufacturer or a qualified installer.</p>
+<h2>Frequently asked questions</h2><h3>Does a lower offset add more poke?</h3><p>Usually yes when width is unchanged. A wider wheel can add both inner and outer extension, so compare width and offset together.</p><h3>Is more inner clearance always better?</h3><p>No. Moving outward can create fender interference, change scrub radius, alter steering feel, and increase load on components. The result is a dimensional estimate, not an approval.</p>"""
     return None
 
 
@@ -1217,6 +1265,17 @@ def default_calculator_copy(calc):
 
 
 def analysis_extra_html(calc):
+    if calc.get("slug") in ("tire-size-calculator", "wheel-offset-calculator"):
+        tire = calc.get("slug") == "tire-size-calculator"
+        title = "Tire Size Comparison" if tire else "Wheel Position Comparison"
+        chart_title = "Calculated Dimensions" if tire else "Position Changes"
+        aria = "Tire size comparison results" if tire else "Wheel offset comparison results"
+        return f"""<section class="mortgage-dashboard generic-dashboard fitment-dashboard" aria-label="{aria}">
+<div class="section-head stack"><h2>{title}</h2><p>Review the main fitment changes, supporting dimensions, and calculation details.</p></div>
+<div class="summary-grid" id="genericSummary"></div>
+<div class="chart-grid"><div class="chart-card compact-chart"><h3>{chart_title}</h3><canvas id="genericChart" width="620" height="230" aria-label="{chart_title}" data-chart-type="bars"></canvas></div></div>
+<div class="table-card"><h3>Calculation Details</h3><div class="table-scroll"><table class="data-table" id="genericTable"><thead><tr><th>Metric</th><th>Value</th><th>Note</th></tr></thead><tbody></tbody></table></div></div>
+</section>"""
     if calc.get("slug") == "compound-interest-calculator":
         return """<section class="mortgage-dashboard compound-dashboard" aria-label="Compound interest result details">
 <div class="section-head stack"><h2>Growth Summary</h2><p>Compare contributions with estimated interest and review the balance year by year.</p></div>
@@ -1302,6 +1361,12 @@ def calculator_page(site, calc, related):
     elif calc.get("slug") == "used-car-value-calculator":
         fields = used_car_value_input_html()
         page_engine = "used_car_estimate"
+    elif calc.get("slug") == "tire-size-calculator":
+        fields = tire_size_input_html()
+        page_engine = "tire_compare"
+    elif calc.get("slug") == "wheel-offset-calculator":
+        fields = wheel_offset_input_html()
+        page_engine = "wheel_offset_compare"
     elif calc.get("engine") == "cn_mortgage":
         fields = mortgage_input_html()
     elif calc.get("engine") == "loan_page":
@@ -1435,6 +1500,9 @@ body{background:var(--bg)}.site-header{border-bottom-color:#dbe7f4}.primary{back
 @media(max-width:560px){.vehicle-weight-fields{grid-template-columns:repeat(2,minmax(0,1fr))}.vehicle-weight-fields .field label{min-height:34px;display:flex;align-items:end}.vehicle-weight-fields .field-wide{grid-column:1/-1}}
 @media(max-width:560px){.fuel-fields{grid-template-columns:repeat(2,minmax(0,1fr))}.fuel-fields .field label{min-height:34px;display:flex;align-items:end}}
 @media(max-width:560px){.vehicle-value-fields{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px!important}.vehicle-value-fields .field label{min-height:28px;display:flex;align-items:end;font-size:12px!important}.vehicle-value-fields .field-wide{grid-column:1/-1}.vehicle-value-fields .field input,.vehicle-value-fields .field select{height:36px!important}.calculator-article:has(.vehicle-value-fields) .calc{padding:10px}.calculator-article:has(.vehicle-value-fields) .calc h2{margin-bottom:6px;font-size:17px}.calculator-article:has(.vehicle-value-fields) .calc-actions{margin-top:8px}.calculator-article:has(.vehicle-value-fields) .calc-actions .btn{min-height:36px;padding:7px 10px}.calculator-article:has(.vehicle-value-fields) .result{padding:9px 10px}}
+.fitment-fields{gap:8px!important}.tire-size-fields{grid-template-columns:repeat(3,minmax(0,1fr))}.wheel-offset-fields{grid-template-columns:repeat(2,minmax(0,1fr))}.field-group-label{grid-column:1/-1;margin-top:2px;padding-bottom:3px;border-bottom:1px solid var(--line);color:var(--brand);font-size:13px;font-weight:850}.fitment-dashboard .chart-grid{grid-template-columns:1fr}.fitment-dashboard .chart-card canvas{max-height:230px}.calculator-article:has(.fitment-fields) .calculator-layout.split-analysis{grid-template-columns:minmax(390px,460px) minmax(0,1fr)}
+@media(max-width:900px){.calculator-article:has(.fitment-fields) .calculator-layout.split-analysis{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:560px){.fitment-fields{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px!important}.tire-size-fields{grid-template-columns:repeat(3,minmax(0,1fr))}.fitment-fields .field label{min-height:28px;display:flex;align-items:end;font-size:12px!important}.fitment-fields .field-wide{grid-column:1/-1}.fitment-fields .field input{height:36px!important;padding:0 6px}.fitment-fields .input-unit input,.fitment-fields .input-unit span{height:36px!important}.fitment-fields .input-unit span{padding:0 6px;font-size:12px}.field-group-label{margin-top:0;font-size:12px}.calculator-article:has(.fitment-fields) .calc{padding:10px}.calculator-article:has(.fitment-fields) .calc h2{margin-bottom:6px;font-size:17px}.calculator-article:has(.fitment-fields) .calc-actions{margin-top:8px}.calculator-article:has(.fitment-fields) .calc-actions .btn{min-height:36px;padding:7px 10px}.calculator-article:has(.fitment-fields) .result{padding:9px 10px;font-size:12px}.calculator-article:has(.fitment-fields) .result strong{font-size:23px}.fitment-dashboard .summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 '''
 
 SEARCH_JS = r'''
@@ -1537,6 +1605,9 @@ function compoundProjection(){
 }
 function tradeInProjection(){const comparable=Math.max(0,V('comparable')),adjustment=V('market_adjustment'),margin=Math.max(0,V('dealer_margin')),reconditioning=Math.max(0,V('reconditioning')),payoff=Math.max(0,V('payoff')),replacement=Math.max(0,V('replacement_price')),taxRate=Math.max(0,V('tax_rate'))/100,trade=Math.max(0,comparable+adjustment-margin-reconditioning),equity=trade-payoff,taxSavings=Math.min(trade,replacement)*taxRate;return{comparable,adjustment,margin,reconditioning,payoff,replacement,taxRate,trade,equity,taxSavings,effective:trade+taxSavings}}
 function usedCarProjection(){const benchmark=Math.max(0,V('retail_benchmark')),condition=V('condition_adjustment'),mileage=V('mileage_adjustment'),options=V('options_adjustment'),regional=V('regional_adjustment'),spread=Math.max(0,Math.min(50,V('dealer_spread'))),retail=Math.max(0,benchmark*(1+condition/100)*(1+regional/100)+mileage+options),privateValue=retail*(1-spread/200),trade=retail*(1-spread/100);return{benchmark,condition,mileage,options,regional,spread,retail,privateValue,trade}}
+function tireSpec(width,aspect,rim){const sidewall=width*aspect/100,diameter=rim+2*sidewall/25.4,circumference=Math.PI*diameter,revsPerMile=63360/circumference;return{width,aspect,rim,sidewall,diameter,circumference,revsPerMile}}
+function tireComparison(){const original=tireSpec(Math.max(0,V('original_width')),Math.max(0,V('original_aspect')),Math.max(0,V('original_rim'))),next=tireSpec(Math.max(0,V('new_width')),Math.max(0,V('new_aspect')),Math.max(0,V('new_rim'))),ratio=original.diameter?next.diameter/original.diameter:0,differencePct=(ratio-1)*100,indicated=Math.max(0,V('indicated_speed')),actualSpeed=indicated*ratio,clearance=(next.diameter-original.diameter)/2;return{original,next,ratio,differencePct,indicated,actualSpeed,clearance}}
+function wheelOffsetComparison(){const currentWidth=Math.max(0,V('current_width')),currentOffset=V('current_offset'),newWidth=Math.max(0,V('new_wheel_width')),newOffset=V('new_offset'),spacer=Math.max(0,V('spacer')),effectiveOffset=newOffset-spacer,currentHalf=currentWidth*25.4/2,newHalf=newWidth*25.4/2,currentInner=currentHalf+currentOffset,currentOuter=currentHalf-currentOffset,newInner=newHalf+effectiveOffset,newOuter=newHalf-effectiveOffset,innerClearance=currentInner-newInner,outerPoke=newOuter-currentOuter,trackChange=outerPoke*2,currentBackspacing=(currentWidth+1)/2+currentOffset/25.4,newBackspacing=(newWidth+1)/2+effectiveOffset/25.4;return{currentWidth,currentOffset,newWidth,newOffset,spacer,effectiveOffset,currentInner,currentOuter,newInner,newOuter,innerClearance,outerPoke,trackChange,currentBackspacing,newBackspacing}}
 function syncFeetMeterInputs(){const reverse=document.getElementById('conversion_direction')?.value==='meters_to_feet';document.querySelectorAll('[data-feet-input]').forEach(el=>el.classList.toggle('is-hidden',reverse));document.querySelectorAll('[data-meter-input]').forEach(el=>el.classList.toggle('is-hidden',!reverse));return reverse}
 function clearCalcForm(){const form=document.querySelector('.calc');if(!form)return;form.querySelectorAll('input').forEach(input=>{if(input.type==='checkbox')input.checked=false;else input.value=''});form.querySelectorAll('select').forEach(select=>{select.selectedIndex=0});form.querySelectorAll('details').forEach(item=>{item.open=false});syncMortgageCosts();show('<strong>$0.00 / month</strong><br>Enter values to calculate a new result.');const engine=currentEngine();if(engine==='cn_mortgage')renderMortgage(0,0,1,0,0,0,0,0,0,0,0,0,0,new Date());if(engine==='loan_page')renderLoanPage()}
 function calc(e){
@@ -1556,6 +1627,8 @@ function calc(e){
   case'fuel_cost_advanced':{let metric=document.getElementById('trip_units')?.value==='metric',distance=V('distance')*Math.max(1,V('trip_type'))*Math.max(1,V('trips')),eff=Math.max(.01,V('efficiency')),fuel=metric?distance*eff/100:distance/eff,cost=fuel*V('fuelprice'),currency=document.getElementById('currency')?.value||'USD',people=Math.max(1,V('people'));show(`<strong>${MONEY(cost,currency)}</strong><br>${F(fuel,2)} ${metric?'liters':'US gallons'}; ${MONEY(cost/people,currency)} per person; ${F(distance,0)} ${metric?'km':'miles'} total.`);break}
   case'trade_in_estimate':{const p=tradeInProjection(),equityLabel=p.equity>=0?'positive equity':'negative equity';show(`<strong>${USD(p.trade)} trade-in estimate</strong><br>${USD(Math.abs(p.equity))} ${equityLabel}; ${USD(p.taxSavings)} entered tax benefit; ${USD(p.effective)} effective trade value.`);break}
   case'used_car_estimate':{const p=usedCarProjection();show(`<strong>${USD(p.privateValue)} private-party estimate</strong><br>Adjusted retail: ${USD(p.retail)}; trade-in estimate: ${USD(p.trade)}; review the planning ranges below.`);break}
+  case'tire_compare':{const p=tireComparison(),direction=p.differencePct>=0?'larger':'smaller';show(`<strong>${F(Math.abs(p.differencePct),2)}% ${direction} diameter</strong><br>Actual speed at ${F(p.indicated,0)} mph indicated: ${F(p.actualSpeed,2)} mph; ground-clearance change: ${p.clearance>=0?'+':''}${F(p.clearance,2)} in.`);break}
+  case'wheel_offset_compare':{const p=wheelOffsetComparison(),clearance=p.innerClearance>=0?`${F(p.innerClearance,1)} mm more`:`${F(Math.abs(p.innerClearance),1)} mm less`;show(`<strong>${p.outerPoke>=0?'+':''}${F(p.outerPoke,1)} mm outer position</strong><br>${clearance} inner clearance; ${p.trackChange>=0?'+':''}${F(p.trackChange,1)} mm estimated track change.`);break}
   case'tire':{let width=V('width'),aspect=V('aspect'),wheel=V('wheel');let side=width*aspect/100,diam=wheel+2*side/25.4,circ=Math.PI*diam;show(`<strong>${F(diam,2)} in diameter</strong><br>Sidewall: ${F(side,1)} mm; circumference: ${F(circ,2)} in.`);break}
   case'offset':{let r=(V('backspacing')-V('width')/2)*25.4;show(`<strong>${F(r,1)} mm offset</strong><br>Approximation using nominal wheel width.`);break}
   case'backspacing':{let r=V('width')/2+V('offset')/25.4;show(`<strong>${F(r,2)} in backspacing</strong><br>Approximation using nominal wheel width.`);break}
@@ -1829,6 +1902,16 @@ function renderGenericFromEngine(engine) {
     cards=[["Private-party estimate",USD(p.privateValue),"Midpoint for an as-is private sale."],["Trade-in estimate",USD(p.trade),"Midpoint after entered dealer spread."],["Adjusted retail",USD(p.retail),"Comparable retail after adjustments."],["Pricing spread",`${F(p.spread,1)}%`,"Entered retail-to-trade difference."]];
     bars=[{label:"Dealer retail",value:p.retail,display:USD(p.retail)},{label:"Private party",value:p.privateValue,display:USD(p.privateValue)},{label:"Trade-in",value:p.trade,display:USD(p.trade)}];
     rows=[["Local retail benchmark",USD(p.benchmark),"Comparable asking price."],["Condition adjustment",`${F(p.condition,1)}%`,"Selected condition factor."],["Mileage adjustment",USD(p.mileage),"Entered dollar adjustment."],["Options/history adjustment",USD(p.options),"Entered dollar adjustment."],["Regional adjustment",`${F(p.regional,1)}%`,"Local demand assumption."],["Adjusted retail range",range(p.retail),"Midpoint plus or minus 4%."],["Private-party range",range(p.privateValue),"Planning range."],["Trade-in range",range(p.trade),"Planning range, not an offer."]];
+  } else if (engine === "tire_compare") {
+    const p=tireComparison(), speedError=p.actualSpeed-p.indicated;
+    cards=[["Diameter difference",`${p.differencePct>=0?'+':''}${F(p.differencePct,2)}%`,"New tire versus original."],["Actual speed",`${F(p.actualSpeed,2)} mph`,`${F(p.indicated,0)} mph indicated.`],["Ground clearance",`${p.clearance>=0?'+':''}${F(p.clearance,2)} in`,"Half the diameter change."],["Revolutions per mile",F(p.next.revsPerMile,1),"Calculated new tire value."]];
+    bars=[{label:"Original diameter",value:p.original.diameter,display:`${F(p.original.diameter,2)} in`},{label:"New diameter",value:p.next.diameter,display:`${F(p.next.diameter,2)} in`},{label:"Original sidewall",value:p.original.sidewall/25.4,display:`${F(p.original.sidewall,1)} mm`},{label:"New sidewall",value:p.next.sidewall/25.4,display:`${F(p.next.sidewall,1)} mm`}];
+    rows=[["Original size",`${F(p.original.width,0)}/${F(p.original.aspect,0)}R${F(p.original.rim,1)}`,"Entered baseline tire."],["New size",`${F(p.next.width,0)}/${F(p.next.aspect,0)}R${F(p.next.rim,1)}`,"Entered comparison tire."],["Original diameter",`${F(p.original.diameter,3)} in`,"Nominal calculated diameter."],["New diameter",`${F(p.next.diameter,3)} in`,"Nominal calculated diameter."],["Diameter difference",`${p.differencePct>=0?'+':''}${F(p.differencePct,3)}%`,"Common 3% guidance is not fitment approval."],["Speedometer difference",`${speedError>=0?'+':''}${F(speedError,2)} mph`,`${F(p.indicated,0)} mph indicated.`],["Ground-clearance change",`${p.clearance>=0?'+':''}${F(p.clearance,3)} in`,"Static estimate."],["New revolutions per mile",F(p.next.revsPerMile,2),"Actual tire specs may vary."]];
+  } else if (engine === "wheel_offset_compare") {
+    const p=wheelOffsetComparison(), clearanceNote=p.innerClearance>=0?"More suspension-side clearance.":"Less suspension-side clearance.";
+    cards=[["Outer position",`${p.outerPoke>=0?'+':''}${F(p.outerPoke,1)} mm`,p.outerPoke>=0?"Farther toward the fender.":"Farther inward."],["Inner clearance",`${p.innerClearance>=0?'+':''}${F(p.innerClearance,1)} mm`,clearanceNote],["Track change",`${p.trackChange>=0?'+':''}${F(p.trackChange,1)} mm`,"Estimated across both wheels."],["Effective new offset",`ET${F(p.effectiveOffset,1)}`,"New offset minus spacer."]];
+    bars=[{label:"Outer position change",value:p.outerPoke,display:`${p.outerPoke>=0?'+':''}${F(p.outerPoke,1)} mm`},{label:"Inner clearance change",value:p.innerClearance,display:`${p.innerClearance>=0?'+':''}${F(p.innerClearance,1)} mm`},{label:"Track change",value:p.trackChange,display:`${p.trackChange>=0?'+':''}${F(p.trackChange,1)} mm`},{label:"Spacer",value:p.spacer,display:`${F(p.spacer,1)} mm`}];
+    rows=[["Current wheel",`${F(p.currentWidth,1)} in ET${F(p.currentOffset,1)}`,"Entered baseline wheel."],["New wheel",`${F(p.newWidth,1)} in ET${F(p.newOffset,1)}`,"Before spacer adjustment."],["Effective new offset",`ET${F(p.effectiveOffset,1)}`,"Offset minus spacer thickness."],["Inner clearance change",`${p.innerClearance>=0?'+':''}${F(p.innerClearance,2)} mm`,clearanceNote],["Outer position change",`${p.outerPoke>=0?'+':''}${F(p.outerPoke,2)} mm`,p.outerPoke>=0?"Additional poke.":"Moves inward."],["Estimated track change",`${p.trackChange>=0?'+':''}${F(p.trackChange,2)} mm`,"Both sides combined."],["Current backspacing",`${F(p.currentBackspacing,3)} in`,"Includes estimated rim lips."],["New backspacing",`${F(p.newBackspacing,3)} in`,"Includes estimated rim lips and spacer."]];
   } else if (engine === "mpg_advanced") {
     const distance=V('distance'), fuel=V('fuel_used'), miles=document.getElementById('distance_unit')?.value==='kilometers'?distance*0.621371192237:distance, liters=fuel*(document.getElementById('fuel_unit')?.value==='us_gallon'?3.785411784:document.getElementById('fuel_unit')?.value==='imperial_gallon'?4.54609:1), km=miles/0.621371192237, usGallons=liters/3.785411784, imperialGallons=liters/4.54609, usMpg=usGallons>0?miles/usGallons:0, imperialMpg=imperialGallons>0?miles/imperialGallons:0, l100=km>0?liters/km*100:0, kmL=liters>0?km/liters:0;
     cards=[["US fuel economy",`${F(usMpg,2)} MPG`,"Miles per US gallon."],["Metric consumption",`${F(l100,2)} L/100 km`,"Lower is more efficient."],["Imperial fuel economy",`${F(imperialMpg,2)} MPG`,"Miles per UK gallon."],["Kilometers per liter",`${F(kmL,2)} km/L`,"Distance per liter."]];
