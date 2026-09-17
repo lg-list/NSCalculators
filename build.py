@@ -14,7 +14,10 @@ KEYWORD_STATS = ROOT / "exports" / "keyword-stats-positive.json"
 SEO_STRATEGY = ROOT / "exports" / "seo-keyword-strategy-2026-09-05.json"
 PUBLIC_BASE_PATH = os.environ.get("PUBLIC_BASE_PATH", "").strip().rstrip("/")
 PUBLIC_SITE_DOMAIN = os.environ.get("PUBLIC_SITE_DOMAIN", "").strip()
-ASSET_VERSION = "20260917j"
+ASSET_VERSION = "20260917k"
+CALCULATOR_REDIRECTS = {
+    "concrete-calculator": "concrete-volume-calculator",
+}
 
 CATEGORY_ORDER = [
     "Automotive",
@@ -717,6 +720,10 @@ def base_and_supplemental(data):
             calc["title"] = smart_title(calc["title"])
         else:
             calc["keyword_data"] = {}
+        if calc["slug"] == "concrete-volume-calculator":
+            calc["title"] = "Concrete Calculator"
+            calc["seo_keyword"] = "concrete calculator"
+            calc["desc"] = "Calculate cubic yards, cubic feet, concrete bags, and material cost for slabs, footings, columns, and post holes."
     title_counts = Counter(slugify_text(calc["title"]) for calc in calculators)
     for calc in calculators:
         if title_counts[slugify_text(calc["title"])] > 1 and not calc.get("seo_keyword"):
@@ -788,6 +795,12 @@ def seo_description(calc):
         return "Compare two tire sizes for diameter, sidewall, circumference, revolutions per mile, speedometer error, and ground-clearance change."
     if calc.get("slug") == "wheel-offset-calculator":
         return "Compare current and new wheel width, offset, and spacer size to estimate inner clearance, outer poke, track change, and backspacing."
+    if calc.get("slug") == "concrete-volume-calculator":
+        return "Calculate concrete cubic yards, cubic feet, bag count, and estimated material cost for slabs, footings, round columns, and post holes."
+    if calc.get("slug") == "roof-pitch-calculator":
+        return "Calculate roof pitch, angle, percent slope, pitch multiplier, rafter length, sloped area, and roofing squares from pitch, rise and run, or angle."
+    if calc.get("slug") == "rafter-length-calculator":
+        return "Calculate common rafter length, roof rise, slope factor, angle, and horizontal-overhang adjustment from run and roof pitch."
     if calc.get("engine") == "linear_convert":
         return f"Use this free {keyword} to convert units instantly with the formula, example, and related conversion calculators."
     if calc.get("engine") in ("cn_mortgage", "loan_page", "car_loan"):
@@ -941,6 +954,43 @@ def wheel_offset_input_html():
 <div class="field"><label for="new_wheel_width">Wheel width</label><div class="input-unit"><input id="new_wheel_width" type="number" step="0.5" min="1" value="9"><span>in</span></div></div>
 <div class="field"><label for="new_offset">Offset</label><div class="input-unit"><input id="new_offset" type="number" step="1" value="35"><span>mm</span></div></div>
 <div class="field field-wide"><label for="spacer">Spacer thickness per wheel</label><div class="input-unit"><input id="spacer" type="number" step="1" min="0" value="0"><span>mm</span></div></div>
+</div>"""
+
+
+def concrete_volume_input_html():
+    return """<div class="fields project-fields concrete-fields">
+<div class="field field-wide"><label for="concrete_shape">Project shape</label><select id="concrete_shape"><option value="slab" selected>Slab, patio, or footing</option><option value="column">Round column</option><option value="post_hole">Round post holes</option></select></div>
+<div class="field" data-concrete-rect><label for="concrete_length">Length</label><div class="input-unit"><input id="concrete_length" type="number" step="any" min="0" value="20"><span>ft</span></div></div>
+<div class="field" data-concrete-rect><label for="concrete_width">Width</label><div class="input-unit"><input id="concrete_width" type="number" step="any" min="0" value="10"><span>ft</span></div></div>
+<div class="field" data-concrete-rect><label for="concrete_thickness">Thickness</label><div class="input-unit"><input id="concrete_thickness" type="number" step="any" min="0" value="4"><span>in</span></div></div>
+<div class="field is-hidden" data-concrete-round><label for="concrete_diameter">Diameter</label><div class="input-unit"><input id="concrete_diameter" type="number" step="any" min="0" value="12"><span>in</span></div></div>
+<div class="field is-hidden" data-concrete-round><label for="concrete_height">Height or depth</label><div class="input-unit"><input id="concrete_height" type="number" step="any" min="0" value="4"><span>ft</span></div></div>
+<div class="field is-hidden" data-concrete-round><label for="concrete_qty">Quantity</label><input id="concrete_qty" type="number" step="1" min="1" value="4"></div>
+<div class="field"><label for="concrete_waste">Waste allowance</label><div class="input-unit"><input id="concrete_waste" type="number" step="any" min="0" value="10"><span>%</span></div></div>
+<div class="field"><label for="concrete_bag_size">Bag size</label><select id="concrete_bag_size"><option value="0.30">40 lb (0.30 ft³)</option><option value="0.45">60 lb (0.45 ft³)</option><option value="0.60" selected>80 lb (0.60 ft³)</option></select></div>
+<details class="more-options field-wide"><summary>Cost options</summary><div class="fields concrete-cost-fields"><div class="field"><label for="concrete_bag_price">Price per bag</label><div class="input-unit"><input id="concrete_bag_price" type="number" step="any" min="0" value="6.25"><span>$</span></div></div><div class="field"><label for="concrete_yard_price">Ready-mix price</label><div class="input-unit"><input id="concrete_yard_price" type="number" step="any" min="0" value="165"><span>$/yd³</span></div></div></div></details>
+</div>"""
+
+
+def roof_pitch_input_html():
+    return """<div class="fields project-fields roof-pitch-fields">
+<div class="field field-wide"><label for="roof_input_mode">Calculate pitch from</label><select id="roof_input_mode"><option value="pitch" selected>Rise per 12 inches</option><option value="rise_run">Rise and run</option><option value="angle">Angle in degrees</option></select></div>
+<div class="field field-wide" data-roof-pitch><label for="roof_pitch">Pitch rise</label><div class="input-unit"><input id="roof_pitch" type="number" step="any" min="0" value="6"><span>/ 12</span></div></div>
+<div class="field is-hidden" data-roof-rise-run><label for="roof_rise">Rise</label><div class="input-unit"><input id="roof_rise" type="number" step="any" min="0" value="6"><span>in</span></div></div>
+<div class="field is-hidden" data-roof-rise-run><label for="roof_run">Run</label><div class="input-unit"><input id="roof_run" type="number" step="any" min="0.01" value="12"><span>in</span></div></div>
+<div class="field field-wide is-hidden" data-roof-angle><label for="roof_angle">Angle from horizontal</label><div class="input-unit"><input id="roof_angle" type="number" step="any" min="0" max="89.9" value="26.565"><span>°</span></div></div>
+<div class="field"><label for="roof_rafter_run">Horizontal rafter run</label><div class="input-unit"><input id="roof_rafter_run" type="number" step="any" min="0" value="12"><span>ft</span></div></div>
+<div class="field"><label for="roof_overhang">Horizontal overhang</label><div class="input-unit"><input id="roof_overhang" type="number" step="any" min="0" value="12"><span>in</span></div></div>
+<div class="field field-wide"><label for="roof_plan_area">Horizontal plan area (optional)</label><div class="input-unit"><input id="roof_plan_area" type="number" step="any" min="0" value="1200"><span>ft²</span></div></div>
+</div>"""
+
+
+def rafter_length_input_html():
+    return """<div class="fields project-fields rafter-fields">
+<div class="field"><label for="rafter_pitch">Roof pitch rise</label><div class="input-unit"><input id="rafter_pitch" type="number" step="any" min="0" value="6"><span>/ 12</span></div></div>
+<div class="field"><label for="rafter_run">Horizontal run</label><div class="input-unit"><input id="rafter_run" type="number" step="any" min="0" value="12"><span>ft</span></div></div>
+<div class="field"><label for="rafter_overhang">Horizontal overhang</label><div class="input-unit"><input id="rafter_overhang" type="number" step="any" min="0" value="12"><span>in</span></div></div>
+<div class="field"><label for="rafter_qty">Number of rafters</label><input id="rafter_qty" type="number" step="1" min="1" value="20"></div>
 </div>"""
 
 
@@ -1252,6 +1302,31 @@ def high_value_calculator_copy(calc):
 <h2>Backspacing estimate</h2><p>Backspacing is measured from the hub-mounting face to the inner wheel edge. The calculator adds one inch to nominal wheel width as a common approximation for both rim lips, then adds offset. Published wheel specifications should be used when exact overall width is available.</p>
 <h2>Fitment limitations</h2><p>This geometry comparison does not verify bolt pattern, center bore, lug-seat type, stud engagement, brake-caliper clearance, tire bulge, suspension travel, steering lock, fender clearance, alignment, or wheel and tire load ratings. Measure the vehicle and confirm the setup with the wheel manufacturer or a qualified installer.</p>
 <h2>Frequently asked questions</h2><h3>Does a lower offset add more poke?</h3><p>Usually yes when width is unchanged. A wider wheel can add both inner and outer extension, so compare width and offset together.</p><h3>Is more inner clearance always better?</h3><p>No. Moving outward can create fender interference, change scrub radius, alter steering feel, and increase load on components. The result is a dimensional estimate, not an approval.</p>"""
+    if calc.get("slug") == "concrete-volume-calculator":
+        return """
+<h2>How much concrete do I need?</h2><p>Select a rectangular slab or footing, round column, or set of post holes. The calculator converts every measurement to feet, calculates volume, adds the entered waste allowance, and reports cubic feet, cubic yards, bags, and estimated material cost.</p>
+<p class="formula">rectangular volume = length x width x thickness; round volume = π x radius² x height x quantity</p>
+<h2>Concrete slab example</h2><p>A 20 ft by 10 ft slab at 4 inches thick contains 66.67 cubic feet before waste. Adding 10% gives 73.33 cubic feet, or about 2.72 cubic yards. At an approximate 0.60 cubic foot yield, that is 123 80 lb bags after rounding up.</p>
+<h2>Concrete bag yields</h2><p>The calculator uses approximate yields of 0.30 cubic foot for a 40 lb bag, 0.45 cubic foot for a 60 lb bag, and 0.60 cubic foot for an 80 lb bag. These figures match the published <a href="https://www.quikrete.com/pdfs/data_sheet-concrete%20mix%201101.pdf" rel="external noopener">QUIKRETE Concrete Mix data sheet</a>. Product yield varies, so use the label for the exact mix you buy.</p>
+<h2>Bagged mix versus ready-mix</h2><p>The two cost estimates use only the prices you enter. Bag cost excludes sales tax, tools, water, labor, and delivery. Ready-mix cost excludes short-load, delivery, waiting-time, pumping, and minimum-order charges. Call local suppliers before treating either result as a quote.</p>
+<h2>Waste allowance</h2><p>Uneven excavation, subgrade variation, forms, spillage, and leftover material can increase the required volume. Ten percent is a common planning allowance, but the appropriate margin depends on site conditions and measurement confidence.</p>
+<h2>Frequently asked questions</h2><h3>How many cubic feet are in a cubic yard?</h3><p>One cubic yard equals 27 cubic feet.</p><h3>Do I round concrete bags up?</h3><p>Yes. Partial bags are not normally purchased, so the calculator rounds the final bag count up after waste is included.</p><h3>Does this calculate structural requirements?</h3><p>No. It estimates material volume only. Slab thickness, reinforcement, mix strength, joints, drainage, frost protection, and foundation design must follow the project plans and local requirements.</p>"""
+    if calc.get("slug") == "roof-pitch-calculator":
+        return """
+<h2>How to calculate roof pitch</h2><p>Choose the measurement you already know: rise per 12 inches, measured rise and horizontal run, or angle from horizontal. The calculator normalizes each method into an X:12 pitch, degree angle, percent slope, and pitch multiplier.</p>
+<p class="formula">pitch rise per 12 = rise / run x 12; angle = arctan(rise / run); multiplier = √(1 + slope²)</p>
+<h2>6:12 roof-pitch example</h2><p>A 6:12 roof rises 6 inches for every 12 inches of horizontal run. Its slope is 50%, its angle is about 26.57°, and its pitch multiplier is about 1.118. A 12 ft horizontal rafter run with a 12 in horizontal overhang has an estimated sloped length of 14.53 ft.</p>
+<h2>Roof area and roofing squares</h2><p>When a horizontal plan area is entered, the calculator multiplies it by the pitch factor to estimate sloped surface area. One roofing square equals 100 square feet. The estimate does not include waste, starter strips, ridge caps, valleys, hips, dormers, or multiple roof pitches.</p>
+<h2>Roof slope terminology</h2><p>In common US field usage, X:12 describes inches of rise per 12 inches of horizontal run. The <a href="https://www.gaf.com/en-us/document-library/documents/installation-instructions-%26-guides/guide__steepslope_profield_guide_version_20__english.pdf" rel="external noopener">GAF steep-slope field guide</a> explains rise, run, span, slope, and pitch conventions.</p>
+<h2>Frequently asked questions</h2><h3>Is run the same as span?</h3><p>No. Run is horizontal distance from support to ridge. For a centered symmetrical gable, run is commonly half the full building span.</p><h3>Does pitch determine the required rafter size?</h3><p>No. Member size also depends on species, grade, spacing, loads, span, bearing, and code requirements. Use approved plans or a span resource such as the <a href="https://awc.org/resources/span-options-calculator-for-wood-joists-and-rafters/" rel="external noopener">American Wood Council span calculator</a>.</p>"""
+    if calc.get("slug") == "rafter-length-calculator":
+        return """
+<h2>How to calculate common rafter length</h2><p>Enter the roof pitch as rise per 12 inches, the horizontal run from wall support to ridge, and the horizontal eave overhang. The calculator applies the same slope factor to the run and overhang.</p>
+<p class="formula">slope factor = √(pitch² + 12²) / 12; rafter length = (run + horizontal overhang) x slope factor</p>
+<h2>Rafter-length example</h2><p>For a 6:12 roof with a 12 ft horizontal run and 12 in horizontal overhang, the base rafter length is about 13.42 ft and the total sloped length is about 14.53 ft. The roof rise over the 12 ft run is 6 ft.</p>
+<h2>Horizontal versus sloped overhang</h2><p>This calculator expects the overhang's horizontal projection. A 12 in horizontal overhang is longer than 12 in when measured along a sloped rafter. If your drawing already gives the tail length along the slope, do not enter that value as horizontal overhang.</p>
+<h2>Geometry is not structural sizing</h2><p>The result is theoretical line length before ridge, birdsmouth, plumb-cut, seat-cut, fascia, and field-fitting adjustments. It does not select lumber size or verify loads. The <a href="https://awc.org/resources/calculator-help/" rel="external noopener">American Wood Council span-calculator guidance</a> explains that allowable spans depend on strength, stiffness, shear, bearing, species, grade, spacing, and loads.</p>
+<h2>Frequently asked questions</h2><h3>Do I subtract half the ridge-board thickness?</h3><p>Often the theoretical run is adjusted for the ridge detail, but the exact layout depends on the plans and framing method. This calculator leaves that job-specific adjustment to the user.</p><h3>Does the total linear footage include waste?</h3><p>No. It multiplies the calculated length by the entered rafter count. Add an appropriate cutting and procurement allowance separately.</p>"""
     return None
 
 
@@ -1265,6 +1340,19 @@ def default_calculator_copy(calc):
 
 
 def analysis_extra_html(calc):
+    if calc.get("slug") in ("concrete-volume-calculator", "roof-pitch-calculator", "rafter-length-calculator"):
+        labels = {
+            "concrete-volume-calculator": ("Concrete Material Estimate", "Volume and Cost Comparison"),
+            "roof-pitch-calculator": ("Roof Geometry", "Pitch and Area Results"),
+            "rafter-length-calculator": ("Rafter Geometry", "Length Breakdown"),
+        }
+        title, chart_title = labels[calc.get("slug")]
+        return f"""<section class="mortgage-dashboard generic-dashboard project-dashboard" aria-label="{title} results">
+<div class="section-head stack"><h2>{title}</h2><p>Review the main result, supporting measurements, and calculation details.</p></div>
+<div class="summary-grid" id="genericSummary"></div>
+<div class="chart-grid"><div class="chart-card compact-chart"><h3>{chart_title}</h3><canvas id="genericChart" width="620" height="230" aria-label="{chart_title}" data-chart-type="bars"></canvas></div></div>
+<div class="table-card"><h3>Calculation Details</h3><div class="table-scroll"><table class="data-table" id="genericTable"><thead><tr><th>Metric</th><th>Value</th><th>Note</th></tr></thead><tbody></tbody></table></div></div>
+</section>"""
     if calc.get("slug") in ("tire-size-calculator", "wheel-offset-calculator"):
         tire = calc.get("slug") == "tire-size-calculator"
         title = "Tire Size Comparison" if tire else "Wheel Position Comparison"
@@ -1367,6 +1455,15 @@ def calculator_page(site, calc, related):
     elif calc.get("slug") == "wheel-offset-calculator":
         fields = wheel_offset_input_html()
         page_engine = "wheel_offset_compare"
+    elif calc.get("slug") == "concrete-volume-calculator":
+        fields = concrete_volume_input_html()
+        page_engine = "concrete_advanced"
+    elif calc.get("slug") == "roof-pitch-calculator":
+        fields = roof_pitch_input_html()
+        page_engine = "roof_pitch_advanced"
+    elif calc.get("slug") == "rafter-length-calculator":
+        fields = rafter_length_input_html()
+        page_engine = "rafter_advanced"
     elif calc.get("engine") == "cn_mortgage":
         fields = mortgage_input_html()
     elif calc.get("engine") == "loan_page":
@@ -1503,6 +1600,9 @@ body{background:var(--bg)}.site-header{border-bottom-color:#dbe7f4}.primary{back
 .fitment-fields{gap:8px!important}.tire-size-fields{grid-template-columns:repeat(3,minmax(0,1fr))}.wheel-offset-fields{grid-template-columns:repeat(2,minmax(0,1fr))}.field-group-label{grid-column:1/-1;margin-top:2px;padding-bottom:3px;border-bottom:1px solid var(--line);color:var(--brand);font-size:13px;font-weight:850}.fitment-dashboard .chart-grid{grid-template-columns:1fr}.fitment-dashboard .chart-card canvas{max-height:230px}.calculator-article:has(.fitment-fields) .calculator-layout.split-analysis{grid-template-columns:minmax(390px,460px) minmax(0,1fr)}
 @media(max-width:900px){.calculator-article:has(.fitment-fields) .calculator-layout.split-analysis{grid-template-columns:minmax(0,1fr)}}
 @media(max-width:560px){.fitment-fields{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px!important}.tire-size-fields{grid-template-columns:repeat(3,minmax(0,1fr))}.fitment-fields .field label{min-height:28px;display:flex;align-items:end;font-size:12px!important}.fitment-fields .field-wide{grid-column:1/-1}.fitment-fields .field input{height:36px!important;padding:0 6px}.fitment-fields .input-unit input,.fitment-fields .input-unit span{height:36px!important}.fitment-fields .input-unit span{padding:0 6px;font-size:12px}.field-group-label{margin-top:0;font-size:12px}.calculator-article:has(.fitment-fields) .calc{padding:10px}.calculator-article:has(.fitment-fields) .calc h2{margin-bottom:6px;font-size:17px}.calculator-article:has(.fitment-fields) .calc-actions{margin-top:8px}.calculator-article:has(.fitment-fields) .calc-actions .btn{min-height:36px;padding:7px 10px}.calculator-article:has(.fitment-fields) .result{padding:9px 10px;font-size:12px}.calculator-article:has(.fitment-fields) .result strong{font-size:23px}.fitment-dashboard .summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.project-fields{gap:8px!important}.project-fields .is-hidden{display:none!important}.project-dashboard .chart-grid{grid-template-columns:1fr}.project-dashboard .chart-card canvas{max-height:230px}.concrete-cost-fields{padding:0 12px 12px}.calculator-article:has(.project-fields) .calculator-layout.split-analysis{grid-template-columns:minmax(390px,460px) minmax(0,1fr)}
+@media(max-width:900px){.calculator-article:has(.project-fields) .calculator-layout.split-analysis{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:560px){.project-fields{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px!important}.project-fields .field label{min-height:28px;display:flex;align-items:end;font-size:12px!important}.project-fields .field-wide{grid-column:1/-1}.project-fields .field input,.project-fields .field select{height:36px!important;padding:0 6px}.project-fields .input-unit input,.project-fields .input-unit span{height:36px!important}.project-fields .input-unit span{padding:0 6px;font-size:12px}.calculator-article:has(.project-fields) .calc{padding:10px}.calculator-article:has(.project-fields) .calc h2{margin-bottom:6px;font-size:17px}.calculator-article:has(.project-fields) .calc-actions{margin-top:8px}.calculator-article:has(.project-fields) .calc-actions .btn{min-height:36px;padding:7px 10px}.calculator-article:has(.project-fields) .result{padding:9px 10px;font-size:12px}.calculator-article:has(.project-fields) .result strong{font-size:23px}.project-dashboard .summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.concrete-cost-fields{grid-template-columns:repeat(2,minmax(0,1fr))}}
 '''
 
 SEARCH_JS = r'''
@@ -1608,8 +1708,13 @@ function usedCarProjection(){const benchmark=Math.max(0,V('retail_benchmark')),c
 function tireSpec(width,aspect,rim){const sidewall=width*aspect/100,diameter=rim+2*sidewall/25.4,circumference=Math.PI*diameter,revsPerMile=63360/circumference;return{width,aspect,rim,sidewall,diameter,circumference,revsPerMile}}
 function tireComparison(){const original=tireSpec(Math.max(0,V('original_width')),Math.max(0,V('original_aspect')),Math.max(0,V('original_rim'))),next=tireSpec(Math.max(0,V('new_width')),Math.max(0,V('new_aspect')),Math.max(0,V('new_rim'))),ratio=original.diameter?next.diameter/original.diameter:0,differencePct=(ratio-1)*100,indicated=Math.max(0,V('indicated_speed')),actualSpeed=indicated*ratio,clearance=(next.diameter-original.diameter)/2;return{original,next,ratio,differencePct,indicated,actualSpeed,clearance}}
 function wheelOffsetComparison(){const currentWidth=Math.max(0,V('current_width')),currentOffset=V('current_offset'),newWidth=Math.max(0,V('new_wheel_width')),newOffset=V('new_offset'),spacer=Math.max(0,V('spacer')),effectiveOffset=newOffset-spacer,currentHalf=currentWidth*25.4/2,newHalf=newWidth*25.4/2,currentInner=currentHalf+currentOffset,currentOuter=currentHalf-currentOffset,newInner=newHalf+effectiveOffset,newOuter=newHalf-effectiveOffset,innerClearance=currentInner-newInner,outerPoke=newOuter-currentOuter,trackChange=outerPoke*2,currentBackspacing=(currentWidth+1)/2+currentOffset/25.4,newBackspacing=(newWidth+1)/2+effectiveOffset/25.4;return{currentWidth,currentOffset,newWidth,newOffset,spacer,effectiveOffset,currentInner,currentOuter,newInner,newOuter,innerClearance,outerPoke,trackChange,currentBackspacing,newBackspacing}}
+function syncConcreteFields(){const round=(document.getElementById('concrete_shape')?.value||'slab')!=='slab';document.querySelectorAll('[data-concrete-rect]').forEach(el=>el.classList.toggle('is-hidden',round));document.querySelectorAll('[data-concrete-round]').forEach(el=>el.classList.toggle('is-hidden',!round));return round}
+function concreteProjection(){const shape=document.getElementById('concrete_shape')?.value||'slab',round=syncConcreteFields();let baseFt3=0,quantity=1;if(round){const radius=Math.max(0,V('concrete_diameter'))/24,height=Math.max(0,V('concrete_height'));quantity=Math.max(1,Math.floor(V('concrete_qty')));baseFt3=Math.PI*radius*radius*height*quantity}else baseFt3=Math.max(0,V('concrete_length'))*Math.max(0,V('concrete_width'))*Math.max(0,V('concrete_thickness'))/12;const waste=Math.max(0,V('concrete_waste')),withWaste=baseFt3*(1+waste/100),yards=withWaste/27,yieldPerBag=Math.max(.001,V('concrete_bag_size')),bags=Math.ceil(withWaste/yieldPerBag),bagCost=bags*Math.max(0,V('concrete_bag_price')),readyCost=yards*Math.max(0,V('concrete_yard_price'));return{shape,quantity,baseFt3,waste,withWaste,yards,yieldPerBag,bags,bagCost,readyCost}}
+function syncRoofFields(){const mode=document.getElementById('roof_input_mode')?.value||'pitch';document.querySelectorAll('[data-roof-pitch]').forEach(el=>el.classList.toggle('is-hidden',mode!=='pitch'));document.querySelectorAll('[data-roof-rise-run]').forEach(el=>el.classList.toggle('is-hidden',mode!=='rise_run'));document.querySelectorAll('[data-roof-angle]').forEach(el=>el.classList.toggle('is-hidden',mode!=='angle'));return mode}
+function roofPitchProjection(){const mode=syncRoofFields();let slope=0;if(mode==='rise_run')slope=Math.max(0,V('roof_rise'))/Math.max(.0001,V('roof_run'));else if(mode==='angle')slope=Math.tan(Math.max(0,Math.min(89.9,V('roof_angle')))*Math.PI/180);else slope=Math.max(0,V('roof_pitch'))/12;const pitch=slope*12,angle=Math.atan(slope)*180/Math.PI,percent=slope*100,factor=Math.sqrt(1+slope*slope),run=Math.max(0,V('roof_rafter_run')),overhang=Math.max(0,V('roof_overhang'))/12,rafter=(run+overhang)*factor,rise=run*slope,planArea=Math.max(0,V('roof_plan_area')),slopedArea=planArea*factor,squares=slopedArea/100;return{mode,slope,pitch,angle,percent,factor,run,overhang,rafter,rise,planArea,slopedArea,squares}}
+function rafterProjection(){const pitch=Math.max(0,V('rafter_pitch')),slope=pitch/12,factor=Math.sqrt(1+slope*slope),run=Math.max(0,V('rafter_run')),overhang=Math.max(0,V('rafter_overhang'))/12,baseLength=run*factor,tailLength=overhang*factor,totalLength=baseLength+tailLength,rise=run*slope,angle=Math.atan(slope)*180/Math.PI,quantity=Math.max(1,Math.floor(V('rafter_qty'))),totalLinear=totalLength*quantity;return{pitch,slope,factor,run,overhang,baseLength,tailLength,totalLength,rise,angle,quantity,totalLinear}}
 function syncFeetMeterInputs(){const reverse=document.getElementById('conversion_direction')?.value==='meters_to_feet';document.querySelectorAll('[data-feet-input]').forEach(el=>el.classList.toggle('is-hidden',reverse));document.querySelectorAll('[data-meter-input]').forEach(el=>el.classList.toggle('is-hidden',!reverse));return reverse}
-function clearCalcForm(){const form=document.querySelector('.calc');if(!form)return;form.querySelectorAll('input').forEach(input=>{if(input.type==='checkbox')input.checked=false;else input.value=''});form.querySelectorAll('select').forEach(select=>{select.selectedIndex=0});form.querySelectorAll('details').forEach(item=>{item.open=false});syncMortgageCosts();show('<strong>$0.00 / month</strong><br>Enter values to calculate a new result.');const engine=currentEngine();if(engine==='cn_mortgage')renderMortgage(0,0,1,0,0,0,0,0,0,0,0,0,0,new Date());if(engine==='loan_page')renderLoanPage()}
+function clearCalcForm(){const form=document.querySelector('.calc');if(!form)return;form.querySelectorAll('input').forEach(input=>{if(input.type==='checkbox')input.checked=false;else input.value=''});form.querySelectorAll('select').forEach(select=>{select.selectedIndex=0});form.querySelectorAll('details').forEach(item=>{item.open=false});syncMortgageCosts();syncConcreteFields();syncRoofFields();show('<strong>0</strong><br>Enter values to calculate a new result.');const engine=currentEngine();if(engine==='cn_mortgage')renderMortgage(0,0,1,0,0,0,0,0,0,0,0,0,0,new Date());if(engine==='loan_page')renderLoanPage()}
 function calc(e){
  switch(e){
   case'trade_value':{let price=V('price'),age=V('age'),miles=V('miles'),cond=V('condition');let ageF=Math.pow(.84,age),expected=Math.max(1,age)*12000,mileageF=Math.max(.72,Math.min(1.12,1-(miles-expected)*0.000003));let r=price*ageF*mileageF*cond;show(`<strong>${USD(Math.max(0,r))}</strong><br>Illustrative estimate, not a dealer quote or appraisal.`);break}
@@ -1629,6 +1734,9 @@ function calc(e){
   case'used_car_estimate':{const p=usedCarProjection();show(`<strong>${USD(p.privateValue)} private-party estimate</strong><br>Adjusted retail: ${USD(p.retail)}; trade-in estimate: ${USD(p.trade)}; review the planning ranges below.`);break}
   case'tire_compare':{const p=tireComparison(),direction=p.differencePct>=0?'larger':'smaller';show(`<strong>${F(Math.abs(p.differencePct),2)}% ${direction} diameter</strong><br>Actual speed at ${F(p.indicated,0)} mph indicated: ${F(p.actualSpeed,2)} mph; ground-clearance change: ${p.clearance>=0?'+':''}${F(p.clearance,2)} in.`);break}
   case'wheel_offset_compare':{const p=wheelOffsetComparison(),clearance=p.innerClearance>=0?`${F(p.innerClearance,1)} mm more`:`${F(Math.abs(p.innerClearance),1)} mm less`;show(`<strong>${p.outerPoke>=0?'+':''}${F(p.outerPoke,1)} mm outer position</strong><br>${clearance} inner clearance; ${p.trackChange>=0?'+':''}${F(p.trackChange,1)} mm estimated track change.`);break}
+  case'concrete_advanced':{const p=concreteProjection();show(`<strong>${F(p.yards,2)} cubic yards</strong><br>${F(p.withWaste,2)} cubic feet with waste; ${F(p.bags,0)} selected bags; estimated bag cost ${USD(p.bagCost)}.`);break}
+  case'roof_pitch_advanced':{const p=roofPitchProjection();show(`<strong>${F(p.pitch,2)}:12 roof pitch</strong><br>${F(p.angle,2)}° angle; ${F(p.percent,1)}% slope; ${F(p.rafter,2)} ft estimated rafter length.`);break}
+  case'rafter_advanced':{const p=rafterProjection();show(`<strong>${F(p.totalLength,2)} ft per rafter</strong><br>${F(p.baseLength,2)} ft to wall line plus ${F(p.tailLength,2)} ft sloped tail; ${F(p.totalLinear,1)} total linear feet.`);break}
   case'tire':{let width=V('width'),aspect=V('aspect'),wheel=V('wheel');let side=width*aspect/100,diam=wheel+2*side/25.4,circ=Math.PI*diam;show(`<strong>${F(diam,2)} in diameter</strong><br>Sidewall: ${F(side,1)} mm; circumference: ${F(circ,2)} in.`);break}
   case'offset':{let r=(V('backspacing')-V('width')/2)*25.4;show(`<strong>${F(r,1)} mm offset</strong><br>Approximation using nominal wheel width.`);break}
   case'backspacing':{let r=V('width')/2+V('offset')/25.4;show(`<strong>${F(r,2)} in backspacing</strong><br>Approximation using nominal wheel width.`);break}
@@ -1902,6 +2010,21 @@ function renderGenericFromEngine(engine) {
     cards=[["Private-party estimate",USD(p.privateValue),"Midpoint for an as-is private sale."],["Trade-in estimate",USD(p.trade),"Midpoint after entered dealer spread."],["Adjusted retail",USD(p.retail),"Comparable retail after adjustments."],["Pricing spread",`${F(p.spread,1)}%`,"Entered retail-to-trade difference."]];
     bars=[{label:"Dealer retail",value:p.retail,display:USD(p.retail)},{label:"Private party",value:p.privateValue,display:USD(p.privateValue)},{label:"Trade-in",value:p.trade,display:USD(p.trade)}];
     rows=[["Local retail benchmark",USD(p.benchmark),"Comparable asking price."],["Condition adjustment",`${F(p.condition,1)}%`,"Selected condition factor."],["Mileage adjustment",USD(p.mileage),"Entered dollar adjustment."],["Options/history adjustment",USD(p.options),"Entered dollar adjustment."],["Regional adjustment",`${F(p.regional,1)}%`,"Local demand assumption."],["Adjusted retail range",range(p.retail),"Midpoint plus or minus 4%."],["Private-party range",range(p.privateValue),"Planning range."],["Trade-in range",range(p.trade),"Planning range, not an offer."]];
+  } else if (engine === "concrete_advanced") {
+    const p=concreteProjection(), shapeLabel=p.shape==='slab'?"Slab or footing":p.shape==='column'?"Round column":"Round post holes", bagLabel=document.getElementById('concrete_bag_size')?.selectedOptions[0]?.textContent||"Selected bag";
+    cards=[["Concrete needed",`${F(p.yards,2)} yd³`,"Includes entered waste."],["Volume",`${F(p.withWaste,2)} ft³`,"Final ordering volume."],["Bag count",F(p.bags,0),bagLabel],["Estimated bag cost",USD(p.bagCost),"Price per bag times count."]];
+    bars=[{label:"Volume before waste",value:p.baseFt3,display:`${F(p.baseFt3,2)} ft³`},{label:"Volume with waste",value:p.withWaste,display:`${F(p.withWaste,2)} ft³`},{label:"Bag cost",value:p.bagCost,display:USD(p.bagCost)},{label:"Ready-mix material",value:p.readyCost,display:USD(p.readyCost)}];
+    rows=[["Project shape",shapeLabel,"Selected geometry."],["Volume before waste",`${F(p.baseFt3,3)} ft³`,"Calculated dimensions."],["Waste allowance",`${F(p.waste,1)}%`,"Entered planning margin."],["Ordering volume",`${F(p.withWaste,3)} ft³`,`${F(p.yards,3)} cubic yards.`],["Selected bag yield",`${F(p.yieldPerBag,3)} ft³`,"Approximate yield per bag."],["Bags required",F(p.bags,0),"Rounded up to a whole bag."],["Estimated bag cost",USD(p.bagCost),"Excludes tax and labor."],["Estimated ready-mix material",USD(p.readyCost),"Excludes delivery and fees."]];
+  } else if (engine === "roof_pitch_advanced") {
+    const p=roofPitchProjection();
+    cards=[["Roof pitch",`${F(p.pitch,2)}:12`,"Rise per 12 inches of run."],["Roof angle",`${F(p.angle,2)}°`,"Angle from horizontal."],["Pitch multiplier",F(p.factor,4),"Sloped length per horizontal foot."],["Rafter length",`${F(p.rafter,2)} ft`,"Run plus horizontal overhang."]];
+    bars=[{label:"Horizontal run",value:p.run,display:`${F(p.run,2)} ft`},{label:"Roof rise",value:p.rise,display:`${F(p.rise,2)} ft`},{label:"Rafter length",value:p.rafter,display:`${F(p.rafter,2)} ft`},{label:"Roofing squares",value:p.squares,display:F(p.squares,2)}];
+    rows=[["Pitch",`${F(p.pitch,3)}:12`,"Normalized rise per 12."],["Percent slope",`${F(p.percent,3)}%`,"Rise divided by run."],["Angle",`${F(p.angle,3)}°`,"Angle from horizontal."],["Pitch multiplier",F(p.factor,5),"Square root of 1 plus slope squared."],["Horizontal rafter run",`${F(p.run,3)} ft`,"Entered plan distance."],["Roof rise",`${F(p.rise,3)} ft`,"Run times slope."],["Rafter with overhang",`${F(p.rafter,3)} ft`,"Geometry estimate before cuts."],["Sloped roof area",`${F(p.slopedArea,1)} ft²`,"Horizontal plan area times multiplier."],["Roofing squares",F(p.squares,2),"One square equals 100 square feet."]];
+  } else if (engine === "rafter_advanced") {
+    const p=rafterProjection();
+    cards=[["Rafter length",`${F(p.totalLength,2)} ft`,"Includes horizontal overhang."],["Roof rise",`${F(p.rise,2)} ft`,"Over entered horizontal run."],["Slope factor",F(p.factor,4),"Length per horizontal foot."],["Total linear feet",`${F(p.totalLinear,1)} ft`,`${F(p.quantity,0)} rafters before waste.`]];
+    bars=[{label:"Wall-to-ridge length",value:p.baseLength,display:`${F(p.baseLength,2)} ft`},{label:"Sloped tail",value:p.tailLength,display:`${F(p.tailLength,2)} ft`},{label:"Roof rise",value:p.rise,display:`${F(p.rise,2)} ft`},{label:"Total per rafter",value:p.totalLength,display:`${F(p.totalLength,2)} ft`}];
+    rows=[["Roof pitch",`${F(p.pitch,2)}:12`,"Entered rise per 12."],["Pitch angle",`${F(p.angle,3)}°`,"Angle from horizontal."],["Slope factor",F(p.factor,5),"Sloped length multiplier."],["Horizontal run",`${F(p.run,3)} ft`,"Wall support to ridge."],["Roof rise",`${F(p.rise,3)} ft`,"Run times pitch ratio."],["Base rafter length",`${F(p.baseLength,3)} ft`,"Before overhang."],["Sloped overhang length",`${F(p.tailLength,3)} ft`,"From horizontal overhang."],["Total rafter length",`${F(p.totalLength,3)} ft`,"Before cut adjustments."],["Total linear footage",`${F(p.totalLinear,2)} ft`,"Length times rafter count."]];
   } else if (engine === "tire_compare") {
     const p=tireComparison(), speedError=p.actualSpeed-p.indicated;
     cards=[["Diameter difference",`${p.differencePct>=0?'+':''}${F(p.differencePct,2)}%`,"New tire versus original."],["Actual speed",`${F(p.actualSpeed,2)} mph`,`${F(p.indicated,0)} mph indicated.`],["Ground clearance",`${p.clearance>=0?'+':''}${F(p.clearance,2)} in`,"Half the diameter change."],["Revolutions per mile",F(p.next.revsPerMile,1),"Calculated new tire value."]];
@@ -2430,7 +2553,7 @@ def build():
     site = dict(data["site"])
     if PUBLIC_SITE_DOMAIN:
         site["domain"] = PUBLIC_SITE_DOMAIN
-    calculators = base_and_supplemental(data)
+    calculators = [c for c in base_and_supplemental(data) if c["slug"] not in CALCULATOR_REDIRECTS]
     if DIST.exists():
         shutil.rmtree(DIST, ignore_errors=True)
     write(DIST / "assets" / "site.css", CSS.strip() + "\n")
@@ -2460,6 +2583,8 @@ def build():
     for calc in calculators:
         rel = [c for c in by_cat[calc["cat"]] if c["slug"] != calc["slug"] and calculator_group(c) == calculator_group(calc) and is_indexable_calculator(c)][:6]
         write(DIST / calc["slug"] / "index.html", calculator_page(site, calc, rel))
+    for source_slug, target_slug in CALCULATOR_REDIRECTS.items():
+        write(DIST / source_slug / "index.html", redirect_page(site, f"/{source_slug}/", f"/{target_slug}/", "Concrete Calculator"))
 
     write(DIST / "scientific-calculator" / "index.html", scientific_page(site))
     for path, html in info_pages(site).items():
