@@ -14,7 +14,7 @@ KEYWORD_STATS = ROOT / "exports" / "keyword-stats-positive.json"
 SEO_STRATEGY = ROOT / "exports" / "seo-keyword-strategy-2026-09-05.json"
 PUBLIC_BASE_PATH = os.environ.get("PUBLIC_BASE_PATH", "").strip().rstrip("/")
 PUBLIC_SITE_DOMAIN = os.environ.get("PUBLIC_SITE_DOMAIN", "").strip()
-ASSET_VERSION = "20260917m"
+ASSET_VERSION = "20260917n"
 CALCULATOR_REDIRECTS = {
     "concrete-calculator": "concrete-volume-calculator",
 }
@@ -811,6 +811,14 @@ def seo_description(calc):
         return "Calculate deck-board rows, full boards, linear feet, joists, fasteners, package quantities, waste, and estimated material cost."
     if calc.get("slug") == "board-foot-calculator":
         return "Calculate board feet per piece and total lumber volume, including quantity, waste allowance, cubic feet, linear feet, and estimated cost."
+    if calc.get("slug") == "voltage-drop-calculator":
+        return "Calculate voltage drop, voltage at the load, drop percentage, and maximum run length for copper or aluminum wire in DC, single-phase, or three-phase circuits."
+    if calc.get("slug") == "wire-size-calculator":
+        return "Estimate copper or aluminum wire size from load, continuous-use factor, reference ampacity, circuit length, voltage, phase, and maximum voltage drop."
+    if calc.get("slug") == "breaker-size-calculator":
+        return "Estimate a standard breaker size from continuous and noncontinuous load current, including the 125% continuous-load planning factor and circuit utilization."
+    if calc.get("slug") == "electrical-load-calculator":
+        return "Calculate amps, apparent power, continuous-load planning current, and a reference breaker size from watts, voltage, phase, and power factor."
     if calc.get("engine") == "linear_convert":
         return f"Use this free {keyword} to convert units instantly with the formula, example, and related conversion calculators."
     if calc.get("engine") in ("cn_mortgage", "loan_page", "car_loan"):
@@ -1065,6 +1073,52 @@ def board_foot_input_html():
 <div class="field"><label for="bf_quantity">Quantity</label><input id="bf_quantity" type="number" step="1" min="1" value="10"></div>
 <div class="field"><label for="bf_waste">Waste allowance</label><div class="input-unit"><input id="bf_waste" type="number" step="any" min="0" value="10"><span>%</span></div></div>
 <div class="field"><label for="bf_price">Price per board foot</label><div class="input-unit"><input id="bf_price" type="number" step="any" min="0" value="4.25"><span>$/BF</span></div></div>
+</div>"""
+
+
+def voltage_drop_input_html():
+    gauges = [("14", "14 AWG"), ("12", "12 AWG"), ("10", "10 AWG"), ("8", "8 AWG"), ("6", "6 AWG"), ("4", "4 AWG"), ("3", "3 AWG"), ("2", "2 AWG"), ("1", "1 AWG"), ("1/0", "1/0 AWG"), ("2/0", "2/0 AWG"), ("3/0", "3/0 AWG"), ("4/0", "4/0 AWG")]
+    options = "".join(f'<option value="{h(value)}"{" selected" if value == "12" else ""}>{h(label)}</option>' for value, label in gauges)
+    return f"""<div class="fields project-fields electrical-fields">
+<div class="field"><label for="vd_phase">Circuit type</label><select id="vd_phase"><option value="dc">DC</option><option value="single" selected>Single-phase AC</option><option value="three">Three-phase AC</option></select></div>
+<div class="field"><label for="vd_material">Conductor</label><select id="vd_material"><option value="copper" selected>Copper</option><option value="aluminum">Aluminum</option></select></div>
+<div class="field"><label for="vd_gauge">Wire size</label><select id="vd_gauge">{options}</select></div>
+<div class="field"><label for="vd_length">One-way run length</label><div class="input-unit"><input id="vd_length" type="number" step="any" min="0" value="100"><span>ft</span></div></div>
+<div class="field"><label for="vd_amps">Load current</label><div class="input-unit"><input id="vd_amps" type="number" step="any" min="0" value="15"><span>A</span></div></div>
+<div class="field"><label for="vd_voltage">System voltage</label><div class="input-unit"><input id="vd_voltage" type="number" step="any" min="0.01" value="120"><span>V</span></div></div>
+<div class="field field-wide"><label for="vd_limit">Maximum voltage drop</label><div class="input-unit"><input id="vd_limit" type="number" step="any" min="0.1" value="3"><span>%</span></div></div>
+</div>"""
+
+
+def wire_size_input_html():
+    return """<div class="fields project-fields electrical-fields">
+<div class="field"><label for="ws_amps">Load current</label><div class="input-unit"><input id="ws_amps" type="number" step="any" min="0" value="24"><span>A</span></div></div>
+<div class="field"><label for="ws_continuous">Continuous portion</label><div class="input-unit"><input id="ws_continuous" type="number" step="any" min="0" value="24"><span>A</span></div></div>
+<div class="field"><label for="ws_material">Conductor</label><select id="ws_material"><option value="copper" selected>Copper</option><option value="aluminum">Aluminum</option></select></div>
+<div class="field"><label for="ws_temp">Reference ampacity</label><select id="ws_temp"><option value="60" selected>60°C column</option><option value="75">75°C column</option></select></div>
+<div class="field"><label for="ws_phase">Circuit type</label><select id="ws_phase"><option value="dc">DC</option><option value="single" selected>Single-phase AC</option><option value="three">Three-phase AC</option></select></div>
+<div class="field"><label for="ws_voltage">System voltage</label><div class="input-unit"><input id="ws_voltage" type="number" step="any" min="0.01" value="240"><span>V</span></div></div>
+<div class="field"><label for="ws_length">One-way run length</label><div class="input-unit"><input id="ws_length" type="number" step="any" min="0" value="100"><span>ft</span></div></div>
+<div class="field"><label for="ws_drop_limit">Maximum voltage drop</label><div class="input-unit"><input id="ws_drop_limit" type="number" step="any" min="0.1" value="3"><span>%</span></div></div>
+</div>"""
+
+
+def breaker_size_input_html():
+    return """<div class="fields project-fields electrical-fields">
+<div class="field"><label for="br_continuous">Continuous load</label><div class="input-unit"><input id="br_continuous" type="number" step="any" min="0" value="16"><span>A</span></div></div>
+<div class="field"><label for="br_noncontinuous">Noncontinuous load</label><div class="input-unit"><input id="br_noncontinuous" type="number" step="any" min="0" value="0"><span>A</span></div></div>
+<div class="field"><label for="br_voltage">Circuit voltage</label><div class="input-unit"><input id="br_voltage" type="number" step="any" min="0.01" value="120"><span>V</span></div></div>
+<div class="field"><label for="br_poles">Circuit poles</label><select id="br_poles"><option value="1" selected>Single pole</option><option value="2">Double pole</option><option value="3">Three pole</option></select></div>
+</div>"""
+
+
+def electrical_load_input_html():
+    return """<div class="fields project-fields electrical-fields">
+<div class="field"><label for="el_continuous">Continuous load</label><div class="input-unit"><input id="el_continuous" type="number" step="any" min="0" value="1800"><span>W</span></div></div>
+<div class="field"><label for="el_noncontinuous">Noncontinuous load</label><div class="input-unit"><input id="el_noncontinuous" type="number" step="any" min="0" value="600"><span>W</span></div></div>
+<div class="field"><label for="el_voltage">Line voltage</label><div class="input-unit"><input id="el_voltage" type="number" step="any" min="0.01" value="120"><span>V</span></div></div>
+<div class="field"><label for="el_phase">Circuit type</label><select id="el_phase"><option value="dc">DC</option><option value="single" selected>Single-phase AC</option><option value="three">Three-phase AC</option></select></div>
+<div class="field field-wide"><label for="el_pf">Power factor</label><input id="el_pf" type="number" step="0.01" min="0.01" max="1" value="1"></div>
 </div>"""
 
 
@@ -1444,6 +1498,38 @@ def high_value_calculator_copy(calc):
 <h2>Board feet, cubic feet, and linear feet</h2><p>Board feet measure volume, not surface area or length. Twelve board feet equal one cubic foot. Linear feet describe only total length and do not account for thickness or width. This calculator reports all three so you can check the order from different views.</p>
 <h2>US lumber reference</h2><p>The USDA Forest Service defines one board foot as the volume of a board 1 foot long, 1 foot wide, and 1 inch thick. See its <a href="https://www.srs.fs.usda.gov/pubs/rb/rb_srs068.pdf" rel="external noopener">forest-products measurement reference</a>.</p>
 <h2>Frequently asked questions</h2><h3>Should waste be added before cost?</h3><p>Yes. The cost result multiplies the waste-adjusted board feet by the entered price per board foot.</p><h3>Can I use this for decking?</h3><p>Use this page to compare lumber volume. For piece count, joists, fasteners, and whole-board purchasing, use the <a href="/deck-board-calculator/">deck board calculator</a>.</p><h3>Does this account for random widths?</h3><p>Run separate calculations for different dimensions or use an average only when your supplier's tally supports it.</p>"""
+    if calc.get("slug") == "voltage-drop-calculator":
+        return """
+<h2>How to calculate voltage drop</h2><p>Select DC, single-phase AC, or three-phase AC, then enter conductor material and size, one-way run length, current, and system voltage. The calculator uses approximate conductor resistance to estimate voltage lost and voltage remaining at the load.</p>
+<p class="formula">DC or single phase: Vdrop = 2 x length x current x resistance / 1,000; three phase: Vdrop = √3 x length x current x resistance / 1,000</p>
+<h2>Voltage-drop example</h2><p>A 100 ft one-way, 120 V single-phase circuit carrying 15 A on 12 AWG copper at an approximate 1.93 ohms per 1,000 ft loses 5.79 V, or 4.83%. The calculator also estimates a larger conductor and the maximum run length for the selected drop target.</p>
+<h2>Why conductor size matters</h2><p>Longer runs, higher current, and higher resistance increase drop. Larger conductors have lower resistance. Aluminum has higher resistance than copper at the same gauge, so equivalent installations may require different sizes and terminations.</p>
+<h2>Planning limits</h2><p>A common design target is 3% for a branch circuit, but the correct limit depends on the complete system and applicable requirements. Southwire's <a href="https://www.southwire.com/calculator-vdrop" rel="external noopener">voltage drop calculator</a> also considers ampacity and installation details. This page uses a simplified resistive model and does not account for reactance, temperature, harmonics, parallel conductors, or every installation method.</p>
+<h2>Frequently asked questions</h2><h3>Is one-way length or round-trip length entered?</h3><p>Enter one-way length. The DC and single-phase formula doubles it for the outgoing and returning path.</p><h3>Does the recommended gauge prove code compliance?</h3><p>No. It addresses the entered voltage-drop target only. Check ampacity, insulation, terminals, temperature, bundling, conduit fill, equipment instructions, and local code with a qualified electrician.</p><h3>Where can I check ampacity too?</h3><p>Use the <a href="/wire-size-calculator/">wire size calculator</a> for a combined reference ampacity and voltage-drop estimate.</p>"""
+    if calc.get("slug") == "wire-size-calculator":
+        return """
+<h2>How this wire size calculator works</h2><p>The tool compares two constraints: reference ampacity after applying the continuous-load factor and conductor size needed to stay within the entered voltage-drop limit. It recommends the larger conductor produced by those two checks.</p>
+<p class="formula">design current = noncontinuous amps + 125% x continuous amps</p>
+<h2>Wire-size example</h2><p>A 24 A load that is entirely continuous produces 30 A of design current. For a 100 ft, 240 V single-phase copper circuit with a 3% drop target, 10 AWG satisfies the simplified 30 A reference ampacity and keeps estimated voltage drop below the target.</p>
+<h2>Ampacity is installation-specific</h2><p>The 60°C and 75°C choices are reference columns, not permission to use a temperature rating. Terminal ratings, insulation, conductor material, ambient temperature, conductor count, cable type, wet locations, and special equipment rules can change the permitted ampacity. Small-conductor overcurrent limits are included conservatively in this planning table.</p>
+<h2>Voltage-drop check</h2><p>The voltage-drop calculation uses approximate conductor resistance and actual entered load current. Southwire's professional <a href="https://www.southwire.com/calculators/re3%E2%84%A2-building-wire-selector-calculator" rel="external noopener">building wire selector</a> explains that final selection remains subject to current codes, the licensed electrician, and the local authority having jurisdiction.</p>
+<h2>Frequently asked questions</h2><h3>Why can voltage drop require a larger wire?</h3><p>A conductor may carry the load safely at a short distance but lose too much voltage over a long run. The final recommendation uses whichever requirement produces the larger size.</p><h3>Can I size service conductors with this?</h3><p>No. Services, feeders, motors, HVAC, EV charging, and other equipment can have additional rules. Use project-specific engineering and code calculations.</p><h3>Should continuous load exceed total load?</h3><p>No. The calculator caps the continuous portion at the entered total load.</p>"""
+    if calc.get("slug") == "breaker-size-calculator":
+        return """
+<h2>How to estimate breaker size</h2><p>Enter continuous load separately from noncontinuous load. The calculator applies 125% to the continuous portion, adds the noncontinuous portion, and selects the next standard breaker rating at or above that planning current.</p>
+<p class="formula">minimum planning current = 125% x continuous load + noncontinuous load</p>
+<h2>Breaker-size example</h2><p>A 16 A continuous load with no other load produces 20 A of planning current, so the reference result is a 20 A breaker. A 16 A continuous load plus 5 A noncontinuous load produces 25 A.</p>
+<h2>Why continuous load is treated differently</h2><p>NFPA material for Article 215 describes feeder sizing for a combination of noncontinuous load plus 125% of continuous load, subject to listed 100%-rated assemblies and other exceptions. A continuous load is generally one expected to remain at maximum current for three hours or more.</p>
+<h2>A breaker does not size the whole circuit</h2><p>The selected overcurrent device must protect conductors and match equipment, terminal, fault-current, panel, and local requirements. Some loads such as motors, HVAC, welders, and EV supply equipment use additional rules or nameplate values. Confirm the complete circuit with a licensed electrician and the AHJ.</p>
+<h2>Frequently asked questions</h2><h3>Is the next standard size always allowed?</h3><p>No. This tool rounds to a familiar rating for planning, but conductor and equipment rules can prohibit that result.</p><h3>Can I add every appliance breaker to size a panel?</h3><p>No. The US Department of Energy notes that panel breakers cannot simply be added because not every load operates simultaneously. Residential service calculations use specific demand methods.</p><h3>What wire size goes with the result?</h3><p>Use the <a href="/wire-size-calculator/">wire size calculator</a> for a preliminary conductor check, then verify the installation professionally.</p>"""
+    if calc.get("slug") == "electrical-load-calculator":
+        return """
+<h2>How to calculate electrical load</h2><p>Enter continuous and noncontinuous real power separately, then select DC, single-phase AC, or three-phase AC. For AC loads, enter power factor. The calculator reports actual current, apparent power, 125%-adjusted planning current, and a reference standard breaker.</p>
+<p class="formula">single-phase amps = watts / (volts x power factor); three-phase amps = watts / (√3 x volts x power factor)</p>
+<h2>Electrical-load example</h2><p>At 120 V single phase and power factor 1.0, 1,800 W continuous plus 600 W noncontinuous equals 2,400 W and 20 A actual current. Applying 125% only to the continuous portion produces 23.75 A of planning current and a 25 A reference breaker.</p>
+<h2>Watts, VA, and power factor</h2><p>Watts measure real power. Volt-amperes measure apparent power. For AC loads below unity power factor, the same real power requires more current. DC calculations ignore the power-factor entry.</p>
+<h2>Panel and service limitations</h2><p>This tool combines entered loads; it is not a residential service calculation. The US Department of Energy's <a href="https://bsesc.energy.gov/sites/default/files/2024-10/Home%20Electrification%20and%20Electric%20Panel%20Upgrades.pdf" rel="external noopener">panel-upgrade factsheet</a> explains that electricians use nameplate loads and NEC demand methods rather than simply adding breaker ratings.</p>
+<h2>Frequently asked questions</h2><h3>What counts as continuous load?</h3><p>A load expected to operate at maximum current for three hours or more is generally treated as continuous; confirm the applicable definition and equipment rule.</p><h3>Does this include motor efficiency?</h3><p>No. Enter electrical input watts, not mechanical output watts. Motors and HVAC equipment should be sized from nameplate and applicable rules.</p><h3>Can I convert a single value?</h3><p>Use the <a href="/watts-to-amps-calculator/">watts to amps calculator</a> or <a href="/amps-to-watts-calculator/">amps to watts calculator</a> for a simpler conversion.</p>"""
     return None
 
 
@@ -1457,7 +1543,7 @@ def default_calculator_copy(calc):
 
 
 def analysis_extra_html(calc):
-    if calc.get("slug") in ("concrete-volume-calculator", "roof-pitch-calculator", "rafter-length-calculator", "square-footage-calculator", "flooring-calculator", "tile-calculator", "deck-board-calculator", "board-foot-calculator"):
+    if calc.get("slug") in ("concrete-volume-calculator", "roof-pitch-calculator", "rafter-length-calculator", "square-footage-calculator", "flooring-calculator", "tile-calculator", "deck-board-calculator", "board-foot-calculator", "voltage-drop-calculator", "wire-size-calculator", "breaker-size-calculator", "electrical-load-calculator"):
         labels = {
             "concrete-volume-calculator": ("Concrete Material Estimate", "Volume and Cost Comparison"),
             "roof-pitch-calculator": ("Roof Geometry", "Pitch and Area Results"),
@@ -1467,6 +1553,10 @@ def analysis_extra_html(calc):
             "tile-calculator": ("Tile Order", "Pieces, Boxes, and Cost"),
             "deck-board-calculator": ("Deck Material Estimate", "Boards, Framing, and Cost"),
             "board-foot-calculator": ("Lumber Volume Estimate", "Board Feet and Cost"),
+            "voltage-drop-calculator": ("Voltage Drop Results", "Voltage and Run-Length Analysis"),
+            "wire-size-calculator": ("Wire Size Estimate", "Ampacity and Voltage-Drop Checks"),
+            "breaker-size-calculator": ("Breaker Planning Result", "Load and Capacity Analysis"),
+            "electrical-load-calculator": ("Electrical Load Results", "Power and Current Analysis"),
         }
         title, chart_title = labels[calc.get("slug")]
         return f"""<section class="mortgage-dashboard generic-dashboard project-dashboard" aria-label="{title} results">
@@ -1601,6 +1691,18 @@ def calculator_page(site, calc, related):
     elif calc.get("slug") == "board-foot-calculator":
         fields = board_foot_input_html()
         page_engine = "board_foot_advanced"
+    elif calc.get("slug") == "voltage-drop-calculator":
+        fields = voltage_drop_input_html()
+        page_engine = "voltage_drop_advanced"
+    elif calc.get("slug") == "wire-size-calculator":
+        fields = wire_size_input_html()
+        page_engine = "wire_size_advanced"
+    elif calc.get("slug") == "breaker-size-calculator":
+        fields = breaker_size_input_html()
+        page_engine = "breaker_advanced"
+    elif calc.get("slug") == "electrical-load-calculator":
+        fields = electrical_load_input_html()
+        page_engine = "electrical_load_advanced"
     elif calc.get("engine") == "cn_mortgage":
         fields = mortgage_input_html()
     elif calc.get("engine") == "loan_page":
@@ -1856,6 +1958,18 @@ function flooringProjection(){const length=Math.max(0,V('floor_length')),width=M
 function tileProjection(){const length=Math.max(0,V('tile_project_length')),width=Math.max(0,V('tile_project_width')),area=length*width,tileWidth=Math.max(.001,V('tile_width')),tileHeight=Math.max(.001,V('tile_height')),tileArea=tileWidth*tileHeight/144,waste=Math.max(0,V('tile_waste')),targetArea=area*(1+waste/100),pieces=Math.ceil(targetArea/tileArea-1e-9),perBox=Math.max(1,Math.floor(V('tile_per_box'))),boxes=Math.ceil(pieces/perBox-1e-9),purchasedPieces=boxes*perBox,purchasedArea=purchasedPieces*tileArea,leftover=Math.max(0,purchasedArea-area),cost=boxes*Math.max(0,V('tile_box_price'));return{length,width,area,tileWidth,tileHeight,tileArea,waste,targetArea,pieces,perBox,boxes,purchasedPieces,purchasedArea,leftover,cost}}
 function deckProjection(){const length=Math.max(0,V('deck_length')),width=Math.max(0,V('deck_width')),boardWidth=Math.max(.001,V('deck_board_width')),gap=Math.max(0,V('deck_gap')),stockLength=Math.max(.001,V('deck_stock_length')),waste=Math.max(0,V('deck_waste')),joistSpacing=Math.max(.001,V('deck_joist_spacing')),boardPrice=Math.max(0,V('deck_board_price')),fastenersPerCrossing=Math.max(1,Math.floor(V('deck_fasteners_crossing'))),fastenersPerPack=Math.max(1,Math.floor(V('deck_fastener_pack'))),fastenerPackPrice=Math.max(0,V('deck_fastener_price')),area=length*width,rows=Math.ceil(width*12/(boardWidth+gap)-1e-9),boardsPerRow=Math.ceil(length/stockLength-1e-9),baseBoards=rows*boardsPerRow,boards=Math.ceil(baseBoards*(1+waste/100)-1e-9),coverageLinear=rows*length,stockLinear=baseBoards*stockLength,orderedLinear=boards*stockLength,joists=Math.ceil(length*12/joistSpacing-1e-9)+1,fasteners=rows*joists*fastenersPerCrossing,fastenerPacks=Math.ceil(fasteners/fastenersPerPack-1e-9),boardCost=boards*boardPrice,fastenerCost=fastenerPacks*fastenerPackPrice,totalCost=boardCost+fastenerCost;return{length,width,area,boardWidth,gap,stockLength,waste,rows,boardsPerRow,baseBoards,boards,coverageLinear,stockLinear,orderedLinear,joistSpacing,joists,fastenersPerCrossing,fasteners,fastenersPerPack,fastenerPacks,boardCost,fastenerCost,totalCost}}
 function boardFootProjection(){const thickness=Math.max(0,V('bf_thickness')),width=Math.max(0,V('bf_width')),length=Math.max(0,V('bf_length')),quantity=Math.max(1,Math.floor(V('bf_quantity'))),waste=Math.max(0,V('bf_waste')),price=Math.max(0,V('bf_price')),perBoard=thickness*width*length/12,total=perBoard*quantity,order=total*(1+waste/100),cubicFeet=order/12,linearFeet=length*quantity,cost=order*price;return{thickness,width,length,quantity,waste,price,perBoard,total,order,cubicFeet,linearFeet,cost}}
+const ELECTRICAL_WIRE_TABLE=[
+ {g:'14',cuR:3.07,alR:5.06,cu60:15,cu75:15,al60:0,al75:0},{g:'12',cuR:1.93,alR:3.20,cu60:20,cu75:20,al60:0,al75:0},{g:'10',cuR:1.21,alR:2.00,cu60:30,cu75:30,al60:0,al75:0},{g:'8',cuR:.764,alR:1.26,cu60:40,cu75:50,al60:30,al75:40},{g:'6',cuR:.491,alR:.808,cu60:55,cu75:65,al60:40,al75:50},{g:'4',cuR:.308,alR:.508,cu60:70,cu75:85,al60:55,al75:65},{g:'3',cuR:.245,alR:.404,cu60:85,cu75:100,al60:65,al75:75},{g:'2',cuR:.194,alR:.319,cu60:95,cu75:115,al60:75,al75:90},{g:'1',cuR:.154,alR:.253,cu60:110,cu75:130,al60:85,al75:100},{g:'1/0',cuR:.122,alR:.201,cu60:125,cu75:150,al60:100,al75:120},{g:'2/0',cuR:.0967,alR:.159,cu60:145,cu75:175,al60:115,al75:135},{g:'3/0',cuR:.0766,alR:.126,cu60:165,cu75:200,al60:130,al75:155},{g:'4/0',cuR:.0608,alR:.100,cu60:195,cu75:230,al60:150,al75:180}
+];
+const STANDARD_BREAKERS=[15,20,25,30,35,40,45,50,60,70,80,90,100,110,125,150,175,200,225,250,300,350,400];
+function nextBreaker(amps){return STANDARD_BREAKERS.find(x=>x+1e-9>=amps)||Math.ceil(amps/50)*50}
+function phaseFactor(phase){return phase==='three'?Math.sqrt(3):2}
+function wireResistance(row,material){return material==='aluminum'?row.alR:row.cuR}
+function voltageDropFor(row,material,phase,length,amps){return phaseFactor(phase)*length*amps*wireResistance(row,material)/1000}
+function voltageDropProjection(){const phase=document.getElementById('vd_phase')?.value||'single',material=document.getElementById('vd_material')?.value||'copper',gauge=document.getElementById('vd_gauge')?.value||'12',length=Math.max(0,V('vd_length')),amps=Math.max(0,V('vd_amps')),voltage=Math.max(.001,V('vd_voltage')),limit=Math.max(.1,V('vd_limit')),row=ELECTRICAL_WIRE_TABLE.find(x=>x.g===gauge)||ELECTRICAL_WIRE_TABLE[1],drop=voltageDropFor(row,material,phase,length,amps),percent=drop/voltage*100,loadVoltage=Math.max(0,voltage-drop),targetVolts=voltage*limit/100,recommended=ELECTRICAL_WIRE_TABLE.find(x=>voltageDropFor(x,material,phase,length,amps)<=targetVolts+1e-9)||ELECTRICAL_WIRE_TABLE.at(-1),maxLength=amps>0?targetVolts*1000/(phaseFactor(phase)*amps*wireResistance(row,material)):0;return{phase,material,gauge,length,amps,voltage,limit,row,drop,percent,loadVoltage,recommended,maxLength}}
+function wireSizeProjection(){const amps=Math.max(0,V('ws_amps')),continuous=Math.min(amps,Math.max(0,V('ws_continuous'))),designAmps=amps+continuous*.25,material=document.getElementById('ws_material')?.value||'copper',temp=document.getElementById('ws_temp')?.value||'60',phase=document.getElementById('ws_phase')?.value||'single',voltage=Math.max(.001,V('ws_voltage')),length=Math.max(0,V('ws_length')),limit=Math.max(.1,V('ws_drop_limit')),ampKey=(material==='aluminum'?'al':'cu')+temp,ampacityRow=ELECTRICAL_WIRE_TABLE.find(x=>x[ampKey]>=designAmps&&x[ampKey]>0)||ELECTRICAL_WIRE_TABLE.at(-1),targetVolts=voltage*limit/100,dropRow=ELECTRICAL_WIRE_TABLE.find(x=>voltageDropFor(x,material,phase,length,amps)<=targetVolts+1e-9)||ELECTRICAL_WIRE_TABLE.at(-1),ampIndex=ELECTRICAL_WIRE_TABLE.indexOf(ampacityRow),dropIndex=ELECTRICAL_WIRE_TABLE.indexOf(dropRow),recommended=ELECTRICAL_WIRE_TABLE[Math.max(ampIndex,dropIndex)],ampacity=recommended[ampKey],drop=voltageDropFor(recommended,material,phase,length,amps),dropPercent=drop/voltage*100,loadVoltage=Math.max(0,voltage-drop);return{amps,continuous,designAmps,material,temp,phase,voltage,length,limit,ampacityRow,dropRow,recommended,ampacity,drop,dropPercent,loadVoltage}}
+function breakerProjection(){const continuous=Math.max(0,V('br_continuous')),noncontinuous=Math.max(0,V('br_noncontinuous')),actual=continuous+noncontinuous,planning=continuous*1.25+noncontinuous,breaker=nextBreaker(planning),voltage=Math.max(0,V('br_voltage')),poles=Math.max(1,V('br_poles')),utilization=breaker>0?actual/breaker*100:0,headroom=Math.max(0,breaker-planning),power=actual*voltage;return{continuous,noncontinuous,actual,planning,breaker,voltage,poles,utilization,headroom,power}}
+function electricalLoadProjection(){const continuous=Math.max(0,V('el_continuous')),noncontinuous=Math.max(0,V('el_noncontinuous')),watts=continuous+noncontinuous,planningWatts=continuous*1.25+noncontinuous,voltage=Math.max(.001,V('el_voltage')),phase=document.getElementById('el_phase')?.value||'single',pf=phase==='dc'?1:Math.max(.01,Math.min(1,V('el_pf'))),divisor=voltage*pf*(phase==='three'?Math.sqrt(3):1),amps=watts/divisor,planningAmps=planningWatts/divisor,va=watts/pf,breaker=nextBreaker(planningAmps),utilization=breaker>0?amps/breaker*100:0;return{continuous,noncontinuous,watts,planningWatts,voltage,phase,pf,amps,planningAmps,va,breaker,utilization}}
 function syncFeetMeterInputs(){const reverse=document.getElementById('conversion_direction')?.value==='meters_to_feet';document.querySelectorAll('[data-feet-input]').forEach(el=>el.classList.toggle('is-hidden',reverse));document.querySelectorAll('[data-meter-input]').forEach(el=>el.classList.toggle('is-hidden',!reverse));return reverse}
 function clearCalcForm(){const form=document.querySelector('.calc');if(!form)return;form.querySelectorAll('input').forEach(input=>{if(input.type==='checkbox')input.checked=false;else input.value=''});form.querySelectorAll('select').forEach(select=>{select.selectedIndex=0});form.querySelectorAll('details').forEach(item=>{item.open=false});syncMortgageCosts();syncConcreteFields();syncRoofFields();syncAreaFields();show('<strong>0</strong><br>Enter values to calculate a new result.');const engine=currentEngine();if(engine==='cn_mortgage')renderMortgage(0,0,1,0,0,0,0,0,0,0,0,0,0,new Date());if(engine==='loan_page')renderLoanPage()}
 function calc(e){
@@ -1885,6 +1999,10 @@ function calc(e){
 	  case'tile_advanced':{const p=tileProjection();show(`<strong>${F(p.boxes,0)} boxes / ${F(p.pieces,0)} tiles</strong><br>${F(p.targetArea,1)} sq ft target; ${F(p.purchasedArea,1)} sq ft purchased; estimated tile cost ${USD(p.cost)}.`);break}
 	  case'deck_advanced':{const p=deckProjection();show(`<strong>${F(p.boards,0)} full deck boards</strong><br>${F(p.rows,0)} rows; ${F(p.joists,0)} joist lines; ${F(p.fasteners,0)} fasteners; estimated materials ${USD(p.totalCost)}.`);break}
 	  case'board_foot_advanced':{const p=boardFootProjection();show(`<strong>${F(p.order,2)} board feet to order</strong><br>${F(p.total,2)} board feet before waste; ${F(p.cubicFeet,2)} cubic feet; estimated lumber cost ${USD(p.cost)}.`);break}
+	  case'voltage_drop_advanced':{const p=voltageDropProjection();show(`<strong>${F(p.drop,2)} V drop (${F(p.percent,2)}%)</strong><br>${F(p.loadVoltage,2)} V at load; ${p.recommended.g} AWG meets the entered ${F(p.limit,1)}% resistive-drop target.`);break}
+	  case'wire_size_advanced':{const p=wireSizeProjection();show(`<strong>${p.recommended.g} AWG ${p.material}</strong><br>${F(p.ampacity,0)} A reference ampacity; ${F(p.dropPercent,2)}% estimated drop; ${F(p.designAmps,2)} A planning current.`);break}
+	  case'breaker_advanced':{const p=breakerProjection();show(`<strong>${F(p.breaker,0)} A reference breaker</strong><br>${F(p.planning,2)} A minimum planning current; ${F(p.actual,2)} A connected load; verify conductor and equipment rules.`);break}
+	  case'electrical_load_advanced':{const p=electricalLoadProjection();show(`<strong>${F(p.amps,2)} A actual load</strong><br>${F(p.planningAmps,2)} A continuous-load planning current; ${F(p.breaker,0)} A reference breaker; ${F(p.va,0)} VA.`);break}
   case'tire':{let width=V('width'),aspect=V('aspect'),wheel=V('wheel');let side=width*aspect/100,diam=wheel+2*side/25.4,circ=Math.PI*diam;show(`<strong>${F(diam,2)} in diameter</strong><br>Sidewall: ${F(side,1)} mm; circumference: ${F(circ,2)} in.`);break}
   case'offset':{let r=(V('backspacing')-V('width')/2)*25.4;show(`<strong>${F(r,1)} mm offset</strong><br>Approximation using nominal wheel width.`);break}
   case'backspacing':{let r=V('width')/2+V('offset')/25.4;show(`<strong>${F(r,2)} in backspacing</strong><br>Approximation using nominal wheel width.`);break}
@@ -2198,6 +2316,26 @@ function renderGenericFromEngine(engine) {
     cards=[["Board feet to order",F(p.order,2),`${F(p.waste,1)}% waste included.`],["Board feet per piece",F(p.perBoard,3),`${F(p.thickness,2)} x ${F(p.width,2)} in x ${F(p.length,2)} ft.`],["Cubic feet",F(p.cubicFeet,3),"Waste-adjusted lumber volume."],["Estimated lumber cost",USD(p.cost),`${USD(p.price)} per board foot.`]];
     bars=[{label:"Board feet before waste",value:p.total,display:F(p.total,2)},{label:"Waste allowance",value:p.order-p.total,display:F(p.order-p.total,2)},{label:"Board feet to order",value:p.order,display:F(p.order,2)},{label:"Estimated cost",value:p.cost,display:USD(p.cost)}];
     rows=[["Dimensions",`${F(p.thickness,2)} in x ${F(p.width,2)} in x ${F(p.length,2)} ft`,"Entered pricing dimensions."],["Quantity",F(p.quantity,0),"Whole pieces."],["Board feet per piece",F(p.perBoard,4),"Thickness x width x length / 12."],["Board feet before waste",F(p.total,4),"Per-piece volume times quantity."],["Waste allowance",`${F(p.waste,2)}%`,"Entered purchasing margin."],["Board feet to order",F(p.order,4),"Volume after waste."],["Cubic feet",F(p.cubicFeet,4),"Board feet divided by 12."],["Total linear feet",`${F(p.linearFeet,2)} ft`,"Length times quantity before waste."],["Price per board foot",USD(p.price),"Entered unit price."],["Estimated cost",USD(p.cost),"Order volume times unit price."]];
+  } else if (engine === "voltage_drop_advanced") {
+    const p=voltageDropProjection(), material=p.material==='copper'?"Copper":"Aluminum", phase=p.phase==='three'?"Three-phase AC":p.phase==='dc'?"DC":"Single-phase AC";
+    cards=[["Voltage drop",`${F(p.drop,2)} V`,`${F(p.percent,2)}% of source voltage.`],["Voltage at load",`${F(p.loadVoltage,2)} V`,`${F(p.voltage,1)} V source.`],["Drop-target wire",`${p.recommended.g} AWG`,`${material}; ${F(p.limit,1)}% target.`],["Maximum run",`${F(p.maxLength,1)} ft`,"For selected wire and target."]];
+    bars=[{label:"Source voltage",value:p.voltage,display:`${F(p.voltage,1)} V`},{label:"Voltage at load",value:p.loadVoltage,display:`${F(p.loadVoltage,2)} V`},{label:"Voltage lost",value:p.drop,display:`${F(p.drop,2)} V`},{label:"Drop limit",value:p.voltage*p.limit/100,display:`${F(p.limit,1)}%`}];
+    rows=[["Circuit type",phase,"Selected formula."],["Conductor",`${p.gauge} AWG ${material}`,`${F(wireResistance(p.row,p.material),4)} ohms/1,000 ft reference.`],["One-way run",`${F(p.length,2)} ft`,"Round trip is handled by formula."],["Load current",`${F(p.amps,2)} A`,"Entered current."],["Source voltage",`${F(p.voltage,2)} V`,"Entered system voltage."],["Voltage drop",`${F(p.drop,3)} V`,`${F(p.percent,3)}% of source.`],["Voltage at load",`${F(p.loadVoltage,3)} V`,"Source minus estimated drop."],["Target conductor",`${p.recommended.g} AWG`,"Drop-only recommendation."],["Maximum selected-wire run",`${F(p.maxLength,2)} ft`,`${F(p.limit,2)}% entered target.`]];
+  } else if (engine === "wire_size_advanced") {
+    const p=wireSizeProjection(), material=p.material==='copper'?"Copper":"Aluminum", phase=p.phase==='three'?"Three-phase AC":p.phase==='dc'?"DC":"Single-phase AC";
+    cards=[["Recommended wire",`${p.recommended.g} AWG`,`${material}; larger of both checks.`],["Planning current",`${F(p.designAmps,2)} A`,"Includes continuous-load factor."],["Reference ampacity",`${F(p.ampacity,0)} A`,`${p.temp}°C selected column.`],["Voltage drop",`${F(p.dropPercent,2)}%`,`${F(p.drop,2)} V over entered run.`]];
+    bars=[{label:"Actual load",value:p.amps,display:`${F(p.amps,2)} A`},{label:"Planning current",value:p.designAmps,display:`${F(p.designAmps,2)} A`},{label:"Reference ampacity",value:p.ampacity,display:`${F(p.ampacity,0)} A`},{label:"Drop percentage",value:p.dropPercent,display:`${F(p.dropPercent,2)}%`}];
+    rows=[["Circuit type",phase,"Selected voltage-drop formula."],["Conductor",material,`${p.temp}°C reference column.`],["Actual load",`${F(p.amps,2)} A`,"Entered total current."],["Continuous portion",`${F(p.continuous,2)} A`,"Receives 125% planning factor."],["Planning current",`${F(p.designAmps,2)} A`,"Ampacity sizing load."],["Ampacity-only size",`${p.ampacityRow.g} AWG`,"First size meeting reference ampacity."],["Drop-only size",`${p.dropRow.g} AWG`,`${F(p.limit,2)}% target.`],["Recommended size",`${p.recommended.g} AWG`,"Larger of ampacity and drop checks."],["Reference ampacity",`${F(p.ampacity,0)} A`,"Before correction or adjustment."],["Estimated voltage drop",`${F(p.drop,3)} V`,`${F(p.dropPercent,3)}%; ${F(p.loadVoltage,2)} V at load.`]];
+  } else if (engine === "breaker_advanced") {
+    const p=breakerProjection();
+    cards=[["Reference breaker",`${F(p.breaker,0)} A`,`${F(p.poles,0)} pole selection.`],["Planning current",`${F(p.planning,2)} A`,"125% continuous plus noncontinuous."],["Connected load",`${F(p.actual,2)} A`,`${F(p.utilization,1)}% of reference breaker.`],["Connected power",`${F(p.power,0)} W`,`${F(p.voltage,0)} V x actual amps.`]];
+    bars=[{label:"Continuous load",value:p.continuous,display:`${F(p.continuous,2)} A`},{label:"Noncontinuous load",value:p.noncontinuous,display:`${F(p.noncontinuous,2)} A`},{label:"Planning current",value:p.planning,display:`${F(p.planning,2)} A`},{label:"Reference breaker",value:p.breaker,display:`${F(p.breaker,0)} A`}];
+    rows=[["Continuous load",`${F(p.continuous,3)} A`,"Multiplied by 125%."],["Noncontinuous load",`${F(p.noncontinuous,3)} A`,"Added at 100%."],["Connected load",`${F(p.actual,3)} A`,"Sum before planning factor."],["Minimum planning current",`${F(p.planning,3)} A`,"Continuous x 1.25 plus noncontinuous."],["Reference breaker",`${F(p.breaker,0)} A`,"Next familiar standard rating."],["Planning headroom",`${F(p.headroom,2)} A`,"Breaker minus planning current."],["Connected-load utilization",`${F(p.utilization,2)}%`,"Actual amps divided by reference breaker."],["Connected power",`${F(p.power,1)} W`,"Simple volts x amps display."]];
+  } else if (engine === "electrical_load_advanced") {
+    const p=electricalLoadProjection(), phase=p.phase==='three'?"Three-phase AC":p.phase==='dc'?"DC":"Single-phase AC";
+    cards=[["Actual current",`${F(p.amps,2)} A`,`${F(p.watts,0)} W total load.`],["Planning current",`${F(p.planningAmps,2)} A`,"Continuous portion at 125%."],["Apparent power",`${F(p.va,0)} VA`,`${F(p.pf,2)} power factor.`],["Reference breaker",`${F(p.breaker,0)} A`,"Planning result only."]];
+    bars=[{label:"Continuous power",value:p.continuous,display:`${F(p.continuous,0)} W`},{label:"Noncontinuous power",value:p.noncontinuous,display:`${F(p.noncontinuous,0)} W`},{label:"Actual current",value:p.amps,display:`${F(p.amps,2)} A`},{label:"Planning current",value:p.planningAmps,display:`${F(p.planningAmps,2)} A`}];
+    rows=[["Circuit type",phase,"Selected current formula."],["Continuous load",`${F(p.continuous,2)} W`,"Receives 125% planning factor."],["Noncontinuous load",`${F(p.noncontinuous,2)} W`,"Included at 100%."],["Total real power",`${F(p.watts,2)} W`,"Entered loads combined."],["Power factor",F(p.pf,3),p.phase==='dc'?"Not applied to DC.":"Used for AC current."],["Apparent power",`${F(p.va,2)} VA`,"Watts divided by power factor."],["Actual current",`${F(p.amps,3)} A`,"Before continuous-load factor."],["Planning power",`${F(p.planningWatts,2)} W`,"Continuous x 1.25 plus other load."],["Planning current",`${F(p.planningAmps,3)} A`,"Used for reference breaker."],["Reference breaker",`${F(p.breaker,0)} A`,`${F(p.utilization,1)}% connected-load utilization.`]];
   } else if (engine === "tire_compare") {
     const p=tireComparison(), speedError=p.actualSpeed-p.indicated;
     cards=[["Diameter difference",`${p.differencePct>=0?'+':''}${F(p.differencePct,2)}%`,"New tire versus original."],["Actual speed",`${F(p.actualSpeed,2)} mph`,`${F(p.indicated,0)} mph indicated.`],["Ground clearance",`${p.clearance>=0?'+':''}${F(p.clearance,2)} in`,"Half the diameter change."],["Revolutions per mile",F(p.next.revsPerMile,1),"Calculated new tire value."]];
