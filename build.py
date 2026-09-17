@@ -14,7 +14,7 @@ KEYWORD_STATS = ROOT / "exports" / "keyword-stats-positive.json"
 SEO_STRATEGY = ROOT / "exports" / "seo-keyword-strategy-2026-09-05.json"
 PUBLIC_BASE_PATH = os.environ.get("PUBLIC_BASE_PATH", "").strip().rstrip("/")
 PUBLIC_SITE_DOMAIN = os.environ.get("PUBLIC_SITE_DOMAIN", "").strip()
-ASSET_VERSION = "20260917h"
+ASSET_VERSION = "20260917i"
 
 CATEGORY_ORDER = [
     "Automotive",
@@ -780,6 +780,10 @@ def seo_description(calc):
         return "Calculate gas mileage from distance and fuel used, with instant US MPG, Imperial MPG, L/100 km, and kilometers-per-liter results."
     if calc.get("slug") == "trip-fuel-cost-calculator":
         return "Estimate one-way or round-trip fuel cost, gallons or liters needed, cost per mile, and each traveler's share in US or metric units."
+    if calc.get("slug") == "car-trade-in-value-calculator":
+        return "Estimate a transparent car trade-in value, loan equity, possible sales-tax benefit, and effective trade value from a local comparable listing."
+    if calc.get("slug") == "used-car-value-calculator":
+        return "Estimate used-car retail, private-party, and trade-in ranges from a local comparable price, mileage, condition, options, and market adjustments."
     if calc.get("engine") == "linear_convert":
         return f"Use this free {keyword} to convert units instantly with the formula, example, and related conversion calculators."
     if calc.get("engine") in ("cn_mortgage", "loan_page", "car_loan"):
@@ -884,6 +888,29 @@ def trip_fuel_cost_input_html():
 <div class="field"><label for="trips">Number of trips</label><input id="trips" type="number" step="1" min="1" value="1"></div>
 <div class="field"><label for="people">People sharing cost</label><input id="people" type="number" step="1" min="1" value="1"></div>
 <div class="field"><label for="currency">Currency</label><select id="currency"><option value="USD" selected>USD ($)</option><option value="GBP">GBP (£)</option><option value="EUR">EUR (€)</option><option value="CAD">CAD ($)</option></select></div>
+</div>"""
+
+
+def trade_in_value_input_html():
+    return """<div class="fields vehicle-value-fields">
+<div class="field"><label for="comparable">Comparable dealer listing</label><div class="input-unit"><input id="comparable" type="number" step="any" min="0" value="22000"><span>$</span></div></div>
+<div class="field"><label for="market_adjustment">Condition and mileage adjustment</label><div class="input-unit"><input id="market_adjustment" type="number" step="any" value="-500"><span>$</span></div></div>
+<div class="field"><label for="dealer_margin">Dealer resale margin</label><div class="input-unit"><input id="dealer_margin" type="number" step="any" min="0" value="1800"><span>$</span></div></div>
+<div class="field"><label for="reconditioning">Repair and cleanup cost</label><div class="input-unit"><input id="reconditioning" type="number" step="any" min="0" value="600"><span>$</span></div></div>
+<div class="field"><label for="payoff">Current loan payoff</label><div class="input-unit"><input id="payoff" type="number" step="any" min="0" value="12000"><span>$</span></div></div>
+<div class="field"><label for="replacement_price">Replacement vehicle price</label><div class="input-unit"><input id="replacement_price" type="number" step="any" min="0" value="35000"><span>$</span></div></div>
+<div class="field field-wide"><label for="tax_rate">Entered trade-in sales-tax credit rate</label><div class="input-unit"><input id="tax_rate" type="number" step="any" min="0" value="6"><span>%</span></div></div>
+</div>"""
+
+
+def used_car_value_input_html():
+    return """<div class="fields vehicle-value-fields">
+<div class="field"><label for="retail_benchmark">Local comparable retail price</label><div class="input-unit"><input id="retail_benchmark" type="number" step="any" min="0" value="22000"><span>$</span></div></div>
+<div class="field"><label for="condition_adjustment">Vehicle condition</label><select id="condition_adjustment"><option value="-12">Fair (-12%)</option><option value="-5" selected>Good (-5%)</option><option value="0">Very good (0%)</option><option value="3">Excellent (+3%)</option></select></div>
+<div class="field"><label for="mileage_adjustment">Mileage adjustment</label><div class="input-unit"><input id="mileage_adjustment" type="number" step="any" value="-500"><span>$</span></div></div>
+<div class="field"><label for="options_adjustment">Options and history adjustment</label><div class="input-unit"><input id="options_adjustment" type="number" step="any" value="0"><span>$</span></div></div>
+<div class="field"><label for="regional_adjustment">Local market adjustment</label><div class="input-unit"><input id="regional_adjustment" type="number" step="any" value="0"><span>%</span></div></div>
+<div class="field"><label for="dealer_spread">Retail-to-trade spread</label><div class="input-unit"><input id="dealer_spread" type="number" step="any" min="0" value="12"><span>%</span></div></div>
 </div>"""
 
 
@@ -1157,6 +1184,26 @@ def high_value_calculator_copy(calc):
 <h2>Splitting gas money</h2><p>The per-person result divides fuel cost evenly by the number of travelers. It does not assign different shares for the driver, vehicle owner, or passengers, so adjust the entered count or agree on a different split when needed.</p>
 <h2>US and metric modes</h2><p>US mode uses miles, MPG, and price per US gallon. Metric mode uses kilometers, L/100 km, and price per liter. Currency selection changes display only; it does not perform an exchange-rate conversion.</p>
 <h2>Frequently asked questions</h2><h3>Should distance be one way?</h3><p>Yes. Enter one-way distance and choose Round trip when you plan to return over roughly the same distance.</p><h3>Where can I find my vehicle's MPG?</h3><p>Use a recent fill-to-fill calculation for the most relevant estimate, or start with the combined rating for the exact vehicle configuration.</p><h3>Does the result include idling?</h3><p>Only indirectly if your entered real-world MPG already reflects idling. Add a margin for heavy traffic, cold weather, towing, or long stationary periods.</p>"""
+    if calc.get("slug") == "car-trade-in-value-calculator":
+        return """
+<h2>How to estimate car trade-in value</h2><p>Start with the asking price of a similar dealer-listed vehicle in your area: same year, make, model, trim, drivetrain, mileage, and condition. Adjust that benchmark for meaningful differences, then subtract expected dealer margin and reconditioning costs.</p>
+<p class="formula">estimated trade-in = comparable retail price + adjustments - dealer margin - reconditioning</p>
+<h2>Trade-in example</h2><p>A $22,000 comparable listing with a -$500 mileage or condition adjustment, $1,800 dealer margin, and $600 of expected work produces an estimated $19,100 trade-in value. With a $12,000 payoff, estimated positive equity is $7,100.</p>
+<h2>Trade-in value versus private sale</h2><p>A dealer trade-in is usually lower than a private-party sale because a reseller may need to inspect, repair, detail, market, finance, and warranty the vehicle. In exchange, a trade-in can be faster and may reduce transaction complexity.</p>
+<h2>Loan equity and negative equity</h2><p>Equity equals estimated trade-in value minus the lender's current payoff quote. A negative result means the payoff exceeds the estimated trade value. Ask the lender for a current payoff amount rather than adding remaining scheduled payments.</p>
+<h2>Possible sales-tax benefit</h2><p>Some jurisdictions reduce the taxable amount of a replacement vehicle by an eligible trade-in value, while others do not. Enter only a rate and benefit that applies to your transaction. The calculator caps the assumed credit at the replacement vehicle price and is not tax advice.</p>
+<h2>Check a data-backed valuation</h2><p>This tool does not have live auction, VIN, or dealer transaction data. Compare its planning estimate with multiple current offers and a recognized valuation provider. The <a href="https://www.kbb.com/faq/values/" rel="external noopener">Kelley Blue Book value FAQ</a> explains why trade-in value is generally below private-party value.</p>
+<h2>Frequently asked questions</h2><h3>Should I use the original MSRP?</h3><p>No. Use a current local retail listing for a genuinely comparable vehicle; original MSRP does not capture present market demand.</p><h3>Can I enter a positive adjustment?</h3><p>Yes. Use a positive amount when your vehicle has lower mileage, better condition, or valuable equipment compared with the benchmark.</p><h3>Is this a dealer offer?</h3><p>No. It is a transparent planning estimate. Only an appraisal or written buyer offer establishes an actionable trade value.</p>"""
+    if calc.get("slug") == "used-car-value-calculator":
+        return """
+<h2>How to estimate a used car's value</h2><p>Use a current local retail asking price for a closely comparable vehicle, then adjust for condition, mileage, options, history, and local demand. The calculator derives separate planning ranges for dealer retail, private-party sale, and dealer trade-in.</p>
+<p class="formula">adjusted retail = local benchmark x condition factor x regional factor + mileage adjustment + options adjustment</p>
+<h2>Used-car value example</h2><p>A $22,000 local retail benchmark in good condition, adjusted down $500 for mileage, produces an adjusted retail estimate of $20,400 before any options or regional adjustment. The private-party and trade-in estimates are lower to reflect different selling channels.</p>
+<h2>Choose the right benchmark</h2><p>Match year, make, model, trim, engine, drivetrain, major options, title history, mileage, and ZIP-area market as closely as possible. Asking prices are not completed sale prices, so review several listings rather than relying on one unusually high or low example.</p>
+<h2>Retail, private-party, and trade-in values</h2><p>Dealer retail reflects a vehicle offered by a business. Private-party value estimates an as-is transaction between individuals. Trade-in value is typically lower because the dealer must leave room for inspection, reconditioning, inventory, and operating costs.</p>
+<h2>Vehicle condition</h2><p>Most vehicles should not be rated excellent. Consider mechanical condition, warning lights, tires, glass, paint, interior wear, accident and title history, maintenance records, odors, and required repairs. Be consistent with the condition of your benchmark vehicle.</p>
+<h2>Independent comparison</h2><p>This calculator has no live VIN or transaction feed. Use it to reconcile listings and offers, then compare with a professional valuation. The <a href="https://www.kbb.com/faq/values/" rel="external noopener">Kelley Blue Book value FAQ</a> notes that age, mileage, equipment, condition, and location affect value.</p>
+<h2>Frequently asked questions</h2><h3>Why is the value shown as a range?</h3><p>Real transactions vary with negotiation, local supply, buyer demand, inspection results, and timing. A range is more honest than false single-dollar precision.</p><h3>Does the calculator know my VIN?</h3><p>No. You supply the comparable market price and adjustments. Use a VIN-based valuation provider for vehicle-specific market data.</p><h3>Can an accident change the estimate?</h3><p>Yes. Enter a negative options and history adjustment based on comparable vehicles or documented appraisal evidence.</p>"""
     return None
 
 
@@ -1249,6 +1296,12 @@ def calculator_page(site, calc, related):
     elif calc.get("slug") == "trip-fuel-cost-calculator":
         fields = trip_fuel_cost_input_html()
         page_engine = "fuel_cost_advanced"
+    elif calc.get("slug") == "car-trade-in-value-calculator":
+        fields = trade_in_value_input_html()
+        page_engine = "trade_in_estimate"
+    elif calc.get("slug") == "used-car-value-calculator":
+        fields = used_car_value_input_html()
+        page_engine = "used_car_estimate"
     elif calc.get("engine") == "cn_mortgage":
         fields = mortgage_input_html()
     elif calc.get("engine") == "loan_page":
@@ -1381,6 +1434,7 @@ body{background:var(--bg)}.site-header{border-bottom-color:#dbe7f4}.primary{back
 @media(max-width:560px){.compound-fields{grid-template-columns:repeat(2,minmax(0,1fr))}.compound-fields .field label{min-height:34px;display:flex;align-items:end}.compound-dashboard .summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:560px){.vehicle-weight-fields{grid-template-columns:repeat(2,minmax(0,1fr))}.vehicle-weight-fields .field label{min-height:34px;display:flex;align-items:end}.vehicle-weight-fields .field-wide{grid-column:1/-1}}
 @media(max-width:560px){.fuel-fields{grid-template-columns:repeat(2,minmax(0,1fr))}.fuel-fields .field label{min-height:34px;display:flex;align-items:end}}
+@media(max-width:560px){.vehicle-value-fields{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px!important}.vehicle-value-fields .field label{min-height:28px;display:flex;align-items:end;font-size:12px!important}.vehicle-value-fields .field-wide{grid-column:1/-1}.vehicle-value-fields .field input,.vehicle-value-fields .field select{height:36px!important}.calculator-article:has(.vehicle-value-fields) .calc{padding:10px}.calculator-article:has(.vehicle-value-fields) .calc h2{margin-bottom:6px;font-size:17px}.calculator-article:has(.vehicle-value-fields) .calc-actions{margin-top:8px}.calculator-article:has(.vehicle-value-fields) .calc-actions .btn{min-height:36px;padding:7px 10px}.calculator-article:has(.vehicle-value-fields) .result{padding:9px 10px}}
 '''
 
 SEARCH_JS = r'''
@@ -1481,6 +1535,8 @@ function compoundProjection(){
   }
   return {principal,annual,years,frequency,monthly,timing,balance,totalInterest,totalDeposits,schedule,effectiveAnnual:Math.pow(1+annual/frequency,frequency)-1};
 }
+function tradeInProjection(){const comparable=Math.max(0,V('comparable')),adjustment=V('market_adjustment'),margin=Math.max(0,V('dealer_margin')),reconditioning=Math.max(0,V('reconditioning')),payoff=Math.max(0,V('payoff')),replacement=Math.max(0,V('replacement_price')),taxRate=Math.max(0,V('tax_rate'))/100,trade=Math.max(0,comparable+adjustment-margin-reconditioning),equity=trade-payoff,taxSavings=Math.min(trade,replacement)*taxRate;return{comparable,adjustment,margin,reconditioning,payoff,replacement,taxRate,trade,equity,taxSavings,effective:trade+taxSavings}}
+function usedCarProjection(){const benchmark=Math.max(0,V('retail_benchmark')),condition=V('condition_adjustment'),mileage=V('mileage_adjustment'),options=V('options_adjustment'),regional=V('regional_adjustment'),spread=Math.max(0,Math.min(50,V('dealer_spread'))),retail=Math.max(0,benchmark*(1+condition/100)*(1+regional/100)+mileage+options),privateValue=retail*(1-spread/200),trade=retail*(1-spread/100);return{benchmark,condition,mileage,options,regional,spread,retail,privateValue,trade}}
 function syncFeetMeterInputs(){const reverse=document.getElementById('conversion_direction')?.value==='meters_to_feet';document.querySelectorAll('[data-feet-input]').forEach(el=>el.classList.toggle('is-hidden',reverse));document.querySelectorAll('[data-meter-input]').forEach(el=>el.classList.toggle('is-hidden',!reverse));return reverse}
 function clearCalcForm(){const form=document.querySelector('.calc');if(!form)return;form.querySelectorAll('input').forEach(input=>{if(input.type==='checkbox')input.checked=false;else input.value=''});form.querySelectorAll('select').forEach(select=>{select.selectedIndex=0});form.querySelectorAll('details').forEach(item=>{item.open=false});syncMortgageCosts();show('<strong>$0.00 / month</strong><br>Enter values to calculate a new result.');const engine=currentEngine();if(engine==='cn_mortgage')renderMortgage(0,0,1,0,0,0,0,0,0,0,0,0,0,new Date());if(engine==='loan_page')renderLoanPage()}
 function calc(e){
@@ -1498,6 +1554,8 @@ function calc(e){
   case'mpg':{let r=V('gallons')?V('miles')/V('gallons'):0;show(`<strong>${F(r,2)} MPG</strong>`);break}
   case'mpg_advanced':{let distance=V('distance'),fuel=V('fuel_used'),miles=(document.getElementById('distance_unit')?.value==='kilometers'?distance*0.621371192237:distance),liters=fuel*(document.getElementById('fuel_unit')?.value==='us_gallon'?3.785411784:document.getElementById('fuel_unit')?.value==='imperial_gallon'?4.54609:1),usGallons=liters/3.785411784,mpg=usGallons>0?miles/usGallons:0,km=miles/0.621371192237,l100=km>0?liters/km*100:0;show(`<strong>${F(mpg,2)} US MPG</strong><br>${F(l100,2)} L/100 km; ${F(miles/(liters/4.54609),2)} Imperial MPG; ${F(liters?km/liters:0,2)} km/L.`);break}
   case'fuel_cost_advanced':{let metric=document.getElementById('trip_units')?.value==='metric',distance=V('distance')*Math.max(1,V('trip_type'))*Math.max(1,V('trips')),eff=Math.max(.01,V('efficiency')),fuel=metric?distance*eff/100:distance/eff,cost=fuel*V('fuelprice'),currency=document.getElementById('currency')?.value||'USD',people=Math.max(1,V('people'));show(`<strong>${MONEY(cost,currency)}</strong><br>${F(fuel,2)} ${metric?'liters':'US gallons'}; ${MONEY(cost/people,currency)} per person; ${F(distance,0)} ${metric?'km':'miles'} total.`);break}
+  case'trade_in_estimate':{const p=tradeInProjection(),equityLabel=p.equity>=0?'positive equity':'negative equity';show(`<strong>${USD(p.trade)} trade-in estimate</strong><br>${USD(Math.abs(p.equity))} ${equityLabel}; ${USD(p.taxSavings)} entered tax benefit; ${USD(p.effective)} effective trade value.`);break}
+  case'used_car_estimate':{const p=usedCarProjection();show(`<strong>${USD(p.privateValue)} private-party estimate</strong><br>Adjusted retail: ${USD(p.retail)}; trade-in estimate: ${USD(p.trade)}; review the planning ranges below.`);break}
   case'tire':{let width=V('width'),aspect=V('aspect'),wheel=V('wheel');let side=width*aspect/100,diam=wheel+2*side/25.4,circ=Math.PI*diam;show(`<strong>${F(diam,2)} in diameter</strong><br>Sidewall: ${F(side,1)} mm; circumference: ${F(circ,2)} in.`);break}
   case'offset':{let r=(V('backspacing')-V('width')/2)*25.4;show(`<strong>${F(r,1)} mm offset</strong><br>Approximation using nominal wheel width.`);break}
   case'backspacing':{let r=V('width')/2+V('offset')/25.4;show(`<strong>${F(r,2)} in backspacing</strong><br>Approximation using nominal wheel width.`);break}
@@ -1761,6 +1819,16 @@ function renderGenericFromEngine(engine) {
     cards=[["Recommended PSU",`${F(psu,0)} W`,"Next common PSU size."],["Estimated load",`${F(base,0)} W`,"Component wattage total."],["With headroom",`${F(recommended,0)} W`,"Load plus safety margin."],["Headroom",`${F(V('headroom'),0)}%`,"Entered planning margin."]];
     bars=[{label:"CPU",value:cpu,display:`${F(cpu,0)} W`},{label:"GPU",value:gpu,display:`${F(gpu,0)} W`},{label:"Storage",value:drives,display:`${F(drives,0)} W`},{label:"Cooling",value:fans,display:`${F(fans,0)} W`},{label:"Other",value:other,display:`${F(other,0)} W`}];
     rows=[["CPU",`${F(cpu,0)} W`,"Entered CPU power."],["GPU",`${F(gpu,0)} W`,"Entered GPU power."],["Drives/storage",`${F(drives,0)} W`,"Storage estimate."],["Fans/cooling/RGB",`${F(fans,0)} W`,"Cooling and lighting load."],["Other devices",`${F(other,0)} W`,"Additional system load."],["Recommended PSU",`${F(psu,0)} W`,"Rounded to a common size."]];
+  } else if (engine === "trade_in_estimate") {
+    const p=tradeInProjection(), equityLabel=p.equity>=0?"Positive equity":"Negative equity";
+    cards=[["Trade-in estimate",USD(p.trade),"Comparable less entered dealer costs."],[equityLabel,USD(Math.abs(p.equity)),"Trade estimate minus loan payoff."],["Entered tax benefit",USD(p.taxSavings),"Varies by jurisdiction and transaction."],["Effective trade value",USD(p.effective),"Trade estimate plus entered tax benefit."]];
+    bars=[{label:"Trade-in value",value:p.trade,display:USD(p.trade)},{label:"Loan payoff",value:p.payoff,display:USD(p.payoff)},{label:"Tax benefit",value:p.taxSavings,display:USD(p.taxSavings)},{label:"Dealer costs",value:p.margin+p.reconditioning,display:USD(p.margin+p.reconditioning)}];
+    rows=[["Comparable retail listing",USD(p.comparable),"Current local asking-price benchmark."],["Condition/mileage adjustment",USD(p.adjustment),"Positive or negative difference."],["Dealer resale margin",USD(p.margin),"Entered planning allowance."],["Repair and cleanup",USD(p.reconditioning),"Expected reconditioning."],["Estimated trade-in",USD(p.trade),"Planning estimate, not an offer."],["Loan payoff",USD(p.payoff),"Entered lender payoff."],["Loan equity",USD(p.equity),p.equity>=0?"Value above payoff.":"Payoff above value."],["Entered sales-tax benefit",USD(p.taxSavings),"Confirm local rules."]];
+  } else if (engine === "used_car_estimate") {
+    const p=usedCarProjection(), range=(value)=>`${USD(value*.96)} - ${USD(value*1.04)}`;
+    cards=[["Private-party estimate",USD(p.privateValue),"Midpoint for an as-is private sale."],["Trade-in estimate",USD(p.trade),"Midpoint after entered dealer spread."],["Adjusted retail",USD(p.retail),"Comparable retail after adjustments."],["Pricing spread",`${F(p.spread,1)}%`,"Entered retail-to-trade difference."]];
+    bars=[{label:"Dealer retail",value:p.retail,display:USD(p.retail)},{label:"Private party",value:p.privateValue,display:USD(p.privateValue)},{label:"Trade-in",value:p.trade,display:USD(p.trade)}];
+    rows=[["Local retail benchmark",USD(p.benchmark),"Comparable asking price."],["Condition adjustment",`${F(p.condition,1)}%`,"Selected condition factor."],["Mileage adjustment",USD(p.mileage),"Entered dollar adjustment."],["Options/history adjustment",USD(p.options),"Entered dollar adjustment."],["Regional adjustment",`${F(p.regional,1)}%`,"Local demand assumption."],["Adjusted retail range",range(p.retail),"Midpoint plus or minus 4%."],["Private-party range",range(p.privateValue),"Planning range."],["Trade-in range",range(p.trade),"Planning range, not an offer."]];
   } else if (engine === "mpg_advanced") {
     const distance=V('distance'), fuel=V('fuel_used'), miles=document.getElementById('distance_unit')?.value==='kilometers'?distance*0.621371192237:distance, liters=fuel*(document.getElementById('fuel_unit')?.value==='us_gallon'?3.785411784:document.getElementById('fuel_unit')?.value==='imperial_gallon'?4.54609:1), km=miles/0.621371192237, usGallons=liters/3.785411784, imperialGallons=liters/4.54609, usMpg=usGallons>0?miles/usGallons:0, imperialMpg=imperialGallons>0?miles/imperialGallons:0, l100=km>0?liters/km*100:0, kmL=liters>0?km/liters:0;
     cards=[["US fuel economy",`${F(usMpg,2)} MPG`,"Miles per US gallon."],["Metric consumption",`${F(l100,2)} L/100 km`,"Lower is more efficient."],["Imperial fuel economy",`${F(imperialMpg,2)} MPG`,"Miles per UK gallon."],["Kilometers per liter",`${F(kmL,2)} km/L`,"Distance per liter."]];
