@@ -2019,6 +2019,7 @@ def build():
     write(DIST / "privacy" / "index.html", redirect_page(site, "/privacy/", "/privacy-policy/", "Privacy Policy"))
     write(DIST / "404.html", page(site, "Page Not Found | Northstar Calculators", "The requested calculator page could not be found.", "/404.html", '<main class="main"><div class="wrap"><article class="article"><h1>Page not found</h1><p class="lead">Try the homepage search to find the calculator you need.</p><a class="btn primary" href="/">Go to homepage</a></article></div></main>'))
     write(DIST / "robots.txt", f"User-agent: *\nAllow: /\nSitemap: {site_url(site, '/sitemap.xml')}\n")
+    write(DIST / "CNAME", "nscalculators.com\n")
     for verification_file in ROOT.glob("google*.html"):
         shutil.copy2(verification_file, DIST / verification_file.name)
 

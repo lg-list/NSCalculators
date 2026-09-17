@@ -28,8 +28,8 @@ jobs:
 
       - name: Build static site
         env:
-          PUBLIC_SITE_DOMAIN: https://lg-list.github.io/NSCalculators
-          PUBLIC_BASE_PATH: /NSCalculators
+          PUBLIC_SITE_DOMAIN: https://nscalculators.com
+          PUBLIC_BASE_PATH: ""
         run: python build.py
 
       - name: Upload artifact
