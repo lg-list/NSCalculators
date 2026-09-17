@@ -14,9 +14,10 @@ KEYWORD_STATS = ROOT / "exports" / "keyword-stats-positive.json"
 SEO_STRATEGY = ROOT / "exports" / "seo-keyword-strategy-2026-09-05.json"
 PUBLIC_BASE_PATH = os.environ.get("PUBLIC_BASE_PATH", "").strip().rstrip("/")
 PUBLIC_SITE_DOMAIN = os.environ.get("PUBLIC_SITE_DOMAIN", "").strip()
-ASSET_VERSION = "20260917o"
+ASSET_VERSION = "20260917p"
 CALCULATOR_REDIRECTS = {
     "concrete-calculator": "concrete-volume-calculator",
+    "loan-payment-calculator": "loan-calculator",
 }
 
 CATEGORY_ORDER = [
@@ -741,6 +742,16 @@ def is_indexable_calculator(calc):
 
 
 def seo_keywords(calc):
+    if calc.get("slug") == "loan-calculator":
+        return [
+            "loan calculator",
+            "loan payment calculator",
+            "monthly loan payment calculator",
+            "loan interest calculator",
+            "loan amortization calculator",
+            "fixed payment loan calculator",
+            "financial calculators",
+        ]
     keyword = primary_keyword(calc)
     group = display_group(calculator_group(calc)).lower()
     cat = f"{calc['cat'].lower()} calculators"
@@ -761,6 +772,8 @@ def seo_keywords(calc):
 
 
 def seo_title(calc):
+    if calc.get("slug") == "loan-calculator":
+        return "Loan Calculator: Payment & Interest | NS Calculators"
     title = smart_title(primary_keyword(calc))
     if calc.get("seo_context_label"):
         context = smart_title(calc["seo_context_label"])
@@ -823,6 +836,8 @@ def seo_description(calc):
         return "Convert watts to amps for DC, single-phase AC, or balanced three-phase AC, with power factor, VA, kVA, reactive power, and continuous-load planning current."
     if calc.get("slug") == "amps-to-watts-calculator":
         return "Convert amps to watts and kilowatts for DC, single-phase AC, or balanced three-phase AC, including power factor, VA, kVA, and reactive power."
+    if calc.get("slug") == "loan-calculator":
+        return "Calculate loan payments, total interest, amortization, deferred loan maturity value, and bond present value with monthly or custom payment frequency."
     if calc.get("engine") == "linear_convert":
         return f"Use this free {keyword} to convert units instantly with the formula, example, and related conversion calculators."
     if calc.get("engine") in ("cn_mortgage", "loan_page", "car_loan"):
@@ -1175,8 +1190,8 @@ def payback_options(selected="month"):
 
 
 def loan_input_html():
-    return f"""<div class="loan-mode-stack">
-<section class="loan-mode-input" id="monthlyfixed"><h3>Amortized Loan</h3><p>Fixed payments paid periodically until the loan is paid off.</p><div class="fields loan-fields">
+    return f"""<div class="loan-mode-tabs" role="tablist" aria-label="Loan model"><button class="is-active" type="button" role="tab" aria-selected="true" data-loan-mode="monthlyfixed">Amortized</button><button type="button" role="tab" aria-selected="false" data-loan-mode="intheend">Deferred</button><button type="button" role="tab" aria-selected="false" data-loan-mode="fixedend">Bond</button></div><div class="loan-mode-stack">
+<section class="loan-mode-input is-active" id="monthlyfixed"><h3>Amortized Loan</h3><p>Fixed payments paid periodically until the loan is paid off.</p><div class="fields loan-fields">
 <div class="field"><label for="l_amount">Loan Amount</label><input id="l_amount" type="number" step="any" value="100000"></div>
 <div class="field"><label for="l_rate">Interest Rate (%)</label><input id="l_rate" type="number" step="any" value="6"></div>
 <div class="field"><label for="l_years">Loan Term Years</label><input id="l_years" type="number" step="any" value="10"></div>
@@ -1361,6 +1376,20 @@ def conversion_copy(calc):
 
 
 def high_value_calculator_copy(calc):
+    if calc.get("slug") == "loan-calculator":
+        return """
+<h2>Loan payment calculator</h2><p>Use the amortized-loan section for a conventional fixed-payment installment loan. Enter principal, annual interest rate, term, compounding frequency, and payment frequency to calculate each payment, total payments, total interest, and the full amortization schedule.</p>
+<p class="formula">payment = P x r x (1 + r)^n / ((1 + r)^n - 1)</p>
+<p>In the formula, P is principal, r is the effective rate for each payment period, and n is the number of payments. When the rate is zero, payment equals principal divided by the number of payments.</p>
+<h2>Fixed-payment loan example</h2><p>A $100,000 loan at a 6% annual interest rate, compounded monthly and repaid monthly over 10 years, has a payment of about $1,110.21. Across 120 payments, total paid is about $133,224.60 and total interest is about $33,224.60.</p>
+<h2>Amortization schedule</h2><p>Each fixed payment first covers interest on the remaining balance; the rest reduces principal. Early payments contain more interest because the balance is larger. Later payments shift toward principal. The schedule shows payment, principal, interest, and ending balance for every period.</p>
+<h2>Deferred payment loan</h2><p>Use the second model when principal and interest accumulate until one amount is due at maturity. It compounds the entered principal for the selected term and frequency without periodic payments.</p>
+<p class="formula">amount due = principal x (1 + annual rate / compounds per year)^(compounds per year x years)</p>
+<h2>Bond or predetermined due amount</h2><p>Use the third model when the future amount due is known and you need its present value. The result discounts the future value back over the selected term using the entered rate and compounding frequency.</p>
+<p class="formula">present value = future amount / (1 + annual rate / compounds per year)^(compounds per year x years)</p>
+<h2>Interest rate versus APR</h2><p>The calculator treats the entered percentage as the nominal rate used in the selected compounding model. A disclosed APR can include certain fees and may not equal the note interest rate. The <a href="https://www.consumerfinance.gov/ask-cfpb/what-is-the-difference-between-a-loan-interest-rate-and-the-apr-en-733/" rel="external noopener">Consumer Financial Protection Bureau</a> explains that APR is intended to reflect the interest rate plus additional loan charges.</p>
+<h2>Compare total cost, not only payment</h2><p>A longer term can reduce each payment while increasing total interest. CFPB guidance recommends comparing amount financed, APR or rate, term, monthly payment, and total cost. Origination, documentation, insurance, late, and other fees are not included unless they are already part of the principal you enter.</p>
+<h2>Frequently asked questions</h2><h3>Is this also a loan payment calculator?</h3><p>Yes. The amortized-loan model calculates periodic payment, total interest, total paid, and an amortization schedule.</p><h3>Can payment frequency differ from compounding frequency?</h3><p>Yes. The calculator converts the entered annual rate into an effective rate for the selected payment interval.</p><h3>Does the result include fees?</h3><p>No. Add financed fees to principal if appropriate and compare the result with the lender's legally required disclosures.</p><h3>Can I use it for mortgages or auto loans?</h3><p>The basic amortization math applies, but dedicated <a href="/mortgage-calculator/">mortgage</a> and <a href="/auto-loan-calculator/">auto loan</a> tools include costs specific to those products.</p>"""
     if calc.get("slug") == "feet-to-meters-calculator":
         return """
 <h2>How to convert feet to meters</h2><p>Multiply feet by the exact conversion factor 0.3048. When a measurement includes inches, divide the inches by 12, add that value to the feet, and then multiply the total feet by 0.3048.</p>
@@ -1642,7 +1671,7 @@ def analysis_extra_html(calc):
 </section>"""
     if calc.get("engine") == "loan_page":
         return """<section class="loan-results" aria-label="Loan calculator results">
-<div class="loan-result-panel" id="monthlyfixedr"><div class="section-head stack"><h2>Amortized Loan Results</h2><p>Fixed payment, total payments, total interest, and amortization table.</p></div><div class="summary-grid" id="loanSummary"></div><div class="loan-chart-row"><div class="chart-card compact-chart"><h3>Principal vs Interest</h3><canvas id="loanPie" width="360" height="180" aria-label="Amortized loan principal and interest pie chart" data-center-label="total"></canvas></div><div class="table-card loan-result-table"><h3>Results</h3><div class="table-scroll"><table class="data-table" id="loanResultTable"><tbody></tbody></table></div><button class="text-link table-toggle" type="button" data-toggle-table="loanAmortTable">View Amortization Table</button></div></div><div class="table-card is-collapsed" id="loanAmortTable"><h3>Amortization Table</h3><div class="table-scroll"><table class="data-table"><thead><tr><th>Period</th><th>Payment</th><th>Principal</th><th>Interest</th><th>Balance</th></tr></thead><tbody id="loanAmortRows"></tbody></table></div></div></div>
+<div class="loan-result-panel is-active" id="monthlyfixedr"><div class="section-head stack"><h2>Amortized Loan Results</h2><p>Fixed payment, total payments, total interest, and amortization table.</p></div><div class="summary-grid" id="loanSummary"></div><div class="loan-chart-row"><div class="chart-card compact-chart"><h3>Principal vs Interest</h3><canvas id="loanPie" width="360" height="180" aria-label="Amortized loan principal and interest pie chart" data-center-label="total"></canvas></div><div class="table-card loan-result-table"><h3>Results</h3><div class="table-scroll"><table class="data-table" id="loanResultTable"><tbody></tbody></table></div><button class="text-link table-toggle" type="button" data-toggle-table="loanAmortTable">View Amortization Table</button></div></div><div class="table-card is-collapsed" id="loanAmortTable"><h3>Amortization Table</h3><div class="table-scroll"><table class="data-table"><thead><tr><th>Period</th><th>Payment</th><th>Principal</th><th>Interest</th><th>Balance</th></tr></thead><tbody id="loanAmortRows"></tbody></table></div></div></div>
 <div class="loan-result-panel" id="intheendr"><div class="section-head stack"><h2>Deferred Payment Loan Results</h2><p>Single amount due at maturity with compounded interest.</p></div><div class="summary-grid" id="deferredSummary"></div><div class="loan-chart-row"><div class="chart-card compact-chart"><h3>Principal vs Interest</h3><canvas id="deferredPie" width="360" height="180" aria-label="Deferred loan principal and interest pie chart" data-center-label="total"></canvas></div><div class="table-card loan-result-table"><h3>Results</h3><div class="table-scroll"><table class="data-table" id="deferredResultTable"><tbody></tbody></table></div><button class="text-link table-toggle" type="button" data-toggle-table="deferredSchedule">View Schedule Table</button></div></div><div class="table-card is-collapsed" id="deferredSchedule"><h3>Schedule Table</h3><div class="table-scroll"><table class="data-table"><thead><tr><th>Year</th><th>Starting Balance</th><th>Interest</th><th>Ending Balance</th></tr></thead><tbody id="deferredRows"></tbody></table></div></div></div>
 <div class="loan-result-panel" id="fixedendr"><div class="section-head stack"><h2>Bond Results</h2><p>Amount received at the start and interest discount to the predetermined due amount.</p></div><div class="summary-grid" id="bondSummary"></div><div class="loan-chart-row"><div class="chart-card compact-chart"><h3>Principal vs Interest</h3><canvas id="bondPie" width="360" height="180" aria-label="Bond present value and interest pie chart" data-center-label="total"></canvas></div><div class="table-card loan-result-table"><h3>Results</h3><div class="table-scroll"><table class="data-table" id="bondResultTable"><tbody></tbody></table></div><button class="text-link table-toggle" type="button" data-toggle-table="bondSchedule">View Schedule Table</button></div></div><div class="table-card is-collapsed" id="bondSchedule"><h3>Schedule Table</h3><div class="table-scroll"><table class="data-table"><thead><tr><th>Year</th><th>Starting Value</th><th>Interest</th><th>Ending Value</th></tr></thead><tbody id="bondRows"></tbody></table></div></div></div>
 </section>"""
@@ -1854,13 +1883,13 @@ CSS = r'''
 .calculator-article .field label,.calculator-article .field input,.calculator-article .field select{font-size:16px}
 .input-unit{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;border:1px solid #cfd7e4;border-radius:9px;background:#fff;overflow:hidden}.input-unit input,.input-unit select{border:0!important;border-radius:0!important;height:42px!important}.input-unit input{min-width:0}.input-unit select,.input-unit span{height:42px;display:grid;place-items:center;border-left:1px solid #dfe5ee;background:#f8fafc;color:#344054;padding:0 10px;font-weight:760}.input-unit select{min-width:72px}.field-wide{grid-column:1/-1}.checkline{display:flex!important;align-items:center;gap:10px;min-height:42px;margin:0!important;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#f8fafc;color:var(--ink);font-size:16px!important}.checkline input{width:18px;height:18px;accent-color:var(--brand)}.mortgage-cost-fields[hidden],.mortgage-cost-fields.is-hidden{display:none!important}.calculator-article:has(#mortgageSummary) .field label{font-size:16px;margin-bottom:4px}.calculator-article:has(#mortgageSummary) .field input,.calculator-article:has(#mortgageSummary) .field select{font-size:16px}.calculator-article:has(#mortgageSummary) .field>input,.calculator-article:has(#mortgageSummary) .field>select{height:42px;padding:0 10px}.calculator-article:has(#mortgageSummary) .mortgage-fields{gap:9px;margin-top:9px}.calculator-article:has(#mortgageSummary) .mortgage-fields:first-child{margin-top:0}
 .calc-actions{display:flex;gap:10px;align-items:center;margin-top:14px}.calc-actions .calc-btn{margin-top:0;flex:1}.clear-btn{min-width:92px}.more-options{margin-top:10px;border:1px solid var(--line);border-radius:10px;background:#fff}.more-options summary{min-height:42px;display:flex;align-items:center;padding:0 12px;cursor:pointer;color:var(--brand);font-size:16px;font-weight:850}.more-options summary::marker{color:var(--accent)}.more-options .mortgage-fields{padding:0 12px 12px}.calculator-article:has(#mortgageSummary) .calc-actions{margin-top:10px}.calculator-article:has(#mortgageSummary) .calc-actions .calc-btn,.calculator-article:has(#mortgageSummary) .clear-btn{min-height:42px;font-size:16px;padding:9px 14px}
-.loan-mode-stack{display:grid;gap:12px}.loan-mode-input{padding:12px;border:1px solid var(--line);border-radius:12px;background:#f8fafc}.loan-mode-input h3{margin:0 0 4px;font-size:18px;letter-spacing:-.015em}.loan-mode-input p{margin:0 0 10px;color:var(--muted);font-size:13px;line-height:1.35}.loan-fields{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.loan-results{display:grid;gap:14px}.loan-result-panel{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;box-shadow:0 10px 28px rgba(21,32,51,.05)}.loan-result-panel .summary-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:10px 0 12px}.loan-chart-row{display:grid;grid-template-columns:minmax(260px,.9fr) minmax(260px,1fr);gap:12px;align-items:start}.loan-result-table{margin-top:0}.table-toggle{margin-top:10px;border:0;background:transparent;padding:0;cursor:pointer}.is-collapsed{display:none}.calculator-article:has(.loan-results) .calculator-layout.split-analysis{grid-template-columns:minmax(430px,500px) minmax(0,1fr)}.calculator-article:has(.loan-results) .result strong{font-size:30px}.calculator-article:has(.loan-results) .calc{padding:14px}.calculator-article:has(.loan-results) .chart-card canvas{max-height:none}
+.loan-mode-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-bottom:10px;padding:4px;border:1px solid var(--line);border-radius:10px;background:#edf2f7}.loan-mode-tabs button{min-height:38px;border:0;border-radius:7px;background:transparent;color:#475467;font:800 14px/1 system-ui,sans-serif;cursor:pointer}.loan-mode-tabs button.is-active{background:#fff;color:var(--brand);box-shadow:0 2px 8px rgba(21,32,51,.12)}.loan-mode-stack{display:grid;gap:12px}.loan-mode-input{display:none;padding:12px;border:1px solid var(--line);border-radius:12px;background:#f8fafc}.loan-mode-input.is-active{display:block}.loan-mode-input h3{margin:0 0 4px;font-size:18px;letter-spacing:-.015em}.loan-mode-input p{margin:0 0 10px;color:var(--muted);font-size:13px;line-height:1.35}.loan-fields{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.loan-results{display:grid;gap:14px}.loan-result-panel{display:none;background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;box-shadow:0 10px 28px rgba(21,32,51,.05)}.loan-result-panel.is-active{display:block}.loan-result-panel .summary-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:10px 0 12px}.loan-chart-row{display:grid;grid-template-columns:minmax(260px,.9fr) minmax(260px,1fr);gap:12px;align-items:start}.loan-result-table{margin-top:0}.table-toggle{margin-top:10px;border:0;background:transparent;padding:0;cursor:pointer}.is-collapsed{display:none}.calculator-article:has(.loan-results) .calculator-layout.split-analysis{grid-template-columns:minmax(430px,500px) minmax(0,1fr)}.calculator-article:has(.loan-results) .result strong{font-size:30px}.calculator-article:has(.loan-results) .calc{padding:14px}.calculator-article:has(.loan-results) .chart-card canvas{max-height:none}
 @media(max-width:1180px){.nav{align-items:center}.navlinks{flex:0 0 auto;overflow:visible;flex-wrap:nowrap;justify-content:flex-end;padding-bottom:0}.category-nav-link{flex:initial}}
 @media(max-width:1100px){.category-tools{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:900px){.hero-grid,.feature-layout,.proof-grid,.scientific-home,.browse-panel,.scientific-panel,.chart-grid,.calculator-layout.split-analysis,.seo-keywords{grid-template-columns:1fr}.calculator-pane{position:static}.keyword-chip-list{justify-content:flex-start}.category-grid,.tool-grid,.home-category-grid,.popular-list,.summary-grid{grid-template-columns:repeat(2,1fr)}.category-tools{grid-template-columns:repeat(2,1fr)}.directory-links{grid-template-columns:repeat(2,1fr)}.proof-points,.faq-grid,.faq-list,.related{grid-template-columns:1fr 1fr}.search-panel{box-shadow:none}.stats{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:560px){.nav{min-height:64px;gap:10px}.brand{font-size:16px}.brand-mark{width:34px;height:34px}.category-nav-link{padding:6px 7px}.category-nav-link .nav-icon{display:none}.all-calculators-menu .submenu{grid-template-columns:1fr;right:-4px;max-height:72vh;overflow:auto}.hero{padding:32px 0 26px}.hero h1{font-size:36px}.home-hero{padding:30px 0 24px}.home-hero h1{font-size:38px}.hero-actions,.footer-grid,.mini-calc,.mini-calc.full{display:grid;grid-template-columns:1fr}.category-grid,.tool-grid,.home-category-grid,.fields,.directory-links,.proof-points,.faq-grid,.faq-list,.popular-list,.related,.calculator-link-grid,.summary-grid{grid-template-columns:1fr}.section{padding:42px 0}.section.tight,.home-block{padding:28px 0}.section-row{align-items:start}.article h1{font-size:36px}.calculator-article h1{font-size:30px}.calculator-article .lead{font-size:15px;margin-bottom:10px}.calculator-article .calc{padding:14px;margin:10px 0 20px}.calculator-article .calc h2{font-size:20px}.calculator-article .field input,.calculator-article .field select{height:40px}.page-title-icon{align-items:flex-start}.title-icon{width:48px;height:48px}.category-section{padding:18px}.category-section-head{grid-template-columns:1fr}.stats{gap:12px}.carousel{grid-auto-columns:82vw}.sci-keypad{grid-template-columns:repeat(4,1fr)}.ad-slot{min-height:76px}}
 @media(max-width:900px){.calculator-article:has(#mortgageSummary) .calculator-layout.split-analysis,.calculator-article:has(.loan-results) .calculator-layout.split-analysis{grid-template-columns:minmax(0,1fr)}.calculator-article:has(#mortgageSummary) .analysis-pane .chart-grid,.loan-chart-row{grid-template-columns:minmax(0,1fr)}.calculator-article:has(#mortgageSummary) .analysis-pane .summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.calculator-pane,.analysis-pane,.chart-card,.table-card,.mortgage-dashboard,.loan-results{min-width:0}}
-@media(max-width:560px){.calculator-article:has(#mortgageSummary) .analysis-pane .summary-grid,.loan-result-panel .summary-grid{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:560px){.calculator-article:has(#mortgageSummary) .analysis-pane .summary-grid,.loan-result-panel .summary-grid{grid-template-columns:minmax(0,1fr)}.calculator-article:has(.loan-results) .loan-fields{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.calculator-article:has(.loan-results) .loan-mode-input{padding:10px}.calculator-article:has(.loan-results) .loan-mode-input h3{font-size:16px}.calculator-article:has(.loan-results) .loan-mode-input p{font-size:12px;margin-bottom:7px}.calculator-article:has(.loan-results) .field label{font-size:12px;margin-bottom:3px}.calculator-article:has(.loan-results) .field input,.calculator-article:has(.loan-results) .field select{height:36px;font-size:14px;padding:0 8px}.calculator-article:has(.loan-results) .calc-actions{margin-top:8px}.calculator-article:has(.loan-results) .result{padding:9px 12px;margin-top:7px}.calculator-article:has(.loan-results) .result strong{font-size:23px}}
 @media(max-width:560px){
 .wrap{width:calc(100% - 28px)}
 .nav{min-height:56px;height:56px;padding:6px 0;gap:8px}.brand{font-size:15px;line-height:.95}.brand-mark{width:30px;height:30px}.menu-top{min-height:36px;padding:7px 8px;font-size:14px}
@@ -2522,13 +2551,13 @@ function scheduleRows(start, annualRate, years, compoundKey) {
 }
 
 function renderLoanPage() {
+  const activeMode = document.querySelector("[data-loan-mode].is-active")?.dataset.loanMode || "monthlyfixed";
   const payback = document.getElementById("l_payback")?.value || "month";
   const compound = document.getElementById("l_compound")?.value || "monthly";
   const P = V("l_amount"), annual = V("l_rate") / 100, rate = effectiveRate(annual, compound, payback);
   const n = loanTermPeriods("l_years", "l_months", payback);
   const payment = rate ? P * rate * Math.pow(1 + rate, n) / (Math.pow(1 + rate, n) - 1) : P / n;
   const total = payment * n, interest = total - P, payLabel = paybackLabel(payback);
-  show(`<strong>${USD(payment)} / ${payLabel.toLowerCase()}</strong><br>Total of ${F(n,0)} payments: ${USD(total)}; total interest: ${USD(interest)}.`);
   fillSummary("loanSummary", [["Payment Every " + payLabel, USD(payment), "Fixed amortized payment."],["Total of " + F(n,0) + " Payments", USD(total), "Payment multiplied by term."],["Total Interest", USD(interest), "Total cost of borrowing."],["Effective Period Rate", `${F(rate*100,4)}%`, "Adjusted for compound and payback frequency."]]);
   fillResultTable("loanResultTable", [["Payment Every " + payLabel, USD(payment)],["Total of " + F(n,0) + " Payments", USD(total)],["Total Interest", USD(interest)]]);
   drawPie(document.getElementById("loanPie"), [P, interest], ["Principal", "Interest"]);
@@ -2551,7 +2580,26 @@ function renderLoanPage() {
   drawPie(document.getElementById("bondPie"), [received, bInterest], ["Principal", "Interest"]);
   const bBody = document.getElementById("bondRows");
   if (bBody) bBody.innerHTML = scheduleRows(received, bAnnual, bYears, bComp).map(row => `<tr><td>${F(row[0],0)}</td><td>${USD(row[1])}</td><td>${USD(row[2])}</td><td>${USD(row[3])}</td></tr>`).join("");
+  if (activeMode === "intheend") show(`<strong>${USD(due)} due at maturity</strong><br>${USD(dP)} principal; ${USD(dInterest)} compounded interest over ${F(dYears,2)} years.`);
+  else if (activeMode === "fixedend") show(`<strong>${USD(received)} present value</strong><br>${USD(bDue)} predetermined due amount; ${USD(bInterest)} total discount or interest.`);
+  else show(`<strong>${USD(payment)} / ${payLabel.toLowerCase()}</strong><br>Total of ${F(n,0)} payments: ${USD(total)}; total interest: ${USD(interest)}.`);
 }
+
+function setLoanMode(mode) {
+  document.querySelectorAll("[data-loan-mode]").forEach(button => {
+    const active = button.dataset.loanMode === mode;
+    button.classList.toggle("is-active", active);
+    button.setAttribute("aria-selected", active ? "true" : "false");
+  });
+  document.querySelectorAll(".loan-mode-input").forEach(panel => panel.classList.toggle("is-active", panel.id === mode));
+  document.querySelectorAll(".loan-result-panel").forEach(panel => panel.classList.toggle("is-active", panel.id === mode + "r"));
+  renderLoanPage();
+}
+
+document.addEventListener("click", event => {
+  const tab = event.target.closest("[data-loan-mode]");
+  if (tab) setLoanMode(tab.dataset.loanMode);
+});
 
 document.addEventListener("click", event => {
   const trigger = event.target.closest("[data-toggle-table]");
@@ -2958,7 +3006,9 @@ def build():
         rel = [c for c in by_cat[calc["cat"]] if c["slug"] != calc["slug"] and calculator_group(c) == calculator_group(calc) and is_indexable_calculator(c)][:6]
         write(DIST / calc["slug"] / "index.html", calculator_page(site, calc, rel))
     for source_slug, target_slug in CALCULATOR_REDIRECTS.items():
-        write(DIST / source_slug / "index.html", redirect_page(site, f"/{source_slug}/", f"/{target_slug}/", "Concrete Calculator"))
+        target_calc = next((c for c in calculators if c["slug"] == target_slug), None)
+        redirect_title = target_calc["title"] if target_calc else smart_title(target_slug.replace("-", " "))
+        write(DIST / source_slug / "index.html", redirect_page(site, f"/{source_slug}/", f"/{target_slug}/", redirect_title))
 
     write(DIST / "scientific-calculator" / "index.html", scientific_page(site))
     for path, html in info_pages(site).items():

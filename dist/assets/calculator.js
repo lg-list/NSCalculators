@@ -553,13 +553,13 @@ function scheduleRows(start, annualRate, years, compoundKey) {
 }
 
 function renderLoanPage() {
+  const activeMode = document.querySelector("[data-loan-mode].is-active")?.dataset.loanMode || "monthlyfixed";
   const payback = document.getElementById("l_payback")?.value || "month";
   const compound = document.getElementById("l_compound")?.value || "monthly";
   const P = V("l_amount"), annual = V("l_rate") / 100, rate = effectiveRate(annual, compound, payback);
   const n = loanTermPeriods("l_years", "l_months", payback);
   const payment = rate ? P * rate * Math.pow(1 + rate, n) / (Math.pow(1 + rate, n) - 1) : P / n;
   const total = payment * n, interest = total - P, payLabel = paybackLabel(payback);
-  show(`<strong>${USD(payment)} / ${payLabel.toLowerCase()}</strong><br>Total of ${F(n,0)} payments: ${USD(total)}; total interest: ${USD(interest)}.`);
   fillSummary("loanSummary", [["Payment Every " + payLabel, USD(payment), "Fixed amortized payment."],["Total of " + F(n,0) + " Payments", USD(total), "Payment multiplied by term."],["Total Interest", USD(interest), "Total cost of borrowing."],["Effective Period Rate", `${F(rate*100,4)}%`, "Adjusted for compound and payback frequency."]]);
   fillResultTable("loanResultTable", [["Payment Every " + payLabel, USD(payment)],["Total of " + F(n,0) + " Payments", USD(total)],["Total Interest", USD(interest)]]);
   drawPie(document.getElementById("loanPie"), [P, interest], ["Principal", "Interest"]);
@@ -582,7 +582,26 @@ function renderLoanPage() {
   drawPie(document.getElementById("bondPie"), [received, bInterest], ["Principal", "Interest"]);
   const bBody = document.getElementById("bondRows");
   if (bBody) bBody.innerHTML = scheduleRows(received, bAnnual, bYears, bComp).map(row => `<tr><td>${F(row[0],0)}</td><td>${USD(row[1])}</td><td>${USD(row[2])}</td><td>${USD(row[3])}</td></tr>`).join("");
+  if (activeMode === "intheend") show(`<strong>${USD(due)} due at maturity</strong><br>${USD(dP)} principal; ${USD(dInterest)} compounded interest over ${F(dYears,2)} years.`);
+  else if (activeMode === "fixedend") show(`<strong>${USD(received)} present value</strong><br>${USD(bDue)} predetermined due amount; ${USD(bInterest)} total discount or interest.`);
+  else show(`<strong>${USD(payment)} / ${payLabel.toLowerCase()}</strong><br>Total of ${F(n,0)} payments: ${USD(total)}; total interest: ${USD(interest)}.`);
 }
+
+function setLoanMode(mode) {
+  document.querySelectorAll("[data-loan-mode]").forEach(button => {
+    const active = button.dataset.loanMode === mode;
+    button.classList.toggle("is-active", active);
+    button.setAttribute("aria-selected", active ? "true" : "false");
+  });
+  document.querySelectorAll(".loan-mode-input").forEach(panel => panel.classList.toggle("is-active", panel.id === mode));
+  document.querySelectorAll(".loan-result-panel").forEach(panel => panel.classList.toggle("is-active", panel.id === mode + "r"));
+  renderLoanPage();
+}
+
+document.addEventListener("click", event => {
+  const tab = event.target.closest("[data-loan-mode]");
+  if (tab) setLoanMode(tab.dataset.loanMode);
+});
 
 document.addEventListener("click", event => {
   const trigger = event.target.closest("[data-toggle-table]");
