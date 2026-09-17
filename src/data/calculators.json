@@ -1386,9 +1386,9 @@
       "title": "Voltage Drop Calculator",
       "cat": "Electrical",
       "engine": "voltage_drop",
-      "desc": "Estimate DC or single-phase voltage drop using conductor resistance, current and one-way length.",
-      "formula": "Voltage drop \u2248 2 \u00d7 one-way length \u00d7 current \u00d7 conductor resistance per 1000 ft \u00f7 1000.",
-      "example": "Use the actual conductor resistance for the gauge and material you are evaluating.",
+      "desc": "Estimate DC, single-phase, or three-phase voltage drop by conductor size, material, current, voltage, and one-way run length.",
+      "formula": "DC or single phase uses 2 x length x current x resistance / 1000; three phase uses sqrt(3) x length x current x resistance / 1000.",
+      "example": "A 100 ft, 120 V single-phase run carrying 15 A on 12 AWG copper has about 5.79 V of resistive drop.",
       "inputs": [
         [
           "length",
@@ -1422,9 +1422,9 @@
       "title": "Wire Size Calculator",
       "cat": "Electrical",
       "engine": "wire_size",
-      "desc": "Suggest a basic copper wire size from current using a simplified reference ampacity table.",
-      "formula": "The tool chooses the first reference gauge whose simplified ampacity is at least the entered current.",
-      "example": "This is a planning aid only; installation requirements depend on insulation, temperature, terminals, bundling and code rules.",
+      "desc": "Estimate copper or aluminum wire size from reference ampacity, continuous load, circuit length, voltage, phase, and voltage-drop target.",
+      "formula": "Recommended size is the larger conductor required by the reference ampacity and voltage-drop checks.",
+      "example": "A 24 A continuous load produces 30 A of planning current before voltage drop and installation conditions are checked.",
       "inputs": [
         [
           "amps",
@@ -1440,9 +1440,9 @@
       "title": "Breaker Size Calculator",
       "cat": "Electrical",
       "engine": "breaker",
-      "desc": "Estimate a minimum breaker size for a continuous load using a 125% planning factor.",
-      "formula": "Planning current = continuous load \u00d7 1.25, then select the next standard breaker size.",
-      "example": "A 16 A continuous load gives 20 A after the 125% factor.",
+      "desc": "Estimate a reference breaker size from separate continuous and noncontinuous loads using the 125% continuous-load planning factor.",
+      "formula": "Planning current = continuous load x 1.25 + noncontinuous load, then select the next standard rating.",
+      "example": "A 16 A continuous load gives 20 A of planning current before conductor and equipment rules are checked.",
       "inputs": [
         [
           "amps",
@@ -1458,9 +1458,9 @@
       "title": "Amps to Watts Calculator",
       "cat": "Electrical",
       "engine": "amps_watts",
-      "desc": "Convert amps and volts to watts for a simple DC or resistive single-phase calculation.",
-      "formula": "Watts = volts \u00d7 amps.",
-      "example": "10 A at 120 V equals 1,200 W.",
+      "desc": "Convert amps to watts, kilowatts, VA, kVA, and VAR for DC, single-phase AC, or balanced three-phase AC.",
+      "formula": "DC: W = A x V; single phase: W = A x V x PF; three phase: W = sqrt(3) x A x V line-to-line x PF.",
+      "example": "10 A at 120 V and power factor 1 equals 1,200 W; three-phase calculations also use sqrt(3).",
       "inputs": [
         [
           "amps",
@@ -1482,9 +1482,9 @@
       "title": "Watts to Amps Calculator",
       "cat": "Electrical",
       "engine": "watts_amps",
-      "desc": "Convert watts and volts to amps for a simple DC or resistive single-phase calculation.",
-      "formula": "Amps = watts \u00f7 volts.",
-      "example": "1,200 W at 120 V equals 10 A.",
+      "desc": "Convert watts to amps for DC, single-phase AC, or balanced three-phase AC with power factor and continuous-load planning.",
+      "formula": "DC: A = W / V; single phase: A = W / (V x PF); three phase: A = W / (sqrt(3) x V line-to-line x PF).",
+      "example": "1,200 W at 120 V and power factor 1 equals 10 A.",
       "inputs": [
         [
           "watts",
@@ -1506,9 +1506,9 @@
       "title": "Electrical Load Calculator",
       "cat": "Electrical",
       "engine": "electrical_load",
-      "desc": "Estimate current from total watts and voltage, with an optional continuous-load planning factor.",
-      "formula": "Current = watts \u00f7 volts; planning current = current \u00d7 continuous-load factor.",
-      "example": "2,400 W at 120 V is 20 A; applying a 125% continuous-load planning factor gives 25 A.",
+      "desc": "Calculate current, apparent power, continuous-load planning current, and a reference breaker from separate electrical loads.",
+      "formula": "Actual current uses total watts; planning current applies 125% only to the continuous portion.",
+      "example": "1,800 W continuous plus 600 W noncontinuous at 120 V equals 20 A actual and 23.75 A planning current.",
       "inputs": [
         [
           "watts",

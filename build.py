@@ -14,7 +14,7 @@ KEYWORD_STATS = ROOT / "exports" / "keyword-stats-positive.json"
 SEO_STRATEGY = ROOT / "exports" / "seo-keyword-strategy-2026-09-05.json"
 PUBLIC_BASE_PATH = os.environ.get("PUBLIC_BASE_PATH", "").strip().rstrip("/")
 PUBLIC_SITE_DOMAIN = os.environ.get("PUBLIC_SITE_DOMAIN", "").strip()
-ASSET_VERSION = "20260917n"
+ASSET_VERSION = "20260917o"
 CALCULATOR_REDIRECTS = {
     "concrete-calculator": "concrete-volume-calculator",
 }
@@ -819,6 +819,10 @@ def seo_description(calc):
         return "Estimate a standard breaker size from continuous and noncontinuous load current, including the 125% continuous-load planning factor and circuit utilization."
     if calc.get("slug") == "electrical-load-calculator":
         return "Calculate amps, apparent power, continuous-load planning current, and a reference breaker size from watts, voltage, phase, and power factor."
+    if calc.get("slug") == "watts-to-amps-calculator":
+        return "Convert watts to amps for DC, single-phase AC, or balanced three-phase AC, with power factor, VA, kVA, reactive power, and continuous-load planning current."
+    if calc.get("slug") == "amps-to-watts-calculator":
+        return "Convert amps to watts and kilowatts for DC, single-phase AC, or balanced three-phase AC, including power factor, VA, kVA, and reactive power."
     if calc.get("engine") == "linear_convert":
         return f"Use this free {keyword} to convert units instantly with the formula, example, and related conversion calculators."
     if calc.get("engine") in ("cn_mortgage", "loan_page", "car_loan"):
@@ -1119,6 +1123,25 @@ def electrical_load_input_html():
 <div class="field"><label for="el_voltage">Line voltage</label><div class="input-unit"><input id="el_voltage" type="number" step="any" min="0.01" value="120"><span>V</span></div></div>
 <div class="field"><label for="el_phase">Circuit type</label><select id="el_phase"><option value="dc">DC</option><option value="single" selected>Single-phase AC</option><option value="three">Three-phase AC</option></select></div>
 <div class="field field-wide"><label for="el_pf">Power factor</label><input id="el_pf" type="number" step="0.01" min="0.01" max="1" value="1"></div>
+</div>"""
+
+
+def watts_to_amps_input_html():
+    return """<div class="fields project-fields electrical-fields">
+<div class="field"><label for="wa_watts">Real power</label><div class="input-unit"><input id="wa_watts" type="number" step="any" min="0" value="1200"><span>W</span></div></div>
+<div class="field"><label for="wa_voltage">Voltage</label><div class="input-unit"><input id="wa_voltage" type="number" step="any" min="0.01" value="120"><span>V</span></div></div>
+<div class="field"><label for="wa_phase">Power system</label><select id="wa_phase"><option value="dc">DC</option><option value="single" selected>Single-phase AC</option><option value="three">Three-phase AC</option></select></div>
+<div class="field"><label for="wa_pf">Power factor</label><input id="wa_pf" type="number" step="0.01" min="0.01" max="1" value="1"></div>
+<div class="field field-wide"><label for="wa_continuous">Load duration</label><select id="wa_continuous"><option value="no" selected>Noncontinuous / conversion only</option><option value="yes">Continuous load planning</option></select></div>
+</div>"""
+
+
+def amps_to_watts_input_html():
+    return """<div class="fields project-fields electrical-fields">
+<div class="field"><label for="aw_amps">Current</label><div class="input-unit"><input id="aw_amps" type="number" step="any" min="0" value="10"><span>A</span></div></div>
+<div class="field"><label for="aw_voltage">Voltage</label><div class="input-unit"><input id="aw_voltage" type="number" step="any" min="0.01" value="120"><span>V</span></div></div>
+<div class="field"><label for="aw_phase">Power system</label><select id="aw_phase"><option value="dc">DC</option><option value="single" selected>Single-phase AC</option><option value="three">Three-phase AC</option></select></div>
+<div class="field"><label for="aw_pf">Power factor</label><input id="aw_pf" type="number" step="0.01" min="0.01" max="1" value="1"></div>
 </div>"""
 
 
@@ -1530,6 +1553,24 @@ def high_value_calculator_copy(calc):
 <h2>Watts, VA, and power factor</h2><p>Watts measure real power. Volt-amperes measure apparent power. For AC loads below unity power factor, the same real power requires more current. DC calculations ignore the power-factor entry.</p>
 <h2>Panel and service limitations</h2><p>This tool combines entered loads; it is not a residential service calculation. The US Department of Energy's <a href="https://bsesc.energy.gov/sites/default/files/2024-10/Home%20Electrification%20and%20Electric%20Panel%20Upgrades.pdf" rel="external noopener">panel-upgrade factsheet</a> explains that electricians use nameplate loads and NEC demand methods rather than simply adding breaker ratings.</p>
 <h2>Frequently asked questions</h2><h3>What counts as continuous load?</h3><p>A load expected to operate at maximum current for three hours or more is generally treated as continuous; confirm the applicable definition and equipment rule.</p><h3>Does this include motor efficiency?</h3><p>No. Enter electrical input watts, not mechanical output watts. Motors and HVAC equipment should be sized from nameplate and applicable rules.</p><h3>Can I convert a single value?</h3><p>Use the <a href="/watts-to-amps-calculator/">watts to amps calculator</a> or <a href="/amps-to-watts-calculator/">amps to watts calculator</a> for a simpler conversion.</p>"""
+    if calc.get("slug") == "watts-to-amps-calculator":
+        return """
+<h2>How to convert watts to amps</h2><p>Select DC, single-phase AC, or balanced three-phase AC. Enter real power in watts and voltage. AC calculations also use power factor because watts can be lower than apparent power when current and voltage are not perfectly in phase.</p>
+<p class="formula">DC: A = W / V; single phase: A = W / (V x PF); three phase: A = W / (√3 x V line-to-line x PF)</p>
+<h2>Watts-to-amps example</h2><p>A 1,200 W resistive load at 120 V and power factor 1.0 draws 10 A. At power factor 0.8, the same 1,200 W real load requires 12.5 A and 1,500 VA of apparent power.</p>
+<h2>Single-phase and three-phase voltage</h2><p>For the three-phase formula, enter line-to-line RMS voltage and total three-phase real power. Do not enter per-phase power or line-to-neutral voltage into that formula. The US Department of Energy's <a href="https://betterbuildingssolutioncenter.energy.gov/sites/default/files/attachments/FINAL%20Industrial%20Electrification%20Assessment%20Framework_0.pdf" rel="external noopener">industrial electrification framework</a> gives the same √3 x power-factor relationship for a typical three-phase AC load.</p>
+<h2>Watts, VA, and VAR</h2><p>Watts are real power doing useful work. Volt-amperes are apparent power carried by the source and conductors. Reactive volt-amperes represent the quadrature portion in this simplified sinusoidal model. DC uses power factor 1 and has no reactive-power result.</p>
+<h2>Continuous-load planning</h2><p>Choose continuous-load planning to display 125% of calculated current. That is a planning reference, not a complete breaker or conductor selection. Use the <a href="/electrical-load-calculator/">electrical load calculator</a> when continuous and noncontinuous loads must be entered separately.</p>
+<h2>Frequently asked questions</h2><h3>Is 1,500 watts always 12.5 amps?</h3><p>Only at 120 V with power factor 1. Current changes with voltage, phase, and power factor.</p><h3>Should I use equipment output watts?</h3><p>Use electrical input power. Mechanical motor output and cooling capacity are not interchangeable with electrical input watts.</p><h3>How do I reverse the conversion?</h3><p>Use the <a href="/amps-to-watts-calculator/">amps to watts calculator</a> with the same voltage, phase, and power factor.</p>"""
+    if calc.get("slug") == "amps-to-watts-calculator":
+        return """
+<h2>How to convert amps to watts</h2><p>Current alone does not determine power. Enter voltage and select DC, single-phase AC, or balanced three-phase AC. For AC, use the equipment's measured or nameplate power factor.</p>
+<p class="formula">DC: W = A x V; single phase: W = A x V x PF; three phase: W = √3 x A x V line-to-line x PF</p>
+<h2>Amps-to-watts example</h2><p>Ten amps at 120 V DC or single-phase AC with power factor 1.0 equals 1,200 W. A balanced three-phase load drawing 10 A at 208 V line-to-line and 0.9 power factor uses about 3,242 W of real power and 3,603 VA.</p>
+<h2>Real, apparent, and reactive power</h2><p>The calculator reports watts and kilowatts as real power, VA and kVA as apparent power, and VAR as a simplified reactive-power magnitude. At power factor 1.0, watts equal VA and reactive power is zero.</p>
+<h2>Three-phase assumptions</h2><p>The result assumes a balanced three-phase load and line-to-line RMS voltage. Unequal phase currents, distorted waveforms, harmonics, and transient conditions require measurement or a more detailed power analysis. The US Department of Energy's <a href="https://betterbuildingssolutioncenter.energy.gov/sites/default/files/attachments/FINAL%20Industrial%20Electrification%20Assessment%20Framework_0.pdf" rel="external noopener">industrial electrification framework</a> uses P = √3 x PF x amps x voltage for typical three-phase AC loads.</p>
+<h2>Breaker rating is not measured current</h2><p>A 20 A breaker does not mean the circuit is continuously drawing 20 A. Use actual load current or equipment data, and verify conductor and protection requirements separately with the <a href="/breaker-size-calculator/">breaker size calculator</a> and a qualified electrician.</p>
+<h2>Frequently asked questions</h2><h3>Why does a lower power factor reduce calculated watts?</h3><p>For fixed RMS volts and amps, a lower power factor means less apparent power becomes real power.</p><h3>Can this calculate energy use?</h3><p>No. Watts measure power. Multiply kilowatts by operating hours to estimate kilowatt-hours of energy.</p><h3>How do I calculate current from watts?</h3><p>Use the <a href="/watts-to-amps-calculator/">watts to amps calculator</a> and enter the same electrical assumptions.</p>"""
     return None
 
 
@@ -1543,7 +1584,7 @@ def default_calculator_copy(calc):
 
 
 def analysis_extra_html(calc):
-    if calc.get("slug") in ("concrete-volume-calculator", "roof-pitch-calculator", "rafter-length-calculator", "square-footage-calculator", "flooring-calculator", "tile-calculator", "deck-board-calculator", "board-foot-calculator", "voltage-drop-calculator", "wire-size-calculator", "breaker-size-calculator", "electrical-load-calculator"):
+    if calc.get("slug") in ("concrete-volume-calculator", "roof-pitch-calculator", "rafter-length-calculator", "square-footage-calculator", "flooring-calculator", "tile-calculator", "deck-board-calculator", "board-foot-calculator", "voltage-drop-calculator", "wire-size-calculator", "breaker-size-calculator", "electrical-load-calculator", "watts-to-amps-calculator", "amps-to-watts-calculator"):
         labels = {
             "concrete-volume-calculator": ("Concrete Material Estimate", "Volume and Cost Comparison"),
             "roof-pitch-calculator": ("Roof Geometry", "Pitch and Area Results"),
@@ -1557,6 +1598,8 @@ def analysis_extra_html(calc):
             "wire-size-calculator": ("Wire Size Estimate", "Ampacity and Voltage-Drop Checks"),
             "breaker-size-calculator": ("Breaker Planning Result", "Load and Capacity Analysis"),
             "electrical-load-calculator": ("Electrical Load Results", "Power and Current Analysis"),
+            "watts-to-amps-calculator": ("Watts to Amps Results", "Current and Power Components"),
+            "amps-to-watts-calculator": ("Amps to Watts Results", "Real and Apparent Power"),
         }
         title, chart_title = labels[calc.get("slug")]
         return f"""<section class="mortgage-dashboard generic-dashboard project-dashboard" aria-label="{title} results">
@@ -1703,6 +1746,12 @@ def calculator_page(site, calc, related):
     elif calc.get("slug") == "electrical-load-calculator":
         fields = electrical_load_input_html()
         page_engine = "electrical_load_advanced"
+    elif calc.get("slug") == "watts-to-amps-calculator":
+        fields = watts_to_amps_input_html()
+        page_engine = "watts_amps_advanced"
+    elif calc.get("slug") == "amps-to-watts-calculator":
+        fields = amps_to_watts_input_html()
+        page_engine = "amps_watts_advanced"
     elif calc.get("engine") == "cn_mortgage":
         fields = mortgage_input_html()
     elif calc.get("engine") == "loan_page":
@@ -1970,6 +2019,8 @@ function voltageDropProjection(){const phase=document.getElementById('vd_phase')
 function wireSizeProjection(){const amps=Math.max(0,V('ws_amps')),continuous=Math.min(amps,Math.max(0,V('ws_continuous'))),designAmps=amps+continuous*.25,material=document.getElementById('ws_material')?.value||'copper',temp=document.getElementById('ws_temp')?.value||'60',phase=document.getElementById('ws_phase')?.value||'single',voltage=Math.max(.001,V('ws_voltage')),length=Math.max(0,V('ws_length')),limit=Math.max(.1,V('ws_drop_limit')),ampKey=(material==='aluminum'?'al':'cu')+temp,ampacityRow=ELECTRICAL_WIRE_TABLE.find(x=>x[ampKey]>=designAmps&&x[ampKey]>0)||ELECTRICAL_WIRE_TABLE.at(-1),targetVolts=voltage*limit/100,dropRow=ELECTRICAL_WIRE_TABLE.find(x=>voltageDropFor(x,material,phase,length,amps)<=targetVolts+1e-9)||ELECTRICAL_WIRE_TABLE.at(-1),ampIndex=ELECTRICAL_WIRE_TABLE.indexOf(ampacityRow),dropIndex=ELECTRICAL_WIRE_TABLE.indexOf(dropRow),recommended=ELECTRICAL_WIRE_TABLE[Math.max(ampIndex,dropIndex)],ampacity=recommended[ampKey],drop=voltageDropFor(recommended,material,phase,length,amps),dropPercent=drop/voltage*100,loadVoltage=Math.max(0,voltage-drop);return{amps,continuous,designAmps,material,temp,phase,voltage,length,limit,ampacityRow,dropRow,recommended,ampacity,drop,dropPercent,loadVoltage}}
 function breakerProjection(){const continuous=Math.max(0,V('br_continuous')),noncontinuous=Math.max(0,V('br_noncontinuous')),actual=continuous+noncontinuous,planning=continuous*1.25+noncontinuous,breaker=nextBreaker(planning),voltage=Math.max(0,V('br_voltage')),poles=Math.max(1,V('br_poles')),utilization=breaker>0?actual/breaker*100:0,headroom=Math.max(0,breaker-planning),power=actual*voltage;return{continuous,noncontinuous,actual,planning,breaker,voltage,poles,utilization,headroom,power}}
 function electricalLoadProjection(){const continuous=Math.max(0,V('el_continuous')),noncontinuous=Math.max(0,V('el_noncontinuous')),watts=continuous+noncontinuous,planningWatts=continuous*1.25+noncontinuous,voltage=Math.max(.001,V('el_voltage')),phase=document.getElementById('el_phase')?.value||'single',pf=phase==='dc'?1:Math.max(.01,Math.min(1,V('el_pf'))),divisor=voltage*pf*(phase==='three'?Math.sqrt(3):1),amps=watts/divisor,planningAmps=planningWatts/divisor,va=watts/pf,breaker=nextBreaker(planningAmps),utilization=breaker>0?amps/breaker*100:0;return{continuous,noncontinuous,watts,planningWatts,voltage,phase,pf,amps,planningAmps,va,breaker,utilization}}
+function wattsAmpsProjection(){const watts=Math.max(0,V('wa_watts')),voltage=Math.max(.001,V('wa_voltage')),phase=document.getElementById('wa_phase')?.value||'single',pf=phase==='dc'?1:Math.max(.01,Math.min(1,V('wa_pf'))),multiplier=phase==='three'?Math.sqrt(3):1,amps=watts/(voltage*pf*multiplier),va=watts/pf,vars=Math.sqrt(Math.max(0,va*va-watts*watts)),continuous=document.getElementById('wa_continuous')?.value==='yes',planningAmps=amps*(continuous?1.25:1);return{watts,voltage,phase,pf,multiplier,amps,va,vars,continuous,planningAmps}}
+function ampsWattsProjection(){const amps=Math.max(0,V('aw_amps')),voltage=Math.max(.001,V('aw_voltage')),phase=document.getElementById('aw_phase')?.value||'single',pf=phase==='dc'?1:Math.max(.01,Math.min(1,V('aw_pf'))),multiplier=phase==='three'?Math.sqrt(3):1,va=amps*voltage*multiplier,watts=va*pf,vars=Math.sqrt(Math.max(0,va*va-watts*watts));return{amps,voltage,phase,pf,multiplier,va,watts,vars}}
 function syncFeetMeterInputs(){const reverse=document.getElementById('conversion_direction')?.value==='meters_to_feet';document.querySelectorAll('[data-feet-input]').forEach(el=>el.classList.toggle('is-hidden',reverse));document.querySelectorAll('[data-meter-input]').forEach(el=>el.classList.toggle('is-hidden',!reverse));return reverse}
 function clearCalcForm(){const form=document.querySelector('.calc');if(!form)return;form.querySelectorAll('input').forEach(input=>{if(input.type==='checkbox')input.checked=false;else input.value=''});form.querySelectorAll('select').forEach(select=>{select.selectedIndex=0});form.querySelectorAll('details').forEach(item=>{item.open=false});syncMortgageCosts();syncConcreteFields();syncRoofFields();syncAreaFields();show('<strong>0</strong><br>Enter values to calculate a new result.');const engine=currentEngine();if(engine==='cn_mortgage')renderMortgage(0,0,1,0,0,0,0,0,0,0,0,0,0,new Date());if(engine==='loan_page')renderLoanPage()}
 function calc(e){
@@ -2003,6 +2054,8 @@ function calc(e){
 	  case'wire_size_advanced':{const p=wireSizeProjection();show(`<strong>${p.recommended.g} AWG ${p.material}</strong><br>${F(p.ampacity,0)} A reference ampacity; ${F(p.dropPercent,2)}% estimated drop; ${F(p.designAmps,2)} A planning current.`);break}
 	  case'breaker_advanced':{const p=breakerProjection();show(`<strong>${F(p.breaker,0)} A reference breaker</strong><br>${F(p.planning,2)} A minimum planning current; ${F(p.actual,2)} A connected load; verify conductor and equipment rules.`);break}
 	  case'electrical_load_advanced':{const p=electricalLoadProjection();show(`<strong>${F(p.amps,2)} A actual load</strong><br>${F(p.planningAmps,2)} A continuous-load planning current; ${F(p.breaker,0)} A reference breaker; ${F(p.va,0)} VA.`);break}
+	  case'watts_amps_advanced':{const p=wattsAmpsProjection();show(`<strong>${F(p.amps,3)} amps</strong><br>${F(p.watts/1000,3)} kW real power; ${F(p.va,1)} VA apparent power; ${F(p.planningAmps,3)} A ${p.continuous?'continuous-load planning':'conversion'} current.`);break}
+	  case'amps_watts_advanced':{const p=ampsWattsProjection();show(`<strong>${F(p.watts,1)} watts</strong><br>${F(p.watts/1000,3)} kW real power; ${F(p.va,1)} VA apparent power; ${F(p.vars,1)} VAR reactive power.`);break}
   case'tire':{let width=V('width'),aspect=V('aspect'),wheel=V('wheel');let side=width*aspect/100,diam=wheel+2*side/25.4,circ=Math.PI*diam;show(`<strong>${F(diam,2)} in diameter</strong><br>Sidewall: ${F(side,1)} mm; circumference: ${F(circ,2)} in.`);break}
   case'offset':{let r=(V('backspacing')-V('width')/2)*25.4;show(`<strong>${F(r,1)} mm offset</strong><br>Approximation using nominal wheel width.`);break}
   case'backspacing':{let r=V('width')/2+V('offset')/25.4;show(`<strong>${F(r,2)} in backspacing</strong><br>Approximation using nominal wheel width.`);break}
@@ -2336,6 +2389,16 @@ function renderGenericFromEngine(engine) {
     cards=[["Actual current",`${F(p.amps,2)} A`,`${F(p.watts,0)} W total load.`],["Planning current",`${F(p.planningAmps,2)} A`,"Continuous portion at 125%."],["Apparent power",`${F(p.va,0)} VA`,`${F(p.pf,2)} power factor.`],["Reference breaker",`${F(p.breaker,0)} A`,"Planning result only."]];
     bars=[{label:"Continuous power",value:p.continuous,display:`${F(p.continuous,0)} W`},{label:"Noncontinuous power",value:p.noncontinuous,display:`${F(p.noncontinuous,0)} W`},{label:"Actual current",value:p.amps,display:`${F(p.amps,2)} A`},{label:"Planning current",value:p.planningAmps,display:`${F(p.planningAmps,2)} A`}];
     rows=[["Circuit type",phase,"Selected current formula."],["Continuous load",`${F(p.continuous,2)} W`,"Receives 125% planning factor."],["Noncontinuous load",`${F(p.noncontinuous,2)} W`,"Included at 100%."],["Total real power",`${F(p.watts,2)} W`,"Entered loads combined."],["Power factor",F(p.pf,3),p.phase==='dc'?"Not applied to DC.":"Used for AC current."],["Apparent power",`${F(p.va,2)} VA`,"Watts divided by power factor."],["Actual current",`${F(p.amps,3)} A`,"Before continuous-load factor."],["Planning power",`${F(p.planningWatts,2)} W`,"Continuous x 1.25 plus other load."],["Planning current",`${F(p.planningAmps,3)} A`,"Used for reference breaker."],["Reference breaker",`${F(p.breaker,0)} A`,`${F(p.utilization,1)}% connected-load utilization.`]];
+  } else if (engine === "watts_amps_advanced") {
+    const p=wattsAmpsProjection(), phase=p.phase==='three'?"Three-phase AC":p.phase==='dc'?"DC":"Single-phase AC";
+    cards=[["Calculated current",`${F(p.amps,3)} A`,`${F(p.watts,1)} W real power.`],["Real power",`${F(p.watts/1000,3)} kW`,"Entered wattage."],["Apparent power",`${F(p.va,1)} VA`,`${F(p.pf,2)} power factor.`],["Planning current",`${F(p.planningAmps,3)} A`,p.continuous?"Includes 125% continuous factor.":"No continuous factor selected."]];
+    bars=[{label:"Real power",value:p.watts,display:`${F(p.watts,1)} W`},{label:"Apparent power",value:p.va,display:`${F(p.va,1)} VA`},{label:"Reactive power",value:p.vars,display:`${F(p.vars,1)} VAR`},{label:"Current",value:p.amps,display:`${F(p.amps,3)} A`}];
+    rows=[["Power system",phase,p.phase==='three'?"Uses line-to-line voltage.":"Selected conversion mode."],["Real power",`${F(p.watts,3)} W`,`${F(p.watts/1000,4)} kW.`],["Voltage",`${F(p.voltage,3)} V`,p.phase==='three'?"Line-to-line RMS voltage.":"Entered voltage."],["Power factor",F(p.pf,3),p.phase==='dc'?"Fixed at 1 for DC.":"Real power divided by apparent power."],["Calculated current",`${F(p.amps,4)} A`,"Formula result."],["Apparent power",`${F(p.va,3)} VA`,`${F(p.va/1000,4)} kVA.`],["Reactive power",`${F(p.vars,3)} VAR`,"Simplified magnitude."],["Load duration",p.continuous?"Continuous planning":"Conversion only",p.continuous?"125% factor shown.":"No sizing factor applied."],["Planning current",`${F(p.planningAmps,4)} A`,p.continuous?"Calculated amps x 1.25.":"Same as calculated amps."]];
+  } else if (engine === "amps_watts_advanced") {
+    const p=ampsWattsProjection(), phase=p.phase==='three'?"Three-phase AC":p.phase==='dc'?"DC":"Single-phase AC";
+    cards=[["Real power",`${F(p.watts,1)} W`,`${F(p.watts/1000,3)} kW.`],["Apparent power",`${F(p.va,1)} VA`,`${F(p.va/1000,3)} kVA.`],["Reactive power",`${F(p.vars,1)} VAR`,"Simplified magnitude."],["Power factor",F(p.pf,3),p.phase==='dc'?"Fixed at 1 for DC.":"Entered AC power factor."]];
+    bars=[{label:"Real power",value:p.watts,display:`${F(p.watts,1)} W`},{label:"Apparent power",value:p.va,display:`${F(p.va,1)} VA`},{label:"Reactive power",value:p.vars,display:`${F(p.vars,1)} VAR`},{label:"Current",value:p.amps,display:`${F(p.amps,3)} A`}];
+    rows=[["Power system",phase,p.phase==='three'?"Uses line-to-line voltage.":"Selected conversion mode."],["Current",`${F(p.amps,4)} A`,"Entered RMS current."],["Voltage",`${F(p.voltage,3)} V`,p.phase==='three'?"Line-to-line RMS voltage.":"Entered voltage."],["Power factor",F(p.pf,3),p.phase==='dc'?"Fixed at 1 for DC.":"Entered AC ratio."],["Real power",`${F(p.watts,3)} W`,`${F(p.watts/1000,4)} kW.`],["Apparent power",`${F(p.va,3)} VA`,`${F(p.va/1000,4)} kVA.`],["Reactive power",`${F(p.vars,3)} VAR`,"Square root of VA² minus W²."]];
   } else if (engine === "tire_compare") {
     const p=tireComparison(), speedError=p.actualSpeed-p.indicated;
     cards=[["Diameter difference",`${p.differencePct>=0?'+':''}${F(p.differencePct,2)}%`,"New tire versus original."],["Actual speed",`${F(p.actualSpeed,2)} mph`,`${F(p.indicated,0)} mph indicated.`],["Ground clearance",`${p.clearance>=0?'+':''}${F(p.clearance,2)} in`,"Half the diameter change."],["Revolutions per mile",F(p.next.revsPerMile,1),"Calculated new tire value."]];
