@@ -57,3 +57,4 @@ body{background:var(--bg)}.site-header{border-bottom-color:#dbe7f4}.primary{back
 .summary-card small{color:#52647b}.crumb a,.prose a{text-decoration:underline;text-underline-offset:2px;text-decoration-thickness:1px}
 @media(max-width:560px){.compound-fields{grid-template-columns:repeat(2,minmax(0,1fr))}.compound-fields .field label{min-height:34px;display:flex;align-items:end}.compound-dashboard .summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:560px){.vehicle-weight-fields{grid-template-columns:repeat(2,minmax(0,1fr))}.vehicle-weight-fields .field label{min-height:34px;display:flex;align-items:end}.vehicle-weight-fields .field-wide{grid-column:1/-1}}
+@media(max-width:560px){.fuel-fields{grid-template-columns:repeat(2,minmax(0,1fr))}.fuel-fields .field label{min-height:34px;display:flex;align-items:end}}

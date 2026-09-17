@@ -14,7 +14,7 @@ KEYWORD_STATS = ROOT / "exports" / "keyword-stats-positive.json"
 SEO_STRATEGY = ROOT / "exports" / "seo-keyword-strategy-2026-09-05.json"
 PUBLIC_BASE_PATH = os.environ.get("PUBLIC_BASE_PATH", "").strip().rstrip("/")
 PUBLIC_SITE_DOMAIN = os.environ.get("PUBLIC_SITE_DOMAIN", "").strip()
-ASSET_VERSION = "20260917g"
+ASSET_VERSION = "20260917h"
 
 CATEGORY_ORDER = [
     "Automotive",
@@ -776,6 +776,10 @@ def seo_description(calc):
         return "Calculate truck payload capacity and remaining payload from GVWR, curb weight, passengers, cargo, and trailer tongue weight."
     if calc.get("slug") == "towing-capacity-calculator":
         return "Estimate safe trailer weight from tow rating, GCWR, GVWR, payload, hitch rating, cargo, passengers, and tongue weight percentage."
+    if calc.get("slug") == "mpg-calculator":
+        return "Calculate gas mileage from distance and fuel used, with instant US MPG, Imperial MPG, L/100 km, and kilometers-per-liter results."
+    if calc.get("slug") == "trip-fuel-cost-calculator":
+        return "Estimate one-way or round-trip fuel cost, gallons or liters needed, cost per mile, and each traveler's share in US or metric units."
     if calc.get("engine") == "linear_convert":
         return f"Use this free {keyword} to convert units instantly with the formula, example, and related conversion calculators."
     if calc.get("engine") in ("cn_mortgage", "loan_page", "car_loan"):
@@ -858,6 +862,28 @@ def towing_capacity_input_html():
 <div class="field"><label for="people">Driver and passengers</label><div class="input-unit"><input id="people" type="number" step="any" min="0" value="400"><span>lb</span></div></div>
 <div class="field"><label for="cargo">Vehicle cargo</label><div class="input-unit"><input id="cargo" type="number" step="any" min="0" value="200"><span>lb</span></div></div>
 <div class="field"><label for="tongue_pct">Estimated tongue weight</label><div class="input-unit"><input id="tongue_pct" type="number" step="any" min="1" value="12"><span>%</span></div></div>
+</div>"""
+
+
+def mpg_input_html():
+    return """<div class="fields fuel-fields">
+<div class="field"><label for="distance">Distance driven</label><input id="distance" type="number" step="any" min="0" value="300"></div>
+<div class="field"><label for="distance_unit">Distance unit</label><select id="distance_unit"><option value="miles" selected>Miles</option><option value="kilometers">Kilometers</option></select></div>
+<div class="field"><label for="fuel_used">Fuel used</label><input id="fuel_used" type="number" step="any" min="0.001" value="12"></div>
+<div class="field"><label for="fuel_unit">Fuel unit</label><select id="fuel_unit"><option value="us_gallon" selected>US gallons</option><option value="imperial_gallon">Imperial gallons</option><option value="liter">Liters</option></select></div>
+</div>"""
+
+
+def trip_fuel_cost_input_html():
+    return """<div class="fields fuel-fields trip-fuel-fields">
+<div class="field"><label for="trip_units">Unit system</label><select id="trip_units"><option value="us" selected>US: miles, MPG, $/gal</option><option value="metric">Metric: km, L/100 km, price/L</option></select></div>
+<div class="field"><label for="trip_type">Trip type</label><select id="trip_type"><option value="1" selected>One way</option><option value="2">Round trip</option></select></div>
+<div class="field"><label for="distance">One-way distance</label><input id="distance" type="number" step="any" min="0" value="650"></div>
+<div class="field"><label for="efficiency">Fuel economy</label><input id="efficiency" type="number" step="any" min="0.01" value="28"></div>
+<div class="field"><label for="fuelprice">Fuel price</label><input id="fuelprice" type="number" step="any" min="0" value="3.60"></div>
+<div class="field"><label for="trips">Number of trips</label><input id="trips" type="number" step="1" min="1" value="1"></div>
+<div class="field"><label for="people">People sharing cost</label><input id="people" type="number" step="1" min="1" value="1"></div>
+<div class="field"><label for="currency">Currency</label><select id="currency"><option value="USD" selected>USD ($)</option><option value="GBP">GBP (£)</option><option value="EUR">EUR (€)</option><option value="CAD">CAD ($)</option></select></div>
 </div>"""
 
 
@@ -1112,6 +1138,25 @@ def high_value_calculator_copy(calc):
 <h2>Use vehicle-specific ratings</h2><p>Ratings vary with model, trim, drivetrain, axle ratio, factory options, tires, and hitch equipment. Verify the certification label, tire-loading label, owner's manual, towing guide, hitch label, and loaded scale weights before towing.</p>
 <h2>Safety references</h2><p><a href="https://www.ford.com/towing/" rel="external noopener">Ford's towing guidance</a> describes GVWR, GCWR, curb weight, payload, and conventional trailer tongue weight. SAE J2807 establishes performance criteria used to determine tow-vehicle GCWR and trailer weight ratings for applicable light vehicles.</p>
 <h2>Frequently asked questions</h2><h3>What tongue-weight percentage should I enter?</h3><p>Use the trailer and vehicle manufacturer's guidance. Conventional trailers are often planned around 10% to 15%, but the correct range depends on the trailer and hitch system.</p><h3>Does this replace a scale?</h3><p>No. Weigh the fully loaded tow vehicle and trailer when possible, and check individual axle ratings as well as total ratings.</p><h3>What if one limit is much lower than the others?</h3><p>The lowest limit controls. The results identify that limiting factor so you can review the relevant load or equipment rating.</p>"""
+    if calc.get("slug") == "mpg-calculator":
+        return """
+<h2>How to calculate MPG</h2><p>Fill the tank, reset the trip odometer, drive normally, then refill the tank. Divide the distance driven by the fuel needed to refill. Using multiple tanks reduces the effect of small fill-level differences.</p>
+<p class="formula">US MPG = miles driven / US gallons used</p>
+<h2>MPG example</h2><p>Driving 300 miles and using 12 US gallons gives 25 US MPG. The same physical fuel economy is about 30.02 Imperial MPG, 9.41 L/100 km, or 10.63 km/L.</p>
+<h2>US MPG versus Imperial MPG</h2><p>A UK Imperial gallon is larger than a US gallon, so Imperial MPG is numerically higher for the same vehicle and journey. Always identify which gallon a published MPG figure uses before comparing vehicles.</p>
+<h2>Understanding L/100 km</h2><p>Liters per 100 kilometers measures consumption rather than distance per unit of fuel. Lower L/100 km is better, while higher MPG and km/L are better. The calculator normalizes the entered distance and fuel volume before showing every format.</p>
+<h2>Getting a realistic result</h2><p>Use actual pump volume and odometer distance over several fill-ups. Traffic, speed, temperature, tire pressure, payload, idling, terrain, and driving style can all move real-world economy away from a window-sticker estimate. For official US estimates by model, use the <a href="https://www.fueleconomy.gov/feg/Find.do?action=sbsSelect" rel="external noopener">fueleconomy.gov vehicle comparison</a>.</p>
+<h2>Frequently asked questions</h2><h3>Why does my dashboard MPG differ?</h3><p>Trip computers estimate fuel flow and may use different averaging periods. A careful fill-to-fill calculation provides an independent check.</p><h3>Can I enter kilometers and liters?</h3><p>Yes. Select kilometers and liters; the result still includes US MPG, Imperial MPG, L/100 km, and km/L.</p><h3>Is MPGe the same as MPG?</h3><p>No. MPGe is an energy-equivalent comparison used for alternative-fuel and electric vehicles; this calculator measures liquid-fuel volume.</p>"""
+    if calc.get("slug") == "trip-fuel-cost-calculator":
+        return """
+<h2>How to estimate trip fuel cost</h2><p>Choose US or metric units, enter one-way distance, select one way or round trip, then add your vehicle's real-world fuel economy and expected pump price. Multiple trips and cost sharing are included.</p>
+<p class="formula">US fuel cost = total miles / MPG x price per gallon</p>
+<p class="formula">Metric fuel cost = total kilometers x L/100 km / 100 x price per liter</p>
+<h2>Road-trip example</h2><p>A 650-mile one-way trip in a 28 MPG vehicle uses about 23.21 US gallons. At $3.60 per gallon, estimated fuel cost is $83.57. A round trip doubles distance, fuel, and cost before any extra detours.</p>
+<h2>Plan a more realistic fuel budget</h2><p>Use your recent highway or mixed-driving average rather than the best published rating. Add expected detour mileage to the distance field and use an average fuel price for the route. When you need an official model estimate, check <a href="https://www.fueleconomy.gov/feg/Find.do?action=sbsSelect" rel="external noopener">fueleconomy.gov</a>. The result excludes tolls, parking, maintenance, depreciation, lodging, and food.</p>
+<h2>Splitting gas money</h2><p>The per-person result divides fuel cost evenly by the number of travelers. It does not assign different shares for the driver, vehicle owner, or passengers, so adjust the entered count or agree on a different split when needed.</p>
+<h2>US and metric modes</h2><p>US mode uses miles, MPG, and price per US gallon. Metric mode uses kilometers, L/100 km, and price per liter. Currency selection changes display only; it does not perform an exchange-rate conversion.</p>
+<h2>Frequently asked questions</h2><h3>Should distance be one way?</h3><p>Yes. Enter one-way distance and choose Round trip when you plan to return over roughly the same distance.</p><h3>Where can I find my vehicle's MPG?</h3><p>Use a recent fill-to-fill calculation for the most relevant estimate, or start with the combined rating for the exact vehicle configuration.</p><h3>Does the result include idling?</h3><p>Only indirectly if your entered real-world MPG already reflects idling. Add a margin for heavy traffic, cold weather, towing, or long stationary periods.</p>"""
     return None
 
 
@@ -1198,6 +1243,12 @@ def calculator_page(site, calc, related):
         fields = truck_payload_input_html()
     elif calc.get("slug") == "towing-capacity-calculator":
         fields = towing_capacity_input_html()
+    elif calc.get("slug") == "mpg-calculator":
+        fields = mpg_input_html()
+        page_engine = "mpg_advanced"
+    elif calc.get("slug") == "trip-fuel-cost-calculator":
+        fields = trip_fuel_cost_input_html()
+        page_engine = "fuel_cost_advanced"
     elif calc.get("engine") == "cn_mortgage":
         fields = mortgage_input_html()
     elif calc.get("engine") == "loan_page":
@@ -1329,6 +1380,7 @@ body{background:var(--bg)}.site-header{border-bottom-color:#dbe7f4}.primary{back
 .summary-card small{color:#52647b}.crumb a,.prose a{text-decoration:underline;text-underline-offset:2px;text-decoration-thickness:1px}
 @media(max-width:560px){.compound-fields{grid-template-columns:repeat(2,minmax(0,1fr))}.compound-fields .field label{min-height:34px;display:flex;align-items:end}.compound-dashboard .summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:560px){.vehicle-weight-fields{grid-template-columns:repeat(2,minmax(0,1fr))}.vehicle-weight-fields .field label{min-height:34px;display:flex;align-items:end}.vehicle-weight-fields .field-wide{grid-column:1/-1}}
+@media(max-width:560px){.fuel-fields{grid-template-columns:repeat(2,minmax(0,1fr))}.fuel-fields .field label{min-height:34px;display:flex;align-items:end}}
 '''
 
 SEARCH_JS = r'''
@@ -1408,6 +1460,7 @@ CALC_JS = r'''
 const $=s=>document.querySelector(s), V=id=>parseFloat(document.getElementById(id)?.value||0);
 const F=(n,d=2)=>Number.isFinite(n)?n.toLocaleString('en-US',{maximumFractionDigits:d}):'n/a';
 const USD=n=>new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:2}).format(Number.isFinite(n)?n:0);
+const MONEY=(n,currency='USD')=>new Intl.NumberFormat('en-US',{style:'currency',currency,maximumFractionDigits:2}).format(Number.isFinite(n)?n:0);
 function show(html){const r=$('#result');if(r)r.innerHTML=html}
 function unitValue(id, base){return document.getElementById(`${id}_unit`)?.value==='percent'?base*V(id)/100:V(id)}
 function annualCost(id, base){return document.getElementById(`${id}_unit`)?.value==='percent'?base*V(id)/100:V(id)}
@@ -1443,6 +1496,8 @@ function calc(e){
   case'towing':{let loaded=V('curb')+V('people')+V('cargo'),remainingPayload=Math.max(0,V('gvwr')-loaded),pct=Math.max(.01,V('tongue_pct')/100),limits=[['Vehicle tow rating',V('rating')],['GCWR headroom',Math.max(0,V('gcwr')-loaded)],['Hitch rating',V('hitch_rating')],['Payload for tongue weight',remainingPayload/pct]],hit=limits.reduce((a,b)=>b[1]<a[1]?b:a);show(`<strong>${F(hit[1],0)} lb trailer</strong><br>Planning limit: ${hit[0]}; ${F(remainingPayload,0)} lb vehicle payload remains before tongue weight.`);break}
   case'fuel_cost':{let r=V('distance')/Math.max(.01,V('mpg'))*V('fuelprice');show(`<strong>${USD(r)}</strong><br>Estimated fuel cost.`);break}
   case'mpg':{let r=V('gallons')?V('miles')/V('gallons'):0;show(`<strong>${F(r,2)} MPG</strong>`);break}
+  case'mpg_advanced':{let distance=V('distance'),fuel=V('fuel_used'),miles=(document.getElementById('distance_unit')?.value==='kilometers'?distance*0.621371192237:distance),liters=fuel*(document.getElementById('fuel_unit')?.value==='us_gallon'?3.785411784:document.getElementById('fuel_unit')?.value==='imperial_gallon'?4.54609:1),usGallons=liters/3.785411784,mpg=usGallons>0?miles/usGallons:0,km=miles/0.621371192237,l100=km>0?liters/km*100:0;show(`<strong>${F(mpg,2)} US MPG</strong><br>${F(l100,2)} L/100 km; ${F(miles/(liters/4.54609),2)} Imperial MPG; ${F(liters?km/liters:0,2)} km/L.`);break}
+  case'fuel_cost_advanced':{let metric=document.getElementById('trip_units')?.value==='metric',distance=V('distance')*Math.max(1,V('trip_type'))*Math.max(1,V('trips')),eff=Math.max(.01,V('efficiency')),fuel=metric?distance*eff/100:distance/eff,cost=fuel*V('fuelprice'),currency=document.getElementById('currency')?.value||'USD',people=Math.max(1,V('people'));show(`<strong>${MONEY(cost,currency)}</strong><br>${F(fuel,2)} ${metric?'liters':'US gallons'}; ${MONEY(cost/people,currency)} per person; ${F(distance,0)} ${metric?'km':'miles'} total.`);break}
   case'tire':{let width=V('width'),aspect=V('aspect'),wheel=V('wheel');let side=width*aspect/100,diam=wheel+2*side/25.4,circ=Math.PI*diam;show(`<strong>${F(diam,2)} in diameter</strong><br>Sidewall: ${F(side,1)} mm; circumference: ${F(circ,2)} in.`);break}
   case'offset':{let r=(V('backspacing')-V('width')/2)*25.4;show(`<strong>${F(r,1)} mm offset</strong><br>Approximation using nominal wheel width.`);break}
   case'backspacing':{let r=V('width')/2+V('offset')/25.4;show(`<strong>${F(r,2)} in backspacing</strong><br>Approximation using nominal wheel width.`);break}
@@ -1706,6 +1761,16 @@ function renderGenericFromEngine(engine) {
     cards=[["Recommended PSU",`${F(psu,0)} W`,"Next common PSU size."],["Estimated load",`${F(base,0)} W`,"Component wattage total."],["With headroom",`${F(recommended,0)} W`,"Load plus safety margin."],["Headroom",`${F(V('headroom'),0)}%`,"Entered planning margin."]];
     bars=[{label:"CPU",value:cpu,display:`${F(cpu,0)} W`},{label:"GPU",value:gpu,display:`${F(gpu,0)} W`},{label:"Storage",value:drives,display:`${F(drives,0)} W`},{label:"Cooling",value:fans,display:`${F(fans,0)} W`},{label:"Other",value:other,display:`${F(other,0)} W`}];
     rows=[["CPU",`${F(cpu,0)} W`,"Entered CPU power."],["GPU",`${F(gpu,0)} W`,"Entered GPU power."],["Drives/storage",`${F(drives,0)} W`,"Storage estimate."],["Fans/cooling/RGB",`${F(fans,0)} W`,"Cooling and lighting load."],["Other devices",`${F(other,0)} W`,"Additional system load."],["Recommended PSU",`${F(psu,0)} W`,"Rounded to a common size."]];
+  } else if (engine === "mpg_advanced") {
+    const distance=V('distance'), fuel=V('fuel_used'), miles=document.getElementById('distance_unit')?.value==='kilometers'?distance*0.621371192237:distance, liters=fuel*(document.getElementById('fuel_unit')?.value==='us_gallon'?3.785411784:document.getElementById('fuel_unit')?.value==='imperial_gallon'?4.54609:1), km=miles/0.621371192237, usGallons=liters/3.785411784, imperialGallons=liters/4.54609, usMpg=usGallons>0?miles/usGallons:0, imperialMpg=imperialGallons>0?miles/imperialGallons:0, l100=km>0?liters/km*100:0, kmL=liters>0?km/liters:0;
+    cards=[["US fuel economy",`${F(usMpg,2)} MPG`,"Miles per US gallon."],["Metric consumption",`${F(l100,2)} L/100 km`,"Lower is more efficient."],["Imperial fuel economy",`${F(imperialMpg,2)} MPG`,"Miles per UK gallon."],["Kilometers per liter",`${F(kmL,2)} km/L`,"Distance per liter."]];
+    bars=[{label:"US MPG",value:usMpg,display:F(usMpg,2)},{label:"Imperial MPG",value:imperialMpg,display:F(imperialMpg,2)},{label:"km/L",value:kmL,display:F(kmL,2)},{label:"L/100 km",value:l100,display:F(l100,2)}];
+    rows=[["Entered distance",`${F(distance,2)} ${document.getElementById('distance_unit')?.value||'miles'}`,"Normalized before conversion."],["Entered fuel",`${F(fuel,3)} ${(document.getElementById('fuel_unit')?.selectedOptions[0]?.textContent)||'fuel units'}`,"Normalized to liters."],["Distance in miles",F(miles,4),"Used for MPG."],["Fuel in US gallons",F(usGallons,4),"Used for US MPG."],["US MPG",F(usMpg,3),"Miles divided by US gallons."],["L/100 km",F(l100,3),"Liters used per 100 kilometers."]];
+  } else if (engine === "fuel_cost_advanced") {
+    const metric=document.getElementById('trip_units')?.value==='metric', oneWay=V('distance'), multiplier=Math.max(1,V('trip_type'))*Math.max(1,V('trips')), distance=oneWay*multiplier, efficiency=Math.max(.01,V('efficiency')), fuel=metric?distance*efficiency/100:distance/efficiency, price=V('fuelprice'), cost=fuel*price, currency=document.getElementById('currency')?.value||'USD', people=Math.max(1,V('people')), perPerson=cost/people, perDistance=distance>0?cost/distance:0;
+    cards=[["Estimated fuel cost",MONEY(cost,currency),"For all selected trips."],["Fuel needed",`${F(fuel,2)} ${metric?'L':'gal'}`,"Estimated volume used."],["Cost per person",MONEY(perPerson,currency),`Split between ${F(people,0)} people.`],[`Cost per ${metric?'km':'mile'}`,MONEY(perDistance,currency),"Fuel cost only."]];
+    bars=[{label:"Fuel cost",value:cost,display:MONEY(cost,currency)},{label:"Per person",value:perPerson,display:MONEY(perPerson,currency)},{label:`Fuel ${metric?'liters':'gallons'}`,value:fuel,display:F(fuel,2)}];
+    rows=[["One-way distance",`${F(oneWay,1)} ${metric?'km':'mi'}`,"Entered route length."],["Total distance",`${F(distance,1)} ${metric?'km':'mi'}`,"Trip type multiplied by trip count."],["Fuel economy",`${F(efficiency,2)} ${metric?'L/100 km':'MPG'}`,"Entered real-world estimate."],["Fuel price",`${MONEY(price,currency)} / ${metric?'L':'gal'}`,"No currency conversion applied."],["Fuel needed",`${F(fuel,3)} ${metric?'L':'gal'}`,"Calculated trip volume."],["Total fuel cost",MONEY(cost,currency),"Fuel only."],["Cost per person",MONEY(perPerson,currency),"Even split."]];
   } else if (engine === "payload") {
     const capacity=V('gvwr')-V('curb'), occupants=V('people'), cargo=V('cargo'), tongue=V('tongue'), used=occupants+cargo+tongue, remaining=capacity-used, utilization=capacity>0?used/capacity*100:0;
     cards=[["Remaining payload",`${F(remaining,0)} lb`,remaining>=0?"Available before reaching GVWR.":"Entered load exceeds GVWR."],["Payload capacity",`${F(capacity,0)} lb`,"GVWR minus curb weight."],["Payload used",`${F(used,0)} lb`,"Occupants, cargo, and tongue weight."],["Utilization",`${F(utilization,1)}%`,"Share of payload capacity used."]];
