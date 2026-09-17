@@ -14,6 +14,7 @@ KEYWORD_STATS = ROOT / "exports" / "keyword-stats-positive.json"
 SEO_STRATEGY = ROOT / "exports" / "seo-keyword-strategy-2026-09-05.json"
 PUBLIC_BASE_PATH = os.environ.get("PUBLIC_BASE_PATH", "").strip().rstrip("/")
 PUBLIC_SITE_DOMAIN = os.environ.get("PUBLIC_SITE_DOMAIN", "").strip()
+ASSET_VERSION = "20260917a"
 
 CATEGORY_ORDER = [
     "Automotive",
@@ -348,7 +349,7 @@ def page(site, title, desc, path, body, keywords=None, extra_schema=None, page_t
 <title>{h(title)}</title><meta name="description" content="{h(desc)}">{robots_meta}<meta name="theme-color" content="#173f73">
 <meta property="og:type" content="website"><meta property="og:site_name" content="NS Calculators"><meta property="og:locale" content="en_US"><meta property="og:title" content="{h(title)}"><meta property="og:description" content="{h(desc)}"><meta property="og:url" content="{h(site_url(site, path))}">
 <meta name="twitter:card" content="summary"><meta name="twitter:title" content="{h(title)}"><meta name="twitter:description" content="{h(desc)}">
-<link rel="canonical" href="{h(site_url(site, path))}"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="/apple-touch-icon.svg"><link rel="stylesheet" href="/assets/site.css">
+<link rel="canonical" href="{h(site_url(site, path))}"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="/apple-touch-icon.svg"><link rel="stylesheet" href="/assets/site.css?v={ASSET_VERSION}">
 {schema_html}<script>window.NORTHSTAR_BASE_PATH={json.dumps(PUBLIC_BASE_PATH)};</script></head><body>{nav()}{body}{footer()}</body></html>"""
     return apply_base_path(html)
 
@@ -958,7 +959,7 @@ def home_new(site, calculators):
 <section class="home-block popular-block"><div class="wrap"><h2>Most Popular Calculators</h2><div class="popular-list">{popular_links}</div></div></section>
 <section class="home-block faq-section"><div class="wrap"><h2>Common Questions</h2><div class="faq-list">{faq_list}</div></div></section>
 <section class="ad-band"><div class="wrap"><div class="ad-slot">Advertisement</div></div></section>
-</main><script src="/assets/search.js"></script><script src="/assets/scientific.js"></script><script src="/assets/home.js"></script>"""
+</main><script src="/assets/search.js?v={ASSET_VERSION}"></script><script src="/assets/scientific.js?v={ASSET_VERSION}"></script><script src="/assets/home.js?v={ASSET_VERSION}"></script>"""
     return page(site, "Free Online Calculators | Mortgage, Loan & Unit Converters", "Free US-focused calculators for mortgage, loan, auto loan, compound interest, BMI, and unit conversions with instant answers, charts, and formulas.", "/", body, ["free online calculators", "mortgage calculator", "loan calculator", "auto loan calculator", "compound interest calculator", "unit converter"], [website_schema(site), organization_schema(site)])
 
 
@@ -1106,7 +1107,7 @@ def calculator_page(site, calc, related):
 <article class="article calculator-article"><span class="pill icon-pill">{category_icon(calc["cat"], "pill-icon")}{h(calc['cat'])} calculator</span><div class="page-title-icon">{category_icon(calc["cat"], "title-icon")}<h1>{h(calc['title'])}</h1></div><p class="lead">{h(calc['desc'])}</p>{opportunity_notice(calc)}{keyword_section(calc)}
 {primary_tool}
 <div class="prose">{content}</div>
-<h2>Related calculators</h2><div class="related">{rel}</div></article></div></main><script src="/assets/calculator.js?v=20260907"></script>"""
+<h2>Related calculators</h2><div class="related">{rel}</div></article></div></main><script src="/assets/calculator.js?v={ASSET_VERSION}"></script>"""
     crumbs = [
         ("Home", "/"),
         (f"{calc['cat']} Calculators", f"/{slugify_cat(calc['cat'])}/"),
@@ -1122,7 +1123,7 @@ def simple_page(site, path, title, desc, content):
 
 
 def scientific_page(site):
-    body = """<main class="main"><div class="wrap"><article class="article"><div class="crumb"><a href="/">Home</a> / Scientific Calculator</div><span class="pill">Math calculator</span><h1>Scientific Calculator</h1><p class="lead">Run arithmetic, percentages, powers, square roots, trigonometry, and logarithms in your browser.</p><section class="calc scientific-page"><h2>Calculator</h2><div class="mini-calc full"><input id="sciExpression" value="sqrt(144)+25%" aria-label="Scientific expression"><button class="btn primary" id="sciRun" type="button">Calculate</button><div id="sciResult" class="mini-result">Ready</div></div></section><div class="prose"><h2>Supported syntax</h2><p>Use operators such as +, -, *, /, ^, parentheses, percentages, sqrt(), sin(), cos(), tan(), log(), ln(), pi, and e.</p><h2>Example</h2><p>Entering sqrt(144)+25% returns 12.25.</p></div></article></div></main><script src="/assets/scientific.js"></script>"""
+    body = f"""<main class="main"><div class="wrap"><article class="article"><div class="crumb"><a href="/">Home</a> / Scientific Calculator</div><span class="pill">Math calculator</span><h1>Scientific Calculator</h1><p class="lead">Run arithmetic, percentages, powers, square roots, trigonometry, and logarithms in your browser.</p><section class="calc scientific-page"><h2>Calculator</h2><div class="mini-calc full"><input id="sciExpression" value="sqrt(144)+25%" aria-label="Scientific expression"><button class="btn primary" id="sciRun" type="button">Calculate</button><div id="sciResult" class="mini-result">Ready</div></div></section><div class="prose"><h2>Supported syntax</h2><p>Use operators such as +, -, *, /, ^, parentheses, percentages, sqrt(), sin(), cos(), tan(), log(), ln(), pi, and e.</p><h2>Example</h2><p>Entering sqrt(144)+25% returns 12.25.</p></div></article></div></main><script src="/assets/scientific.js?v={ASSET_VERSION}"></script>"""
     return page(site, "Scientific Calculator | NS Calculators", "Free browser-based scientific calculator for arithmetic, percentages, powers, roots, trig, and logarithms.", "/scientific-calculator/", body)
 
 
