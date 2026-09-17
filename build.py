@@ -14,7 +14,7 @@ KEYWORD_STATS = ROOT / "exports" / "keyword-stats-positive.json"
 SEO_STRATEGY = ROOT / "exports" / "seo-keyword-strategy-2026-09-05.json"
 PUBLIC_BASE_PATH = os.environ.get("PUBLIC_BASE_PATH", "").strip().rstrip("/")
 PUBLIC_SITE_DOMAIN = os.environ.get("PUBLIC_SITE_DOMAIN", "").strip()
-ASSET_VERSION = "20260917f"
+ASSET_VERSION = "20260917g"
 
 CATEGORY_ORDER = [
     "Automotive",
@@ -314,7 +314,7 @@ def nav():
         for cat in CATEGORY_ORDER
     )
     return """<header class="site-header"><div class="wrap nav">
-<a class="brand" href="/" aria-label="NS Calculators home"><span class="brand-mark">""" + LOGO_MARK + """</span><span class="brand-name"><strong>NS</strong><b>Calculators</b></span></a>
+<a class="brand" href="/"><span class="brand-mark">""" + LOGO_MARK + """</span><span class="brand-name"><strong>NS</strong><b>Calculators</b></span></a>
 <nav class="navlinks" aria-label="Main navigation"><div class="menu-group all-calculators-menu"><a class="menu-top" href="/">Calculators</a><div class="submenu mega-menu" aria-label="Calculator categories">""" + menu_links + """</div></div></nav>
 </div></header>"""
 
@@ -772,6 +772,10 @@ def seo_title(calc):
 def seo_description(calc):
     keyword = primary_keyword(calc)
     context = f" for {display_group(calculator_group(calc)).lower()}" if calc.get("seo_context_label") else ""
+    if calc.get("slug") == "truck-payload-calculator":
+        return "Calculate truck payload capacity and remaining payload from GVWR, curb weight, passengers, cargo, and trailer tongue weight."
+    if calc.get("slug") == "towing-capacity-calculator":
+        return "Estimate safe trailer weight from tow rating, GCWR, GVWR, payload, hitch rating, cargo, passengers, and tongue weight percentage."
     if calc.get("engine") == "linear_convert":
         return f"Use this free {keyword} to convert units instantly with the formula, example, and related conversion calculators."
     if calc.get("engine") in ("cn_mortgage", "loan_page", "car_loan"):
@@ -831,6 +835,29 @@ def feet_to_meters_input_html():
 <div class="field" data-feet-input><label for="feet">Feet</label><input id="feet" type="number" step="any" value="5"></div>
 <div class="field" data-feet-input><label for="inches">Inches</label><input id="inches" type="number" step="any" value="10"></div>
 <div class="field field-wide is-hidden" data-meter-input><label for="meters">Meters</label><input id="meters" type="number" step="any" value="1.778"></div>
+</div>"""
+
+
+def truck_payload_input_html():
+    return """<div class="fields vehicle-weight-fields">
+<div class="field"><label for="gvwr">Vehicle GVWR</label><div class="input-unit"><input id="gvwr" type="number" step="any" min="0" value="7200"><span>lb</span></div></div>
+<div class="field"><label for="curb">Curb weight</label><div class="input-unit"><input id="curb" type="number" step="any" min="0" value="5200"><span>lb</span></div></div>
+<div class="field"><label for="people">Driver and passengers</label><div class="input-unit"><input id="people" type="number" step="any" min="0" value="400"><span>lb</span></div></div>
+<div class="field"><label for="cargo">Cab and bed cargo</label><div class="input-unit"><input id="cargo" type="number" step="any" min="0" value="200"><span>lb</span></div></div>
+<div class="field field-wide"><label for="tongue">Trailer tongue weight</label><div class="input-unit"><input id="tongue" type="number" step="any" min="0" value="750"><span>lb</span></div></div>
+</div>"""
+
+
+def towing_capacity_input_html():
+    return """<div class="fields vehicle-weight-fields towing-fields">
+<div class="field"><label for="rating">Maximum tow rating</label><div class="input-unit"><input id="rating" type="number" step="any" min="0" value="10000"><span>lb</span></div></div>
+<div class="field"><label for="hitch_rating">Hitch trailer rating</label><div class="input-unit"><input id="hitch_rating" type="number" step="any" min="0" value="10000"><span>lb</span></div></div>
+<div class="field"><label for="gcwr">Vehicle GCWR</label><div class="input-unit"><input id="gcwr" type="number" step="any" min="0" value="16000"><span>lb</span></div></div>
+<div class="field"><label for="gvwr">Vehicle GVWR</label><div class="input-unit"><input id="gvwr" type="number" step="any" min="0" value="7200"><span>lb</span></div></div>
+<div class="field"><label for="curb">Curb weight</label><div class="input-unit"><input id="curb" type="number" step="any" min="0" value="5200"><span>lb</span></div></div>
+<div class="field"><label for="people">Driver and passengers</label><div class="input-unit"><input id="people" type="number" step="any" min="0" value="400"><span>lb</span></div></div>
+<div class="field"><label for="cargo">Vehicle cargo</label><div class="input-unit"><input id="cargo" type="number" step="any" min="0" value="200"><span>lb</span></div></div>
+<div class="field"><label for="tongue_pct">Estimated tongue weight</label><div class="input-unit"><input id="tongue_pct" type="number" step="any" min="1" value="12"><span>%</span></div></div>
 </div>"""
 
 
@@ -1067,6 +1094,24 @@ def high_value_calculator_copy(calc):
 <h2>Compounding frequency matters</h2><p>At the same stated annual rate, more frequent compounding produces a slightly higher effective annual yield. The difference is often modest, while contribution size and time invested usually have a larger effect.</p>
 <h2>How to use the results</h2><p>Use the annual schedule to see how contributions and interest build over time. The estimate assumes a constant rate and does not include taxes, investment fees, inflation, or market volatility, so it should be used for planning rather than as a guaranteed return.</p>
 <h2>Frequently asked questions</h2><h3>What is the difference between APR and APY?</h3><p>APR is a stated annual rate that does not itself show intra-year compounding. APY includes the effect of compounding over a year.</p><h3>Does contribution timing change the answer?</h3><p>Yes. A beginning-of-month contribution has one additional month to earn a return compared with an end-of-month contribution.</p><h3>What is the Rule of 72?</h3><p>Dividing 72 by an annual percentage rate gives a rough estimate of the years needed to double money. It is a shortcut, not an exact projection.</p>"""
+    if calc.get("slug") == "truck-payload-calculator":
+        return """
+<h2>How to calculate truck payload</h2><p>Payload capacity is the truck's GVWR minus its curb weight. Remaining payload subtracts everyone and everything carried by the truck, including passengers, cargo, accessories, and trailer tongue weight.</p>
+<p class="formula">remaining payload = GVWR - curb weight - passengers - cargo - tongue weight</p>
+<h2>Truck payload example</h2><p>A truck with a 7,200 lb GVWR and 5,200 lb curb weight has 2,000 lb of total payload capacity. After 400 lb of occupants, 200 lb of cargo, and 750 lb of trailer tongue weight, 650 lb remains.</p>
+<h2>Where to find the numbers</h2><p>Use the certification and tire-loading labels on the driver-side door jamb for the specific vehicle. Trim, options, accessories, and modifications can change curb weight and available payload. A loaded scale weight is better than a brochure estimate.</p>
+<h2>Payload is not towing capacity</h2><p>Payload is weight carried by the truck. Towing capacity is trailer weight pulled behind it. Trailer tongue weight presses on the truck and therefore consumes payload even though most trailer weight is carried by the trailer axles.</p>
+<h2>Authoritative guidance</h2><p>Ford's US towing guidance explains that payload includes cargo and passengers and recommends using the vehicle label or a public scale. See <a href="https://www.ford.com/towing/" rel="external noopener">Ford Towing</a>. Always follow the ratings for the exact vehicle, tires, axles, and hitch.</p>
+<h2>Frequently asked questions</h2><h3>Does the driver count as payload?</h3><p>Yes. Occupants, cargo, aftermarket equipment, and tongue weight all use available payload.</p><h3>Can remaining payload be negative?</h3><p>Yes. A negative result means the entered load exceeds GVWR and should be reduced.</p><h3>Is the advertised maximum payload right for every trim?</h3><p>No. Advertised maximums usually describe a favorable configuration. Use the label and ratings on the specific truck.</p>"""
+    if calc.get("slug") == "towing-capacity-calculator":
+        return """
+<h2>How this towing capacity calculator works</h2><p>The safe planning estimate is the lowest limit produced by the vehicle's published tow rating, GCWR headroom, hitch trailer rating, and payload available for tongue weight. A trailer must stay under every applicable limit, not only the largest advertised number.</p>
+<p class="formula">planning trailer limit = minimum of tow rating, GCWR limit, hitch limit, and payload-based limit</p>
+<h2>Why payload often limits towing</h2><p>Passengers and cargo increase the loaded tow-vehicle weight and reduce both GCWR headroom and payload available for trailer tongue weight. For example, 650 lb of remaining payload at a 12% tongue-weight assumption supports about 5,417 lb of trailer weight before payload is exhausted.</p>
+<h2>Terms used in the calculator</h2><p><strong>GVWR</strong> is the maximum loaded weight of the tow vehicle. <strong>GCWR</strong> is the maximum combined loaded weight of the vehicle and trailer. <strong>Tongue weight</strong> is the downward trailer load carried by the hitch and tow vehicle.</p>
+<h2>Use vehicle-specific ratings</h2><p>Ratings vary with model, trim, drivetrain, axle ratio, factory options, tires, and hitch equipment. Verify the certification label, tire-loading label, owner's manual, towing guide, hitch label, and loaded scale weights before towing.</p>
+<h2>Safety references</h2><p><a href="https://www.ford.com/towing/" rel="external noopener">Ford's towing guidance</a> describes GVWR, GCWR, curb weight, payload, and conventional trailer tongue weight. SAE J2807 establishes performance criteria used to determine tow-vehicle GCWR and trailer weight ratings for applicable light vehicles.</p>
+<h2>Frequently asked questions</h2><h3>What tongue-weight percentage should I enter?</h3><p>Use the trailer and vehicle manufacturer's guidance. Conventional trailers are often planned around 10% to 15%, but the correct range depends on the trailer and hitch system.</p><h3>Does this replace a scale?</h3><p>No. Weigh the fully loaded tow vehicle and trailer when possible, and check individual axle ratings as well as total ratings.</p><h3>What if one limit is much lower than the others?</h3><p>The lowest limit controls. The results identify that limiting factor so you can review the relevant load or equipment rating.</p>"""
     return None
 
 
@@ -1149,6 +1194,10 @@ def calculator_page(site, calc, related):
         page_engine = "feet_meters"
     elif calc.get("slug") == "compound-interest-calculator":
         fields = compound_interest_input_html()
+    elif calc.get("slug") == "truck-payload-calculator":
+        fields = truck_payload_input_html()
+    elif calc.get("slug") == "towing-capacity-calculator":
+        fields = towing_capacity_input_html()
     elif calc.get("engine") == "cn_mortgage":
         fields = mortgage_input_html()
     elif calc.get("engine") == "loan_page":
@@ -1277,7 +1326,9 @@ CSS = r'''
 :root{--ink:#14213a;--muted:#52647b;--subtle:#7a8ba3;--line:#d8e4f1;--bg:#f8fbff;--card:#fff;--card-2:#eef5ff;--brand:#2563eb;--brand-dark:#1746a2;--accent:#d92d42;--accent-muted:#b42335;--accent-soft:#fff1f3;--accent-line:#ffc8d0;--soft:#eaf3ff;--shadow:0 18px 46px rgba(37,99,235,.10)}
 body{background:var(--bg)}.site-header{border-bottom-color:#dbe7f4}.primary{background:var(--brand)}.primary:hover{background:var(--brand-dark);box-shadow:0 10px 24px rgba(37,99,235,.24)}.secondary:hover{border-color:#9eb7d5;background:#f8fbff}.search:focus,.field input:focus,.field select:focus{border-color:var(--brand);box-shadow:0 0 0 4px rgba(37,99,235,.12)}.calculator-article .result{background:#1d4ed8;border-color:#1d4ed8;box-shadow:0 12px 26px rgba(37,99,235,.20)}.home-hero{background:#fff}.category-section,.home-category,.chart-card,.table-card,.summary-card,.loan-result-panel{box-shadow:0 8px 24px rgba(37,99,235,.055)}
 [data-feet-input].is-hidden,[data-meter-input].is-hidden{display:none}
+.summary-card small{color:#52647b}.crumb a,.prose a{text-decoration:underline;text-underline-offset:2px;text-decoration-thickness:1px}
 @media(max-width:560px){.compound-fields{grid-template-columns:repeat(2,minmax(0,1fr))}.compound-fields .field label{min-height:34px;display:flex;align-items:end}.compound-dashboard .summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.vehicle-weight-fields{grid-template-columns:repeat(2,minmax(0,1fr))}.vehicle-weight-fields .field label{min-height:34px;display:flex;align-items:end}.vehicle-weight-fields .field-wide{grid-column:1/-1}}
 '''
 
 SEARCH_JS = r'''
@@ -1384,12 +1435,12 @@ function calc(e){
   case'trade_value':{let price=V('price'),age=V('age'),miles=V('miles'),cond=V('condition');let ageF=Math.pow(.84,age),expected=Math.max(1,age)*12000,mileageF=Math.max(.72,Math.min(1.12,1-(miles-expected)*0.000003));let r=price*ageF*mileageF*cond;show(`<strong>${USD(Math.max(0,r))}</strong><br>Illustrative estimate, not a dealer quote or appraisal.`);break}
   case'f150_bed':{let bed=String(document.getElementById('bed').value);let d={'5.5':['67.1 in','50.6 in','~52.8 cu ft'],'6.5':['78.9 in','50.6 in','~62.3 cu ft'],'8':['97.6 in','50.6 in','~77.4 cu ft']}[bed];show(`<strong>${bed} ft bed</strong><br>Approx. inside length: ${d[0]}; width between wheelhouses: ${d[1]}; cargo volume: ${d[2]}. Verify exact model year/configuration.`);break}
   case'depreciation':{let r=V('price')*Math.pow(1-V('rate')/100,V('years'));show(`<strong>${USD(r)}</strong><br>Estimated future value.`);break}
-  case'payload':{let r=V('gvwr')-V('curb')-V('people')-V('cargo');show(`<strong>${F(r,0)} lb</strong><br>Estimated remaining payload.`);break}
+  case'payload':{let capacity=V('gvwr')-V('curb'),used=V('people')+V('cargo')+V('tongue'),remaining=capacity-used,status=remaining>=0?'Within entered GVWR':'Over entered GVWR';show(`<strong>${F(remaining,0)} lb remaining</strong><br>${status}; ${F(capacity,0)} lb total payload capacity and ${F(used,0)} lb entered load.`);break}
   case'trailer_weight':{let r=V('empty')+V('cargo');show(`<strong>${F(r,0)} lb</strong><br>Estimated loaded trailer weight.`);break}
   case'tongue_weight':{let r=V('trailer')*V('percent')/100;show(`<strong>${F(r,0)} lb</strong><br>Estimated tongue weight.`);break}
   case'trailer_payload':{let r=V('gvwr')-V('empty');show(`<strong>${F(r,0)} lb</strong><br>Theoretical payload before other limits.`);break}
   case'tongue_pct':{let r=V('trailer')?V('tongue')/V('trailer')*100:0;show(`<strong>${F(r,2)}%</strong>`);break}
-  case'towing':{let r=Math.min(V('rating'),Math.max(0,V('gcwr')-V('vehicle')));show(`<strong>${F(r,0)} lb</strong><br>Lower of tow rating and GCWR headroom; other limits may be lower.`);break}
+  case'towing':{let loaded=V('curb')+V('people')+V('cargo'),remainingPayload=Math.max(0,V('gvwr')-loaded),pct=Math.max(.01,V('tongue_pct')/100),limits=[['Vehicle tow rating',V('rating')],['GCWR headroom',Math.max(0,V('gcwr')-loaded)],['Hitch rating',V('hitch_rating')],['Payload for tongue weight',remainingPayload/pct]],hit=limits.reduce((a,b)=>b[1]<a[1]?b:a);show(`<strong>${F(hit[1],0)} lb trailer</strong><br>Planning limit: ${hit[0]}; ${F(remainingPayload,0)} lb vehicle payload remains before tongue weight.`);break}
   case'fuel_cost':{let r=V('distance')/Math.max(.01,V('mpg'))*V('fuelprice');show(`<strong>${USD(r)}</strong><br>Estimated fuel cost.`);break}
   case'mpg':{let r=V('gallons')?V('miles')/V('gallons'):0;show(`<strong>${F(r,2)} MPG</strong>`);break}
   case'tire':{let width=V('width'),aspect=V('aspect'),wheel=V('wheel');let side=width*aspect/100,diam=wheel+2*side/25.4,circ=Math.PI*diam;show(`<strong>${F(diam,2)} in diameter</strong><br>Sidewall: ${F(side,1)} mm; circumference: ${F(circ,2)} in.`);break}
@@ -1655,6 +1706,16 @@ function renderGenericFromEngine(engine) {
     cards=[["Recommended PSU",`${F(psu,0)} W`,"Next common PSU size."],["Estimated load",`${F(base,0)} W`,"Component wattage total."],["With headroom",`${F(recommended,0)} W`,"Load plus safety margin."],["Headroom",`${F(V('headroom'),0)}%`,"Entered planning margin."]];
     bars=[{label:"CPU",value:cpu,display:`${F(cpu,0)} W`},{label:"GPU",value:gpu,display:`${F(gpu,0)} W`},{label:"Storage",value:drives,display:`${F(drives,0)} W`},{label:"Cooling",value:fans,display:`${F(fans,0)} W`},{label:"Other",value:other,display:`${F(other,0)} W`}];
     rows=[["CPU",`${F(cpu,0)} W`,"Entered CPU power."],["GPU",`${F(gpu,0)} W`,"Entered GPU power."],["Drives/storage",`${F(drives,0)} W`,"Storage estimate."],["Fans/cooling/RGB",`${F(fans,0)} W`,"Cooling and lighting load."],["Other devices",`${F(other,0)} W`,"Additional system load."],["Recommended PSU",`${F(psu,0)} W`,"Rounded to a common size."]];
+  } else if (engine === "payload") {
+    const capacity=V('gvwr')-V('curb'), occupants=V('people'), cargo=V('cargo'), tongue=V('tongue'), used=occupants+cargo+tongue, remaining=capacity-used, utilization=capacity>0?used/capacity*100:0;
+    cards=[["Remaining payload",`${F(remaining,0)} lb`,remaining>=0?"Available before reaching GVWR.":"Entered load exceeds GVWR."],["Payload capacity",`${F(capacity,0)} lb`,"GVWR minus curb weight."],["Payload used",`${F(used,0)} lb`,"Occupants, cargo, and tongue weight."],["Utilization",`${F(utilization,1)}%`,"Share of payload capacity used."]];
+    bars=[{label:"Occupants",value:occupants,display:`${F(occupants,0)} lb`},{label:"Cargo",value:cargo,display:`${F(cargo,0)} lb`},{label:"Tongue weight",value:tongue,display:`${F(tongue,0)} lb`},{label:"Remaining",value:Math.max(0,remaining),display:`${F(remaining,0)} lb`}];
+    rows=[["GVWR",`${F(V('gvwr'),0)} lb`,"Maximum entered vehicle weight."],["Curb weight",`${F(V('curb'),0)} lb`,"Entered empty vehicle weight."],["Payload capacity",`${F(capacity,0)} lb`,"GVWR minus curb weight."],["Loaded vehicle weight",`${F(V('curb')+used,0)} lb`,"Curb weight plus entered payload."],["Remaining payload",`${F(remaining,0)} lb`,remaining>=0?"Within entered GVWR.":"Reduce load before travel."]];
+  } else if (engine === "towing") {
+    const loaded=V('curb')+V('people')+V('cargo'), remainingPayload=Math.max(0,V('gvwr')-loaded), pct=Math.max(.01,V('tongue_pct')/100), limits=[{label:"Vehicle tow rating",value:V('rating')},{label:"GCWR headroom",value:Math.max(0,V('gcwr')-loaded)},{label:"Hitch rating",value:V('hitch_rating')},{label:"Payload-based limit",value:remainingPayload/pct}], controlling=limits.reduce((a,b)=>b.value<a.value?b:a), tongue=controlling.value*pct;
+    cards=[["Planning trailer limit",`${F(controlling.value,0)} lb`,"Lowest entered or calculated limit."],["Controlling factor",controlling.label,"The first rating reached."],["Estimated tongue weight",`${F(tongue,0)} lb`,`${F(V('tongue_pct'),1)}% of planning trailer limit.`],["Payload before hitch",`${F(remainingPayload,0)} lb`,"Available after passengers and cargo."]];
+    bars=limits.map(item=>({label:item.label,value:item.value,display:`${F(item.value,0)} lb`}));
+    rows=[["Loaded tow vehicle",`${F(loaded,0)} lb`,"Curb weight, occupants, and cargo."],["Tow rating",`${F(V('rating'),0)} lb`,"Vehicle manufacturer's entered rating."],["GCWR trailer headroom",`${F(Math.max(0,V('gcwr')-loaded),0)} lb`,"GCWR minus loaded vehicle."],["Hitch trailer rating",`${F(V('hitch_rating'),0)} lb`,"Entered equipment rating."],["Payload-based trailer limit",`${F(remainingPayload/pct,0)} lb`,"Remaining payload divided by tongue percentage."],["Planning limit",`${F(controlling.value,0)} lb`,controlling.label+" controls."]];
   } else if (engine === "cn_generic") {
     const inputs=Array.from(document.querySelectorAll(".calc input,.calc select")).filter(el=>el.type!=="hidden");
     const numeric=inputs.map(el=>({label:el.previousElementSibling?.textContent||el.id,value:parseFloat(el.value)})).filter(x=>Number.isFinite(x.value));
