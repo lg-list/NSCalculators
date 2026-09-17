@@ -14,7 +14,7 @@ KEYWORD_STATS = ROOT / "exports" / "keyword-stats-positive.json"
 SEO_STRATEGY = ROOT / "exports" / "seo-keyword-strategy-2026-09-05.json"
 PUBLIC_BASE_PATH = os.environ.get("PUBLIC_BASE_PATH", "").strip().rstrip("/")
 PUBLIC_SITE_DOMAIN = os.environ.get("PUBLIC_SITE_DOMAIN", "").strip()
-ASSET_VERSION = "20260917c"
+ASSET_VERSION = "20260917d"
 
 CATEGORY_ORDER = [
     "Automotive",
@@ -1215,6 +1215,8 @@ CSS = r'''
 }
 .category-main{padding-top:22px}.category-main .crumb{margin-bottom:16px}.category-directory .page-title-icon{gap:10px;margin-bottom:7px}.category-directory h1{font-size:38px;line-height:1.08;letter-spacing:0}.category-directory .title-icon{width:40px;height:40px;border-radius:9px}.category-directory .title-icon svg{width:22px;height:22px}.category-directory .lead{max-width:780px;margin-bottom:12px;font-size:15px;line-height:1.45}.category-jump-nav{gap:6px;margin:10px 0 16px}.category-jump-nav a{min-height:32px;padding:5px 9px;font-size:13px}.category-tools{align-items:start;gap:12px;margin-top:16px}.category-section{align-self:start;padding:14px;border-radius:10px}.category-section-head{display:flex;grid-template-columns:none;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:10px}.category-section-head h2{margin:0;font-size:18px;line-height:1.2;letter-spacing:0}.category-section-head .category-count{display:inline;width:auto;height:auto;border-radius:0;background:transparent;place-items:normal;flex:0 0 auto;color:var(--muted);font-size:12px;font-weight:750}.category-directory .calculator-link-grid{gap:6px}.category-directory .calculator-link-grid a{min-height:0;padding:8px 9px;font-size:13px;line-height:1.22}
 @media(max-width:560px){.category-main{padding-top:14px}.category-main .crumb{margin-bottom:10px}.category-directory h1{font-size:24px}.category-directory .title-icon{width:30px;height:30px}.category-directory .title-icon svg{width:17px;height:17px}.category-directory .page-title-icon{gap:7px;margin-bottom:4px}.category-directory .lead{margin-bottom:8px;font-size:13px}.category-jump-nav{margin:8px 0 10px}.category-tools{gap:8px;margin-top:10px}.category-section{padding:10px}.category-section-head{margin-bottom:7px}.category-section-head h2{font-size:16px}.category-count{font-size:11px}.category-directory .calculator-link-grid a{padding:7px;font-size:12px}}
+.article h1,.calculator-article h1,.category-directory h1{font-size:32px;line-height:1.12;letter-spacing:0}
+@media(max-width:560px){.article h1,.calculator-article h1,.category-directory h1{font-size:22px;line-height:1.15}}
 '''
 
 SEARCH_JS = r'''
