@@ -14,7 +14,7 @@ KEYWORD_STATS = ROOT / "exports" / "keyword-stats-positive.json"
 SEO_STRATEGY = ROOT / "exports" / "seo-keyword-strategy-2026-09-05.json"
 PUBLIC_BASE_PATH = os.environ.get("PUBLIC_BASE_PATH", "").strip().rstrip("/")
 PUBLIC_SITE_DOMAIN = os.environ.get("PUBLIC_SITE_DOMAIN", "").strip()
-ASSET_VERSION = "20260917d"
+ASSET_VERSION = "20260917e"
 
 CATEGORY_ORDER = [
     "Automotive",
@@ -346,7 +346,7 @@ def page(site, title, desc, path, body, keywords=None, extra_schema=None, page_t
     robots_meta = "" if indexable else '<meta name="robots" content="noindex,follow">'
     schema_html = "\n".join(json_ld(item) for item in [schema] + extra_schema)
     html = f"""<!doctype html><html lang="{h(site['language'])}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>{h(title)}</title><meta name="description" content="{h(desc)}">{robots_meta}<meta name="theme-color" content="#173f73">
+<title>{h(title)}</title><meta name="description" content="{h(desc)}">{robots_meta}<meta name="theme-color" content="#2563eb">
 <meta property="og:type" content="website"><meta property="og:site_name" content="NS Calculators"><meta property="og:locale" content="en_US"><meta property="og:title" content="{h(title)}"><meta property="og:description" content="{h(desc)}"><meta property="og:url" content="{h(site_url(site, path))}">
 <meta name="twitter:card" content="summary"><meta name="twitter:title" content="{h(title)}"><meta name="twitter:description" content="{h(desc)}">
 <link rel="canonical" href="{h(site_url(site, path))}"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="/apple-touch-icon.svg"><link rel="stylesheet" href="/assets/site.css?v={ASSET_VERSION}">
@@ -1217,6 +1217,8 @@ CSS = r'''
 @media(max-width:560px){.category-main{padding-top:14px}.category-main .crumb{margin-bottom:10px}.category-directory h1{font-size:24px}.category-directory .title-icon{width:30px;height:30px}.category-directory .title-icon svg{width:17px;height:17px}.category-directory .page-title-icon{gap:7px;margin-bottom:4px}.category-directory .lead{margin-bottom:8px;font-size:13px}.category-jump-nav{margin:8px 0 10px}.category-tools{gap:8px;margin-top:10px}.category-section{padding:10px}.category-section-head{margin-bottom:7px}.category-section-head h2{font-size:16px}.category-count{font-size:11px}.category-directory .calculator-link-grid a{padding:7px;font-size:12px}}
 .article h1,.calculator-article h1,.category-directory h1{font-size:32px;line-height:1.12;letter-spacing:0}
 @media(max-width:560px){.article h1,.calculator-article h1,.category-directory h1{font-size:22px;line-height:1.15}}
+:root{--ink:#14213a;--muted:#52647b;--subtle:#7a8ba3;--line:#d8e4f1;--bg:#f8fbff;--card:#fff;--card-2:#eef5ff;--brand:#2563eb;--brand-dark:#1746a2;--accent:#d92d42;--accent-muted:#b42335;--accent-soft:#fff1f3;--accent-line:#ffc8d0;--soft:#eaf3ff;--shadow:0 18px 46px rgba(37,99,235,.10)}
+body{background:var(--bg)}.site-header{border-bottom-color:#dbe7f4}.primary{background:var(--brand)}.primary:hover{background:var(--brand-dark);box-shadow:0 10px 24px rgba(37,99,235,.24)}.secondary:hover{border-color:#9eb7d5;background:#f8fbff}.search:focus,.field input:focus,.field select:focus{border-color:var(--brand);box-shadow:0 0 0 4px rgba(37,99,235,.12)}.calculator-article .result{background:#1d4ed8;border-color:#1d4ed8;box-shadow:0 12px 26px rgba(37,99,235,.20)}.home-hero{background:#fff}.category-section,.home-category,.chart-card,.table-card,.summary-card,.loan-result-panel{box-shadow:0 8px 24px rgba(37,99,235,.055)}
 '''
 
 SEARCH_JS = r'''
