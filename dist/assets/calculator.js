@@ -7,6 +7,21 @@ function annualCost(id, base){return document.getElementById(`${id}_unit`)?.valu
 function monthlyCost(id, base){return document.getElementById(`${id}_unit`)?.value==='percent'?base*V(id)/100/12:V(id)/12}
 function monthDate(id){const raw=document.getElementById(id)?.value||'';return /^\d{4}-\d{2}$/.test(raw)?new Date(`${raw}-01T00:00:00`):new Date(raw||Date.now())}
 function syncMortgageCosts(){const box=document.getElementById('include_costs'),panel=document.getElementById('mortgageCostFields');if(!box||!panel)return true;const on=box.checked;panel.hidden=!on;panel.classList.toggle('is-hidden',!on);panel.style.display=on?'':'none';return on}
+function compoundProjection(){
+  const principal=Math.max(0,V('principal')), annual=V('rate')/100, years=Math.max(0,Math.floor(V('years'))), frequency=Math.max(1,V('compound_frequency')||12), monthly=Math.max(0,V('monthly'));
+  const timing=document.getElementById('contribution_timing')?.value||'end', months=years*12;
+  const monthlyRate=Math.pow(1+annual/frequency,frequency/12)-1;
+  let balance=principal,totalInterest=0,totalDeposits=0,yearInterest=0,yearDeposits=0;const schedule=[];
+  for(let month=1;month<=months;month++){
+    if(timing==='beginning'){balance+=monthly;totalDeposits+=monthly;yearDeposits+=monthly}
+    const interest=balance*monthlyRate;balance+=interest;totalInterest+=interest;yearInterest+=interest;
+    if(timing!=='beginning'){balance+=monthly;totalDeposits+=monthly;yearDeposits+=monthly}
+    if(month%12===0)schedule.push({year:month/12,deposits:yearDeposits,interest:yearInterest,balance});
+    if(month%12===0){yearInterest=0;yearDeposits=0}
+  }
+  return {principal,annual,years,frequency,monthly,timing,balance,totalInterest,totalDeposits,schedule,effectiveAnnual:Math.pow(1+annual/frequency,frequency)-1};
+}
+function syncFeetMeterInputs(){const reverse=document.getElementById('conversion_direction')?.value==='meters_to_feet';document.querySelectorAll('[data-feet-input]').forEach(el=>el.classList.toggle('is-hidden',reverse));document.querySelectorAll('[data-meter-input]').forEach(el=>el.classList.toggle('is-hidden',!reverse));return reverse}
 function clearCalcForm(){const form=document.querySelector('.calc');if(!form)return;form.querySelectorAll('input').forEach(input=>{if(input.type==='checkbox')input.checked=false;else input.value=''});form.querySelectorAll('select').forEach(select=>{select.selectedIndex=0});form.querySelectorAll('details').forEach(item=>{item.open=false});syncMortgageCosts();show('<strong>$0.00 / month</strong><br>Enter values to calculate a new result.');const engine=currentEngine();if(engine==='cn_mortgage')renderMortgage(0,0,1,0,0,0,0,0,0,0,0,0,0,new Date());if(engine==='loan_page')renderLoanPage()}
 function calc(e){
  switch(e){
@@ -30,7 +45,7 @@ function calc(e){
   case'car_loan':{let price=V('price'),tax=price*V('tax')/100,fees=V('fees'),include=(document.getElementById('include_fees')?.value||'0')==='1';let base=Math.max(0,price-V('incentives')-V('down')-V('trade')+V('owed')),P=Math.max(0,base+(include?tax+fees:0));let rr=V('apr')/1200,n=Math.max(1,V('months'));let pay=rr?P*rr*Math.pow(1+rr,n)/(Math.pow(1+rr,n)-1):P/n,upfront=V('down')+(include?0:tax+fees);show(`<strong>${USD(pay)} / month</strong><br>Total loan amount: ${USD(P)}; upfront payment: ${USD(upfront)}; sale tax: ${USD(tax)}.`);break}
   case'loan':{let P=V('amount'),rr=V('apr')/1200,n=Math.max(1,(V('years')*12)+(V('months_extra')||V('months')));let pay=rr?P*rr*Math.pow(1+rr,n)/(Math.pow(1+rr,n)-1):P/n,total=pay*n;show(`<strong>${USD(pay)} / month</strong><br>Total paid: ${USD(total)}; total interest: ${USD(total-P)}.`);break}
   case'loan_page':{renderLoanPage();break}
-  case'compound':{let P=V('principal'),rr=V('rate')/1200,n=V('years')*12,pmt=V('monthly');let r=P*Math.pow(1+rr,n)+(rr?pmt*(Math.pow(1+rr,n)-1)/rr:pmt*n);show(`<strong>${USD(r)}</strong><br>Estimated future value with monthly contributions.`);break}
+  case'compound':{const p=compoundProjection();show(`<strong>${USD(p.balance)}</strong><br>Total contributions: ${USD(p.principal+p.totalDeposits)}; estimated interest: ${USD(p.totalInterest)}.`);renderCompound(p);break}
   case'discount':{let r=V('price')*(1-V('discount')/100);show(`<strong>${USD(r)}</strong><br>Savings: ${USD(V('price')-r)}.`);break}
   case'salary':{let r=V('salary')*(1+V('increase')/100);show(`<strong>${USD(r)}</strong><br>Annual increase: ${USD(r-V('salary'))}.`);break}
   case'dome':{let radius=V('diameter')/2,area=2*Math.PI*radius*radius,vol=2/3*Math.PI*Math.pow(radius,3);show(`<strong>${F(area,2)} sq ft</strong><br>Approx. curved area; ${F(vol,2)} cu ft volume.`);break}
@@ -51,6 +66,7 @@ function calc(e){
   case'amps_watts':{let r=V('amps')*V('volts');show(`<strong>${F(r,2)} W</strong>`);break}
   case'watts_amps':{let r=V('volts')?V('watts')/V('volts'):0;show(`<strong>${F(r,2)} A</strong>`);break}
   case'linear_convert':{let r=V('value')*V('factor'),target=document.getElementById('target')?.value||'target units';show(`<strong>${F(r,8)} ${target}</strong><br>Converted with the factor shown in the formula.`);break}
+  case'feet_meters':{let reverse=syncFeetMeterInputs();if(reverse){let meters=V('meters'),totalFeet=meters/0.3048,feet=Math.floor(totalFeet),inches=(totalFeet-feet)*12;show(`<strong>${F(totalFeet,6)} feet</strong><br>${feet} ft ${F(inches,3)} in; ${F(meters,6)} meters.`)}else{let feet=V('feet'),inches=V('inches'),totalFeet=feet+inches/12,meters=totalFeet*0.3048;show(`<strong>${F(meters,6)} meters</strong><br>${F(totalFeet,6)} feet; ${F(totalFeet*12,3)} total inches.`)}break}
   case'cn_mortgage':{let price=V('price'),down=unitValue('down',price),P=Math.max(0,price-down),rr=V('apr')/1200,n=Math.max(1,V('years')*12);let pi=rr?P*rr*Math.pow(1+rr,n)/(Math.pow(1+rr,n)-1):P/n;let include=syncMortgageCosts(),tax=include?annualCost('tax',price)/12:0,ins=include?monthlyCost('insurance',price):0,pmi=include?monthlyCost('pmi',P):0,hoa=include?monthlyCost('hoa',price):0,other=include?monthlyCost('other',price):0,inc=include?V('increase'):0,extraM=V('extra_monthly'),extraY=V('extra_yearly'),extraO=V('extra_once'),extra=tax+ins+pmi+hoa+other;let start=monthDate('start');show(`<strong>${USD(pi)} / month</strong><br>Total monthly payment with selected taxes and costs: ${USD(pi+extra+extraM)}.`);renderMortgage(P,rr,n,pi,tax,ins,pmi,hoa,other,inc,extraM,extraY,extraO,start);break}
   case'cn_simple_interest':{let P=V('principal'),i=P*V('rate')/100*V('years');show(`<strong>${USD(P+i)}</strong><br>Simple interest: ${USD(i)}.`);break}
   case'cn_retirement':{let P=V('principal'),rr=V('rate')/1200,n=V('years')*12,pmt=V('monthly');let fv=P*Math.pow(1+rr,n)+(rr?pmt*(Math.pow(1+rr,n)-1)/rr:pmt*n);show(`<strong>${USD(fv)}</strong><br>Total contributions: ${USD(P+pmt*n)}; estimated growth: ${USD(fv-P-pmt*n)}.`);break}
@@ -114,6 +130,26 @@ function drawGenericBars(canvas, bars) {
   });
 }
 
+function drawCompoundLine(canvas, schedule) {
+  if (!canvas || !schedule.length) return;
+  const ctx=clearCanvas(canvas), pad={left:48,right:18,top:18,bottom:30}, width=canvas.width-pad.left-pad.right, height=canvas.height-pad.top-pad.bottom;
+  const points=[Math.max(0,V('principal')),...schedule.map(row=>row.balance)], max=Math.max(...points,1);
+  ctx.strokeStyle="#d8e4f1";ctx.lineWidth=1;
+  for(let i=0;i<=4;i++){const y=pad.top+height*i/4;ctx.beginPath();ctx.moveTo(pad.left,y);ctx.lineTo(pad.left+width,y);ctx.stroke()}
+  ctx.beginPath();points.forEach((value,index)=>{const x=pad.left+width*index/Math.max(1,points.length-1),y=pad.top+height*(1-value/max);if(index===0)ctx.moveTo(x,y);else ctx.lineTo(x,y)});ctx.strokeStyle="#2563eb";ctx.lineWidth=3;ctx.stroke();
+  ctx.fillStyle="#52647b";ctx.font="600 11px system-ui, sans-serif";ctx.textAlign="left";ctx.fillText("$0",5,pad.top+height);ctx.fillText(USD(max).replace('.00',''),5,pad.top+9);ctx.fillText("Start",pad.left,canvas.height-8);ctx.textAlign="right";ctx.fillText(`Year ${schedule.length}`,canvas.width-pad.right,canvas.height-8);
+}
+
+function renderCompound(projection) {
+  const summary=document.getElementById('compoundSummary'), pie=document.getElementById('compoundPie'), line=document.getElementById('compoundLine'), table=document.querySelector('#compoundSchedule tbody');
+  if(!summary||!pie||!line||!table)return;
+  const contributed=projection.principal+projection.totalDeposits;
+  summary.innerHTML=[["Ending balance",USD(projection.balance),"Projected account value."],["Total contributed",USD(contributed),"Initial amount plus deposits."],["Interest earned",USD(projection.totalInterest),"Estimated compound growth."],["Effective annual yield",`${F(projection.effectiveAnnual*100,3)}%`,"Based on selected frequency."]].map(item=>`<div class="summary-card"><span>${item[0]}</span><strong>${item[1]}</strong><small>${item[2]}</small></div>`).join('');
+  drawPie(pie,[projection.principal,projection.totalDeposits,projection.totalInterest],["Initial investment","Monthly deposits","Interest"]);
+  drawCompoundLine(line,projection.schedule);
+  table.innerHTML=projection.schedule.map(row=>`<tr><td>${row.year}</td><td>${USD(row.deposits)}</td><td>${USD(row.interest)}</td><td>${USD(row.balance)}</td></tr>`).join('');
+}
+
 function renderGeneric(cards, bars, rows) {
   const summary = document.getElementById("genericSummary");
   const chart = document.getElementById("genericChart");
@@ -128,7 +164,13 @@ function renderGeneric(cards, bars, rows) {
 function renderGenericFromEngine(engine) {
   if (!document.getElementById("genericSummary")) return;
   let cards=[], bars=[], rows=[];
-  if (engine === "loan") {
+  if (engine === "feet_meters") {
+    const reverse=document.getElementById('conversion_direction')?.value==='meters_to_feet';
+    const meters=reverse?V('meters'):(V('feet')+V('inches')/12)*0.3048, totalFeet=meters/0.3048, wholeFeet=Math.floor(totalFeet), inches=(totalFeet-wholeFeet)*12;
+    cards=[["Meters",`${F(meters,6)} m`,"SI length."],["Decimal feet",`${F(totalFeet,6)} ft`,"Feet as a decimal."],["Feet and inches",`${wholeFeet} ft ${F(inches,3)} in`,"US customary format."],["Total inches",`${F(totalFeet*12,3)} in`,"Combined length in inches."]];
+    bars=[{label:"Meters",value:meters,display:`${F(meters,4)} m`},{label:"Feet",value:totalFeet,display:`${F(totalFeet,4)} ft`},{label:"Yards",value:totalFeet/3,display:`${F(totalFeet/3,4)} yd`}];
+    rows=[["Exact factor","1 ft = 0.3048 m","International foot."],["Meters",F(meters,8),"Calculated metric length."],["Decimal feet",F(totalFeet,8),"Meters divided by 0.3048."],["Feet and inches",`${wholeFeet} ft ${F(inches,4)} in`,"Separated customary units."]];
+  } else if (engine === "loan") {
     const P=V('amount'), rr=V('apr')/1200, n=Math.max(1,(V('years')*12)+(V('months_extra')||V('months'))), pay=rr?P*rr*Math.pow(1+rr,n)/(Math.pow(1+rr,n)-1):P/n, total=pay*n, interest=total-P;
     cards=[["Monthly payment",USD(pay),"Estimated recurring payment."],["Total paid",USD(total),"Principal plus interest."],["Total interest",USD(interest),"Cost of borrowing."],["Loan term",`${F(n,0)} months`,"Entered repayment period."]];
     bars=[{label:"Principal",value:P,display:USD(P)},{label:"Interest",value:interest,display:USD(interest)},{label:"Monthly payment",value:pay,display:USD(pay)}];

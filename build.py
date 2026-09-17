@@ -14,7 +14,7 @@ KEYWORD_STATS = ROOT / "exports" / "keyword-stats-positive.json"
 SEO_STRATEGY = ROOT / "exports" / "seo-keyword-strategy-2026-09-05.json"
 PUBLIC_BASE_PATH = os.environ.get("PUBLIC_BASE_PATH", "").strip().rstrip("/")
 PUBLIC_SITE_DOMAIN = os.environ.get("PUBLIC_SITE_DOMAIN", "").strip()
-ASSET_VERSION = "20260917e"
+ASSET_VERSION = "20260917f"
 
 CATEGORY_ORDER = [
     "Automotive",
@@ -814,6 +814,26 @@ def input_html(field):
     return f'<div class="field"><label for="{h(fid)}">{h(label)}</label>{control}</div>'
 
 
+def compound_interest_input_html():
+    return """<div class="fields compound-fields">
+<div class="field"><label for="principal">Initial investment</label><div class="input-unit"><input id="principal" type="number" step="any" min="0" value="10000"><span>$</span></div></div>
+<div class="field"><label for="rate">Annual interest rate</label><div class="input-unit"><input id="rate" type="number" step="any" value="6"><span>%</span></div></div>
+<div class="field"><label for="years">Investment length</label><div class="input-unit"><input id="years" type="number" step="1" min="1" value="10"><span>years</span></div></div>
+<div class="field"><label for="compound_frequency">Compound frequency</label><select id="compound_frequency"><option value="365">Daily</option><option value="12" selected>Monthly</option><option value="4">Quarterly</option><option value="2">Semi-annually</option><option value="1">Annually</option></select></div>
+<div class="field"><label for="monthly">Monthly contribution</label><div class="input-unit"><input id="monthly" type="number" step="any" min="0" value="200"><span>$</span></div></div>
+<div class="field"><label for="contribution_timing">Contribution timing</label><select id="contribution_timing"><option value="end" selected>End of month</option><option value="beginning">Beginning of month</option></select></div>
+</div>"""
+
+
+def feet_to_meters_input_html():
+    return """<div class="fields feet-meter-fields">
+<div class="field field-wide"><label for="conversion_direction">Conversion direction</label><select id="conversion_direction"><option value="feet_to_meters" selected>Feet and inches to meters</option><option value="meters_to_feet">Meters to feet and inches</option></select></div>
+<div class="field" data-feet-input><label for="feet">Feet</label><input id="feet" type="number" step="any" value="5"></div>
+<div class="field" data-feet-input><label for="inches">Inches</label><input id="inches" type="number" step="any" value="10"></div>
+<div class="field field-wide is-hidden" data-meter-input><label for="meters">Meters</label><input id="meters" type="number" step="any" value="1.778"></div>
+</div>"""
+
+
 def compound_options(selected="monthly"):
     options = [
         ("annually", "Annually (APY)"),
@@ -1029,6 +1049,27 @@ def conversion_copy(calc):
 <h2>Frequently asked questions</h2><h3>Can I enter decimals?</h3><p>Yes. Decimal values are supported, which helps with small measurements and precise conversions.</p><h3>Why is the result rounded?</h3><p>The result is rounded for readability in the browser. Use the formula if you need more precision for a specialist workflow.</p>"""
 
 
+def high_value_calculator_copy(calc):
+    if calc.get("slug") == "feet-to-meters-calculator":
+        return """
+<h2>How to convert feet to meters</h2><p>Multiply feet by the exact conversion factor 0.3048. When a measurement includes inches, divide the inches by 12, add that value to the feet, and then multiply the total feet by 0.3048.</p>
+<p class="formula">meters = (feet + inches / 12) x 0.3048</p>
+<h2>Feet and inches example</h2><p>For 5 feet 10 inches, the calculation is (5 + 10 / 12) x 0.3048 = 1.778 meters. The calculator also reverses meters into feet and remaining inches.</p>
+<h2>Common feet to meters conversions</h2><div class="table-scroll"><table class="data-table"><thead><tr><th>Feet</th><th>Meters</th><th>Feet</th><th>Meters</th></tr></thead><tbody><tr><td>1 ft</td><td>0.3048 m</td><td>10 ft</td><td>3.048 m</td></tr><tr><td>3 ft</td><td>0.9144 m</td><td>25 ft</td><td>7.62 m</td></tr><tr><td>5 ft</td><td>1.524 m</td><td>50 ft</td><td>15.24 m</td></tr><tr><td>6 ft</td><td>1.8288 m</td><td>100 ft</td><td>30.48 m</td></tr></tbody></table></div>
+<h2>Measurement reference</h2><p>The international foot is exactly 0.3048 meter. The meter is the SI base unit for length; see the <a href="https://www.nist.gov/pml/owm/si-units-length" rel="external noopener">NIST guide to SI length</a> for the official US measurement reference.</p>
+<h2>Frequently asked questions</h2><h3>How many meters are in one foot?</h3><p>One foot equals exactly 0.3048 meter.</p><h3>How do I convert meters back to feet?</h3><p>Divide meters by 0.3048. This calculator also separates the decimal result into whole feet and remaining inches.</p>"""
+    if calc.get("slug") == "compound-interest-calculator":
+        return """
+<h2>How compound interest is calculated</h2><p>Compound interest earns a return on the original principal and on interest already added to the balance. This calculator supports daily, monthly, quarterly, semi-annual, and annual compounding plus recurring monthly deposits.</p>
+<p class="formula">A = P(1 + r / n)^(nt)</p>
+<p>In the formula, P is the starting principal, r is the annual rate as a decimal, n is the number of compounding periods per year, and t is the number of years. Monthly deposits are applied separately at the beginning or end of each month.</p>
+<h2>Worked example</h2><p>A $10,000 initial investment earning 6% annually, compounded monthly for 10 years with $200 deposited at the end of every month, grows to about $50,970 before taxes and fees. Of that total, $34,000 is contributed principal and about $16,970 is estimated interest.</p>
+<h2>Compounding frequency matters</h2><p>At the same stated annual rate, more frequent compounding produces a slightly higher effective annual yield. The difference is often modest, while contribution size and time invested usually have a larger effect.</p>
+<h2>How to use the results</h2><p>Use the annual schedule to see how contributions and interest build over time. The estimate assumes a constant rate and does not include taxes, investment fees, inflation, or market volatility, so it should be used for planning rather than as a guaranteed return.</p>
+<h2>Frequently asked questions</h2><h3>What is the difference between APR and APY?</h3><p>APR is a stated annual rate that does not itself show intra-year compounding. APY includes the effect of compounding over a year.</p><h3>Does contribution timing change the answer?</h3><p>Yes. A beginning-of-month contribution has one additional month to earn a return compared with an end-of-month contribution.</p><h3>What is the Rule of 72?</h3><p>Dividing 72 by an annual percentage rate gives a rough estimate of the years needed to double money. It is a shortcut, not an exact projection.</p>"""
+    return None
+
+
 def default_calculator_copy(calc):
     return f"""
 <h2>How it works</h2><p>{h(calc['desc'])} Use the units shown in the calculator and review every assumption before using the result.</p>
@@ -1039,6 +1080,16 @@ def default_calculator_copy(calc):
 
 
 def analysis_extra_html(calc):
+    if calc.get("slug") == "compound-interest-calculator":
+        return """<section class="mortgage-dashboard compound-dashboard" aria-label="Compound interest result details">
+<div class="section-head stack"><h2>Growth Summary</h2><p>Compare contributions with estimated interest and review the balance year by year.</p></div>
+<div class="summary-grid" id="compoundSummary"></div>
+<div class="chart-grid">
+<div class="chart-card compact-chart"><h3>Balance Composition</h3><canvas id="compoundPie" width="360" height="190" aria-label="Principal, deposits, and interest chart"></canvas></div>
+<div class="chart-card compact-chart"><h3>Balance by Year</h3><canvas id="compoundLine" width="420" height="190" aria-label="Compound interest balance by year chart"></canvas></div>
+</div>
+<div class="table-card"><h3>Annual Growth Schedule</h3><div class="table-scroll"><table class="data-table" id="compoundSchedule"><thead><tr><th>Year</th><th>Deposits</th><th>Interest</th><th>Ending balance</th></tr></thead><tbody></tbody></table></div></div>
+</section>"""
     if calc.get("engine") == "cn_mortgage":
         return """<section class="mortgage-dashboard" aria-label="Mortgage result details">
 <div class="section-head stack"><h2>Mortgage Summary</h2><p>Monthly payment, total cost, payoff trend, and amortization details.</p></div>
@@ -1092,19 +1143,25 @@ def calculator_page(site, calc, related):
     title = seo_title(calc)
     desc = seo_description(calc)
     group = calculator_group(calc)
-    if calc.get("engine") == "cn_mortgage":
+    page_engine = calc.get("engine")
+    if calc.get("slug") == "feet-to-meters-calculator":
+        fields = feet_to_meters_input_html()
+        page_engine = "feet_meters"
+    elif calc.get("slug") == "compound-interest-calculator":
+        fields = compound_interest_input_html()
+    elif calc.get("engine") == "cn_mortgage":
         fields = mortgage_input_html()
     elif calc.get("engine") == "loan_page":
         fields = loan_input_html()
     else:
         fields = f"""<div class="fields">{''.join(input_html(f) for f in calc["inputs"])}</div>"""
     rel = "".join(card(c, compact=True) for c in related)
-    content = conversion_copy(calc) or default_calculator_copy(calc)
+    content = high_value_calculator_copy(calc) or conversion_copy(calc) or default_calculator_copy(calc)
     extra = analysis_extra_html(calc)
     if calc.get("engine") == "loan_page":
         calc_html = f"""<section class="calc loan-page-calc"><h2>Calculator</h2>{fields}<div class="result" id="result">Enter your values and select Calculate.</div></section>"""
     else:
-        calc_html = f"""<section class="calc"><h2>Calculator</h2>{fields}<div class="calc-actions"><button class="btn primary calc-btn" data-engine="{h(calc['engine'])}">Calculate</button><button class="btn secondary clear-btn" type="button" data-clear>Clear</button></div><div class="result" id="result">Enter your values and select Calculate.</div></section>"""
+        calc_html = f"""<section class="calc"><h2>Calculator</h2>{fields}<div class="calc-actions"><button class="btn primary calc-btn" data-engine="{h(page_engine)}">Calculate</button><button class="btn secondary clear-btn" type="button" data-clear>Clear</button></div><div class="result" id="result" aria-live="polite">Enter your values and select Calculate.</div></section>"""
     primary_tool = f"""<div class="calculator-layout split-analysis"><div class="calculator-pane">{calc_html}</div><div class="analysis-pane">{extra}</div></div>""" if extra else calc_html
     body = f"""<main class="main"><div class="wrap"><div class="crumb"><a href="/">Home</a> / <a href="/{slugify_cat(calc['cat'])}/">{h(calc['cat'])}</a> / {h(display_group(group))} / {h(calc['title'])}</div>
 <article class="article calculator-article"><span class="pill icon-pill">{category_icon(calc["cat"], "pill-icon")}{h(calc['cat'])} calculator</span><div class="page-title-icon">{category_icon(calc["cat"], "title-icon")}<h1>{h(calc['title'])}</h1></div><p class="lead">{h(calc['desc'])}</p>{opportunity_notice(calc)}{keyword_section(calc)}
@@ -1219,6 +1276,8 @@ CSS = r'''
 @media(max-width:560px){.article h1,.calculator-article h1,.category-directory h1{font-size:22px;line-height:1.15}}
 :root{--ink:#14213a;--muted:#52647b;--subtle:#7a8ba3;--line:#d8e4f1;--bg:#f8fbff;--card:#fff;--card-2:#eef5ff;--brand:#2563eb;--brand-dark:#1746a2;--accent:#d92d42;--accent-muted:#b42335;--accent-soft:#fff1f3;--accent-line:#ffc8d0;--soft:#eaf3ff;--shadow:0 18px 46px rgba(37,99,235,.10)}
 body{background:var(--bg)}.site-header{border-bottom-color:#dbe7f4}.primary{background:var(--brand)}.primary:hover{background:var(--brand-dark);box-shadow:0 10px 24px rgba(37,99,235,.24)}.secondary:hover{border-color:#9eb7d5;background:#f8fbff}.search:focus,.field input:focus,.field select:focus{border-color:var(--brand);box-shadow:0 0 0 4px rgba(37,99,235,.12)}.calculator-article .result{background:#1d4ed8;border-color:#1d4ed8;box-shadow:0 12px 26px rgba(37,99,235,.20)}.home-hero{background:#fff}.category-section,.home-category,.chart-card,.table-card,.summary-card,.loan-result-panel{box-shadow:0 8px 24px rgba(37,99,235,.055)}
+[data-feet-input].is-hidden,[data-meter-input].is-hidden{display:none}
+@media(max-width:560px){.compound-fields{grid-template-columns:repeat(2,minmax(0,1fr))}.compound-fields .field label{min-height:34px;display:flex;align-items:end}.compound-dashboard .summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 '''
 
 SEARCH_JS = r'''
@@ -1304,6 +1363,21 @@ function annualCost(id, base){return document.getElementById(`${id}_unit`)?.valu
 function monthlyCost(id, base){return document.getElementById(`${id}_unit`)?.value==='percent'?base*V(id)/100/12:V(id)/12}
 function monthDate(id){const raw=document.getElementById(id)?.value||'';return /^\d{4}-\d{2}$/.test(raw)?new Date(`${raw}-01T00:00:00`):new Date(raw||Date.now())}
 function syncMortgageCosts(){const box=document.getElementById('include_costs'),panel=document.getElementById('mortgageCostFields');if(!box||!panel)return true;const on=box.checked;panel.hidden=!on;panel.classList.toggle('is-hidden',!on);panel.style.display=on?'':'none';return on}
+function compoundProjection(){
+  const principal=Math.max(0,V('principal')), annual=V('rate')/100, years=Math.max(0,Math.floor(V('years'))), frequency=Math.max(1,V('compound_frequency')||12), monthly=Math.max(0,V('monthly'));
+  const timing=document.getElementById('contribution_timing')?.value||'end', months=years*12;
+  const monthlyRate=Math.pow(1+annual/frequency,frequency/12)-1;
+  let balance=principal,totalInterest=0,totalDeposits=0,yearInterest=0,yearDeposits=0;const schedule=[];
+  for(let month=1;month<=months;month++){
+    if(timing==='beginning'){balance+=monthly;totalDeposits+=monthly;yearDeposits+=monthly}
+    const interest=balance*monthlyRate;balance+=interest;totalInterest+=interest;yearInterest+=interest;
+    if(timing!=='beginning'){balance+=monthly;totalDeposits+=monthly;yearDeposits+=monthly}
+    if(month%12===0)schedule.push({year:month/12,deposits:yearDeposits,interest:yearInterest,balance});
+    if(month%12===0){yearInterest=0;yearDeposits=0}
+  }
+  return {principal,annual,years,frequency,monthly,timing,balance,totalInterest,totalDeposits,schedule,effectiveAnnual:Math.pow(1+annual/frequency,frequency)-1};
+}
+function syncFeetMeterInputs(){const reverse=document.getElementById('conversion_direction')?.value==='meters_to_feet';document.querySelectorAll('[data-feet-input]').forEach(el=>el.classList.toggle('is-hidden',reverse));document.querySelectorAll('[data-meter-input]').forEach(el=>el.classList.toggle('is-hidden',!reverse));return reverse}
 function clearCalcForm(){const form=document.querySelector('.calc');if(!form)return;form.querySelectorAll('input').forEach(input=>{if(input.type==='checkbox')input.checked=false;else input.value=''});form.querySelectorAll('select').forEach(select=>{select.selectedIndex=0});form.querySelectorAll('details').forEach(item=>{item.open=false});syncMortgageCosts();show('<strong>$0.00 / month</strong><br>Enter values to calculate a new result.');const engine=currentEngine();if(engine==='cn_mortgage')renderMortgage(0,0,1,0,0,0,0,0,0,0,0,0,0,new Date());if(engine==='loan_page')renderLoanPage()}
 function calc(e){
  switch(e){
@@ -1327,7 +1401,7 @@ function calc(e){
   case'car_loan':{let price=V('price'),tax=price*V('tax')/100,fees=V('fees'),include=(document.getElementById('include_fees')?.value||'0')==='1';let base=Math.max(0,price-V('incentives')-V('down')-V('trade')+V('owed')),P=Math.max(0,base+(include?tax+fees:0));let rr=V('apr')/1200,n=Math.max(1,V('months'));let pay=rr?P*rr*Math.pow(1+rr,n)/(Math.pow(1+rr,n)-1):P/n,upfront=V('down')+(include?0:tax+fees);show(`<strong>${USD(pay)} / month</strong><br>Total loan amount: ${USD(P)}; upfront payment: ${USD(upfront)}; sale tax: ${USD(tax)}.`);break}
   case'loan':{let P=V('amount'),rr=V('apr')/1200,n=Math.max(1,(V('years')*12)+(V('months_extra')||V('months')));let pay=rr?P*rr*Math.pow(1+rr,n)/(Math.pow(1+rr,n)-1):P/n,total=pay*n;show(`<strong>${USD(pay)} / month</strong><br>Total paid: ${USD(total)}; total interest: ${USD(total-P)}.`);break}
   case'loan_page':{renderLoanPage();break}
-  case'compound':{let P=V('principal'),rr=V('rate')/1200,n=V('years')*12,pmt=V('monthly');let r=P*Math.pow(1+rr,n)+(rr?pmt*(Math.pow(1+rr,n)-1)/rr:pmt*n);show(`<strong>${USD(r)}</strong><br>Estimated future value with monthly contributions.`);break}
+  case'compound':{const p=compoundProjection();show(`<strong>${USD(p.balance)}</strong><br>Total contributions: ${USD(p.principal+p.totalDeposits)}; estimated interest: ${USD(p.totalInterest)}.`);renderCompound(p);break}
   case'discount':{let r=V('price')*(1-V('discount')/100);show(`<strong>${USD(r)}</strong><br>Savings: ${USD(V('price')-r)}.`);break}
   case'salary':{let r=V('salary')*(1+V('increase')/100);show(`<strong>${USD(r)}</strong><br>Annual increase: ${USD(r-V('salary'))}.`);break}
   case'dome':{let radius=V('diameter')/2,area=2*Math.PI*radius*radius,vol=2/3*Math.PI*Math.pow(radius,3);show(`<strong>${F(area,2)} sq ft</strong><br>Approx. curved area; ${F(vol,2)} cu ft volume.`);break}
@@ -1348,6 +1422,7 @@ function calc(e){
   case'amps_watts':{let r=V('amps')*V('volts');show(`<strong>${F(r,2)} W</strong>`);break}
   case'watts_amps':{let r=V('volts')?V('watts')/V('volts'):0;show(`<strong>${F(r,2)} A</strong>`);break}
   case'linear_convert':{let r=V('value')*V('factor'),target=document.getElementById('target')?.value||'target units';show(`<strong>${F(r,8)} ${target}</strong><br>Converted with the factor shown in the formula.`);break}
+  case'feet_meters':{let reverse=syncFeetMeterInputs();if(reverse){let meters=V('meters'),totalFeet=meters/0.3048,feet=Math.floor(totalFeet),inches=(totalFeet-feet)*12;show(`<strong>${F(totalFeet,6)} feet</strong><br>${feet} ft ${F(inches,3)} in; ${F(meters,6)} meters.`)}else{let feet=V('feet'),inches=V('inches'),totalFeet=feet+inches/12,meters=totalFeet*0.3048;show(`<strong>${F(meters,6)} meters</strong><br>${F(totalFeet,6)} feet; ${F(totalFeet*12,3)} total inches.`)}break}
   case'cn_mortgage':{let price=V('price'),down=unitValue('down',price),P=Math.max(0,price-down),rr=V('apr')/1200,n=Math.max(1,V('years')*12);let pi=rr?P*rr*Math.pow(1+rr,n)/(Math.pow(1+rr,n)-1):P/n;let include=syncMortgageCosts(),tax=include?annualCost('tax',price)/12:0,ins=include?monthlyCost('insurance',price):0,pmi=include?monthlyCost('pmi',P):0,hoa=include?monthlyCost('hoa',price):0,other=include?monthlyCost('other',price):0,inc=include?V('increase'):0,extraM=V('extra_monthly'),extraY=V('extra_yearly'),extraO=V('extra_once'),extra=tax+ins+pmi+hoa+other;let start=monthDate('start');show(`<strong>${USD(pi)} / month</strong><br>Total monthly payment with selected taxes and costs: ${USD(pi+extra+extraM)}.`);renderMortgage(P,rr,n,pi,tax,ins,pmi,hoa,other,inc,extraM,extraY,extraO,start);break}
   case'cn_simple_interest':{let P=V('principal'),i=P*V('rate')/100*V('years');show(`<strong>${USD(P+i)}</strong><br>Simple interest: ${USD(i)}.`);break}
   case'cn_retirement':{let P=V('principal'),rr=V('rate')/1200,n=V('years')*12,pmt=V('monthly');let fv=P*Math.pow(1+rr,n)+(rr?pmt*(Math.pow(1+rr,n)-1)/rr:pmt*n);show(`<strong>${USD(fv)}</strong><br>Total contributions: ${USD(P+pmt*n)}; estimated growth: ${USD(fv-P-pmt*n)}.`);break}
@@ -1411,6 +1486,26 @@ function drawGenericBars(canvas, bars) {
   });
 }
 
+function drawCompoundLine(canvas, schedule) {
+  if (!canvas || !schedule.length) return;
+  const ctx=clearCanvas(canvas), pad={left:48,right:18,top:18,bottom:30}, width=canvas.width-pad.left-pad.right, height=canvas.height-pad.top-pad.bottom;
+  const points=[Math.max(0,V('principal')),...schedule.map(row=>row.balance)], max=Math.max(...points,1);
+  ctx.strokeStyle="#d8e4f1";ctx.lineWidth=1;
+  for(let i=0;i<=4;i++){const y=pad.top+height*i/4;ctx.beginPath();ctx.moveTo(pad.left,y);ctx.lineTo(pad.left+width,y);ctx.stroke()}
+  ctx.beginPath();points.forEach((value,index)=>{const x=pad.left+width*index/Math.max(1,points.length-1),y=pad.top+height*(1-value/max);if(index===0)ctx.moveTo(x,y);else ctx.lineTo(x,y)});ctx.strokeStyle="#2563eb";ctx.lineWidth=3;ctx.stroke();
+  ctx.fillStyle="#52647b";ctx.font="600 11px system-ui, sans-serif";ctx.textAlign="left";ctx.fillText("$0",5,pad.top+height);ctx.fillText(USD(max).replace('.00',''),5,pad.top+9);ctx.fillText("Start",pad.left,canvas.height-8);ctx.textAlign="right";ctx.fillText(`Year ${schedule.length}`,canvas.width-pad.right,canvas.height-8);
+}
+
+function renderCompound(projection) {
+  const summary=document.getElementById('compoundSummary'), pie=document.getElementById('compoundPie'), line=document.getElementById('compoundLine'), table=document.querySelector('#compoundSchedule tbody');
+  if(!summary||!pie||!line||!table)return;
+  const contributed=projection.principal+projection.totalDeposits;
+  summary.innerHTML=[["Ending balance",USD(projection.balance),"Projected account value."],["Total contributed",USD(contributed),"Initial amount plus deposits."],["Interest earned",USD(projection.totalInterest),"Estimated compound growth."],["Effective annual yield",`${F(projection.effectiveAnnual*100,3)}%`,"Based on selected frequency."]].map(item=>`<div class="summary-card"><span>${item[0]}</span><strong>${item[1]}</strong><small>${item[2]}</small></div>`).join('');
+  drawPie(pie,[projection.principal,projection.totalDeposits,projection.totalInterest],["Initial investment","Monthly deposits","Interest"]);
+  drawCompoundLine(line,projection.schedule);
+  table.innerHTML=projection.schedule.map(row=>`<tr><td>${row.year}</td><td>${USD(row.deposits)}</td><td>${USD(row.interest)}</td><td>${USD(row.balance)}</td></tr>`).join('');
+}
+
 function renderGeneric(cards, bars, rows) {
   const summary = document.getElementById("genericSummary");
   const chart = document.getElementById("genericChart");
@@ -1425,7 +1520,13 @@ function renderGeneric(cards, bars, rows) {
 function renderGenericFromEngine(engine) {
   if (!document.getElementById("genericSummary")) return;
   let cards=[], bars=[], rows=[];
-  if (engine === "loan") {
+  if (engine === "feet_meters") {
+    const reverse=document.getElementById('conversion_direction')?.value==='meters_to_feet';
+    const meters=reverse?V('meters'):(V('feet')+V('inches')/12)*0.3048, totalFeet=meters/0.3048, wholeFeet=Math.floor(totalFeet), inches=(totalFeet-wholeFeet)*12;
+    cards=[["Meters",`${F(meters,6)} m`,"SI length."],["Decimal feet",`${F(totalFeet,6)} ft`,"Feet as a decimal."],["Feet and inches",`${wholeFeet} ft ${F(inches,3)} in`,"US customary format."],["Total inches",`${F(totalFeet*12,3)} in`,"Combined length in inches."]];
+    bars=[{label:"Meters",value:meters,display:`${F(meters,4)} m`},{label:"Feet",value:totalFeet,display:`${F(totalFeet,4)} ft`},{label:"Yards",value:totalFeet/3,display:`${F(totalFeet/3,4)} yd`}];
+    rows=[["Exact factor","1 ft = 0.3048 m","International foot."],["Meters",F(meters,8),"Calculated metric length."],["Decimal feet",F(totalFeet,8),"Meters divided by 0.3048."],["Feet and inches",`${wholeFeet} ft ${F(inches,4)} in`,"Separated customary units."]];
+  } else if (engine === "loan") {
     const P=V('amount'), rr=V('apr')/1200, n=Math.max(1,(V('years')*12)+(V('months_extra')||V('months'))), pay=rr?P*rr*Math.pow(1+rr,n)/(Math.pow(1+rr,n)-1):P/n, total=pay*n, interest=total-P;
     cards=[["Monthly payment",USD(pay),"Estimated recurring payment."],["Total paid",USD(total),"Principal plus interest."],["Total interest",USD(interest),"Cost of borrowing."],["Loan term",`${F(n,0)} months`,"Entered repayment period."]];
     bars=[{label:"Principal",value:P,display:USD(P)},{label:"Interest",value:interest,display:USD(interest)},{label:"Monthly payment",value:pay,display:USD(pay)}];
