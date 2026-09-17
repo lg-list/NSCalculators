@@ -14,7 +14,7 @@ KEYWORD_STATS = ROOT / "exports" / "keyword-stats-positive.json"
 SEO_STRATEGY = ROOT / "exports" / "seo-keyword-strategy-2026-09-05.json"
 PUBLIC_BASE_PATH = os.environ.get("PUBLIC_BASE_PATH", "").strip().rstrip("/")
 PUBLIC_SITE_DOMAIN = os.environ.get("PUBLIC_SITE_DOMAIN", "").strip()
-ASSET_VERSION = "20260917l"
+ASSET_VERSION = "20260917m"
 CALCULATOR_REDIRECTS = {
     "concrete-calculator": "concrete-volume-calculator",
 }
@@ -807,6 +807,10 @@ def seo_description(calc):
         return "Calculate flooring square footage, waste, full boxes, purchased coverage, leftover material, underlayment, and estimated project cost."
     if calc.get("slug") == "tile-calculator":
         return "Calculate floor or wall tile quantity, waste, full boxes, purchased coverage, leftover tile, and estimated material cost."
+    if calc.get("slug") == "deck-board-calculator":
+        return "Calculate deck-board rows, full boards, linear feet, joists, fasteners, package quantities, waste, and estimated material cost."
+    if calc.get("slug") == "board-foot-calculator":
+        return "Calculate board feet per piece and total lumber volume, including quantity, waste allowance, cubic feet, linear feet, and estimated cost."
     if calc.get("engine") == "linear_convert":
         return f"Use this free {keyword} to convert units instantly with the formula, example, and related conversion calculators."
     if calc.get("engine") in ("cn_mortgage", "loan_page", "car_loan"):
@@ -1036,6 +1040,31 @@ def tile_input_html():
 <div class="field"><label for="tile_waste">Waste allowance</label><div class="input-unit"><input id="tile_waste" type="number" step="any" min="0" value="10"><span>%</span></div></div>
 <div class="field"><label for="tile_per_box">Tiles per box</label><input id="tile_per_box" type="number" step="1" min="1" value="15"></div>
 <div class="field field-wide"><label for="tile_box_price">Price per box</label><div class="input-unit"><input id="tile_box_price" type="number" step="any" min="0" value="32"><span>$</span></div></div>
+</div>"""
+
+
+def deck_board_input_html():
+    return """<div class="fields project-fields deck-board-fields">
+<div class="field"><label for="deck_length">Deck length</label><div class="input-unit"><input id="deck_length" type="number" step="any" min="0" value="16"><span>ft</span></div></div>
+<div class="field"><label for="deck_width">Deck width</label><div class="input-unit"><input id="deck_width" type="number" step="any" min="0" value="12"><span>ft</span></div></div>
+<div class="field"><label for="deck_board_width">Actual board width</label><div class="input-unit"><input id="deck_board_width" type="number" step="any" min="0.01" value="5.5"><span>in</span></div></div>
+<div class="field"><label for="deck_gap">Gap between boards</label><div class="input-unit"><input id="deck_gap" type="number" step="any" min="0" value="0.125"><span>in</span></div></div>
+<div class="field"><label for="deck_stock_length">Stock board length</label><div class="input-unit"><input id="deck_stock_length" type="number" step="any" min="0.01" value="16"><span>ft</span></div></div>
+<div class="field"><label for="deck_waste">Waste allowance</label><div class="input-unit"><input id="deck_waste" type="number" step="any" min="0" value="10"><span>%</span></div></div>
+<div class="field"><label for="deck_joist_spacing">Joist spacing</label><div class="input-unit"><input id="deck_joist_spacing" type="number" step="any" min="0.01" value="16"><span>in OC</span></div></div>
+<div class="field"><label for="deck_board_price">Price per board</label><div class="input-unit"><input id="deck_board_price" type="number" step="any" min="0" value="35"><span>$</span></div></div>
+<details class="more-options field-wide"><summary>Fastener options</summary><div class="fields concrete-cost-fields"><div class="field"><label for="deck_fasteners_crossing">Fasteners per crossing</label><input id="deck_fasteners_crossing" type="number" step="1" min="1" value="2"></div><div class="field"><label for="deck_fastener_pack">Fasteners per box</label><input id="deck_fastener_pack" type="number" step="1" min="1" value="350"></div><div class="field field-wide"><label for="deck_fastener_price">Price per box</label><div class="input-unit"><input id="deck_fastener_price" type="number" step="any" min="0" value="30"><span>$</span></div></div></div></details>
+</div>"""
+
+
+def board_foot_input_html():
+    return """<div class="fields project-fields board-foot-fields">
+<div class="field"><label for="bf_thickness">Board thickness</label><div class="input-unit"><input id="bf_thickness" type="number" step="any" min="0" value="1"><span>in</span></div></div>
+<div class="field"><label for="bf_width">Board width</label><div class="input-unit"><input id="bf_width" type="number" step="any" min="0" value="8"><span>in</span></div></div>
+<div class="field"><label for="bf_length">Board length</label><div class="input-unit"><input id="bf_length" type="number" step="any" min="0" value="10"><span>ft</span></div></div>
+<div class="field"><label for="bf_quantity">Quantity</label><input id="bf_quantity" type="number" step="1" min="1" value="10"></div>
+<div class="field"><label for="bf_waste">Waste allowance</label><div class="input-unit"><input id="bf_waste" type="number" step="any" min="0" value="10"><span>%</span></div></div>
+<div class="field"><label for="bf_price">Price per board foot</label><div class="input-unit"><input id="bf_price" type="number" step="any" min="0" value="4.25"><span>$/BF</span></div></div>
 </div>"""
 
 
@@ -1397,6 +1426,24 @@ def high_value_calculator_copy(calc):
 <h2>Waste and spare tile</h2><p>Cuts, breakage, pattern alignment, room shape, tile variation, and future repairs affect the order. <a href="https://www.lowes.com/n/calculators/tile-floor-calculator" rel="external noopener">Lowe's tile calculator guidance</a> suggests purchasing an extra 10% for trim and waste, but the right allowance depends on the project.</p>
 <h2>Mortar and grout are product-specific</h2><p>This page estimates tile pieces and boxes, not mortar or grout. Coverage depends on the product, trowel, tile dimensions, joint width and depth, substrate, and application. Use the exact product data sheet or a manufacturer tool such as the <a href="https://www.mapei.com/us/en-us/tools-and-downloads/product-calculators" rel="external noopener">MAPEI product calculators</a>.</p>
 <h2>Frequently asked questions</h2><h3>Does grout-joint width reduce the tile count?</h3><p>Joint spacing affects layout, but cuts and edge conditions make a simple deduction unreliable. This estimator uses tile face area and a user-controlled waste allowance for purchasing.</p><h3>Why is box count rounded up?</h3><p>Retailers normally sell sealed tile in full boxes. The calculator rounds up after converting the required pieces to boxes.</p><h3>Should wall tile and floor tile be combined?</h3><p>Run separate estimates when tile sizes, patterns, waste, products, or dye lots differ.</p>"""
+    if calc.get("slug") == "deck-board-calculator":
+        return """
+<h2>How many deck boards do I need?</h2><p>Enter the deck dimensions, actual board width, spacing gap, and stock-board length. The calculator determines the number of board rows, rounds each row to whole stock lengths, applies waste, and estimates joists, fasteners, packages, and material cost.</p>
+<p class="formula">rows = round up(deck width / (board width + gap)); boards per row = round up(deck length / stock length)</p>
+<h2>Deck-board example</h2><p>A 16 ft by 12 ft deck using 5.5 in boards with a 1/8 in gap needs 26 rows. With 16 ft stock, each row uses one board. Adding 10% waste produces an order of 29 full boards. At $35 each, the board estimate is $1,015.</p>
+<h2>Joists and fasteners</h2><p>For a 16 ft joist run at 16 in on center, this planning model counts 13 joist lines, including both edges. Two fasteners at each of 26 board-row and 13 joist intersections produce about 676 fasteners, or two 350-count boxes. Picture framing, blocking, stairs, railings, hidden-fastener clips, and manufacturer-specific edge details are not included.</p>
+<h2>Stock length and cut planning</h2><p>Boards are rounded up for each row, so the estimate is intentionally conservative when stock is shorter than the deck. Butt joints must land on approved framing, and reusable offcuts depend on the actual layout. Create a cut plan before ordering when staggered seams or multiple stock lengths could reduce waste.</p>
+<h2>Spacing and structural limits</h2><p>Use the actual installed face width and the gap required by the decking manufacturer. Composite, PVC, diagonal, and specialty patterns can require different joist spacing and fasteners. This calculator estimates materials; it does not design a safe deck. Use approved plans and resources such as the <a href="https://awc.org/resources/span-options-calculator-for-wood-joists-and-rafters/" rel="external noopener">American Wood Council span calculator</a>.</p>
+<h2>Frequently asked questions</h2><h3>Does the board count include waste?</h3><p>Yes. The final order rounds the base whole-board count up after applying the entered waste percentage.</p><h3>Are picture-frame border boards included?</h3><p>No. Estimate border, fascia, stair, and breaker boards separately because their stock lengths and framing requirements vary.</p><h3>How do I estimate lumber volume?</h3><p>Use the <a href="/board-foot-calculator/">board foot calculator</a> when lumber is sold or compared by board-foot volume.</p>"""
+    if calc.get("slug") == "board-foot-calculator":
+        return """
+<h2>How to calculate board feet</h2><p>A board foot is a lumber-volume unit equal to a piece 1 inch thick, 12 inches wide, and 1 foot long. Enter thickness and width in inches, length in feet, and the number of pieces.</p>
+<p class="formula">board feet = thickness (in) x width (in) x length (ft) / 12 x quantity</p>
+<h2>Board-foot example</h2><p>One 1 in by 8 in by 10 ft board contains 6.67 board feet. Ten boards contain 66.67 board feet. With 10% waste, the purchasing estimate is 73.33 board feet; at $4.25 per board foot, estimated lumber cost is $311.67.</p>
+<h2>Nominal versus actual dimensions</h2><p>Use the dimensions your supplier uses for pricing. Hardwood may be priced from stated rough thickness and measured width, while surfaced softwood commonly has smaller actual dimensions than its nominal name. Do not mix nominal dimensions with an actual-dimension price basis.</p>
+<h2>Board feet, cubic feet, and linear feet</h2><p>Board feet measure volume, not surface area or length. Twelve board feet equal one cubic foot. Linear feet describe only total length and do not account for thickness or width. This calculator reports all three so you can check the order from different views.</p>
+<h2>US lumber reference</h2><p>The USDA Forest Service defines one board foot as the volume of a board 1 foot long, 1 foot wide, and 1 inch thick. See its <a href="https://www.srs.fs.usda.gov/pubs/rb/rb_srs068.pdf" rel="external noopener">forest-products measurement reference</a>.</p>
+<h2>Frequently asked questions</h2><h3>Should waste be added before cost?</h3><p>Yes. The cost result multiplies the waste-adjusted board feet by the entered price per board foot.</p><h3>Can I use this for decking?</h3><p>Use this page to compare lumber volume. For piece count, joists, fasteners, and whole-board purchasing, use the <a href="/deck-board-calculator/">deck board calculator</a>.</p><h3>Does this account for random widths?</h3><p>Run separate calculations for different dimensions or use an average only when your supplier's tally supports it.</p>"""
     return None
 
 
@@ -1410,7 +1457,7 @@ def default_calculator_copy(calc):
 
 
 def analysis_extra_html(calc):
-    if calc.get("slug") in ("concrete-volume-calculator", "roof-pitch-calculator", "rafter-length-calculator", "square-footage-calculator", "flooring-calculator", "tile-calculator"):
+    if calc.get("slug") in ("concrete-volume-calculator", "roof-pitch-calculator", "rafter-length-calculator", "square-footage-calculator", "flooring-calculator", "tile-calculator", "deck-board-calculator", "board-foot-calculator"):
         labels = {
             "concrete-volume-calculator": ("Concrete Material Estimate", "Volume and Cost Comparison"),
             "roof-pitch-calculator": ("Roof Geometry", "Pitch and Area Results"),
@@ -1418,6 +1465,8 @@ def analysis_extra_html(calc):
             "square-footage-calculator": ("Area Estimate", "Area and Cost Results"),
             "flooring-calculator": ("Flooring Order", "Coverage and Cost Results"),
             "tile-calculator": ("Tile Order", "Pieces, Boxes, and Cost"),
+            "deck-board-calculator": ("Deck Material Estimate", "Boards, Framing, and Cost"),
+            "board-foot-calculator": ("Lumber Volume Estimate", "Board Feet and Cost"),
         }
         title, chart_title = labels[calc.get("slug")]
         return f"""<section class="mortgage-dashboard generic-dashboard project-dashboard" aria-label="{title} results">
@@ -1546,6 +1595,12 @@ def calculator_page(site, calc, related):
     elif calc.get("slug") == "tile-calculator":
         fields = tile_input_html()
         page_engine = "tile_advanced"
+    elif calc.get("slug") == "deck-board-calculator":
+        fields = deck_board_input_html()
+        page_engine = "deck_advanced"
+    elif calc.get("slug") == "board-foot-calculator":
+        fields = board_foot_input_html()
+        page_engine = "board_foot_advanced"
     elif calc.get("engine") == "cn_mortgage":
         fields = mortgage_input_html()
     elif calc.get("engine") == "loan_page":
@@ -1799,6 +1854,8 @@ function syncAreaFields(){const shape=document.getElementById('area_shape')?.val
 function squareFootageProjection(){const shape=syncAreaFields(),length=Math.max(0,V('area_length')),width=Math.max(0,V('area_width'));let area=0,perimeter=null,gross=0,openings=0;if(shape==='circle'){const diameter=Math.max(0,V('area_diameter'));area=Math.PI*(diameter/2)**2;perimeter=Math.PI*diameter}else if(shape==='triangle'){area=Math.max(0,V('area_base'))*Math.max(0,V('area_height'))/2}else if(shape==='room_walls'){perimeter=2*(length+width);gross=perimeter*Math.max(0,V('wall_height'));openings=Math.max(0,V('area_openings'));area=Math.max(0,gross-openings)}else{area=length*width;perimeter=2*(length+width)}const overage=Math.max(0,V('area_overage')),orderArea=area*(1+overage/100),price=Math.max(0,V('area_price')),cost=orderArea*price;return{shape,length,width,area,perimeter,gross,openings,overage,orderArea,price,cost}}
 function flooringProjection(){const length=Math.max(0,V('floor_length')),width=Math.max(0,V('floor_width')),extra=Math.max(0,V('floor_extra')),area=length*width+extra,waste=Math.max(0,V('floor_waste')),target=area*(1+waste/100),boxCoverage=Math.max(.001,V('floor_box_coverage')),boxes=Math.ceil(target/boxCoverage-1e-9),purchased=boxes*boxCoverage,leftover=Math.max(0,purchased-area),boxCost=boxes*Math.max(0,V('floor_box_price')),underlayCoverage=Math.max(.001,V('underlay_coverage')),underlayRolls=Math.ceil(area/underlayCoverage-1e-9),underlayCost=underlayRolls*Math.max(0,V('underlay_price')),totalCost=boxCost+underlayCost;return{length,width,extra,area,waste,target,boxCoverage,boxes,purchased,leftover,boxCost,underlayCoverage,underlayRolls,underlayCost,totalCost}}
 function tileProjection(){const length=Math.max(0,V('tile_project_length')),width=Math.max(0,V('tile_project_width')),area=length*width,tileWidth=Math.max(.001,V('tile_width')),tileHeight=Math.max(.001,V('tile_height')),tileArea=tileWidth*tileHeight/144,waste=Math.max(0,V('tile_waste')),targetArea=area*(1+waste/100),pieces=Math.ceil(targetArea/tileArea-1e-9),perBox=Math.max(1,Math.floor(V('tile_per_box'))),boxes=Math.ceil(pieces/perBox-1e-9),purchasedPieces=boxes*perBox,purchasedArea=purchasedPieces*tileArea,leftover=Math.max(0,purchasedArea-area),cost=boxes*Math.max(0,V('tile_box_price'));return{length,width,area,tileWidth,tileHeight,tileArea,waste,targetArea,pieces,perBox,boxes,purchasedPieces,purchasedArea,leftover,cost}}
+function deckProjection(){const length=Math.max(0,V('deck_length')),width=Math.max(0,V('deck_width')),boardWidth=Math.max(.001,V('deck_board_width')),gap=Math.max(0,V('deck_gap')),stockLength=Math.max(.001,V('deck_stock_length')),waste=Math.max(0,V('deck_waste')),joistSpacing=Math.max(.001,V('deck_joist_spacing')),boardPrice=Math.max(0,V('deck_board_price')),fastenersPerCrossing=Math.max(1,Math.floor(V('deck_fasteners_crossing'))),fastenersPerPack=Math.max(1,Math.floor(V('deck_fastener_pack'))),fastenerPackPrice=Math.max(0,V('deck_fastener_price')),area=length*width,rows=Math.ceil(width*12/(boardWidth+gap)-1e-9),boardsPerRow=Math.ceil(length/stockLength-1e-9),baseBoards=rows*boardsPerRow,boards=Math.ceil(baseBoards*(1+waste/100)-1e-9),coverageLinear=rows*length,stockLinear=baseBoards*stockLength,orderedLinear=boards*stockLength,joists=Math.ceil(length*12/joistSpacing-1e-9)+1,fasteners=rows*joists*fastenersPerCrossing,fastenerPacks=Math.ceil(fasteners/fastenersPerPack-1e-9),boardCost=boards*boardPrice,fastenerCost=fastenerPacks*fastenerPackPrice,totalCost=boardCost+fastenerCost;return{length,width,area,boardWidth,gap,stockLength,waste,rows,boardsPerRow,baseBoards,boards,coverageLinear,stockLinear,orderedLinear,joistSpacing,joists,fastenersPerCrossing,fasteners,fastenersPerPack,fastenerPacks,boardCost,fastenerCost,totalCost}}
+function boardFootProjection(){const thickness=Math.max(0,V('bf_thickness')),width=Math.max(0,V('bf_width')),length=Math.max(0,V('bf_length')),quantity=Math.max(1,Math.floor(V('bf_quantity'))),waste=Math.max(0,V('bf_waste')),price=Math.max(0,V('bf_price')),perBoard=thickness*width*length/12,total=perBoard*quantity,order=total*(1+waste/100),cubicFeet=order/12,linearFeet=length*quantity,cost=order*price;return{thickness,width,length,quantity,waste,price,perBoard,total,order,cubicFeet,linearFeet,cost}}
 function syncFeetMeterInputs(){const reverse=document.getElementById('conversion_direction')?.value==='meters_to_feet';document.querySelectorAll('[data-feet-input]').forEach(el=>el.classList.toggle('is-hidden',reverse));document.querySelectorAll('[data-meter-input]').forEach(el=>el.classList.toggle('is-hidden',!reverse));return reverse}
 function clearCalcForm(){const form=document.querySelector('.calc');if(!form)return;form.querySelectorAll('input').forEach(input=>{if(input.type==='checkbox')input.checked=false;else input.value=''});form.querySelectorAll('select').forEach(select=>{select.selectedIndex=0});form.querySelectorAll('details').forEach(item=>{item.open=false});syncMortgageCosts();syncConcreteFields();syncRoofFields();syncAreaFields();show('<strong>0</strong><br>Enter values to calculate a new result.');const engine=currentEngine();if(engine==='cn_mortgage')renderMortgage(0,0,1,0,0,0,0,0,0,0,0,0,0,new Date());if(engine==='loan_page')renderLoanPage()}
 function calc(e){
@@ -1824,8 +1881,10 @@ function calc(e){
   case'roof_pitch_advanced':{const p=roofPitchProjection();show(`<strong>${F(p.pitch,2)}:12 roof pitch</strong><br>${F(p.angle,2)}° angle; ${F(p.percent,1)}% slope; ${F(p.rafter,2)} ft estimated rafter length.`);break}
   case'rafter_advanced':{const p=rafterProjection();show(`<strong>${F(p.totalLength,2)} ft per rafter</strong><br>${F(p.baseLength,2)} ft to wall line plus ${F(p.tailLength,2)} ft sloped tail; ${F(p.totalLinear,1)} total linear feet.`);break}
   case'square_footage_advanced':{const p=squareFootageProjection();show(`<strong>${F(p.area,2)} square feet</strong><br>${F(p.orderArea,2)} sq ft with overage; estimated material cost ${USD(p.cost)}${p.perimeter!==null?`; ${F(p.perimeter,1)} ft perimeter`:''}.`);break}
-  case'flooring_advanced':{const p=flooringProjection();show(`<strong>${F(p.boxes,0)} boxes of flooring</strong><br>${F(p.target,1)} sq ft target; ${F(p.purchased,1)} sq ft purchased; estimated total with underlayment ${USD(p.totalCost)}.`);break}
-  case'tile_advanced':{const p=tileProjection();show(`<strong>${F(p.boxes,0)} boxes / ${F(p.pieces,0)} tiles</strong><br>${F(p.targetArea,1)} sq ft target; ${F(p.purchasedArea,1)} sq ft purchased; estimated tile cost ${USD(p.cost)}.`);break}
+	  case'flooring_advanced':{const p=flooringProjection();show(`<strong>${F(p.boxes,0)} boxes of flooring</strong><br>${F(p.target,1)} sq ft target; ${F(p.purchased,1)} sq ft purchased; estimated total with underlayment ${USD(p.totalCost)}.`);break}
+	  case'tile_advanced':{const p=tileProjection();show(`<strong>${F(p.boxes,0)} boxes / ${F(p.pieces,0)} tiles</strong><br>${F(p.targetArea,1)} sq ft target; ${F(p.purchasedArea,1)} sq ft purchased; estimated tile cost ${USD(p.cost)}.`);break}
+	  case'deck_advanced':{const p=deckProjection();show(`<strong>${F(p.boards,0)} full deck boards</strong><br>${F(p.rows,0)} rows; ${F(p.joists,0)} joist lines; ${F(p.fasteners,0)} fasteners; estimated materials ${USD(p.totalCost)}.`);break}
+	  case'board_foot_advanced':{const p=boardFootProjection();show(`<strong>${F(p.order,2)} board feet to order</strong><br>${F(p.total,2)} board feet before waste; ${F(p.cubicFeet,2)} cubic feet; estimated lumber cost ${USD(p.cost)}.`);break}
   case'tire':{let width=V('width'),aspect=V('aspect'),wheel=V('wheel');let side=width*aspect/100,diam=wheel+2*side/25.4,circ=Math.PI*diam;show(`<strong>${F(diam,2)} in diameter</strong><br>Sidewall: ${F(side,1)} mm; circumference: ${F(circ,2)} in.`);break}
   case'offset':{let r=(V('backspacing')-V('width')/2)*25.4;show(`<strong>${F(r,1)} mm offset</strong><br>Approximation using nominal wheel width.`);break}
   case'backspacing':{let r=V('width')/2+V('offset')/25.4;show(`<strong>${F(r,2)} in backspacing</strong><br>Approximation using nominal wheel width.`);break}
@@ -2129,6 +2188,16 @@ function renderGenericFromEngine(engine) {
     cards=[["Boxes to buy",F(p.boxes,0),`${F(p.perBox,0)} pieces per box.`],["Tiles needed",F(p.pieces,0),`${F(p.waste,1)}% waste included.`],["Purchased coverage",`${F(p.purchasedArea,1)} ft²`,"Full boxes converted to area."],["Estimated tile cost",USD(p.cost),"Boxes times entered price."]];
     bars=[{label:"Project area",value:p.area,display:`${F(p.area,1)} ft²`},{label:"Waste allowance",value:p.targetArea-p.area,display:`${F(p.targetArea-p.area,1)} ft²`},{label:"Purchased coverage",value:p.purchasedArea,display:`${F(p.purchasedArea,1)} ft²`},{label:"Tile cost",value:p.cost,display:USD(p.cost)}];
     rows=[["Project area",`${F(p.area,2)} ft²`,"Length times width."],["Tile face size",`${F(p.tileWidth,2)} x ${F(p.tileHeight,2)} in`,`${F(p.tileArea,4)} square feet each.`],["Waste allowance",`${F(p.waste,2)}%`,"Entered cutting margin."],["Order target",`${F(p.targetArea,2)} ft²`,"Project area after waste."],["Tiles needed",F(p.pieces,0),"Rounded up by piece."],["Tiles per box",F(p.perBox,0),"Entered package quantity."],["Boxes to buy",F(p.boxes,0),"Rounded up to full boxes."],["Purchased tile",`${F(p.purchasedArea,2)} ft²`,`${F(p.purchasedPieces,0)} total pieces.`],["Left after installation",`${F(p.leftover,2)} ft²`,"Includes waste and box remainder."],["Estimated cost",USD(p.cost),"Tile boxes only."]];
+  } else if (engine === "deck_advanced") {
+    const p=deckProjection();
+    cards=[["Full boards to buy",F(p.boards,0),`${F(p.waste,1)}% waste included.`],["Board rows",F(p.rows,0),`${F(p.boardWidth,3)} in boards plus ${F(p.gap,3)} in gaps.`],["Fastener boxes",F(p.fastenerPacks,0),`${F(p.fasteners,0)} fasteners estimated.`],["Estimated materials",USD(p.totalCost),"Boards plus entered fastener cost."]];
+    bars=[{label:"Base whole boards",value:p.baseBoards,display:F(p.baseBoards,0)},{label:"Boards with waste",value:p.boards,display:F(p.boards,0)},{label:"Joist lines",value:p.joists,display:F(p.joists,0)},{label:"Fastener boxes",value:p.fastenerPacks,display:F(p.fastenerPacks,0)},{label:"Material cost",value:p.totalCost,display:USD(p.totalCost)}];
+    rows=[["Deck area",`${F(p.area,2)} ft²`,"Length times width."],["Board rows",F(p.rows,0),"Rounded across deck width."],["Stock boards per row",F(p.boardsPerRow,0),"Rounded from deck length."],["Base whole-board count",F(p.baseBoards,0),"Rows times boards per row."],["Waste allowance",`${F(p.waste,2)}%`,"Applied to whole-board count."],["Full boards to buy",F(p.boards,0),"Final count rounded up."],["Coverage linear footage",`${F(p.coverageLinear,1)} ft`,"Rows times deck length."],["Ordered stock footage",`${F(p.orderedLinear,1)} ft`,"Full boards times stock length."],["Joist lines",F(p.joists,0),`${F(p.joistSpacing,2)} in on center, including edges.`],["Fasteners",F(p.fasteners,0),`${F(p.fastenersPerCrossing,0)} per row and joist crossing.`],["Fastener boxes",F(p.fastenerPacks,0),`${F(p.fastenersPerPack,0)} per box.`],["Board cost",USD(p.boardCost),"Full boards times entered price."],["Fastener cost",USD(p.fastenerCost),"Full boxes times entered price."],["Estimated total",USD(p.totalCost),"Entered decking and fasteners only."]];
+  } else if (engine === "board_foot_advanced") {
+    const p=boardFootProjection();
+    cards=[["Board feet to order",F(p.order,2),`${F(p.waste,1)}% waste included.`],["Board feet per piece",F(p.perBoard,3),`${F(p.thickness,2)} x ${F(p.width,2)} in x ${F(p.length,2)} ft.`],["Cubic feet",F(p.cubicFeet,3),"Waste-adjusted lumber volume."],["Estimated lumber cost",USD(p.cost),`${USD(p.price)} per board foot.`]];
+    bars=[{label:"Board feet before waste",value:p.total,display:F(p.total,2)},{label:"Waste allowance",value:p.order-p.total,display:F(p.order-p.total,2)},{label:"Board feet to order",value:p.order,display:F(p.order,2)},{label:"Estimated cost",value:p.cost,display:USD(p.cost)}];
+    rows=[["Dimensions",`${F(p.thickness,2)} in x ${F(p.width,2)} in x ${F(p.length,2)} ft`,"Entered pricing dimensions."],["Quantity",F(p.quantity,0),"Whole pieces."],["Board feet per piece",F(p.perBoard,4),"Thickness x width x length / 12."],["Board feet before waste",F(p.total,4),"Per-piece volume times quantity."],["Waste allowance",`${F(p.waste,2)}%`,"Entered purchasing margin."],["Board feet to order",F(p.order,4),"Volume after waste."],["Cubic feet",F(p.cubicFeet,4),"Board feet divided by 12."],["Total linear feet",`${F(p.linearFeet,2)} ft`,"Length times quantity before waste."],["Price per board foot",USD(p.price),"Entered unit price."],["Estimated cost",USD(p.cost),"Order volume times unit price."]];
   } else if (engine === "tire_compare") {
     const p=tireComparison(), speedError=p.actualSpeed-p.indicated;
     cards=[["Diameter difference",`${p.differencePct>=0?'+':''}${F(p.differencePct,2)}%`,"New tire versus original."],["Actual speed",`${F(p.actualSpeed,2)} mph`,`${F(p.indicated,0)} mph indicated.`],["Ground clearance",`${p.clearance>=0?'+':''}${F(p.clearance,2)} in`,"Half the diameter change."],["Revolutions per mile",F(p.next.revsPerMile,1),"Calculated new tire value."]];
