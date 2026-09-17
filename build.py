@@ -14,7 +14,7 @@ KEYWORD_STATS = ROOT / "exports" / "keyword-stats-positive.json"
 SEO_STRATEGY = ROOT / "exports" / "seo-keyword-strategy-2026-09-05.json"
 PUBLIC_BASE_PATH = os.environ.get("PUBLIC_BASE_PATH", "").strip().rstrip("/")
 PUBLIC_SITE_DOMAIN = os.environ.get("PUBLIC_SITE_DOMAIN", "").strip()
-ASSET_VERSION = "20260917k"
+ASSET_VERSION = "20260917l"
 CALCULATOR_REDIRECTS = {
     "concrete-calculator": "concrete-volume-calculator",
 }
@@ -801,6 +801,12 @@ def seo_description(calc):
         return "Calculate roof pitch, angle, percent slope, pitch multiplier, rafter length, sloped area, and roofing squares from pitch, rise and run, or angle."
     if calc.get("slug") == "rafter-length-calculator":
         return "Calculate common rafter length, roof rise, slope factor, angle, and horizontal-overhang adjustment from run and roof pitch."
+    if calc.get("slug") == "square-footage-calculator":
+        return "Calculate square footage for rectangles, circles, triangles, or room walls, including openings, overage, perimeter, and estimated material cost."
+    if calc.get("slug") == "flooring-calculator":
+        return "Calculate flooring square footage, waste, full boxes, purchased coverage, leftover material, underlayment, and estimated project cost."
+    if calc.get("slug") == "tile-calculator":
+        return "Calculate floor or wall tile quantity, waste, full boxes, purchased coverage, leftover tile, and estimated material cost."
     if calc.get("engine") == "linear_convert":
         return f"Use this free {keyword} to convert units instantly with the formula, example, and related conversion calculators."
     if calc.get("engine") in ("cn_mortgage", "loan_page", "car_loan"):
@@ -991,6 +997,45 @@ def rafter_length_input_html():
 <div class="field"><label for="rafter_run">Horizontal run</label><div class="input-unit"><input id="rafter_run" type="number" step="any" min="0" value="12"><span>ft</span></div></div>
 <div class="field"><label for="rafter_overhang">Horizontal overhang</label><div class="input-unit"><input id="rafter_overhang" type="number" step="any" min="0" value="12"><span>in</span></div></div>
 <div class="field"><label for="rafter_qty">Number of rafters</label><input id="rafter_qty" type="number" step="1" min="1" value="20"></div>
+</div>"""
+
+
+def square_footage_input_html():
+    return """<div class="fields project-fields square-footage-fields">
+<div class="field field-wide"><label for="area_shape">Area type</label><select id="area_shape"><option value="rectangle" selected>Rectangle: floor, room, or wall</option><option value="circle">Circle</option><option value="triangle">Triangle</option><option value="room_walls">Four room walls</option></select></div>
+<div class="field" data-area-rectangle data-area-walls><label for="area_length">Length</label><div class="input-unit"><input id="area_length" type="number" step="any" min="0" value="20"><span>ft</span></div></div>
+<div class="field" data-area-rectangle data-area-walls><label for="area_width">Width</label><div class="input-unit"><input id="area_width" type="number" step="any" min="0" value="12"><span>ft</span></div></div>
+<div class="field is-hidden" data-area-circle><label for="area_diameter">Diameter</label><div class="input-unit"><input id="area_diameter" type="number" step="any" min="0" value="12"><span>ft</span></div></div>
+<div class="field is-hidden" data-area-triangle><label for="area_base">Triangle base</label><div class="input-unit"><input id="area_base" type="number" step="any" min="0" value="20"><span>ft</span></div></div>
+<div class="field is-hidden" data-area-triangle><label for="area_height">Triangle height</label><div class="input-unit"><input id="area_height" type="number" step="any" min="0" value="12"><span>ft</span></div></div>
+<div class="field is-hidden" data-area-walls><label for="wall_height">Wall height</label><div class="input-unit"><input id="wall_height" type="number" step="any" min="0" value="8"><span>ft</span></div></div>
+<div class="field is-hidden" data-area-walls><label for="area_openings">Doors and windows</label><div class="input-unit"><input id="area_openings" type="number" step="any" min="0" value="40"><span>ft²</span></div></div>
+<div class="field"><label for="area_overage">Overage</label><div class="input-unit"><input id="area_overage" type="number" step="any" min="0" value="10"><span>%</span></div></div>
+<div class="field"><label for="area_price">Material price</label><div class="input-unit"><input id="area_price" type="number" step="any" min="0" value="3.50"><span>$/ft²</span></div></div>
+</div>"""
+
+
+def flooring_input_html():
+    return """<div class="fields project-fields flooring-fields">
+<div class="field"><label for="floor_length">Room length</label><div class="input-unit"><input id="floor_length" type="number" step="any" min="0" value="20"><span>ft</span></div></div>
+<div class="field"><label for="floor_width">Room width</label><div class="input-unit"><input id="floor_width" type="number" step="any" min="0" value="12"><span>ft</span></div></div>
+<div class="field"><label for="floor_extra">Closets or extra area</label><div class="input-unit"><input id="floor_extra" type="number" step="any" min="0" value="0"><span>ft²</span></div></div>
+<div class="field"><label for="floor_waste">Waste allowance</label><div class="input-unit"><input id="floor_waste" type="number" step="any" min="0" value="10"><span>%</span></div></div>
+<div class="field"><label for="floor_box_coverage">Coverage per box</label><div class="input-unit"><input id="floor_box_coverage" type="number" step="any" min="0.01" value="24"><span>ft²</span></div></div>
+<div class="field"><label for="floor_box_price">Price per box</label><div class="input-unit"><input id="floor_box_price" type="number" step="any" min="0" value="48"><span>$</span></div></div>
+<details class="more-options field-wide"><summary>Underlayment options</summary><div class="fields concrete-cost-fields"><div class="field"><label for="underlay_coverage">Coverage per roll</label><div class="input-unit"><input id="underlay_coverage" type="number" step="any" min="0.01" value="100"><span>ft²</span></div></div><div class="field"><label for="underlay_price">Price per roll</label><div class="input-unit"><input id="underlay_price" type="number" step="any" min="0" value="35"><span>$</span></div></div></div></details>
+</div>"""
+
+
+def tile_input_html():
+    return """<div class="fields project-fields tile-fields">
+<div class="field"><label for="tile_project_length">Project length</label><div class="input-unit"><input id="tile_project_length" type="number" step="any" min="0" value="15"><span>ft</span></div></div>
+<div class="field"><label for="tile_project_width">Project width</label><div class="input-unit"><input id="tile_project_width" type="number" step="any" min="0" value="12"><span>ft</span></div></div>
+<div class="field"><label for="tile_width">Tile width</label><div class="input-unit"><input id="tile_width" type="number" step="any" min="0.01" value="12"><span>in</span></div></div>
+<div class="field"><label for="tile_height">Tile length</label><div class="input-unit"><input id="tile_height" type="number" step="any" min="0.01" value="12"><span>in</span></div></div>
+<div class="field"><label for="tile_waste">Waste allowance</label><div class="input-unit"><input id="tile_waste" type="number" step="any" min="0" value="10"><span>%</span></div></div>
+<div class="field"><label for="tile_per_box">Tiles per box</label><input id="tile_per_box" type="number" step="1" min="1" value="15"></div>
+<div class="field field-wide"><label for="tile_box_price">Price per box</label><div class="input-unit"><input id="tile_box_price" type="number" step="any" min="0" value="32"><span>$</span></div></div>
 </div>"""
 
 
@@ -1327,6 +1372,31 @@ def high_value_calculator_copy(calc):
 <h2>Horizontal versus sloped overhang</h2><p>This calculator expects the overhang's horizontal projection. A 12 in horizontal overhang is longer than 12 in when measured along a sloped rafter. If your drawing already gives the tail length along the slope, do not enter that value as horizontal overhang.</p>
 <h2>Geometry is not structural sizing</h2><p>The result is theoretical line length before ridge, birdsmouth, plumb-cut, seat-cut, fascia, and field-fitting adjustments. It does not select lumber size or verify loads. The <a href="https://awc.org/resources/calculator-help/" rel="external noopener">American Wood Council span-calculator guidance</a> explains that allowable spans depend on strength, stiffness, shear, bearing, species, grade, spacing, and loads.</p>
 <h2>Frequently asked questions</h2><h3>Do I subtract half the ridge-board thickness?</h3><p>Often the theoretical run is adjusted for the ridge detail, but the exact layout depends on the plans and framing method. This calculator leaves that job-specific adjustment to the user.</p><h3>Does the total linear footage include waste?</h3><p>No. It multiplies the calculated length by the entered rafter count. Add an appropriate cutting and procurement allowance separately.</p>"""
+    if calc.get("slug") == "square-footage-calculator":
+        return """
+<h2>How to calculate square footage</h2><p>Select a rectangle, circle, triangle, or four-wall room. Enter dimensions in feet, subtract door and window openings when using wall mode, and add an optional overage for the material being ordered.</p>
+<p class="formula">rectangle = length x width; circle = π x (diameter / 2)²; triangle = base x height / 2</p>
+<h2>Room and wall example</h2><p>A 20 ft by 12 ft rectangular floor contains 240 square feet and has a 64 ft perimeter. At 10% overage, the material-order area is 264 square feet. Four 8 ft walls around that room contain 512 square feet before subtracting doors and windows.</p>
+<h2>Gross wall area versus net wall area</h2><p>Gross wall area is room perimeter multiplied by wall height. Net wall area subtracts the combined square footage of openings. Whether to subtract small openings depends on the product, labor method, and estimator, so enter only the deductions appropriate to your project.</p>
+<h2>Material cost estimate</h2><p>The cost result multiplies the overage-adjusted area by the entered price per square foot. It does not include whole-package rounding, tax, delivery, accessories, labor, surface preparation, or minimum charges. Use a product-specific calculator when flooring, tile, paint, drywall, or roofing must be purchased in packages.</p>
+<h2>Frequently asked questions</h2><h3>How many square feet are in a square yard?</h3><p>One square yard equals 9 square feet.</p><h3>Can this calculate an L-shaped room?</h3><p>Split the room into non-overlapping rectangles, calculate each section, and add the areas. Do not include the same section twice.</p><h3>Is this the same as official home living area?</h3><p>No. Real-estate and appraisal standards define which spaces count and how they are measured. This tool calculates geometric project area only.</p>"""
+    if calc.get("slug") == "flooring-calculator":
+        return """
+<h2>How much flooring do I need?</h2><p>Measure the room and any closets or connected sections, add a waste allowance, then divide by the exact coverage printed on one box. Flooring is purchased in whole boxes, so the calculator always rounds the box count up.</p>
+<p class="formula">boxes = round up((room area + extra area) x (1 + waste %) / box coverage)</p>
+<h2>Flooring example</h2><p>A 20 ft by 12 ft room contains 240 square feet. With 10% waste, the target is 264 square feet. If each box covers 24 square feet, the order is exactly 11 boxes. At $48 per box, estimated flooring cost is $528 before tax and delivery.</p>
+<h2>Coverage ordered and leftover material</h2><p>Because boxes are rounded up, purchased coverage can exceed the waste-adjusted target. The leftover result is purchased coverage minus the original measured floor area; it includes the planned cutting allowance and any additional package-rounding remainder.</p>
+<h2>Underlayment</h2><p>Underlayment is calculated separately from its entered roll coverage and price. Some flooring includes an attached pad, some systems require a specific moisture or sound-control product, and some installations use no separate underlayment. Follow the flooring manufacturer's instructions.</p>
+<h2>Waste allowance</h2><p>Room shape, installation direction, plank length, pattern matching, defects, and future repair stock affect waste. Use the allowance specified by your installer or product guidance instead of treating a default percentage as universal.</p>
+<h2>Frequently asked questions</h2><h3>Should I use price per box or price per square foot?</h3><p>This calculator uses price per box so the cost matches the rounded number of packages purchased.</p><h3>Can I combine multiple rooms?</h3><p>Yes. Add the measured areas of rooms and closets and enter that total as extra area, or run each room separately when layouts and waste rates differ.</p>"""
+    if calc.get("slug") == "tile-calculator":
+        return """
+<h2>How many tiles do I need?</h2><p>Enter the project dimensions, tile face dimensions, waste allowance, pieces per box, and price per box. The calculator estimates individual pieces, rounds to full boxes, and reports purchased coverage and material cost.</p>
+<p class="formula">tiles = round up(project area / tile face area x (1 + waste %)); boxes = round up(tiles / pieces per box)</p>
+<h2>Tile example</h2><p>A 15 ft by 12 ft area contains 180 square feet. Twelve-inch square tiles cover one square foot each, so 10% waste produces a 198-tile target. With 15 tiles per box, 14 boxes provide 210 tiles and 210 square feet of face coverage.</p>
+<h2>Waste and spare tile</h2><p>Cuts, breakage, pattern alignment, room shape, tile variation, and future repairs affect the order. <a href="https://www.lowes.com/n/calculators/tile-floor-calculator" rel="external noopener">Lowe's tile calculator guidance</a> suggests purchasing an extra 10% for trim and waste, but the right allowance depends on the project.</p>
+<h2>Mortar and grout are product-specific</h2><p>This page estimates tile pieces and boxes, not mortar or grout. Coverage depends on the product, trowel, tile dimensions, joint width and depth, substrate, and application. Use the exact product data sheet or a manufacturer tool such as the <a href="https://www.mapei.com/us/en-us/tools-and-downloads/product-calculators" rel="external noopener">MAPEI product calculators</a>.</p>
+<h2>Frequently asked questions</h2><h3>Does grout-joint width reduce the tile count?</h3><p>Joint spacing affects layout, but cuts and edge conditions make a simple deduction unreliable. This estimator uses tile face area and a user-controlled waste allowance for purchasing.</p><h3>Why is box count rounded up?</h3><p>Retailers normally sell sealed tile in full boxes. The calculator rounds up after converting the required pieces to boxes.</p><h3>Should wall tile and floor tile be combined?</h3><p>Run separate estimates when tile sizes, patterns, waste, products, or dye lots differ.</p>"""
     return None
 
 
@@ -1340,11 +1410,14 @@ def default_calculator_copy(calc):
 
 
 def analysis_extra_html(calc):
-    if calc.get("slug") in ("concrete-volume-calculator", "roof-pitch-calculator", "rafter-length-calculator"):
+    if calc.get("slug") in ("concrete-volume-calculator", "roof-pitch-calculator", "rafter-length-calculator", "square-footage-calculator", "flooring-calculator", "tile-calculator"):
         labels = {
             "concrete-volume-calculator": ("Concrete Material Estimate", "Volume and Cost Comparison"),
             "roof-pitch-calculator": ("Roof Geometry", "Pitch and Area Results"),
             "rafter-length-calculator": ("Rafter Geometry", "Length Breakdown"),
+            "square-footage-calculator": ("Area Estimate", "Area and Cost Results"),
+            "flooring-calculator": ("Flooring Order", "Coverage and Cost Results"),
+            "tile-calculator": ("Tile Order", "Pieces, Boxes, and Cost"),
         }
         title, chart_title = labels[calc.get("slug")]
         return f"""<section class="mortgage-dashboard generic-dashboard project-dashboard" aria-label="{title} results">
@@ -1464,6 +1537,15 @@ def calculator_page(site, calc, related):
     elif calc.get("slug") == "rafter-length-calculator":
         fields = rafter_length_input_html()
         page_engine = "rafter_advanced"
+    elif calc.get("slug") == "square-footage-calculator":
+        fields = square_footage_input_html()
+        page_engine = "square_footage_advanced"
+    elif calc.get("slug") == "flooring-calculator":
+        fields = flooring_input_html()
+        page_engine = "flooring_advanced"
+    elif calc.get("slug") == "tile-calculator":
+        fields = tile_input_html()
+        page_engine = "tile_advanced"
     elif calc.get("engine") == "cn_mortgage":
         fields = mortgage_input_html()
     elif calc.get("engine") == "loan_page":
@@ -1713,8 +1795,12 @@ function concreteProjection(){const shape=document.getElementById('concrete_shap
 function syncRoofFields(){const mode=document.getElementById('roof_input_mode')?.value||'pitch';document.querySelectorAll('[data-roof-pitch]').forEach(el=>el.classList.toggle('is-hidden',mode!=='pitch'));document.querySelectorAll('[data-roof-rise-run]').forEach(el=>el.classList.toggle('is-hidden',mode!=='rise_run'));document.querySelectorAll('[data-roof-angle]').forEach(el=>el.classList.toggle('is-hidden',mode!=='angle'));return mode}
 function roofPitchProjection(){const mode=syncRoofFields();let slope=0;if(mode==='rise_run')slope=Math.max(0,V('roof_rise'))/Math.max(.0001,V('roof_run'));else if(mode==='angle')slope=Math.tan(Math.max(0,Math.min(89.9,V('roof_angle')))*Math.PI/180);else slope=Math.max(0,V('roof_pitch'))/12;const pitch=slope*12,angle=Math.atan(slope)*180/Math.PI,percent=slope*100,factor=Math.sqrt(1+slope*slope),run=Math.max(0,V('roof_rafter_run')),overhang=Math.max(0,V('roof_overhang'))/12,rafter=(run+overhang)*factor,rise=run*slope,planArea=Math.max(0,V('roof_plan_area')),slopedArea=planArea*factor,squares=slopedArea/100;return{mode,slope,pitch,angle,percent,factor,run,overhang,rafter,rise,planArea,slopedArea,squares}}
 function rafterProjection(){const pitch=Math.max(0,V('rafter_pitch')),slope=pitch/12,factor=Math.sqrt(1+slope*slope),run=Math.max(0,V('rafter_run')),overhang=Math.max(0,V('rafter_overhang'))/12,baseLength=run*factor,tailLength=overhang*factor,totalLength=baseLength+tailLength,rise=run*slope,angle=Math.atan(slope)*180/Math.PI,quantity=Math.max(1,Math.floor(V('rafter_qty'))),totalLinear=totalLength*quantity;return{pitch,slope,factor,run,overhang,baseLength,tailLength,totalLength,rise,angle,quantity,totalLinear}}
+function syncAreaFields(){const shape=document.getElementById('area_shape')?.value||'rectangle';document.querySelectorAll('[data-area-rectangle],[data-area-circle],[data-area-triangle],[data-area-walls]').forEach(el=>{const show=(shape==='rectangle'&&el.hasAttribute('data-area-rectangle'))||(shape==='circle'&&el.hasAttribute('data-area-circle'))||(shape==='triangle'&&el.hasAttribute('data-area-triangle'))||(shape==='room_walls'&&el.hasAttribute('data-area-walls'));el.classList.toggle('is-hidden',!show)});return shape}
+function squareFootageProjection(){const shape=syncAreaFields(),length=Math.max(0,V('area_length')),width=Math.max(0,V('area_width'));let area=0,perimeter=null,gross=0,openings=0;if(shape==='circle'){const diameter=Math.max(0,V('area_diameter'));area=Math.PI*(diameter/2)**2;perimeter=Math.PI*diameter}else if(shape==='triangle'){area=Math.max(0,V('area_base'))*Math.max(0,V('area_height'))/2}else if(shape==='room_walls'){perimeter=2*(length+width);gross=perimeter*Math.max(0,V('wall_height'));openings=Math.max(0,V('area_openings'));area=Math.max(0,gross-openings)}else{area=length*width;perimeter=2*(length+width)}const overage=Math.max(0,V('area_overage')),orderArea=area*(1+overage/100),price=Math.max(0,V('area_price')),cost=orderArea*price;return{shape,length,width,area,perimeter,gross,openings,overage,orderArea,price,cost}}
+function flooringProjection(){const length=Math.max(0,V('floor_length')),width=Math.max(0,V('floor_width')),extra=Math.max(0,V('floor_extra')),area=length*width+extra,waste=Math.max(0,V('floor_waste')),target=area*(1+waste/100),boxCoverage=Math.max(.001,V('floor_box_coverage')),boxes=Math.ceil(target/boxCoverage-1e-9),purchased=boxes*boxCoverage,leftover=Math.max(0,purchased-area),boxCost=boxes*Math.max(0,V('floor_box_price')),underlayCoverage=Math.max(.001,V('underlay_coverage')),underlayRolls=Math.ceil(area/underlayCoverage-1e-9),underlayCost=underlayRolls*Math.max(0,V('underlay_price')),totalCost=boxCost+underlayCost;return{length,width,extra,area,waste,target,boxCoverage,boxes,purchased,leftover,boxCost,underlayCoverage,underlayRolls,underlayCost,totalCost}}
+function tileProjection(){const length=Math.max(0,V('tile_project_length')),width=Math.max(0,V('tile_project_width')),area=length*width,tileWidth=Math.max(.001,V('tile_width')),tileHeight=Math.max(.001,V('tile_height')),tileArea=tileWidth*tileHeight/144,waste=Math.max(0,V('tile_waste')),targetArea=area*(1+waste/100),pieces=Math.ceil(targetArea/tileArea-1e-9),perBox=Math.max(1,Math.floor(V('tile_per_box'))),boxes=Math.ceil(pieces/perBox-1e-9),purchasedPieces=boxes*perBox,purchasedArea=purchasedPieces*tileArea,leftover=Math.max(0,purchasedArea-area),cost=boxes*Math.max(0,V('tile_box_price'));return{length,width,area,tileWidth,tileHeight,tileArea,waste,targetArea,pieces,perBox,boxes,purchasedPieces,purchasedArea,leftover,cost}}
 function syncFeetMeterInputs(){const reverse=document.getElementById('conversion_direction')?.value==='meters_to_feet';document.querySelectorAll('[data-feet-input]').forEach(el=>el.classList.toggle('is-hidden',reverse));document.querySelectorAll('[data-meter-input]').forEach(el=>el.classList.toggle('is-hidden',!reverse));return reverse}
-function clearCalcForm(){const form=document.querySelector('.calc');if(!form)return;form.querySelectorAll('input').forEach(input=>{if(input.type==='checkbox')input.checked=false;else input.value=''});form.querySelectorAll('select').forEach(select=>{select.selectedIndex=0});form.querySelectorAll('details').forEach(item=>{item.open=false});syncMortgageCosts();syncConcreteFields();syncRoofFields();show('<strong>0</strong><br>Enter values to calculate a new result.');const engine=currentEngine();if(engine==='cn_mortgage')renderMortgage(0,0,1,0,0,0,0,0,0,0,0,0,0,new Date());if(engine==='loan_page')renderLoanPage()}
+function clearCalcForm(){const form=document.querySelector('.calc');if(!form)return;form.querySelectorAll('input').forEach(input=>{if(input.type==='checkbox')input.checked=false;else input.value=''});form.querySelectorAll('select').forEach(select=>{select.selectedIndex=0});form.querySelectorAll('details').forEach(item=>{item.open=false});syncMortgageCosts();syncConcreteFields();syncRoofFields();syncAreaFields();show('<strong>0</strong><br>Enter values to calculate a new result.');const engine=currentEngine();if(engine==='cn_mortgage')renderMortgage(0,0,1,0,0,0,0,0,0,0,0,0,0,new Date());if(engine==='loan_page')renderLoanPage()}
 function calc(e){
  switch(e){
   case'trade_value':{let price=V('price'),age=V('age'),miles=V('miles'),cond=V('condition');let ageF=Math.pow(.84,age),expected=Math.max(1,age)*12000,mileageF=Math.max(.72,Math.min(1.12,1-(miles-expected)*0.000003));let r=price*ageF*mileageF*cond;show(`<strong>${USD(Math.max(0,r))}</strong><br>Illustrative estimate, not a dealer quote or appraisal.`);break}
@@ -1737,6 +1823,9 @@ function calc(e){
   case'concrete_advanced':{const p=concreteProjection();show(`<strong>${F(p.yards,2)} cubic yards</strong><br>${F(p.withWaste,2)} cubic feet with waste; ${F(p.bags,0)} selected bags; estimated bag cost ${USD(p.bagCost)}.`);break}
   case'roof_pitch_advanced':{const p=roofPitchProjection();show(`<strong>${F(p.pitch,2)}:12 roof pitch</strong><br>${F(p.angle,2)}° angle; ${F(p.percent,1)}% slope; ${F(p.rafter,2)} ft estimated rafter length.`);break}
   case'rafter_advanced':{const p=rafterProjection();show(`<strong>${F(p.totalLength,2)} ft per rafter</strong><br>${F(p.baseLength,2)} ft to wall line plus ${F(p.tailLength,2)} ft sloped tail; ${F(p.totalLinear,1)} total linear feet.`);break}
+  case'square_footage_advanced':{const p=squareFootageProjection();show(`<strong>${F(p.area,2)} square feet</strong><br>${F(p.orderArea,2)} sq ft with overage; estimated material cost ${USD(p.cost)}${p.perimeter!==null?`; ${F(p.perimeter,1)} ft perimeter`:''}.`);break}
+  case'flooring_advanced':{const p=flooringProjection();show(`<strong>${F(p.boxes,0)} boxes of flooring</strong><br>${F(p.target,1)} sq ft target; ${F(p.purchased,1)} sq ft purchased; estimated total with underlayment ${USD(p.totalCost)}.`);break}
+  case'tile_advanced':{const p=tileProjection();show(`<strong>${F(p.boxes,0)} boxes / ${F(p.pieces,0)} tiles</strong><br>${F(p.targetArea,1)} sq ft target; ${F(p.purchasedArea,1)} sq ft purchased; estimated tile cost ${USD(p.cost)}.`);break}
   case'tire':{let width=V('width'),aspect=V('aspect'),wheel=V('wheel');let side=width*aspect/100,diam=wheel+2*side/25.4,circ=Math.PI*diam;show(`<strong>${F(diam,2)} in diameter</strong><br>Sidewall: ${F(side,1)} mm; circumference: ${F(circ,2)} in.`);break}
   case'offset':{let r=(V('backspacing')-V('width')/2)*25.4;show(`<strong>${F(r,1)} mm offset</strong><br>Approximation using nominal wheel width.`);break}
   case'backspacing':{let r=V('width')/2+V('offset')/25.4;show(`<strong>${F(r,2)} in backspacing</strong><br>Approximation using nominal wheel width.`);break}
@@ -2025,6 +2114,21 @@ function renderGenericFromEngine(engine) {
     cards=[["Rafter length",`${F(p.totalLength,2)} ft`,"Includes horizontal overhang."],["Roof rise",`${F(p.rise,2)} ft`,"Over entered horizontal run."],["Slope factor",F(p.factor,4),"Length per horizontal foot."],["Total linear feet",`${F(p.totalLinear,1)} ft`,`${F(p.quantity,0)} rafters before waste.`]];
     bars=[{label:"Wall-to-ridge length",value:p.baseLength,display:`${F(p.baseLength,2)} ft`},{label:"Sloped tail",value:p.tailLength,display:`${F(p.tailLength,2)} ft`},{label:"Roof rise",value:p.rise,display:`${F(p.rise,2)} ft`},{label:"Total per rafter",value:p.totalLength,display:`${F(p.totalLength,2)} ft`}];
     rows=[["Roof pitch",`${F(p.pitch,2)}:12`,"Entered rise per 12."],["Pitch angle",`${F(p.angle,3)}°`,"Angle from horizontal."],["Slope factor",F(p.factor,5),"Sloped length multiplier."],["Horizontal run",`${F(p.run,3)} ft`,"Wall support to ridge."],["Roof rise",`${F(p.rise,3)} ft`,"Run times pitch ratio."],["Base rafter length",`${F(p.baseLength,3)} ft`,"Before overhang."],["Sloped overhang length",`${F(p.tailLength,3)} ft`,"From horizontal overhang."],["Total rafter length",`${F(p.totalLength,3)} ft`,"Before cut adjustments."],["Total linear footage",`${F(p.totalLinear,2)} ft`,"Length times rafter count."]];
+  } else if (engine === "square_footage_advanced") {
+    const p=squareFootageProjection(), shape={rectangle:"Rectangle",circle:"Circle",triangle:"Triangle",room_walls:"Four room walls"}[p.shape]||p.shape;
+    cards=[["Net area",`${F(p.area,2)} ft²`,shape],["Order area",`${F(p.orderArea,2)} ft²`,`${F(p.overage,1)}% overage included.`],["Perimeter",p.perimeter===null?"n/a":`${F(p.perimeter,2)} ft`,"Boundary length when determined."],["Material cost",USD(p.cost),`${USD(p.price)} per square foot.`]];
+    bars=[{label:"Measured area",value:p.area,display:`${F(p.area,2)} ft²`},{label:"Overage amount",value:p.orderArea-p.area,display:`${F(p.orderArea-p.area,2)} ft²`},{label:"Order area",value:p.orderArea,display:`${F(p.orderArea,2)} ft²`},{label:"Estimated cost",value:p.cost,display:USD(p.cost)}];
+    rows=[["Area type",shape,"Selected geometry."],["Measured or net area",`${F(p.area,3)} ft²`,p.shape==='room_walls'?"Gross walls minus openings.":"Calculated geometry."],["Gross wall area",p.shape==='room_walls'?`${F(p.gross,3)} ft²`:"n/a","Available in wall mode."],["Openings deducted",p.shape==='room_walls'?`${F(p.openings,3)} ft²`:"n/a","Doors and windows."],["Perimeter",p.perimeter===null?"n/a":`${F(p.perimeter,3)} ft`,"Triangle sides are not inferred."],["Overage",`${F(p.overage,2)}%`,"Entered planning allowance."],["Order area",`${F(p.orderArea,3)} ft²`,"Area after overage."],["Estimated cost",USD(p.cost),"Area times entered unit price."]];
+  } else if (engine === "flooring_advanced") {
+    const p=flooringProjection();
+    cards=[["Boxes to buy",F(p.boxes,0),"Rounded up to complete boxes."],["Order target",`${F(p.target,1)} ft²`,`${F(p.waste,1)}% waste included.`],["Purchased coverage",`${F(p.purchased,1)} ft²`,"Box count times coverage."],["Estimated total",USD(p.totalCost),"Flooring plus entered underlayment."]];
+    bars=[{label:"Measured floor",value:p.area,display:`${F(p.area,1)} ft²`},{label:"Waste allowance",value:p.target-p.area,display:`${F(p.target-p.area,1)} ft²`},{label:"Purchased coverage",value:p.purchased,display:`${F(p.purchased,1)} ft²`},{label:"Flooring cost",value:p.boxCost,display:USD(p.boxCost)},{label:"Underlayment cost",value:p.underlayCost,display:USD(p.underlayCost)}];
+    rows=[["Measured floor area",`${F(p.area,2)} ft²`,"Room plus extra area."],["Waste allowance",`${F(p.waste,2)}%`,"Cuts and planning margin."],["Order target",`${F(p.target,2)} ft²`,"Area after waste."],["Coverage per box",`${F(p.boxCoverage,2)} ft²`,"Entered package label."],["Boxes to buy",F(p.boxes,0),"Rounded up."],["Purchased coverage",`${F(p.purchased,2)} ft²`,"Whole-box coverage."],["Left after installation",`${F(p.leftover,2)} ft²`,"Includes waste and package remainder."],["Flooring cost",USD(p.boxCost),"Boxes times price."],["Underlayment rolls",F(p.underlayRolls,0),"Rounded up separately."],["Estimated total",USD(p.totalCost),"Entered materials only."]];
+  } else if (engine === "tile_advanced") {
+    const p=tileProjection();
+    cards=[["Boxes to buy",F(p.boxes,0),`${F(p.perBox,0)} pieces per box.`],["Tiles needed",F(p.pieces,0),`${F(p.waste,1)}% waste included.`],["Purchased coverage",`${F(p.purchasedArea,1)} ft²`,"Full boxes converted to area."],["Estimated tile cost",USD(p.cost),"Boxes times entered price."]];
+    bars=[{label:"Project area",value:p.area,display:`${F(p.area,1)} ft²`},{label:"Waste allowance",value:p.targetArea-p.area,display:`${F(p.targetArea-p.area,1)} ft²`},{label:"Purchased coverage",value:p.purchasedArea,display:`${F(p.purchasedArea,1)} ft²`},{label:"Tile cost",value:p.cost,display:USD(p.cost)}];
+    rows=[["Project area",`${F(p.area,2)} ft²`,"Length times width."],["Tile face size",`${F(p.tileWidth,2)} x ${F(p.tileHeight,2)} in`,`${F(p.tileArea,4)} square feet each.`],["Waste allowance",`${F(p.waste,2)}%`,"Entered cutting margin."],["Order target",`${F(p.targetArea,2)} ft²`,"Project area after waste."],["Tiles needed",F(p.pieces,0),"Rounded up by piece."],["Tiles per box",F(p.perBox,0),"Entered package quantity."],["Boxes to buy",F(p.boxes,0),"Rounded up to full boxes."],["Purchased tile",`${F(p.purchasedArea,2)} ft²`,`${F(p.purchasedPieces,0)} total pieces.`],["Left after installation",`${F(p.leftover,2)} ft²`,"Includes waste and box remainder."],["Estimated cost",USD(p.cost),"Tile boxes only."]];
   } else if (engine === "tire_compare") {
     const p=tireComparison(), speedError=p.actualSpeed-p.indicated;
     cards=[["Diameter difference",`${p.differencePct>=0?'+':''}${F(p.differencePct,2)}%`,"New tire versus original."],["Actual speed",`${F(p.actualSpeed,2)} mph`,`${F(p.indicated,0)} mph indicated.`],["Ground clearance",`${p.clearance>=0?'+':''}${F(p.clearance,2)} in`,"Half the diameter change."],["Revolutions per mile",F(p.next.revsPerMile,1),"Calculated new tire value."]];
