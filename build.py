@@ -14,7 +14,7 @@ KEYWORD_STATS = ROOT / "exports" / "keyword-stats-positive.json"
 SEO_STRATEGY = ROOT / "exports" / "seo-keyword-strategy-2026-09-05.json"
 PUBLIC_BASE_PATH = os.environ.get("PUBLIC_BASE_PATH", "").strip().rstrip("/")
 PUBLIC_SITE_DOMAIN = os.environ.get("PUBLIC_SITE_DOMAIN", "").strip()
-ASSET_VERSION = "20260918b"
+ASSET_VERSION = "20260918c"
 CALCULATOR_REDIRECTS = {
     "concrete-calculator": "concrete-volume-calculator",
     "loan-payment-calculator": "loan-calculator",
@@ -625,6 +625,8 @@ def calculator_net_template(keyword, slug, cat):
         base.update({"engine": "car_loan", "desc": "Estimate an auto loan payment including price, tax, fees, cash incentives, down payment, trade-in, amount owed on trade-in, and whether taxes and fees are financed.", "formula": "Loan amount = auto price - cash incentives - down payment - trade-in value + amount owed on trade-in, plus taxes and fees when included in the loan. Payment uses monthly amortization.", "inputs": [["price", "Auto Price ($)", "number", 50000], ["months", "Loan Term (months)", "number", 60], ["apr", "Interest Rate (%)", "number", 5], ["incentives", "Cash Incentives ($)", "number", 0], ["down", "Down Payment ($)", "number", 10000], ["trade", "Trade-in Value ($)", "number", 0], ["owed", "Amount Owed on Trade-in ($)", "number", 0], ["tax", "Sales Tax (%)", "number", 3], ["fees", "Title, Registration and Other Fees ($)", "number", 2800], ["include_fees", "Include taxes and fees in loan", "select", [["0", "No"], ["1", "Yes"]]]]})
     elif "loan" in text or "payment calculator" in text:
         base.update({"engine": "loan", "desc": "Calculate an installment loan payment, total paid, and interest cost from loan amount, term, and APR.", "formula": "Payment = P x r x (1+r)^n / ((1+r)^n - 1).", "inputs": [["amount", "Loan amount ($)", "number", 10000], ["apr", "Interest rate (%)", "number", 10], ["years", "Loan term (years)", "number", 5], ["months_extra", "Extra months", "number", 0]]})
+    elif slug == "compound-interest-calculator":
+        base.update({"engine": "compound", "desc": "Calculate compound interest with monthly and annual contributions, years and months, tax, inflation, and nine compounding options.", "formula": "Ending balance = initial investment growth + recurring contribution growth - estimated tax on interest.", "inputs": []})
     elif "compound interest" in text or "investment" in text or "savings" in text or "future value" in text:
         base.update({"engine": "compound", "desc": "Project future value from current principal, contribution amount, compound frequency, return, and time.", "formula": "Future value = principal growth + recurring contribution growth, compounded monthly.", "inputs": [["principal", "Initial investment ($)", "number", 10000], ["monthly", "Monthly contribution ($)", "number", 100], ["rate", "Annual return (%)", "number", 5], ["years", "Years to grow", "number", 10]]})
     elif "interest calculator" in text or "simple interest" in text:
@@ -778,6 +780,8 @@ def seo_keywords(calc):
 def seo_title(calc):
     if calc.get("slug") == "loan-calculator":
         return "Loan Calculator: Payment & Interest | NS Calculators"
+    if calc.get("slug") == "compound-interest-calculator":
+        return "Compound Interest Calculator | NS Calculators"
     if calc.get("slug") == "take-home-pay-calculator":
         return "Take Home Pay Calculator 2026 | NS Calculators"
     if calc.get("slug") == "sales-tax-calculator":
@@ -800,6 +804,8 @@ def seo_title(calc):
 def seo_description(calc):
     keyword = primary_keyword(calc)
     context = f" for {display_group(calculator_group(calc)).lower()}" if calc.get("seo_context_label") else ""
+    if calc.get("slug") == "compound-interest-calculator":
+        return "Calculate compound interest with monthly and annual contributions, tax, inflation, years and months, detailed growth charts, and an annual schedule."
     if calc.get("slug") == "truck-payload-calculator":
         return "Calculate truck payload capacity and remaining payload from GVWR, curb weight, passengers, cargo, and trailer tongue weight."
     if calc.get("slug") == "towing-capacity-calculator":
@@ -900,10 +906,13 @@ def compound_interest_input_html():
     return """<div class="fields compound-fields">
 <div class="field"><label for="principal">Initial investment</label><div class="input-unit"><input id="principal" type="number" step="any" min="0" value="10000"><span>$</span></div></div>
 <div class="field"><label for="rate">Annual interest rate</label><div class="input-unit"><input id="rate" type="number" step="any" value="6"><span>%</span></div></div>
-<div class="field"><label for="years">Investment length</label><div class="input-unit"><input id="years" type="number" step="1" min="1" value="10"><span>years</span></div></div>
-<div class="field"><label for="compound_frequency">Compound frequency</label><select id="compound_frequency"><option value="365">Daily</option><option value="12" selected>Monthly</option><option value="4">Quarterly</option><option value="2">Semi-annually</option><option value="1">Annually</option></select></div>
+<div class="field"><label for="years">Investment length</label><div class="input-unit"><input id="years" type="number" step="1" min="0" value="10"><span>years</span></div></div>
+<div class="field"><label for="compound_months">Additional months</label><div class="input-unit"><input id="compound_months" type="number" step="1" min="0" max="11" value="0"><span>months</span></div></div>
 <div class="field"><label for="monthly">Monthly contribution</label><div class="input-unit"><input id="monthly" type="number" step="any" min="0" value="200"><span>$</span></div></div>
-<div class="field"><label for="contribution_timing">Contribution timing</label><select id="contribution_timing"><option value="end" selected>End of month</option><option value="beginning">Beginning of month</option></select></div>
+<div class="field"><label for="annual_contribution">Annual contribution</label><div class="input-unit"><input id="annual_contribution" type="number" step="any" min="0" value="0"><span>$</span></div></div>
+<div class="field"><label for="compound_frequency">Compound frequency</label><select id="compound_frequency"><option value="365">Daily</option><option value="52">Weekly</option><option value="26">Biweekly</option><option value="24">Semimonthly</option><option value="12" selected>Monthly</option><option value="4">Quarterly</option><option value="2">Semi-annually</option><option value="1">Annually</option><option value="0">Continuously</option></select></div>
+<div class="field"><label for="contribution_timing">Contribution timing</label><select id="contribution_timing"><option value="end" selected>End of period</option><option value="beginning">Beginning of period</option></select></div>
+<details class="more-options field-wide"><summary>Tax and inflation</summary><div class="fields"><div class="field"><label for="interest_tax">Tax rate on interest</label><div class="input-unit"><input id="interest_tax" type="number" step="any" min="0" max="100" value="0"><span>%</span></div></div><div class="field"><label for="compound_inflation">Expected inflation rate</label><div class="input-unit"><input id="compound_inflation" type="number" step="any" min="-99" value="3"><span>%</span></div></div></div></details>
 </div>"""
 
 
@@ -1515,13 +1524,15 @@ def high_value_calculator_copy(calc):
 <h2>Frequently asked questions</h2><h3>How many meters are in one foot?</h3><p>One foot equals exactly 0.3048 meter.</p><h3>How do I convert meters back to feet?</h3><p>Divide meters by 0.3048. This calculator also separates the decimal result into whole feet and remaining inches.</p>"""
     if calc.get("slug") == "compound-interest-calculator":
         return """
-<h2>How compound interest is calculated</h2><p>Compound interest earns a return on the original principal and on interest already added to the balance. This calculator supports daily, monthly, quarterly, semi-annual, and annual compounding plus recurring monthly deposits.</p>
+<h2>How compound interest is calculated</h2><p>Compound interest earns a return on the original principal and on interest already added to the balance. This calculator supports daily, weekly, biweekly, semimonthly, monthly, quarterly, semi-annual, annual, and continuous compounding, plus monthly and annual contributions.</p>
 <p class="formula">A = P(1 + r / n)^(nt)</p>
-<p>In the formula, P is the starting principal, r is the annual rate as a decimal, n is the number of compounding periods per year, and t is the number of years. Monthly deposits are applied separately at the beginning or end of each month.</p>
-<h2>Worked example</h2><p>A $10,000 initial investment earning 6% annually, compounded monthly for 10 years with $200 deposited at the end of every month, grows to about $50,970 before taxes and fees. Of that total, $34,000 is contributed principal and about $16,970 is estimated interest.</p>
-<h2>Compounding frequency matters</h2><p>At the same stated annual rate, more frequent compounding produces a slightly higher effective annual yield. The difference is often modest, while contribution size and time invested usually have a larger effect.</p>
-<h2>How to use the results</h2><p>Use the annual schedule to see how contributions and interest build over time. The estimate assumes a constant rate and does not include taxes, investment fees, inflation, or market volatility, so it should be used for planning rather than as a guaranteed return.</p>
-<h2>Frequently asked questions</h2><h3>What is the difference between APR and APY?</h3><p>APR is a stated annual rate that does not itself show intra-year compounding. APY includes the effect of compounding over a year.</p><h3>Does contribution timing change the answer?</h3><p>Yes. A beginning-of-month contribution has one additional month to earn a return compared with an end-of-month contribution.</p><h3>What is the Rule of 72?</h3><p>Dividing 72 by an annual percentage rate gives a rough estimate of the years needed to double money. It is a shortcut, not an exact projection.</p>"""
+<p>In the formula, P is the starting principal, r is the nominal annual rate as a decimal, n is the number of compounding periods per year, and t is time in years. Continuous compounding uses A = Pe^(rt). Recurring contributions are added separately at the selected beginning or end timing.</p>
+<h2>Worked example</h2><p>A $10,000 initial investment earning 6% annually, compounded monthly for 10 years with $200 deposited at the end of every month, grows to about $50,970 before taxes and fees. Total contributions are $34,000 and estimated interest is about $16,970.</p>
+<h2>Contributions and withdrawals</h2><p>Monthly additions are made every month. Annual additions are made once for each complete year. The <a href="https://www.investor.gov/financial-tools-calculators/calculators/compound-interest-calculator" rel="external noopener">SEC Investor.gov compound interest tool</a> likewise models an initial investment, recurring monthly contributions, time, rate, and compounding frequency. This calculator currently accepts nonnegative contributions; model a withdrawal by reducing the contribution amount or running separate before-and-after scenarios.</p>
+<h2>Compounding frequency and APY</h2><p>At the same nominal annual rate, more frequent compounding produces a higher effective annual yield. The <a href="https://www.consumerfinance.gov/ask-cfpb/how-does-compound-interest-work-en-1683/" rel="external noopener">Consumer Financial Protection Bureau</a> explains that increasing compounding frequency, earning a higher rate, and adding principal can accelerate savings growth. Contribution size and time often have a larger effect than small frequency differences.</p>
+<h2>Tax and inflation estimates</h2><p>The optional tax rate is applied to positive interest as it accrues, not to contributed principal. Actual tax timing, tax rates, account rules, losses, and deductions can differ. The inflation result discounts the ending balance into today's estimated purchasing power. The <a href="https://www.bls.gov/cpi/factsheets/purchasing-power-constant-dollars.htm" rel="external noopener">U.S. Bureau of Labor Statistics</a> explains that purchasing power falls as prices rise and that price-index ratios can convert nominal amounts to constant dollars.</p>
+<h2>How to use the results</h2><p>Use the schedule to see contributions, gross interest, estimated interest tax, and ending balance by year. A constant rate is a planning assumption, not a forecast. Investment returns can vary and this calculator does not include account fees or market volatility.</p>
+<h2>Frequently asked questions</h2><h3>What is the difference between APR and APY?</h3><p>APR or a nominal annual rate does not itself include intra-year compounding. APY is the effective annual yield after the selected compounding frequency.</p><h3>Does contribution timing change the answer?</h3><p>Yes. A beginning-of-period contribution has more time to earn interest than an otherwise identical end-of-period contribution.</p><h3>What is the Rule of 72?</h3><p>Dividing 72 by an annual percentage rate gives a rough estimate of the years needed to double money. It is a shortcut, not an exact projection.</p>"""
     if calc.get("slug") == "truck-payload-calculator":
         return """
 <h2>How to calculate truck payload</h2><p>Payload capacity is the truck's GVWR minus its curb weight. Remaining payload subtracts everyone and everything carried by the truck, including passengers, cargo, accessories, and trailer tongue weight.</p>
@@ -1791,13 +1802,13 @@ def analysis_extra_html(calc):
 </section>"""
     if calc.get("slug") == "compound-interest-calculator":
         return """<section class="mortgage-dashboard compound-dashboard" aria-label="Compound interest result details">
-<div class="section-head stack"><h2>Growth Summary</h2><p>Compare contributions with estimated interest and review the balance year by year.</p></div>
+<div class="section-head stack"><h2>Growth Summary</h2><p>Compare contributions, interest, taxes, and inflation-adjusted buying power.</p></div>
 <div class="summary-grid" id="compoundSummary"></div>
 <div class="chart-grid">
-<div class="chart-card compact-chart"><h3>Balance Composition</h3><canvas id="compoundPie" width="360" height="190" aria-label="Principal, deposits, and interest chart"></canvas></div>
+<div class="chart-card compact-chart"><h3>Balance Composition</h3><canvas id="compoundPie" width="360" height="190" aria-label="Principal, contributions, and net interest chart"></canvas></div>
 <div class="chart-card compact-chart"><h3>Balance by Year</h3><canvas id="compoundLine" width="420" height="190" aria-label="Compound interest balance by year chart"></canvas></div>
 </div>
-<div class="table-card"><h3>Annual Growth Schedule</h3><div class="table-scroll"><table class="data-table" id="compoundSchedule"><thead><tr><th>Year</th><th>Deposits</th><th>Interest</th><th>Ending balance</th></tr></thead><tbody></tbody></table></div></div>
+<div class="table-card"><h3>Growth Schedule</h3><div class="table-scroll"><table class="data-table" id="compoundSchedule"><thead><tr><th>Period</th><th>Contributions</th><th>Gross interest</th><th>Est. tax</th><th>Ending balance</th></tr></thead><tbody></tbody></table></div></div>
 </section>"""
     if calc.get("engine") == "cn_mortgage":
         return """<section class="mortgage-dashboard" aria-label="Mortgage result details">
@@ -2160,18 +2171,25 @@ function monthlyCost(id, base){return document.getElementById(`${id}_unit`)?.val
 function monthDate(id){const raw=document.getElementById(id)?.value||'';return /^\d{4}-\d{2}$/.test(raw)?new Date(`${raw}-01T00:00:00`):new Date(raw||Date.now())}
 function syncMortgageCosts(){const box=document.getElementById('include_costs'),panel=document.getElementById('mortgageCostFields');if(!box||!panel)return true;const on=box.checked;panel.hidden=!on;panel.classList.toggle('is-hidden',!on);panel.style.display=on?'':'none';return on}
 function compoundProjection(){
-  const principal=Math.max(0,V('principal')), annual=V('rate')/100, years=Math.max(0,Math.floor(V('years'))), frequency=Math.max(1,V('compound_frequency')||12), monthly=Math.max(0,V('monthly'));
-  const timing=document.getElementById('contribution_timing')?.value||'end', months=years*12;
-  const monthlyRate=Math.pow(1+annual/frequency,frequency/12)-1;
-  let balance=principal,totalInterest=0,totalDeposits=0,yearInterest=0,yearDeposits=0;const schedule=[];
-  for(let month=1;month<=months;month++){
-    if(timing==='beginning'){balance+=monthly;totalDeposits+=monthly;yearDeposits+=monthly}
-    const interest=balance*monthlyRate;balance+=interest;totalInterest+=interest;yearInterest+=interest;
-    if(timing!=='beginning'){balance+=monthly;totalDeposits+=monthly;yearDeposits+=monthly}
-    if(month%12===0)schedule.push({year:month/12,deposits:yearDeposits,interest:yearInterest,balance});
-    if(month%12===0){yearInterest=0;yearDeposits=0}
+  const principal=Math.max(0,V('principal')),annual=Math.max(-.99,V('rate')/100),years=Math.max(0,Math.floor(V('years'))),extraMonths=Math.max(0,Math.min(11,Math.floor(V('compound_months')))),frequency=Number(document.getElementById('compound_frequency')?.value??12),monthly=Math.max(0,V('monthly')),annualContribution=Math.max(0,V('annual_contribution')),taxRate=Math.max(0,Math.min(1,V('interest_tax')/100)),inflation=Math.max(-.99,V('compound_inflation')/100);
+  const timing=document.getElementById('contribution_timing')?.value||'end',totalMonths=years*12+extraMonths,monthlyRate=frequency===0?Math.exp(annual/12)-1:Math.pow(1+annual/frequency,frequency/12)-1,effectiveAnnual=frequency===0?Math.exp(annual)-1:Math.pow(1+annual/frequency,frequency)-1;
+  let balance=principal,totalGrossInterest=0,totalTax=0,totalDeposits=0,periodInterest=0,periodTax=0,periodDeposits=0;const schedule=[];
+  for(let month=1;month<=totalMonths;month++){
+    if(timing==='beginning'){
+      balance+=monthly;totalDeposits+=monthly;periodDeposits+=monthly;
+      if((month-1)%12===0){balance+=annualContribution;totalDeposits+=annualContribution;periodDeposits+=annualContribution}
+    }
+    const grossInterest=balance*monthlyRate,interestTax=Math.max(0,grossInterest)*taxRate,netInterest=grossInterest-interestTax;
+    balance+=netInterest;totalGrossInterest+=grossInterest;totalTax+=interestTax;periodInterest+=grossInterest;periodTax+=interestTax;
+    if(timing!=='beginning'){
+      balance+=monthly;totalDeposits+=monthly;periodDeposits+=monthly;
+      if(month%12===0){balance+=annualContribution;totalDeposits+=annualContribution;periodDeposits+=annualContribution}
+    }
+    if(month%12===0||month===totalMonths){const wholeYears=Math.floor(month/12),remaining=month%12,period=remaining?(wholeYears?`${wholeYears} yr ${remaining} mo`:`${remaining} mo`):`${wholeYears} yr`;schedule.push({period,deposits:periodDeposits,grossInterest:periodInterest,tax:periodTax,balance});periodInterest=0;periodTax=0;periodDeposits=0}
   }
-  return {principal,annual,years,frequency,monthly,timing,balance,totalInterest,totalDeposits,schedule,effectiveAnnual:Math.pow(1+annual/frequency,frequency)-1};
+  if(!schedule.length)schedule.push({period:'Start',deposits:0,grossInterest:0,tax:0,balance});
+  const totalInterest=totalGrossInterest-totalTax,contributed=principal+totalDeposits,buyingPower=balance/Math.pow(1+inflation,totalMonths/12),durationLabel=extraMonths?`${years} yr ${extraMonths} mo`:`${years} yr`;
+  return {principal,annual,years,extraMonths,totalMonths,frequency,monthly,annualContribution,taxRate,inflation,timing,balance,totalGrossInterest,totalTax,totalInterest,totalDeposits,contributed,buyingPower,schedule,effectiveAnnual,durationLabel};
 }
 function salaryProjection(){const current=Math.max(0,V('salary')),unit=document.getElementById('raise_unit')?.value||'percent',entered=V('raise_amount'),raiseDollars=unit==='dollar'?entered:current*entered/100,raisePercent=current?raiseDollars/current*100:0,annual=Math.max(0,current+raiseDollars),periods=Math.max(1,Math.floor(V('pay_periods'))),hours=Math.max(.1,V('hours_week')),weeks=Math.max(.1,V('weeks_year')),inflation=Math.max(-99,V('inflation_rate')),realRaise=((1+raisePercent/100)/(1+inflation/100)-1)*100;return{current,unit,entered,raiseDollars,raisePercent,annual,periods,hours,weeks,inflation,realRaise,monthly:annual/12,perPeriod:annual/periods,weekly:annual/weeks,hourly:annual/(hours*weeks),oldMonthly:current/12,oldPerPeriod:current/periods,oldWeekly:current/weeks,oldHourly:current/(hours*weeks)}}
 function discountProjection(){const price=Math.max(0,V('price')),first=Math.max(0,Math.min(100,V('discount'))),second=Math.max(0,Math.min(100,V('discount_two'))),quantity=Math.max(1,Math.floor(V('quantity'))),taxRate=Math.max(0,V('sales_tax')),fees=Math.max(0,V('checkout_fees')),multiplier=(1-first/100)*(1-second/100),unitPrice=price*multiplier,effective=(1-multiplier)*100,subtotal=unitPrice*quantity,savings=(price-unitPrice)*quantity,tax=subtotal*taxRate/100,total=subtotal+tax+fees;return{price,first,second,quantity,taxRate,fees,multiplier,unitPrice,effective,subtotal,savings,tax,total}}
@@ -2257,7 +2275,7 @@ function calc(e){
   case'car_loan':{let price=V('price'),tax=price*V('tax')/100,fees=V('fees'),include=(document.getElementById('include_fees')?.value||'0')==='1';let base=Math.max(0,price-V('incentives')-V('down')-V('trade')+V('owed')),P=Math.max(0,base+(include?tax+fees:0));let rr=V('apr')/1200,n=Math.max(1,V('months'));let pay=rr?P*rr*Math.pow(1+rr,n)/(Math.pow(1+rr,n)-1):P/n,upfront=V('down')+(include?0:tax+fees);show(`<strong>${USD(pay)} / month</strong><br>Total loan amount: ${USD(P)}; upfront payment: ${USD(upfront)}; sale tax: ${USD(tax)}.`);break}
   case'loan':{let P=V('amount'),rr=V('apr')/1200,n=Math.max(1,(V('years')*12)+(V('months_extra')||V('months')));let pay=rr?P*rr*Math.pow(1+rr,n)/(Math.pow(1+rr,n)-1):P/n,total=pay*n;show(`<strong>${USD(pay)} / month</strong><br>Total paid: ${USD(total)}; total interest: ${USD(total-P)}.`);break}
   case'loan_page':{renderLoanPage();break}
-  case'compound':{const p=compoundProjection();show(`<strong>${USD(p.balance)}</strong><br>Total contributions: ${USD(p.principal+p.totalDeposits)}; estimated interest: ${USD(p.totalInterest)}.`);renderCompound(p);break}
+  case'compound':{const p=compoundProjection();show(`<strong>${USD(p.balance)} ending balance</strong><br>${USD(p.contributed)} contributed; ${USD(p.totalInterest)} net interest; ${USD(p.buyingPower)} inflation-adjusted buying power.`);renderCompound(p);break}
   case'salary_advanced':{const p=salaryProjection();show(`<strong>${USD(p.annual)} new annual salary</strong><br>${USD(p.raiseDollars)} raise (${F(p.raisePercent,2)}%); ${USD(p.perPeriod)} per selected pay period; ${USD(p.hourly)} hourly equivalent.`);break}
   case'discount_advanced':{const p=discountProjection();show(`<strong>${USD(p.total)} estimated checkout total</strong><br>${USD(p.unitPrice)} discounted unit price; ${USD(p.savings)} total savings; ${F(p.effective,2)}% effective discount.`);break}
   case'take_home_pay':{const p=takeHomeProjection();show(`<strong>${USD(p.perPay)} take-home per paycheck</strong><br>${USD(p.net)} annual net pay; ${USD(p.monthly)} monthly average; ${F(p.effective,2)}% estimated total tax rate.`);break}
@@ -2346,24 +2364,23 @@ function drawGenericBars(canvas, bars) {
   });
 }
 
-function drawCompoundLine(canvas, schedule) {
+function drawCompoundLine(canvas, schedule, durationLabel) {
   if (!canvas || !schedule.length) return;
   const ctx=clearCanvas(canvas), pad={left:48,right:18,top:18,bottom:30}, width=canvas.width-pad.left-pad.right, height=canvas.height-pad.top-pad.bottom;
   const points=[Math.max(0,V('principal')),...schedule.map(row=>row.balance)], max=Math.max(...points,1);
   ctx.strokeStyle="#d8e4f1";ctx.lineWidth=1;
   for(let i=0;i<=4;i++){const y=pad.top+height*i/4;ctx.beginPath();ctx.moveTo(pad.left,y);ctx.lineTo(pad.left+width,y);ctx.stroke()}
   ctx.beginPath();points.forEach((value,index)=>{const x=pad.left+width*index/Math.max(1,points.length-1),y=pad.top+height*(1-value/max);if(index===0)ctx.moveTo(x,y);else ctx.lineTo(x,y)});ctx.strokeStyle="#2563eb";ctx.lineWidth=3;ctx.stroke();
-  ctx.fillStyle="#52647b";ctx.font="600 11px system-ui, sans-serif";ctx.textAlign="left";ctx.fillText("$0",5,pad.top+height);ctx.fillText(USD(max).replace('.00',''),5,pad.top+9);ctx.fillText("Start",pad.left,canvas.height-8);ctx.textAlign="right";ctx.fillText(`Year ${schedule.length}`,canvas.width-pad.right,canvas.height-8);
+  ctx.fillStyle="#52647b";ctx.font="600 11px system-ui, sans-serif";ctx.textAlign="left";ctx.fillText("$0",5,pad.top+height);ctx.fillText(USD(max).replace('.00',''),5,pad.top+9);ctx.fillText("Start",pad.left,canvas.height-8);ctx.textAlign="right";ctx.fillText(durationLabel,canvas.width-pad.right,canvas.height-8);
 }
 
 function renderCompound(projection) {
   const summary=document.getElementById('compoundSummary'), pie=document.getElementById('compoundPie'), line=document.getElementById('compoundLine'), table=document.querySelector('#compoundSchedule tbody');
   if(!summary||!pie||!line||!table)return;
-  const contributed=projection.principal+projection.totalDeposits;
-  summary.innerHTML=[["Ending balance",USD(projection.balance),"Projected account value."],["Total contributed",USD(contributed),"Initial amount plus deposits."],["Interest earned",USD(projection.totalInterest),"Estimated compound growth."],["Effective annual yield",`${F(projection.effectiveAnnual*100,3)}%`,"Based on selected frequency."]].map(item=>`<div class="summary-card"><span>${item[0]}</span><strong>${item[1]}</strong><small>${item[2]}</small></div>`).join('');
-  drawPie(pie,[projection.principal,projection.totalDeposits,projection.totalInterest],["Initial investment","Monthly deposits","Interest"]);
-  drawCompoundLine(line,projection.schedule);
-  table.innerHTML=projection.schedule.map(row=>`<tr><td>${row.year}</td><td>${USD(row.deposits)}</td><td>${USD(row.interest)}</td><td>${USD(row.balance)}</td></tr>`).join('');
+  summary.innerHTML=[["Ending balance",USD(projection.balance),"Projected account value."],["Total contributed",USD(projection.contributed),"Initial amount plus additions."],["Net interest",USD(projection.totalInterest),`${F(projection.effectiveAnnual*100,3)}% APY before estimated tax.`],["Today's buying power",USD(projection.buyingPower),`${F(projection.inflation*100,2)}% assumed inflation.`]].map(item=>`<div class="summary-card"><span>${item[0]}</span><strong>${item[1]}</strong><small>${item[2]}</small></div>`).join('');
+  drawPie(pie,[projection.principal,projection.totalDeposits,Math.max(0,projection.totalInterest)],["Initial investment","Contributions","Net interest"]);
+  drawCompoundLine(line,projection.schedule,projection.durationLabel);
+  table.innerHTML=projection.schedule.map(row=>`<tr><td>${row.period}</td><td>${USD(row.deposits)}</td><td>${USD(row.grossInterest)}</td><td>${USD(row.tax)}</td><td>${USD(row.balance)}</td></tr>`).join('');
 }
 
 function renderGeneric(cards, bars, rows) {

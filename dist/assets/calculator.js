@@ -9,18 +9,25 @@ function monthlyCost(id, base){return document.getElementById(`${id}_unit`)?.val
 function monthDate(id){const raw=document.getElementById(id)?.value||'';return /^\d{4}-\d{2}$/.test(raw)?new Date(`${raw}-01T00:00:00`):new Date(raw||Date.now())}
 function syncMortgageCosts(){const box=document.getElementById('include_costs'),panel=document.getElementById('mortgageCostFields');if(!box||!panel)return true;const on=box.checked;panel.hidden=!on;panel.classList.toggle('is-hidden',!on);panel.style.display=on?'':'none';return on}
 function compoundProjection(){
-  const principal=Math.max(0,V('principal')), annual=V('rate')/100, years=Math.max(0,Math.floor(V('years'))), frequency=Math.max(1,V('compound_frequency')||12), monthly=Math.max(0,V('monthly'));
-  const timing=document.getElementById('contribution_timing')?.value||'end', months=years*12;
-  const monthlyRate=Math.pow(1+annual/frequency,frequency/12)-1;
-  let balance=principal,totalInterest=0,totalDeposits=0,yearInterest=0,yearDeposits=0;const schedule=[];
-  for(let month=1;month<=months;month++){
-    if(timing==='beginning'){balance+=monthly;totalDeposits+=monthly;yearDeposits+=monthly}
-    const interest=balance*monthlyRate;balance+=interest;totalInterest+=interest;yearInterest+=interest;
-    if(timing!=='beginning'){balance+=monthly;totalDeposits+=monthly;yearDeposits+=monthly}
-    if(month%12===0)schedule.push({year:month/12,deposits:yearDeposits,interest:yearInterest,balance});
-    if(month%12===0){yearInterest=0;yearDeposits=0}
+  const principal=Math.max(0,V('principal')),annual=Math.max(-.99,V('rate')/100),years=Math.max(0,Math.floor(V('years'))),extraMonths=Math.max(0,Math.min(11,Math.floor(V('compound_months')))),frequency=Number(document.getElementById('compound_frequency')?.value??12),monthly=Math.max(0,V('monthly')),annualContribution=Math.max(0,V('annual_contribution')),taxRate=Math.max(0,Math.min(1,V('interest_tax')/100)),inflation=Math.max(-.99,V('compound_inflation')/100);
+  const timing=document.getElementById('contribution_timing')?.value||'end',totalMonths=years*12+extraMonths,monthlyRate=frequency===0?Math.exp(annual/12)-1:Math.pow(1+annual/frequency,frequency/12)-1,effectiveAnnual=frequency===0?Math.exp(annual)-1:Math.pow(1+annual/frequency,frequency)-1;
+  let balance=principal,totalGrossInterest=0,totalTax=0,totalDeposits=0,periodInterest=0,periodTax=0,periodDeposits=0;const schedule=[];
+  for(let month=1;month<=totalMonths;month++){
+    if(timing==='beginning'){
+      balance+=monthly;totalDeposits+=monthly;periodDeposits+=monthly;
+      if((month-1)%12===0){balance+=annualContribution;totalDeposits+=annualContribution;periodDeposits+=annualContribution}
+    }
+    const grossInterest=balance*monthlyRate,interestTax=Math.max(0,grossInterest)*taxRate,netInterest=grossInterest-interestTax;
+    balance+=netInterest;totalGrossInterest+=grossInterest;totalTax+=interestTax;periodInterest+=grossInterest;periodTax+=interestTax;
+    if(timing!=='beginning'){
+      balance+=monthly;totalDeposits+=monthly;periodDeposits+=monthly;
+      if(month%12===0){balance+=annualContribution;totalDeposits+=annualContribution;periodDeposits+=annualContribution}
+    }
+    if(month%12===0||month===totalMonths){const wholeYears=Math.floor(month/12),remaining=month%12,period=remaining?(wholeYears?`${wholeYears} yr ${remaining} mo`:`${remaining} mo`):`${wholeYears} yr`;schedule.push({period,deposits:periodDeposits,grossInterest:periodInterest,tax:periodTax,balance});periodInterest=0;periodTax=0;periodDeposits=0}
   }
-  return {principal,annual,years,frequency,monthly,timing,balance,totalInterest,totalDeposits,schedule,effectiveAnnual:Math.pow(1+annual/frequency,frequency)-1};
+  if(!schedule.length)schedule.push({period:'Start',deposits:0,grossInterest:0,tax:0,balance});
+  const totalInterest=totalGrossInterest-totalTax,contributed=principal+totalDeposits,buyingPower=balance/Math.pow(1+inflation,totalMonths/12),durationLabel=extraMonths?`${years} yr ${extraMonths} mo`:`${years} yr`;
+  return {principal,annual,years,extraMonths,totalMonths,frequency,monthly,annualContribution,taxRate,inflation,timing,balance,totalGrossInterest,totalTax,totalInterest,totalDeposits,contributed,buyingPower,schedule,effectiveAnnual,durationLabel};
 }
 function salaryProjection(){const current=Math.max(0,V('salary')),unit=document.getElementById('raise_unit')?.value||'percent',entered=V('raise_amount'),raiseDollars=unit==='dollar'?entered:current*entered/100,raisePercent=current?raiseDollars/current*100:0,annual=Math.max(0,current+raiseDollars),periods=Math.max(1,Math.floor(V('pay_periods'))),hours=Math.max(.1,V('hours_week')),weeks=Math.max(.1,V('weeks_year')),inflation=Math.max(-99,V('inflation_rate')),realRaise=((1+raisePercent/100)/(1+inflation/100)-1)*100;return{current,unit,entered,raiseDollars,raisePercent,annual,periods,hours,weeks,inflation,realRaise,monthly:annual/12,perPeriod:annual/periods,weekly:annual/weeks,hourly:annual/(hours*weeks),oldMonthly:current/12,oldPerPeriod:current/periods,oldWeekly:current/weeks,oldHourly:current/(hours*weeks)}}
 function discountProjection(){const price=Math.max(0,V('price')),first=Math.max(0,Math.min(100,V('discount'))),second=Math.max(0,Math.min(100,V('discount_two'))),quantity=Math.max(1,Math.floor(V('quantity'))),taxRate=Math.max(0,V('sales_tax')),fees=Math.max(0,V('checkout_fees')),multiplier=(1-first/100)*(1-second/100),unitPrice=price*multiplier,effective=(1-multiplier)*100,subtotal=unitPrice*quantity,savings=(price-unitPrice)*quantity,tax=subtotal*taxRate/100,total=subtotal+tax+fees;return{price,first,second,quantity,taxRate,fees,multiplier,unitPrice,effective,subtotal,savings,tax,total}}
@@ -106,7 +113,7 @@ function calc(e){
   case'car_loan':{let price=V('price'),tax=price*V('tax')/100,fees=V('fees'),include=(document.getElementById('include_fees')?.value||'0')==='1';let base=Math.max(0,price-V('incentives')-V('down')-V('trade')+V('owed')),P=Math.max(0,base+(include?tax+fees:0));let rr=V('apr')/1200,n=Math.max(1,V('months'));let pay=rr?P*rr*Math.pow(1+rr,n)/(Math.pow(1+rr,n)-1):P/n,upfront=V('down')+(include?0:tax+fees);show(`<strong>${USD(pay)} / month</strong><br>Total loan amount: ${USD(P)}; upfront payment: ${USD(upfront)}; sale tax: ${USD(tax)}.`);break}
   case'loan':{let P=V('amount'),rr=V('apr')/1200,n=Math.max(1,(V('years')*12)+(V('months_extra')||V('months')));let pay=rr?P*rr*Math.pow(1+rr,n)/(Math.pow(1+rr,n)-1):P/n,total=pay*n;show(`<strong>${USD(pay)} / month</strong><br>Total paid: ${USD(total)}; total interest: ${USD(total-P)}.`);break}
   case'loan_page':{renderLoanPage();break}
-  case'compound':{const p=compoundProjection();show(`<strong>${USD(p.balance)}</strong><br>Total contributions: ${USD(p.principal+p.totalDeposits)}; estimated interest: ${USD(p.totalInterest)}.`);renderCompound(p);break}
+  case'compound':{const p=compoundProjection();show(`<strong>${USD(p.balance)} ending balance</strong><br>${USD(p.contributed)} contributed; ${USD(p.totalInterest)} net interest; ${USD(p.buyingPower)} inflation-adjusted buying power.`);renderCompound(p);break}
   case'salary_advanced':{const p=salaryProjection();show(`<strong>${USD(p.annual)} new annual salary</strong><br>${USD(p.raiseDollars)} raise (${F(p.raisePercent,2)}%); ${USD(p.perPeriod)} per selected pay period; ${USD(p.hourly)} hourly equivalent.`);break}
   case'discount_advanced':{const p=discountProjection();show(`<strong>${USD(p.total)} estimated checkout total</strong><br>${USD(p.unitPrice)} discounted unit price; ${USD(p.savings)} total savings; ${F(p.effective,2)}% effective discount.`);break}
   case'take_home_pay':{const p=takeHomeProjection();show(`<strong>${USD(p.perPay)} take-home per paycheck</strong><br>${USD(p.net)} annual net pay; ${USD(p.monthly)} monthly average; ${F(p.effective,2)}% estimated total tax rate.`);break}
@@ -195,24 +202,23 @@ function drawGenericBars(canvas, bars) {
   });
 }
 
-function drawCompoundLine(canvas, schedule) {
+function drawCompoundLine(canvas, schedule, durationLabel) {
   if (!canvas || !schedule.length) return;
   const ctx=clearCanvas(canvas), pad={left:48,right:18,top:18,bottom:30}, width=canvas.width-pad.left-pad.right, height=canvas.height-pad.top-pad.bottom;
   const points=[Math.max(0,V('principal')),...schedule.map(row=>row.balance)], max=Math.max(...points,1);
   ctx.strokeStyle="#d8e4f1";ctx.lineWidth=1;
   for(let i=0;i<=4;i++){const y=pad.top+height*i/4;ctx.beginPath();ctx.moveTo(pad.left,y);ctx.lineTo(pad.left+width,y);ctx.stroke()}
   ctx.beginPath();points.forEach((value,index)=>{const x=pad.left+width*index/Math.max(1,points.length-1),y=pad.top+height*(1-value/max);if(index===0)ctx.moveTo(x,y);else ctx.lineTo(x,y)});ctx.strokeStyle="#2563eb";ctx.lineWidth=3;ctx.stroke();
-  ctx.fillStyle="#52647b";ctx.font="600 11px system-ui, sans-serif";ctx.textAlign="left";ctx.fillText("$0",5,pad.top+height);ctx.fillText(USD(max).replace('.00',''),5,pad.top+9);ctx.fillText("Start",pad.left,canvas.height-8);ctx.textAlign="right";ctx.fillText(`Year ${schedule.length}`,canvas.width-pad.right,canvas.height-8);
+  ctx.fillStyle="#52647b";ctx.font="600 11px system-ui, sans-serif";ctx.textAlign="left";ctx.fillText("$0",5,pad.top+height);ctx.fillText(USD(max).replace('.00',''),5,pad.top+9);ctx.fillText("Start",pad.left,canvas.height-8);ctx.textAlign="right";ctx.fillText(durationLabel,canvas.width-pad.right,canvas.height-8);
 }
 
 function renderCompound(projection) {
   const summary=document.getElementById('compoundSummary'), pie=document.getElementById('compoundPie'), line=document.getElementById('compoundLine'), table=document.querySelector('#compoundSchedule tbody');
   if(!summary||!pie||!line||!table)return;
-  const contributed=projection.principal+projection.totalDeposits;
-  summary.innerHTML=[["Ending balance",USD(projection.balance),"Projected account value."],["Total contributed",USD(contributed),"Initial amount plus deposits."],["Interest earned",USD(projection.totalInterest),"Estimated compound growth."],["Effective annual yield",`${F(projection.effectiveAnnual*100,3)}%`,"Based on selected frequency."]].map(item=>`<div class="summary-card"><span>${item[0]}</span><strong>${item[1]}</strong><small>${item[2]}</small></div>`).join('');
-  drawPie(pie,[projection.principal,projection.totalDeposits,projection.totalInterest],["Initial investment","Monthly deposits","Interest"]);
-  drawCompoundLine(line,projection.schedule);
-  table.innerHTML=projection.schedule.map(row=>`<tr><td>${row.year}</td><td>${USD(row.deposits)}</td><td>${USD(row.interest)}</td><td>${USD(row.balance)}</td></tr>`).join('');
+  summary.innerHTML=[["Ending balance",USD(projection.balance),"Projected account value."],["Total contributed",USD(projection.contributed),"Initial amount plus additions."],["Net interest",USD(projection.totalInterest),`${F(projection.effectiveAnnual*100,3)}% APY before estimated tax.`],["Today's buying power",USD(projection.buyingPower),`${F(projection.inflation*100,2)}% assumed inflation.`]].map(item=>`<div class="summary-card"><span>${item[0]}</span><strong>${item[1]}</strong><small>${item[2]}</small></div>`).join('');
+  drawPie(pie,[projection.principal,projection.totalDeposits,Math.max(0,projection.totalInterest)],["Initial investment","Contributions","Net interest"]);
+  drawCompoundLine(line,projection.schedule,projection.durationLabel);
+  table.innerHTML=projection.schedule.map(row=>`<tr><td>${row.period}</td><td>${USD(row.deposits)}</td><td>${USD(row.grossInterest)}</td><td>${USD(row.tax)}</td><td>${USD(row.balance)}</td></tr>`).join('');
 }
 
 function renderGeneric(cards, bars, rows) {

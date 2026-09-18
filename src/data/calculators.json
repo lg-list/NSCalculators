@@ -918,9 +918,9 @@
       "title": "Compound Interest Calculator",
       "cat": "Finance",
       "engine": "compound",
-      "desc": "Calculate compound growth with optional recurring monthly contributions.",
-      "formula": "Future value combines compound growth of the initial principal with the future value of recurring contributions.",
-      "example": "$10,000 at 6% for 10 years grows substantially more when monthly contributions are added.",
+      "desc": "Calculate compound interest with monthly and annual contributions, years and months, tax, inflation, and nine compounding options.",
+      "formula": "Ending balance combines compound growth of the initial investment and recurring contributions, less estimated tax on positive interest.",
+      "example": "$10,000 at 6% compounded monthly for 10 years with $200 added monthly grows to about $50,970 before taxes and fees.",
       "inputs": [
         [
           "principal",
