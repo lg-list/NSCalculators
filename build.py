@@ -14,7 +14,7 @@ KEYWORD_STATS = ROOT / "exports" / "keyword-stats-positive.json"
 SEO_STRATEGY = ROOT / "exports" / "seo-keyword-strategy-2026-09-05.json"
 PUBLIC_BASE_PATH = os.environ.get("PUBLIC_BASE_PATH", "").strip().rstrip("/")
 PUBLIC_SITE_DOMAIN = os.environ.get("PUBLIC_SITE_DOMAIN", "").strip()
-ASSET_VERSION = "20260918g"
+ASSET_VERSION = "20260918h"
 CALCULATOR_REDIRECTS = {
     "concrete-calculator": "concrete-volume-calculator",
     "loan-payment-calculator": "loan-calculator",
@@ -623,6 +623,8 @@ def calculator_net_template(keyword, slug, cat):
         base.update({"engine": "stats_advanced", "desc": "Calculate sample or population standard deviation, variance, mean, sum, range, standard error, and a normal-approximation margin of error with detailed steps.", "formula": "Population variance divides squared deviations by n; sample variance divides by n - 1.", "inputs": []})
     elif slug == "bmi-calculator":
         base.update({"engine": "bmi_advanced", "desc": "Calculate adult BMI with US or metric units, CDC weight category, healthy weight range, BMI Prime, and Ponderal Index.", "formula": "BMI = weight in kilograms / height in meters squared, or 703 x pounds / inches squared.", "inputs": []})
+    elif slug == "salary-calculator":
+        base.update({"engine": "salary_converter", "desc": "Convert hourly, daily, weekly, biweekly, semimonthly, monthly, quarterly, or annual pay and compare unpaid time-off adjustments.", "formula": "Annual pay equals the entered amount multiplied by the number of pay periods per year.", "inputs": []})
     elif slug == "take-home-pay-calculator":
         base.update({"engine": "take_home_pay", "desc": "Estimate 2026 US take-home pay from federal income tax brackets, Social Security, Medicare, state or local tax, pay frequency, and payroll deductions.", "formula": "Take-home pay = gross pay - estimated federal income tax - FICA taxes - state or local tax - pre-tax and post-tax deductions.", "inputs": []})
     elif "mortgage" in text:
@@ -796,6 +798,8 @@ def seo_title(calc):
         return "Standard Deviation Calculator: Sample & Population"
     if calc.get("slug") == "bmi-calculator":
         return "BMI Calculator for Adults: US & Metric Units"
+    if calc.get("slug") == "salary-calculator":
+        return "Salary Calculator: Hourly, Monthly & Annual Pay"
     if calc.get("slug") == "compound-interest-calculator":
         return "Compound Interest Calculator | NS Calculators"
     if calc.get("slug") == "take-home-pay-calculator":
@@ -828,6 +832,8 @@ def seo_description(calc):
         return "Calculate sample or population standard deviation, variance, mean, sum, range, standard error, and margin of error with step-by-step results."
     if calc.get("slug") == "bmi-calculator":
         return "Calculate adult BMI in US or metric units with CDC category, healthy weight range, BMI Prime, Ponderal Index, formulas, and limitations."
+    if calc.get("slug") == "salary-calculator":
+        return "Convert hourly, daily, weekly, biweekly, semimonthly, monthly, quarterly, or annual salary and compare pay adjusted for unpaid days off."
     if calc.get("slug") == "compound-interest-calculator":
         return "Calculate compound interest with monthly and annual contributions, tax, inflation, years and months, detailed growth charts, and an annual schedule."
     if calc.get("slug") == "truck-payload-calculator":
@@ -1045,6 +1051,16 @@ def bmi_input_html():
 <div class="field is-hidden" data-bmi-metric><label for="bmi_weight_kg">Weight</label><div class="input-unit"><input id="bmi_weight_kg" type="number" step="any" min="1" value="72.57"><span>kg</span></div></div>
 <div class="field is-hidden" data-bmi-metric><label for="bmi_height_cm">Height</label><div class="input-unit"><input id="bmi_height_cm" type="number" step="any" min="1" value="177.8"><span>cm</span></div></div>
 <div class="field-note field-wide">For adults age 20 and older. Children and teens require BMI-for-age percentiles.</div>
+</div>"""
+
+
+def salary_converter_input_html():
+    return """<div class="fields salary-converter-fields">
+<div class="field"><label for="salary_amount">Salary amount</label><div class="input-unit"><input id="salary_amount" type="number" step="any" min="0" value="50"><span>$</span></div></div>
+<div class="field"><label for="salary_period">Paid per</label><select id="salary_period"><option value="hour" selected>Hour</option><option value="day">Day</option><option value="week">Week</option><option value="biweekly">Two weeks (biweekly)</option><option value="semimonthly">Half month (semimonthly)</option><option value="month">Month</option><option value="quarter">Quarter</option><option value="year">Year</option></select></div>
+<div class="field"><label for="salary_hours_week">Hours per week</label><input id="salary_hours_week" type="number" step="any" min="0.1" value="40"></div>
+<div class="field"><label for="salary_days_week">Days per week</label><input id="salary_days_week" type="number" step="any" min="0.1" max="7" value="5"></div>
+<details class="more-options field-wide"><summary>Holidays and vacation</summary><div class="fields"><div class="field"><label for="salary_holidays">Holidays per year</label><input id="salary_holidays" type="number" step="1" min="0" value="10"></div><div class="field"><label for="salary_vacation">Vacation days per year</label><input id="salary_vacation" type="number" step="1" min="0" value="15"></div></div><p class="option-note">The adjusted column treats these as unpaid non-working days. Use the unadjusted column when salary or leave is paid.</p></details>
 </div>"""
 
 
@@ -1533,6 +1549,17 @@ def conversion_copy(calc):
 
 
 def high_value_calculator_copy(calc):
+    if calc.get("slug") == "salary-calculator":
+        return """
+<h2>Salary calculator and pay converter</h2><p>Enter an amount paid by the hour, day, week, two weeks, half month, month, quarter, or year. The calculator converts it to the other common pay periods using your work schedule. Results are gross pay before taxes, payroll deductions, bonuses, commissions, and overtime.</p>
+<h2>Hourly to annual salary</h2><p>Multiply the hourly rate by hours worked each week and by 52 weeks. At $50 per hour and 40 hours per week, the unadjusted annual equivalent is $104,000.</p><p class="formula">annual salary = hourly rate x hours per week x 52</p>
+<h2>Annual salary to hourly pay</h2><p>Divide annual salary by 52 and then by weekly hours. A $62,400 annual salary at 40 hours per week is equivalent to $30 per hour before accounting for unpaid time off.</p><p class="formula">hourly equivalent = annual salary / (52 x hours per week)</p>
+<h2>Biweekly versus semimonthly pay</h2><p>Biweekly means every two weeks, normally 26 pay periods per year. Semimonthly means twice per month, normally 24 pay periods per year. The <a href="https://webapps.dol.gov/elaws/whd/flsa/otcalc/glossaryall.asp" rel="external noopener">US Department of Labor pay glossary</a> describes semimonthly pay as two periods per month. A biweekly paycheck is therefore usually smaller than a semimonthly paycheck for the same annual salary.</p>
+<h2>Unadjusted and adjusted results</h2><p>The unadjusted column assumes 52 full working weeks. The adjusted column subtracts the entered holidays and vacation days from scheduled workdays and treats them as unpaid. If your salary, holidays, or vacation days are paid, use the unadjusted amount for gross-pay comparisons.</p>
+<p>The <a href="https://www.dol.gov/general/topic/workhours/vacation_leave" rel="external noopener">US Department of Labor vacation guidance</a> explains that federal law generally does not require payment for time not worked, such as vacations or holidays; paid leave is usually determined by the employment agreement and applicable law.</p>
+<h2>Pay-period conversion factors</h2><p>This calculator uses 52 weekly periods, 26 biweekly periods, 24 semimonthly periods, 12 monthly periods, and 4 quarterly periods per year. Daily pay uses the entered days per week. Hourly pay uses both hours and days entered.</p>
+<h2>Gross pay versus take-home pay</h2><p>This page converts gross salary frequencies only. It does not estimate taxes or deductions. Use the <a href="/take-home-pay-calculator/">take-home pay calculator</a> for a separate US federal, FICA, state, and payroll-deduction estimate, or the <a href="/salary-increase-calculator/">salary increase calculator</a> to evaluate a raise.</p>
+<h2>Frequently asked questions</h2><h3>How many biweekly pay periods are in a year?</h3><p>The standard conversion uses 26 because 52 weeks divided by two equals 26. Some calendar years or employer schedules can produce a 27th paycheck.</p><h3>Is semimonthly the same as biweekly?</h3><p>No. Semimonthly usually means 24 paychecks per year; biweekly usually means 26.</p><h3>Does this calculator include overtime?</h3><p>No. Overtime eligibility and the regular rate can depend on job classification and compensation details. This tool converts straight-time gross pay only.</p>"""
     if calc.get("slug") == "bmi-calculator":
         return """
 <h2>Adult BMI calculator</h2><p>Use US customary units or metric units to calculate body mass index for adults age 20 and older. The result includes the adult BMI category, the weight range corresponding to BMI 18.5 through 24.9 at the entered height, BMI Prime, and the Ponderal Index.</p>
@@ -1867,6 +1894,13 @@ def default_calculator_copy(calc):
 
 
 def analysis_extra_html(calc):
+    if calc.get("slug") == "salary-calculator":
+        return """<section class="mortgage-dashboard generic-dashboard salary-converter-dashboard" aria-label="Salary conversion results">
+<div class="section-head stack"><h2>Salary Conversion Results</h2><p>Compare gross pay periods before taxes and the effect of unpaid days off.</p></div>
+<div class="summary-grid" id="genericSummary"></div>
+<div class="chart-grid"><div class="chart-card compact-chart"><h3>Annual and Monthly Comparison</h3><canvas id="genericChart" width="620" height="230" aria-label="Unadjusted and unpaid-time adjusted salary comparison" data-chart-type="bars"></canvas></div></div>
+<div class="table-card"><h3>Pay Frequency Table</h3><div class="table-scroll"><table class="data-table" id="genericTable"><thead><tr><th>Pay period</th><th>Unadjusted gross pay</th><th>Adjusted for unpaid days</th></tr></thead><tbody></tbody></table></div></div>
+</section>"""
     if calc.get("slug") == "bmi-calculator":
         return """<section class="mortgage-dashboard generic-dashboard bmi-dashboard" aria-label="Adult BMI calculation results">
 <div class="section-head stack"><h2>Adult BMI Results</h2><p>Review the BMI category, reference weight range, and supporting measures.</p></div>
@@ -2049,6 +2083,9 @@ def calculator_page(site, calc, related):
     elif calc.get("slug") == "bmi-calculator":
         fields = bmi_input_html()
         page_engine = "bmi_advanced"
+    elif calc.get("slug") == "salary-calculator":
+        fields = salary_converter_input_html()
+        page_engine = "salary_converter"
     elif calc.get("slug") == "truck-payload-calculator":
         fields = truck_payload_input_html()
     elif calc.get("slug") == "towing-capacity-calculator":
@@ -2255,6 +2292,9 @@ body{background:var(--bg)}.site-header{border-bottom-color:#dbe7f4}.primary{back
 .bmi-fields .field-wide{grid-column:1/-1}.bmi-fields .is-hidden{display:none!important}.field-note{padding:9px 10px;border:1px solid #dbe7f4;border-radius:9px;background:#f5f9fd;color:var(--muted);font-size:12px;line-height:1.4}.bmi-dashboard .chart-grid{grid-template-columns:1fr}.bmi-dashboard .chart-card canvas{max-height:230px}.calculator-article:has(.bmi-fields) .calculator-layout.split-analysis{grid-template-columns:minmax(360px,420px) minmax(0,1fr)}
 @media(max-width:900px){.calculator-article:has(.bmi-fields) .calculator-layout.split-analysis{grid-template-columns:minmax(0,1fr)}}
 @media(max-width:560px){.bmi-dashboard .summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.calculator-article:has(.bmi-fields) .calc{padding:10px}}
+.salary-converter-fields .field-wide{grid-column:1/-1}.salary-converter-fields .more-options .fields{padding:0 12px}.option-note{margin:8px 12px 12px;color:var(--muted);font-size:12px;line-height:1.4}.salary-converter-dashboard .chart-grid{grid-template-columns:1fr}.salary-converter-dashboard .chart-card canvas{max-height:230px}.calculator-article:has(.salary-converter-fields) .calculator-layout.split-analysis{grid-template-columns:minmax(380px,440px) minmax(0,1fr)}
+@media(max-width:900px){.calculator-article:has(.salary-converter-fields) .calculator-layout.split-analysis{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:560px){.salary-converter-dashboard .summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.calculator-article:has(.salary-converter-fields) .calc{padding:10px}}
 .fitment-fields{gap:8px!important}.tire-size-fields{grid-template-columns:repeat(3,minmax(0,1fr))}.wheel-offset-fields{grid-template-columns:repeat(2,minmax(0,1fr))}.field-group-label{grid-column:1/-1;margin-top:2px;padding-bottom:3px;border-bottom:1px solid var(--line);color:var(--brand);font-size:13px;font-weight:850}.fitment-dashboard .chart-grid{grid-template-columns:1fr}.fitment-dashboard .chart-card canvas{max-height:230px}.calculator-article:has(.fitment-fields) .calculator-layout.split-analysis{grid-template-columns:minmax(390px,460px) minmax(0,1fr)}
 @media(max-width:900px){.calculator-article:has(.fitment-fields) .calculator-layout.split-analysis{grid-template-columns:minmax(0,1fr)}}
 @media(max-width:560px){.fitment-fields{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px!important}.tire-size-fields{grid-template-columns:repeat(3,minmax(0,1fr))}.fitment-fields .field label{min-height:28px;display:flex;align-items:end;font-size:12px!important}.fitment-fields .field-wide{grid-column:1/-1}.fitment-fields .field input{height:36px!important;padding:0 6px}.fitment-fields .input-unit input,.fitment-fields .input-unit span{height:36px!important}.fitment-fields .input-unit span{padding:0 6px;font-size:12px}.field-group-label{margin-top:0;font-size:12px}.calculator-article:has(.fitment-fields) .calc{padding:10px}.calculator-article:has(.fitment-fields) .calc h2{margin-bottom:6px;font-size:17px}.calculator-article:has(.fitment-fields) .calc-actions{margin-top:8px}.calculator-article:has(.fitment-fields) .calc-actions .btn{min-height:36px;padding:7px 10px}.calculator-article:has(.fitment-fields) .result{padding:9px 10px;font-size:12px}.calculator-article:has(.fitment-fields) .result strong{font-size:23px}.fitment-dashboard .summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
@@ -2391,6 +2431,7 @@ function fractionProjection(){const mode=syncFractionFields();let a=null,b=null,
 function statsProjection(){const raw=document.getElementById('stats_values')?.value||'',tokens=raw.trim()?raw.trim().split(/[,;\s]+/).filter(Boolean):[],values=tokens.map(Number),invalid=tokens.filter((_,i)=>!Number.isFinite(values[i])),type=document.getElementById('stats_type')?.value||'population',z=Number(document.getElementById('stats_confidence')?.value||1.96),confidence=document.getElementById('stats_confidence')?.selectedOptions[0]?.textContent.split(' ')[0]||'95%',nums=values.filter(Number.isFinite),n=nums.length;if(!n||invalid.length||type==='sample'&&n<2)return{valid:false,message:invalid.length?`Invalid value: ${invalid[0]}`:type==='sample'?'A sample needs at least two values.':'Enter at least one number.',type,values:nums,n};const sum=nums.reduce((a,b)=>a+b,0),mean=sum/n,sorted=[...nums].sort((a,b)=>a-b),mid=Math.floor(n/2),median=n%2?sorted[mid]:(sorted[mid-1]+sorted[mid])/2,min=sorted[0],max=sorted[n-1],range=max-min,squared=nums.map(value=>({value,deviation:value-mean,square:(value-mean)**2})),sumSquares=squared.reduce((total,item)=>total+item.square,0),populationVariance=Math.max(0,sumSquares/n),sampleVariance=n>1?Math.max(0,sumSquares/(n-1)):null,populationSd=Math.sqrt(populationVariance),sampleSd=sampleVariance===null?null:Math.sqrt(sampleVariance),variance=type==='sample'?sampleVariance:populationVariance,sd=type==='sample'?sampleSd:populationSd,standardError=sd/Math.sqrt(n),margin=z*standardError,coefficient=mean!==0?sd/Math.abs(mean)*100:null;return{valid:true,type,z,confidence,values:nums,n,sum,mean,sorted,median,min,max,range,squared,sumSquares,populationVariance,sampleVariance,populationSd,sampleSd,variance,sd,standardError,margin,coefficient}}
 function syncBmiFields(){const metric=document.getElementById('bmi_units')?.value==='metric';document.querySelectorAll('[data-bmi-us]').forEach(el=>el.classList.toggle('is-hidden',metric));document.querySelectorAll('[data-bmi-metric]').forEach(el=>el.classList.toggle('is-hidden',!metric));return metric}
 function bmiProjection(){const metric=syncBmiFields(),feet=V('bmi_height_ft'),inches=V('bmi_height_in'),weightLb=metric?V('bmi_weight_kg')/0.45359237:V('bmi_weight_lb'),heightIn=metric?V('bmi_height_cm')/2.54:feet*12+inches,kg=weightLb*0.45359237,meters=heightIn*0.0254,valid=weightLb>0&&heightIn>0&&(metric||feet>0&&inches>=0&&inches<12);if(!valid)return{valid:false,message:metric?'Enter a positive weight and height.':'Enter positive weight and feet, with additional inches from 0 to less than 12.',metric};const bmi=kg/(meters*meters),category=bmi<18.5?'Underweight':bmi<25?'Healthy Weight':bmi<30?'Overweight':bmi<35?'Obesity, Class 1':bmi<40?'Obesity, Class 2':'Obesity, Class 3',lowKg=18.5*meters*meters,highKg=24.9*meters*meters,lowLb=lowKg/0.45359237,highLb=highKg/0.45359237,bmiPrime=bmi/25,ponderal=kg/(meters*meters*meters),difference=bmi<18.5?lowKg-kg:bmi>=25?kg-highKg:0,direction=bmi<18.5?'below':bmi>=25?'above':'within';return{valid:true,metric,feet,inches,weightLb,heightIn,kg,meters,bmi,category,lowKg,highKg,lowLb,highLb,bmiPrime,ponderal,difference,direction}}
+function salaryConverterProjection(){const amount=Math.max(0,V('salary_amount')),period=document.getElementById('salary_period')?.value||'hour',hours=V('salary_hours_week'),days=V('salary_days_week'),holidays=Math.max(0,V('salary_holidays')),vacation=Math.max(0,V('salary_vacation')),valid=Number.isFinite(amount)&&hours>0&&days>0&&days<=7;if(!valid)return{valid:false};const multipliers={hour:hours*52,day:days*52,week:52,biweekly:26,semimonthly:24,month:12,quarter:4,year:1},annual=amount*multipliers[period],workdays=days*52,daysOff=Math.min(workdays,holidays+vacation),factor=workdays?(workdays-daysOff)/workdays:0,adjustedAnnual=annual*factor,hoursDay=hours/days,workedHours=(workdays-daysOff)*hoursDay,effectiveHourly=workedHours?annual/workedHours:0;const convert=value=>({hour:value/(hours*52),day:value/(days*52),week:value/52,biweekly:value/26,semimonthly:value/24,month:value/12,quarter:value/4,year:value});return{valid:true,amount,period,hours,days,holidays,vacation,annual,workdays,daysOff,factor,adjustedAnnual,hoursDay,workedHours,effectiveHourly,unadjusted:convert(annual),adjusted:convert(adjustedAnnual)}}
 function tradeInProjection(){const comparable=Math.max(0,V('comparable')),adjustment=V('market_adjustment'),margin=Math.max(0,V('dealer_margin')),reconditioning=Math.max(0,V('reconditioning')),payoff=Math.max(0,V('payoff')),replacement=Math.max(0,V('replacement_price')),taxRate=Math.max(0,V('tax_rate'))/100,trade=Math.max(0,comparable+adjustment-margin-reconditioning),equity=trade-payoff,taxSavings=Math.min(trade,replacement)*taxRate;return{comparable,adjustment,margin,reconditioning,payoff,replacement,taxRate,trade,equity,taxSavings,effective:trade+taxSavings}}
 function usedCarProjection(){const benchmark=Math.max(0,V('retail_benchmark')),condition=V('condition_adjustment'),mileage=V('mileage_adjustment'),options=V('options_adjustment'),regional=V('regional_adjustment'),spread=Math.max(0,Math.min(50,V('dealer_spread'))),retail=Math.max(0,benchmark*(1+condition/100)*(1+regional/100)+mileage+options),privateValue=retail*(1-spread/200),trade=retail*(1-spread/100);return{benchmark,condition,mileage,options,regional,spread,retail,privateValue,trade}}
 function tireSpec(width,aspect,rim){const sidewall=width*aspect/100,diameter=rim+2*sidewall/25.4,circumference=Math.PI*diameter,revsPerMile=63360/circumference;return{width,aspect,rim,sidewall,diameter,circumference,revsPerMile}}
@@ -2497,6 +2538,7 @@ function calc(e){
   case'cn_simple_interest':{let P=V('principal'),i=P*V('rate')/100*V('years');show(`<strong>${USD(P+i)}</strong><br>Simple interest: ${USD(i)}.`);break}
   case'cn_retirement':{let P=V('principal'),rr=V('rate')/1200,n=V('years')*12,pmt=V('monthly');let fv=P*Math.pow(1+rr,n)+(rr?pmt*(Math.pow(1+rr,n)-1)/rr:pmt*n);show(`<strong>${USD(fv)}</strong><br>Total contributions: ${USD(P+pmt*n)}; estimated growth: ${USD(fv-P-pmt*n)}.`);break}
   case'cn_inflation':{let r=V('amount')*Math.pow(1+V('rate')/100,V('years'));show(`<strong>${USD(r)}</strong><br>Inflation-adjusted estimate after ${F(V('years'),1)} years.`);break}
+  case'salary_converter':{const p=salaryConverterProjection();if(!p.valid)show(`<strong>Check the inputs</strong><br>Enter a positive work schedule.`);else show(`<strong>${USD(p.annual)} annual gross equivalent</strong><br>${USD(p.unadjusted.month)} monthly; ${USD(p.unadjusted.biweekly)} biweekly; ${USD(p.adjustedAnnual)} after entered unpaid days.`);break}
   case'cn_tax_salary':{let taxable=Math.max(0,V('income')-V('deductions')),tax=taxable*V('taxrate')/100,net=V('income')-tax;show(`<strong>${USD(net)} take-home</strong><br>Estimated tax: ${USD(tax)}; monthly take-home: ${USD(net/12)}.`);break}
   case'bmi_advanced':{const p=bmiProjection();if(!p.valid)show(`<strong>Check the inputs</strong><br>${p.message}`);else show(`<strong>${F(p.bmi,1)} BMI</strong><br>${p.category}; adult healthy-weight reference ${p.metric?`${F(p.lowKg,1)}-${F(p.highKg,1)} kg`:`${F(p.lowLb,1)}-${F(p.highLb,1)} lb`}.`);break}
   case'cn_bmi':{let h=V('feet')*12+V('inches'),bmi=h?703*V('weight')/(h*h):0;let band=bmi<18.5?'underweight':bmi<25?'healthy range':bmi<30?'overweight range':'obesity range';show(`<strong>${F(bmi,1)} BMI</strong><br>This falls in the ${band} by adult BMI screening ranges.`);break}
@@ -2664,6 +2706,15 @@ function renderGenericFromEngine(engine) {
     cards=[["Take-home / paycheck",USD(p.perPay),`${F(p.periods,0)} paychecks per year.`],["Annual take-home",USD(p.net),"After estimated taxes and deductions."],["Monthly average",USD(p.monthly),"Annual net pay divided by 12."],["Effective tax rate",`${F(p.effective,2)}%`,"Estimated taxes divided by gross pay."]];
     bars=[{label:"Gross pay",value:p.gross,display:USD(p.gross)},{label:"Take-home pay",value:p.net,display:USD(p.net)},{label:"Estimated taxes",value:p.totalTax,display:USD(p.totalTax)},{label:"Payroll deductions",value:p.totalDeductions,display:USD(p.totalDeductions)}];
     rows=[["Gross annual salary",USD(p.gross),USD(p.grossPerPay)+" gross per paycheck."],["Filing status",statusLabel,"Used for 2026 federal brackets and deduction."],["Federal deduction",USD(p.deduction),p.custom?"Entered custom deduction.":"2026 standard deduction."],["Federal taxable income",USD(p.federalTaxable),"Gross less modeled pre-tax amounts and deduction."],["Federal income tax",USD(p.federal),`${F(p.marginal*100,0)}% estimated marginal bracket.`],["Social Security",USD(p.social),"6.2% up to the $184,500 wage base."],["Medicare",USD(p.medicare),"1.45% plus applicable Additional Medicare Tax."],["State and local tax",USD(p.state),`${F(p.stateRate,2)}% entered effective rate.`],["Extra federal withholding",USD(p.extra),USD(p.extraPerPay)+" per paycheck."],["Pre-tax retirement",USD(p.retirement),"Reduces modeled federal taxable income, not FICA wages."],["Other pre-tax benefits",USD(p.pretax),"Assumed to reduce income-tax and FICA wages."],["Post-tax deductions",USD(p.posttax),"Reduces take-home pay only."],["Total estimated taxes",USD(p.totalTax),"Federal, FICA, state or local, and extra withholding."],["Annual take-home pay",USD(p.net),"Gross pay less modeled taxes and deductions."]];
+  } else if (engine === "salary_converter") {
+    const p=salaryConverterProjection();
+    if(!p.valid){cards=[["Result","Check the inputs","Enter a positive work schedule."],["Annual pay","Unavailable","Unable to annualize."],["Monthly pay","Unavailable","Unable to convert."],["Adjusted pay","Unavailable","Unable to calculate."]];bars=[{label:"Annual pay",value:0,display:"Unavailable"}];rows=[["Validation","Unable to calculate","Hours and days per week must be positive."]]}
+    else{
+      const labels={hour:"Hourly",day:"Daily",week:"Weekly",biweekly:"Biweekly",semimonthly:"Semimonthly",month:"Monthly",quarter:"Quarterly",year:"Annual"},keys=["hour","day","week","biweekly","semimonthly","month","quarter","year"];
+      cards=[["Annual gross equivalent",USD(p.annual),"Before taxes and deductions."],["Monthly gross",USD(p.unadjusted.month),"Annual equivalent divided by 12."],["Biweekly gross",USD(p.unadjusted.biweekly),"Annual equivalent divided by 26."],["Adjusted annual",USD(p.adjustedAnnual),`${F(p.daysOff,0)} unpaid non-working days.`]];
+      bars=[{label:"Annual unadjusted",value:p.annual,display:USD(p.annual)},{label:"Annual adjusted",value:p.adjustedAnnual,display:USD(p.adjustedAnnual)},{label:"Monthly unadjusted",value:p.unadjusted.month,display:USD(p.unadjusted.month)},{label:"Monthly adjusted",value:p.adjusted.month,display:USD(p.adjusted.month)}];
+      rows=keys.map(key=>[labels[key],USD(p.unadjusted[key]),USD(p.adjusted[key])]);rows.push(["Scheduled workdays",F(p.workdays,1),`${F(p.days,2)} days/week x 52.`],["Entered non-working days",F(p.daysOff,1),`${F(p.holidays,0)} holidays + ${F(p.vacation,0)} vacation days.`],["Adjusted work-year factor",`${F(p.factor*100,2)}%`,"Share of scheduled workdays remaining."],["Effective hourly value with paid leave",USD(p.effectiveHourly),"Annual gross divided by hours actually worked; informational only."]);
+    }
   } else if (engine === "cn_tax_salary") {
     const income=V('income'), taxable=Math.max(0,income-V('deductions')), tax=taxable*V('taxrate')/100, net=income-tax;
     cards=[["Take-home pay",USD(net),"Estimated annual net pay."],["Monthly net",USD(net/12),"Estimated monthly take-home."],["Estimated tax",USD(tax),"Taxable income times rate."],["Taxable income",USD(taxable),"Income minus deductions."]];
