@@ -954,9 +954,9 @@
       "title": "Discount Calculator",
       "cat": "Finance",
       "engine": "discount",
-      "desc": "Calculate final sale price and savings after a percentage discount.",
-      "formula": "Sale price = original price \u00d7 (1 \u2212 discount percentage).",
-      "example": "20% off $100 gives a final price of $80 and savings of $20.",
+      "desc": "Calculate stacked discounts, savings, quantity, sales tax, fees, and the final checkout total.",
+      "formula": "Discounted unit price = original price \u00d7 (1 \u2212 first discount) \u00d7 (1 \u2212 second discount).",
+      "example": "20% off $100 gives an $80 sale price; with 8.25% sales tax, the estimated checkout total is $86.60.",
       "inputs": [
         [
           "price",
@@ -978,9 +978,9 @@
       "title": "Salary Increase Calculator",
       "cat": "Finance",
       "engine": "salary",
-      "desc": "Calculate a new salary and annual increase from a percentage raise.",
-      "formula": "New salary = current salary \u00d7 (1 + raise percentage).",
-      "example": "A 5% raise on $60,000 increases annual pay by $3,000 to $63,000.",
+      "desc": "Calculate a pay raise by percentage or dollars, then compare annual, monthly, biweekly, weekly, hourly, and inflation-adjusted pay.",
+      "formula": "New salary = current salary + raise; real raise = (1 + nominal raise rate) / (1 + inflation rate) \u2212 1.",
+      "example": "A 5% raise on $60,000 adds $3,000 for a new annual salary of $63,000, or about $2,423.08 per biweekly pay period.",
       "inputs": [
         [
           "salary",

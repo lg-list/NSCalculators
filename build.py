@@ -14,7 +14,7 @@ KEYWORD_STATS = ROOT / "exports" / "keyword-stats-positive.json"
 SEO_STRATEGY = ROOT / "exports" / "seo-keyword-strategy-2026-09-05.json"
 PUBLIC_BASE_PATH = os.environ.get("PUBLIC_BASE_PATH", "").strip().rstrip("/")
 PUBLIC_SITE_DOMAIN = os.environ.get("PUBLIC_SITE_DOMAIN", "").strip()
-ASSET_VERSION = "20260917p"
+ASSET_VERSION = "20260917q"
 CALCULATOR_REDIRECTS = {
     "concrete-calculator": "concrete-volume-calculator",
     "loan-payment-calculator": "loan-calculator",
@@ -838,6 +838,10 @@ def seo_description(calc):
         return "Convert amps to watts and kilowatts for DC, single-phase AC, or balanced three-phase AC, including power factor, VA, kVA, and reactive power."
     if calc.get("slug") == "loan-calculator":
         return "Calculate loan payments, total interest, amortization, deferred loan maturity value, and bond present value with monthly or custom payment frequency."
+    if calc.get("slug") == "salary-increase-calculator":
+        return "Calculate a raise by percent or dollars and compare new annual, monthly, biweekly, weekly, hourly, and inflation-adjusted pay."
+    if calc.get("slug") == "discount-calculator":
+        return "Calculate one or two discounts, savings, quantity, sales tax, fees, effective discount, and the estimated final checkout total."
     if calc.get("engine") == "linear_convert":
         return f"Use this free {keyword} to convert units instantly with the formula, example, and related conversion calculators."
     if calc.get("engine") in ("cn_mortgage", "loan_page", "car_loan"):
@@ -888,6 +892,24 @@ def compound_interest_input_html():
 <div class="field"><label for="compound_frequency">Compound frequency</label><select id="compound_frequency"><option value="365">Daily</option><option value="12" selected>Monthly</option><option value="4">Quarterly</option><option value="2">Semi-annually</option><option value="1">Annually</option></select></div>
 <div class="field"><label for="monthly">Monthly contribution</label><div class="input-unit"><input id="monthly" type="number" step="any" min="0" value="200"><span>$</span></div></div>
 <div class="field"><label for="contribution_timing">Contribution timing</label><select id="contribution_timing"><option value="end" selected>End of month</option><option value="beginning">Beginning of month</option></select></div>
+</div>"""
+
+
+def salary_increase_input_html():
+    return """<div class="fields salary-fields">
+<div class="field"><label for="salary">Current annual salary</label><div class="input-unit"><input id="salary" type="number" step="any" min="0" value="60000"><span>$</span></div></div>
+<div class="field"><label for="raise_unit">Raise entered as</label><select id="raise_unit"><option value="percent" selected>Percentage (%)</option><option value="dollar">Annual dollars ($)</option></select></div>
+<div class="field"><label for="raise_amount">Raise amount</label><input id="raise_amount" type="number" step="any" value="5"></div>
+<details class="more-options field-wide"><summary>Pay schedule and inflation</summary><div class="fields"><div class="field field-wide"><label for="pay_periods">Pay periods per year</label><select id="pay_periods"><option value="12">Monthly (12)</option><option value="24">Semimonthly (24)</option><option value="26" selected>Biweekly (26)</option><option value="52">Weekly (52)</option></select></div><div class="field"><label for="hours_week">Hours per week</label><input id="hours_week" type="number" step="any" min="0.1" value="40"></div><div class="field"><label for="weeks_year">Working weeks per year</label><input id="weeks_year" type="number" step="any" min="0.1" value="52"></div><div class="field field-wide"><label for="inflation_rate">Expected inflation rate</label><div class="input-unit"><input id="inflation_rate" type="number" step="any" min="-99" value="3"><span>%</span></div></div></div></details>
+</div>"""
+
+
+def discount_input_html():
+    return """<div class="fields discount-fields">
+<div class="field"><label for="price">Original unit price</label><div class="input-unit"><input id="price" type="number" step="any" min="0" value="100"><span>$</span></div></div>
+<div class="field"><label for="discount">First discount</label><div class="input-unit"><input id="discount" type="number" step="any" min="0" max="100" value="20"><span>%</span></div></div>
+<div class="field"><label for="discount_two">Second discount</label><div class="input-unit"><input id="discount_two" type="number" step="any" min="0" max="100" value="0"><span>%</span></div></div>
+<details class="more-options field-wide"><summary>Quantity, tax, and fees</summary><div class="fields"><div class="field"><label for="quantity">Quantity</label><input id="quantity" type="number" step="1" min="1" value="1"></div><div class="field"><label for="sales_tax">Estimated sales tax</label><div class="input-unit"><input id="sales_tax" type="number" step="any" min="0" value="8.25"><span>%</span></div></div><div class="field field-wide"><label for="checkout_fees">Shipping and other fees</label><div class="input-unit"><input id="checkout_fees" type="number" step="any" min="0" value="0"><span>$</span></div></div></div></details>
 </div>"""
 
 
@@ -1376,6 +1398,28 @@ def conversion_copy(calc):
 
 
 def high_value_calculator_copy(calc):
+    if calc.get("slug") == "salary-increase-calculator":
+        return """
+<h2>How to calculate a salary increase</h2><p>Enter your current gross annual salary and a raise as either a percentage or a fixed annual dollar amount. The calculator converts the raise into both formats and then shows the new annual salary across common pay periods.</p>
+<p class="formula">raise dollars = current salary x raise percentage / 100</p>
+<p class="formula">new annual salary = current salary + raise dollars</p>
+<h2>Salary raise example</h2><p>A 5% raise on $60,000 adds $3,000 and produces a new annual salary of $63,000. That equals $5,250 per month, about $2,423.08 across 26 biweekly pay periods, $1,211.54 per week, or $30.29 per hour when divided by 40 hours for 52 weeks.</p>
+<h2>Percentage raise versus dollar raise</h2><p>A percentage makes offers at different salaries easier to compare. A dollar amount shows the direct annual change. Switching the input type does not change the underlying math: the calculator always reports both the annual dollar increase and its percentage of current salary.</p>
+<h2>Inflation-adjusted raise</h2><p>The real raise estimates how much purchasing power changes after the inflation rate you enter. It uses the ratio of the new pay level to the changed price level, so simply subtracting inflation from the raise is only an approximation.</p>
+<p class="formula">real raise = ((1 + nominal raise rate) / (1 + inflation rate) - 1) x 100</p>
+<p>The <a href="https://www.bls.gov/cpi/" rel="external noopener">US Bureau of Labor Statistics</a> describes CPI as a measure of average price change over time, and its <a href="https://www.bls.gov/cpi/factsheets/purchasing-power-constant-dollars.htm" rel="external noopener">purchasing-power guide</a> explains how price indexes can compare the value of money across periods. Your personal cost changes can differ from the national average.</p>
+<h2>Gross pay and take-home pay</h2><p>Every pay-period result is gross pay before federal, state, and local taxes, benefits, retirement contributions, overtime, bonuses, unpaid time, or payroll rounding. Use the <a href="/take-home-pay-calculator/">take-home pay calculator</a> for a separate net-pay estimate.</p>
+<h2>Frequently asked questions</h2><h3>How do I calculate a 3% raise?</h3><p>Multiply current salary by 0.03, then add the result to current salary. On $50,000, the increase is $1,500 and the new salary is $51,500.</p><h3>Is biweekly pay the same as twice monthly?</h3><p>No. Biweekly normally means 26 pay periods per year, while semimonthly means 24. Select the schedule your employer uses.</p><h3>Does the hourly result include overtime?</h3><p>No. It is an annual-salary equivalent based only on the hours and working weeks entered.</p>"""
+    if calc.get("slug") == "discount-calculator":
+        return """
+<h2>How to calculate a discount</h2><p>Enter the original unit price and the first discount. Add a second discount when a promotion applies another percentage to the already-discounted price. Quantity, estimated sales tax, shipping, and other fees then produce an estimated checkout total.</p>
+<p class="formula">discounted unit price = original price x (1 - first discount) x (1 - second discount)</p>
+<p class="formula">checkout total = discounted unit price x quantity + estimated tax + fees</p>
+<h2>Discount example with sales tax</h2><p>Twenty percent off a $100 item saves $20 and leaves an $80 sale price. With 8.25% sales tax and no other fees, the estimated checkout total is $86.60.</p>
+<h2>How stacked discounts work</h2><p>Successive discounts are multiplied, not added. A 20% discount followed by another 10% discount leaves 80% x 90% = 72% of the original price, so the effective discount is 28%, not 30%.</p>
+<h2>Quantity, tax, and fees</h2><p>Savings and merchandise subtotal are multiplied by quantity. Estimated tax is applied to the discounted merchandise subtotal, then the entered shipping or fees are added. Actual taxability, rates, shipping treatment, exemptions, and marketplace fees depend on the location and transaction. The <a href="https://www.irs.gov/credits-deductions/individuals/use-the-sales-tax-deduction-calculator" rel="external noopener">IRS sales-tax calculator guidance</a> notes that local rates can vary within a state, so use the rate shown for the actual purchase.</p>
+<h2>Compare the full offer</h2><p>Check model, size, shipping, return policy, and conditions attached to a low advertised price. The <a href="https://consumer.ftc.gov/articles/online-shopping" rel="external noopener">FTC online-shopping guide</a> recommends comparing item details and shipping fees, not only the headline price.</p>
+<h2>Frequently asked questions</h2><h3>How much is 25% off $80?</h3><p>The savings are $20 and the discounted price is $60 before tax and fees.</p><h3>Do I add two discounts together?</h3><p>No. Apply the second percentage to the price remaining after the first discount.</p><h3>Is sales tax charged before or after a discount?</h3><p>This calculator applies the entered rate after discounts. Actual taxable amounts can differ by jurisdiction and promotion type.</p>"""
     if calc.get("slug") == "loan-calculator":
         return """
 <h2>Loan payment calculator</h2><p>Use the amortized-loan section for a conventional fixed-payment installment loan. Enter principal, annual interest rate, term, compounding frequency, and payment frequency to calculate each payment, total payments, total interest, and the full amortization schedule.</p>
@@ -1613,6 +1657,18 @@ def default_calculator_copy(calc):
 
 
 def analysis_extra_html(calc):
+    if calc.get("slug") in ("salary-increase-calculator", "discount-calculator"):
+        labels = {
+            "salary-increase-calculator": ("Raise and Pay Results", "Annual Pay Comparison"),
+            "discount-calculator": ("Discount and Checkout Results", "Price, Savings, and Tax"),
+        }
+        title, chart_title = labels[calc.get("slug")]
+        return f"""<section class="mortgage-dashboard generic-dashboard finance-dashboard" aria-label="{title}">
+<div class="section-head stack"><h2>{title}</h2><p>Review the main answer, supporting amounts, and calculation details.</p></div>
+<div class="summary-grid" id="genericSummary"></div>
+<div class="chart-grid"><div class="chart-card compact-chart"><h3>{chart_title}</h3><canvas id="genericChart" width="620" height="230" aria-label="{chart_title}" data-chart-type="bars"></canvas></div></div>
+<div class="table-card"><h3>Calculation Details</h3><div class="table-scroll"><table class="data-table" id="genericTable"><thead><tr><th>Metric</th><th>Value</th><th>Note</th></tr></thead><tbody></tbody></table></div></div>
+</section>"""
     if calc.get("slug") in ("concrete-volume-calculator", "roof-pitch-calculator", "rafter-length-calculator", "square-footage-calculator", "flooring-calculator", "tile-calculator", "deck-board-calculator", "board-foot-calculator", "voltage-drop-calculator", "wire-size-calculator", "breaker-size-calculator", "electrical-load-calculator", "watts-to-amps-calculator", "amps-to-watts-calculator"):
         labels = {
             "concrete-volume-calculator": ("Concrete Material Estimate", "Volume and Cost Comparison"),
@@ -1717,6 +1773,12 @@ def calculator_page(site, calc, related):
         page_engine = "feet_meters"
     elif calc.get("slug") == "compound-interest-calculator":
         fields = compound_interest_input_html()
+    elif calc.get("slug") == "salary-increase-calculator":
+        fields = salary_increase_input_html()
+        page_engine = "salary_advanced"
+    elif calc.get("slug") == "discount-calculator":
+        fields = discount_input_html()
+        page_engine = "discount_advanced"
     elif calc.get("slug") == "truck-payload-calculator":
         fields = truck_payload_input_html()
     elif calc.get("slug") == "towing-capacity-calculator":
@@ -2020,6 +2082,8 @@ function compoundProjection(){
   }
   return {principal,annual,years,frequency,monthly,timing,balance,totalInterest,totalDeposits,schedule,effectiveAnnual:Math.pow(1+annual/frequency,frequency)-1};
 }
+function salaryProjection(){const current=Math.max(0,V('salary')),unit=document.getElementById('raise_unit')?.value||'percent',entered=V('raise_amount'),raiseDollars=unit==='dollar'?entered:current*entered/100,raisePercent=current?raiseDollars/current*100:0,annual=Math.max(0,current+raiseDollars),periods=Math.max(1,Math.floor(V('pay_periods'))),hours=Math.max(.1,V('hours_week')),weeks=Math.max(.1,V('weeks_year')),inflation=Math.max(-99,V('inflation_rate')),realRaise=((1+raisePercent/100)/(1+inflation/100)-1)*100;return{current,unit,entered,raiseDollars,raisePercent,annual,periods,hours,weeks,inflation,realRaise,monthly:annual/12,perPeriod:annual/periods,weekly:annual/weeks,hourly:annual/(hours*weeks),oldMonthly:current/12,oldPerPeriod:current/periods,oldWeekly:current/weeks,oldHourly:current/(hours*weeks)}}
+function discountProjection(){const price=Math.max(0,V('price')),first=Math.max(0,Math.min(100,V('discount'))),second=Math.max(0,Math.min(100,V('discount_two'))),quantity=Math.max(1,Math.floor(V('quantity'))),taxRate=Math.max(0,V('sales_tax')),fees=Math.max(0,V('checkout_fees')),multiplier=(1-first/100)*(1-second/100),unitPrice=price*multiplier,effective=(1-multiplier)*100,subtotal=unitPrice*quantity,savings=(price-unitPrice)*quantity,tax=subtotal*taxRate/100,total=subtotal+tax+fees;return{price,first,second,quantity,taxRate,fees,multiplier,unitPrice,effective,subtotal,savings,tax,total}}
 function tradeInProjection(){const comparable=Math.max(0,V('comparable')),adjustment=V('market_adjustment'),margin=Math.max(0,V('dealer_margin')),reconditioning=Math.max(0,V('reconditioning')),payoff=Math.max(0,V('payoff')),replacement=Math.max(0,V('replacement_price')),taxRate=Math.max(0,V('tax_rate'))/100,trade=Math.max(0,comparable+adjustment-margin-reconditioning),equity=trade-payoff,taxSavings=Math.min(trade,replacement)*taxRate;return{comparable,adjustment,margin,reconditioning,payoff,replacement,taxRate,trade,equity,taxSavings,effective:trade+taxSavings}}
 function usedCarProjection(){const benchmark=Math.max(0,V('retail_benchmark')),condition=V('condition_adjustment'),mileage=V('mileage_adjustment'),options=V('options_adjustment'),regional=V('regional_adjustment'),spread=Math.max(0,Math.min(50,V('dealer_spread'))),retail=Math.max(0,benchmark*(1+condition/100)*(1+regional/100)+mileage+options),privateValue=retail*(1-spread/200),trade=retail*(1-spread/100);return{benchmark,condition,mileage,options,regional,spread,retail,privateValue,trade}}
 function tireSpec(width,aspect,rim){const sidewall=width*aspect/100,diameter=rim+2*sidewall/25.4,circumference=Math.PI*diameter,revsPerMile=63360/circumference;return{width,aspect,rim,sidewall,diameter,circumference,revsPerMile}}
@@ -2095,6 +2159,8 @@ function calc(e){
   case'loan':{let P=V('amount'),rr=V('apr')/1200,n=Math.max(1,(V('years')*12)+(V('months_extra')||V('months')));let pay=rr?P*rr*Math.pow(1+rr,n)/(Math.pow(1+rr,n)-1):P/n,total=pay*n;show(`<strong>${USD(pay)} / month</strong><br>Total paid: ${USD(total)}; total interest: ${USD(total-P)}.`);break}
   case'loan_page':{renderLoanPage();break}
   case'compound':{const p=compoundProjection();show(`<strong>${USD(p.balance)}</strong><br>Total contributions: ${USD(p.principal+p.totalDeposits)}; estimated interest: ${USD(p.totalInterest)}.`);renderCompound(p);break}
+  case'salary_advanced':{const p=salaryProjection();show(`<strong>${USD(p.annual)} new annual salary</strong><br>${USD(p.raiseDollars)} raise (${F(p.raisePercent,2)}%); ${USD(p.perPeriod)} per selected pay period; ${USD(p.hourly)} hourly equivalent.`);break}
+  case'discount_advanced':{const p=discountProjection();show(`<strong>${USD(p.total)} estimated checkout total</strong><br>${USD(p.unitPrice)} discounted unit price; ${USD(p.savings)} total savings; ${F(p.effective,2)}% effective discount.`);break}
   case'discount':{let r=V('price')*(1-V('discount')/100);show(`<strong>${USD(r)}</strong><br>Savings: ${USD(V('price')-r)}.`);break}
   case'salary':{let r=V('salary')*(1+V('increase')/100);show(`<strong>${USD(r)}</strong><br>Annual increase: ${USD(r-V('salary'))}.`);break}
   case'dome':{let radius=V('diameter')/2,area=2*Math.PI*radius*radius,vol=2/3*Math.PI*Math.pow(radius,3);show(`<strong>${F(area,2)} sq ft</strong><br>Approx. curved area; ${F(vol,2)} cu ft volume.`);break}
@@ -2276,11 +2342,16 @@ function renderGenericFromEngine(engine) {
     cards=[["Percentage",`${F(pct,2)}%`,"Part as a share of whole."],["Percent change",`${F(change,2)}%`,"New versus old value."],["Difference",F(V('new')-V('old'),2),"New value minus old value."],["Whole",F(V('whole'),2),"Entered denominator."]];
     bars=[{label:"Part",value:V('part'),display:F(V('part'),2)},{label:"Whole",value:V('whole'),display:F(V('whole'),2)},{label:"Old",value:V('old'),display:F(V('old'),2)},{label:"New",value:V('new'),display:F(V('new'),2)}];
     rows=[["Part / whole",`${F(V('part'),2)} / ${F(V('whole'),2)}`,"Percentage inputs."],["Percentage",`${F(pct,2)}%`,"Part divided by whole."],["Old to new",`${F(V('old'),2)} to ${F(V('new'),2)}`,"Change inputs."],["Percent change",`${F(change,2)}%`,"Relative change."]];
-  } else if (engine === "discount") {
-    const savings=V('price')*V('discount')/100, final=V('price')-savings;
-    cards=[["Sale price",USD(final),"Price after discount."],["Savings",USD(savings),"Discount amount."],["Original price",USD(V('price')),"Entered price."],["Discount",`${F(V('discount'),1)}%`,"Entered discount rate."]];
-    bars=[{label:"Sale price",value:final,display:USD(final)},{label:"Savings",value:savings,display:USD(savings)}];
-    rows=[["Original price",USD(V('price')),"Before discount."],["Discount",`${F(V('discount'),2)}%`,"Rate applied."],["Savings",USD(savings),"Amount removed."],["Final price",USD(final),"After discount."]];
+  } else if (engine === "salary_advanced") {
+    const p=salaryProjection();
+    cards=[["New annual salary",USD(p.annual),"Gross pay after the entered raise."],["Annual raise",USD(p.raiseDollars),`${F(p.raisePercent,2)}% of current salary.`],["Selected pay period",USD(p.perPeriod),`${F(p.periods,0)} pay periods per year.`],["Real raise",`${F(p.realRaise,2)}%`,"After the entered inflation rate."]];
+    bars=[{label:"Current annual",value:p.current,display:USD(p.current)},{label:"Annual raise",value:Math.max(0,p.raiseDollars),display:USD(p.raiseDollars)},{label:"New annual",value:p.annual,display:USD(p.annual)}];
+    rows=[["Current annual salary",USD(p.current),"Entered gross annual pay."],["Raise",`${USD(p.raiseDollars)} (${F(p.raisePercent,2)}%)`,p.unit==='dollar'?"Converted from annual dollars.":"Converted from the entered percentage."],["New annual salary",USD(p.annual),"Current salary plus raise."],["Monthly pay",USD(p.monthly),"New annual salary divided by 12."],["Selected pay period",USD(p.perPeriod),`New annual salary divided by ${F(p.periods,0)}.`],["Weekly pay",USD(p.weekly),`New annual salary divided by ${F(p.weeks,1)} working weeks.`],["Hourly equivalent",USD(p.hourly),`${F(p.hours,1)} hours/week across ${F(p.weeks,1)} weeks.`],["Inflation-adjusted raise",`${F(p.realRaise,2)}%`,`Nominal ${F(p.raisePercent,2)}% raise versus ${F(p.inflation,2)}% inflation.`]];
+  } else if (engine === "discount_advanced" || engine === "discount") {
+    const p=engine === "discount_advanced"?discountProjection():{price:V('price'),first:V('discount'),second:0,quantity:1,taxRate:0,fees:0,unitPrice:V('price')*(1-V('discount')/100),effective:V('discount'),subtotal:V('price')*(1-V('discount')/100),savings:V('price')*V('discount')/100,tax:0,total:V('price')*(1-V('discount')/100)};
+    cards=[["Checkout total",USD(p.total),"Discounted merchandise, estimated tax, and fees."],["Discounted unit price",USD(p.unitPrice),"Price per item after both discounts."],["Total savings",USD(p.savings),`Savings across ${F(p.quantity,0)} item(s).`],["Effective discount",`${F(p.effective,2)}%`,"Combined discount rate."]];
+    bars=[{label:"Merchandise",value:p.subtotal,display:USD(p.subtotal)},{label:"Savings",value:p.savings,display:USD(p.savings)},{label:"Estimated tax",value:p.tax,display:USD(p.tax)},{label:"Fees",value:p.fees,display:USD(p.fees)}];
+    rows=[["Original unit price",USD(p.price),"Before discounts."],["First discount",`${F(p.first,2)}%`,"Applied to original price."],["Second discount",`${F(p.second,2)}%`,"Applied to the remaining price."],["Effective discount",`${F(p.effective,2)}%`,"Combined rate, not a simple sum."],["Discounted unit price",USD(p.unitPrice),"After both discounts."],["Quantity",F(p.quantity,0),"Number of items."],["Merchandise subtotal",USD(p.subtotal),"Discounted unit price times quantity."],["Estimated sales tax",USD(p.tax),`${F(p.taxRate,3)}% of discounted merchandise.`],["Shipping and fees",USD(p.fees),"Entered amount."],["Checkout total",USD(p.total),"Subtotal plus estimated tax and fees."]];
   } else if (engine === "cn_triangle") {
     const a=V('a'), b=V('b'), c=Math.sqrt(a*a+b*b), area=a*b/2, perimeter=a+b+c;
     cards=[["Hypotenuse",F(c,4),"Right-triangle side c."],["Area",F(area,4),"a x b / 2."],["Perimeter",F(perimeter,4),"a + b + c."],["Angle A",`${F(Math.atan2(a,b)*180/Math.PI,2)}°`,"Opposite side a."]];
