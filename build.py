@@ -14,10 +14,11 @@ KEYWORD_STATS = ROOT / "exports" / "keyword-stats-positive.json"
 SEO_STRATEGY = ROOT / "exports" / "seo-keyword-strategy-2026-09-05.json"
 PUBLIC_BASE_PATH = os.environ.get("PUBLIC_BASE_PATH", "").strip().rstrip("/")
 PUBLIC_SITE_DOMAIN = os.environ.get("PUBLIC_SITE_DOMAIN", "").strip()
-ASSET_VERSION = "20260918h"
+ASSET_VERSION = "20260918i"
 CALCULATOR_REDIRECTS = {
     "concrete-calculator": "concrete-volume-calculator",
     "loan-payment-calculator": "loan-calculator",
+    "financial-calculator": "financial-calculators",
 }
 
 CATEGORY_ORDER = [
@@ -625,6 +626,8 @@ def calculator_net_template(keyword, slug, cat):
         base.update({"engine": "bmi_advanced", "desc": "Calculate adult BMI with US or metric units, CDC weight category, healthy weight range, BMI Prime, and Ponderal Index.", "formula": "BMI = weight in kilograms / height in meters squared, or 703 x pounds / inches squared.", "inputs": []})
     elif slug == "salary-calculator":
         base.update({"engine": "salary_converter", "desc": "Convert hourly, daily, weekly, biweekly, semimonthly, monthly, quarterly, or annual pay and compare unpaid time-off adjustments.", "formula": "Annual pay equals the entered amount multiplied by the number of pay periods per year.", "inputs": []})
+    elif slug == "finance-calculator":
+        base.update({"engine": "finance_tvm", "desc": "Solve any one of the five core time-value-of-money variables: future value, payment, annual interest rate, number of periods, or present value.", "formula": "PV(1 + r)^N + PMT(1 + r x type)((1 + r)^N - 1) / r + FV = 0.", "inputs": []})
     elif slug == "take-home-pay-calculator":
         base.update({"engine": "take_home_pay", "desc": "Estimate 2026 US take-home pay from federal income tax brackets, Social Security, Medicare, state or local tax, pay frequency, and payroll deductions.", "formula": "Take-home pay = gross pay - estimated federal income tax - FICA taxes - state or local tax - pre-tax and post-tax deductions.", "inputs": []})
     elif "mortgage" in text:
@@ -800,6 +803,8 @@ def seo_title(calc):
         return "BMI Calculator for Adults: US & Metric Units"
     if calc.get("slug") == "salary-calculator":
         return "Salary Calculator: Hourly, Monthly & Annual Pay"
+    if calc.get("slug") == "finance-calculator":
+        return "Finance Calculator: PV, FV, PMT, Rate & Periods"
     if calc.get("slug") == "compound-interest-calculator":
         return "Compound Interest Calculator | NS Calculators"
     if calc.get("slug") == "take-home-pay-calculator":
@@ -834,6 +839,8 @@ def seo_description(calc):
         return "Calculate adult BMI in US or metric units with CDC category, healthy weight range, BMI Prime, Ponderal Index, formulas, and limitations."
     if calc.get("slug") == "salary-calculator":
         return "Convert hourly, daily, weekly, biweekly, semimonthly, monthly, quarterly, or annual salary and compare pay adjusted for unpaid days off."
+    if calc.get("slug") == "finance-calculator":
+        return "Solve future value, present value, payment, annual interest rate, or number of periods with payment timing, compounding settings, and a schedule."
     if calc.get("slug") == "compound-interest-calculator":
         return "Calculate compound interest with monthly and annual contributions, tax, inflation, years and months, detailed growth charts, and an annual schedule."
     if calc.get("slug") == "truck-payload-calculator":
@@ -1051,6 +1058,23 @@ def bmi_input_html():
 <div class="field is-hidden" data-bmi-metric><label for="bmi_weight_kg">Weight</label><div class="input-unit"><input id="bmi_weight_kg" type="number" step="any" min="1" value="72.57"><span>kg</span></div></div>
 <div class="field is-hidden" data-bmi-metric><label for="bmi_height_cm">Height</label><div class="input-unit"><input id="bmi_height_cm" type="number" step="any" min="1" value="177.8"><span>cm</span></div></div>
 <div class="field-note field-wide">For adults age 20 and older. Children and teens require BMI-for-age percentiles.</div>
+</div>"""
+
+
+def finance_tvm_input_html():
+    return """<div class="fields finance-tvm-fields">
+<div class="field field-wide"><label for="finance_solve">Calculate</label><select id="finance_solve"><option value="fv" selected>FV - Future Value</option><option value="pmt">PMT - Periodic Payment</option><option value="iy">I/Y - Annual Interest Rate</option><option value="n">N - Number of Periods</option><option value="pv">PV - Present Value</option></select></div>
+<div class="field" data-finance-value="n"><label for="finance_n">N - number of periods</label><input id="finance_n" type="number" step="any" min="0" value="10"></div>
+<div class="field" data-finance-value="iy"><label for="finance_iy">I/Y - interest per year</label><div class="input-unit"><input id="finance_iy" type="number" step="any" value="6"><span>%</span></div></div>
+<div class="field" data-finance-value="pv"><label for="finance_pv">PV - present value</label><div class="input-unit"><input id="finance_pv" type="number" step="any" value="20000"><span>$</span></div></div>
+<div class="field" data-finance-value="pmt"><label for="finance_pmt">PMT - periodic payment</label><div class="input-unit"><input id="finance_pmt" type="number" step="any" value="-2000"><span>$</span></div></div>
+<div class="field field-wide" data-finance-value="fv"><label for="finance_fv">FV - future value</label><div class="input-unit"><input id="finance_fv" type="number" step="any" value="-9455.36"><span>$</span></div></div>
+<details class="more-options field-wide"><summary>Payment and compounding settings</summary><div class="fields">
+<div class="field"><label for="finance_py">Payments per year (P/Y)</label><input id="finance_py" type="number" step="1" min="1" value="1"></div>
+<div class="field"><label for="finance_cy">Compounds per year (C/Y)</label><input id="finance_cy" type="number" step="1" min="1" value="1"></div>
+<div class="field field-wide"><label for="finance_timing">Payments made at</label><select id="finance_timing"><option value="end" selected>End of each period</option><option value="beginning">Beginning of each period</option></select></div>
+</div></details>
+<div class="field-note field-wide">Use opposite signs for money received and money paid. For example, enter a loan received as positive PV and repayments as negative PMT.</div>
 </div>"""
 
 
@@ -1549,6 +1573,17 @@ def conversion_copy(calc):
 
 
 def high_value_calculator_copy(calc):
+    if calc.get("slug") == "finance-calculator":
+        return """
+<h2>Five-key finance calculator</h2><p>This calculator solves the five core time-value-of-money variables used by common financial calculators: number of periods (N), annual interest rate (I/Y), present value (PV), periodic payment (PMT), and future value (FV). Select the value to calculate, enter the other four, and choose the payment and compounding settings.</p>
+<h2>Cash-flow sign convention</h2><p>Money moving in opposite directions must use opposite signs. If you receive $20,000 today, enter PV as positive. If you then pay $2,000 each period, enter PMT as negative. The calculated FV uses the opposite sign of the ending account or loan balance. A sign error is the most common reason a finance calculator cannot find a meaningful result.</p>
+<h2>Time value of money formula</h2><p>The calculator converts the nominal annual rate to an effective rate for each payment period, then solves the standard annuity equation. For end-of-period payments, type is 0. For beginning-of-period payments, type is 1.</p>
+<p class="formula">PV(1 + r)^N + PMT(1 + r x type)((1 + r)^N - 1) / r + FV = 0</p>
+<h2>Payment frequency and compounding frequency</h2><p>P/Y is the number of payments per year and C/Y is the number of times interest compounds per year. When they differ, the periodic rate is converted so each payment period receives the equivalent compounded return. For a typical monthly loan, use 12 for both P/Y and C/Y.</p>
+<h2>Beginning versus end payments</h2><p>Ordinary annuities make payments at the end of each period. Annuities due make payments at the beginning, giving every payment one additional period of growth or one period less of loan interest. Rent and lease payments are often due at the beginning; many loan payments are modeled at the end.</p>
+<h2>Worked example</h2><p>With N = 10, I/Y = 6%, PV = $20,000, PMT = -$2,000, one payment and one compounding period per year, the calculated FV is about -$9,455.36. The sign means the ending value is opposite the original inflow under the selected cash-flow convention.</p>
+<h2>APR, APY, and assumptions</h2><p>This tool treats I/Y as a nominal annual interest rate and converts it using the selected C/Y and P/Y values. It does not add lender fees or independently calculate a disclosed APR. The <a href="https://www.consumerfinance.gov/ask-cfpb/what-is-the-difference-between-a-loan-interest-rate-and-the-apr-en-733/" rel="external noopener">Consumer Financial Protection Bureau</a> explains that APR can include the interest rate plus certain loan charges. For savings growth, the <a href="https://www.investor.gov/financial-tools-calculators/calculators/compound-interest-calculator" rel="external noopener">SEC Investor.gov compound interest calculator</a> illustrates how principal, contributions, time, rate, and compounding affect future value.</p>
+<h2>Frequently asked questions</h2><h3>What do PV and FV mean?</h3><p>PV is the value at the start of the calculation. FV is the value after N payment periods, expressed using the opposite-side cash-flow sign convention.</p><h3>Why can there be no interest-rate solution?</h3><p>The entered cash flows may never balance at a real rate, or they may permit more than one mathematical rate. This calculator reports the first practical real solution it finds and asks you to review signs when no solution is found.</p><h3>Can N include a partial period?</h3><p>Yes. The equation can return a decimal number of periods, but the schedule displays complete periods plus a final partial-period estimate.</p>"""
     if calc.get("slug") == "salary-calculator":
         return """
 <h2>Salary calculator and pay converter</h2><p>Enter an amount paid by the hour, day, week, two weeks, half month, month, quarter, or year. The calculator converts it to the other common pay periods using your work schedule. Results are gross pay before taxes, payroll deductions, bonuses, commissions, and overtime.</p>
@@ -1894,6 +1929,14 @@ def default_calculator_copy(calc):
 
 
 def analysis_extra_html(calc):
+    if calc.get("slug") == "finance-calculator":
+        return """<section class="mortgage-dashboard generic-dashboard finance-tvm-dashboard" aria-label="Time value of money results">
+<div class="section-head stack"><h2>Finance Calculator Results</h2><p>Review the solved TVM value, rates, cash flows, and period-by-period schedule.</p></div>
+<div class="summary-grid" id="genericSummary"></div>
+<div class="chart-grid"><div class="chart-card compact-chart"><h3>Cash Flow Comparison</h3><canvas id="genericChart" width="620" height="230" aria-label="Present value, total payments, future value, and interest comparison" data-chart-type="bars"></canvas></div></div>
+<div class="table-card"><h3>Calculation Details</h3><div class="table-scroll"><table class="data-table" id="genericTable"><thead><tr><th>Metric</th><th>Value</th><th>Note</th></tr></thead><tbody></tbody></table></div></div>
+<div class="table-card"><h3>Period Schedule</h3><div class="table-scroll"><table class="data-table" id="financeSchedule"><thead><tr><th>Period</th><th>Opening value</th><th>Payment</th><th>Interest</th><th>Ending value</th></tr></thead><tbody></tbody></table></div></div>
+</section>"""
     if calc.get("slug") == "salary-calculator":
         return """<section class="mortgage-dashboard generic-dashboard salary-converter-dashboard" aria-label="Salary conversion results">
 <div class="section-head stack"><h2>Salary Conversion Results</h2><p>Compare gross pay periods before taxes and the effect of unpaid days off.</p></div>
@@ -2054,7 +2097,10 @@ def calculator_page(site, calc, related):
     desc = seo_description(calc)
     group = calculator_group(calc)
     page_engine = calc.get("engine")
-    if calc.get("slug") == "feet-to-meters-calculator":
+    if calc.get("slug") == "finance-calculator":
+        fields = finance_tvm_input_html()
+        page_engine = "finance_tvm"
+    elif calc.get("slug") == "feet-to-meters-calculator":
         fields = feet_to_meters_input_html()
         page_engine = "feet_meters"
     elif calc.get("slug") == "compound-interest-calculator":
@@ -2290,6 +2336,9 @@ body{background:var(--bg)}.site-header{border-bottom-color:#dbe7f4}.primary{back
 @media(max-width:900px){.calculator-article:has(.stats-fields) .calculator-layout.split-analysis{grid-template-columns:minmax(0,1fr)}}
 @media(max-width:560px){.stats-fields textarea{min-height:82px}.stats-dashboard .summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.calculator-article:has(.stats-fields) .calc{padding:10px}}
 .bmi-fields .field-wide{grid-column:1/-1}.bmi-fields .is-hidden{display:none!important}.field-note{padding:9px 10px;border:1px solid #dbe7f4;border-radius:9px;background:#f5f9fd;color:var(--muted);font-size:12px;line-height:1.4}.bmi-dashboard .chart-grid{grid-template-columns:1fr}.bmi-dashboard .chart-card canvas{max-height:230px}.calculator-article:has(.bmi-fields) .calculator-layout.split-analysis{grid-template-columns:minmax(360px,420px) minmax(0,1fr)}
+.finance-tvm-fields .field-wide{grid-column:1/-1}.finance-tvm-fields .more-options .fields{padding:0 12px 12px}.finance-solve-target{padding:8px;border:1px solid #9bbce4;border-radius:9px;background:#eef5ff}.finance-solve-target input:disabled{color:#173f73;background:#fff;font-weight:800;opacity:1}.finance-tvm-dashboard .chart-grid{grid-template-columns:1fr}.finance-tvm-dashboard .chart-card canvas{max-height:230px}.calculator-article:has(.finance-tvm-fields) .calculator-layout.split-analysis{grid-template-columns:minmax(380px,440px) minmax(0,1fr)}
+@media(max-width:900px){.calculator-article:has(.finance-tvm-fields) .calculator-layout.split-analysis{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:560px){.finance-tvm-fields{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px!important}.finance-tvm-fields .field label{min-height:28px;display:flex;align-items:end;font-size:12px!important}.finance-tvm-fields .field input,.finance-tvm-fields .field select{height:36px!important;padding:0 7px}.finance-tvm-fields .input-unit input,.finance-tvm-fields .input-unit span{height:36px!important}.finance-tvm-fields .input-unit span{padding:0 7px;font-size:12px}.finance-solve-target{padding:5px}.finance-tvm-fields .field-note{padding:7px 8px;font-size:11px}.finance-tvm-dashboard .summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.calculator-article:has(.finance-tvm-fields) .calc{padding:10px}.calculator-article:has(.finance-tvm-fields) .calc h2{margin-bottom:6px;font-size:17px}.calculator-article:has(.finance-tvm-fields) .calc-actions{margin-top:8px}.calculator-article:has(.finance-tvm-fields) .calc-actions .btn{min-height:36px;padding:7px 10px}.calculator-article:has(.finance-tvm-fields) .result{padding:9px 10px;font-size:12px}.calculator-article:has(.finance-tvm-fields) .result strong{font-size:23px}}
 @media(max-width:900px){.calculator-article:has(.bmi-fields) .calculator-layout.split-analysis{grid-template-columns:minmax(0,1fr)}}
 @media(max-width:560px){.bmi-dashboard .summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.calculator-article:has(.bmi-fields) .calc{padding:10px}}
 .salary-converter-fields .field-wide{grid-column:1/-1}.salary-converter-fields .more-options .fields{padding:0 12px}.option-note{margin:8px 12px 12px;color:var(--muted);font-size:12px;line-height:1.4}.salary-converter-dashboard .chart-grid{grid-template-columns:1fr}.salary-converter-dashboard .chart-card canvas{max-height:230px}.calculator-article:has(.salary-converter-fields) .calculator-layout.split-analysis{grid-template-columns:minmax(380px,440px) minmax(0,1fr)}
@@ -2408,6 +2457,14 @@ function compoundProjection(){
   const totalInterest=totalGrossInterest-totalTax,contributed=principal+totalDeposits,buyingPower=balance/Math.pow(1+inflation,totalMonths/12),durationLabel=extraMonths?`${years} yr ${extraMonths} mo`:`${years} yr`;
   return {principal,annual,years,extraMonths,totalMonths,frequency,monthly,annualContribution,taxRate,inflation,timing,balance,totalGrossInterest,totalTax,totalInterest,totalDeposits,contributed,buyingPower,schedule,effectiveAnnual,durationLabel};
 }
+function syncFinanceTarget(){const target=document.getElementById('finance_solve')?.value||'fv';document.querySelectorAll('[data-finance-value]').forEach(field=>{const active=field.dataset.financeValue===target;field.classList.toggle('finance-solve-target',active);const input=field.querySelector('input');if(input){input.disabled=active;input.setAttribute('aria-disabled',active?'true':'false')}});return target}
+function financePeriodicRate(annual,py,cy){return Math.pow(1+annual/100/cy,cy/py)-1}
+function financeNominalRate(periodic,py,cy){return cy*(Math.pow(1+periodic,py/cy)-1)*100}
+function financeEquation(rate,n,pv,pmt,fv,due){if(rate<=-1)return NaN;const growth=Math.pow(1+rate,n),annuity=Math.abs(rate)<1e-12?n:(growth-1)/rate;return pv*growth+pmt*(due?1+rate:1)*annuity+fv}
+function solveFinanceRate(n,pv,pmt,fv,due){const fn=r=>financeEquation(r,n,pv,pmt,fv,due),points=[];for(let i=0;i<=800;i++){const x=i/800;points.push(-.9999+x*.9999);points.push(Math.pow(10,x*3)-1)}points.sort((a,b)=>a-b);let previous=points[0],fp=fn(previous);for(let i=1;i<points.length;i++){const current=points[i],fc=fn(current);if(Number.isFinite(fc)&&Math.abs(fc)<1e-9)return current;if(Number.isFinite(fp)&&Number.isFinite(fc)&&fp*fc<0){let lo=previous,hi=current,flo=fp;for(let j=0;j<120;j++){const mid=(lo+hi)/2,fm=fn(mid);if(Math.abs(fm)<1e-11)return mid;if(flo*fm<=0)hi=mid;else{lo=mid;flo=fm}}return(lo+hi)/2}previous=current;fp=fc}return NaN}
+function financeProjection(){const target=syncFinanceTarget(),py=Math.max(1,Math.round(V('finance_py'))),cy=Math.max(1,Math.round(V('finance_cy'))),due=document.getElementById('finance_timing')?.value==='beginning';let n=V('finance_n'),iy=V('finance_iy'),pv=V('finance_pv'),pmt=V('finance_pmt'),fv=V('finance_fv'),rate=financePeriodicRate(iy,py,cy),valid=true,message='';if(!Number.isFinite(n)||!Number.isFinite(iy)||!Number.isFinite(pv)||!Number.isFinite(pmt)||!Number.isFinite(fv)||n<0){valid=false;message='Enter finite values and a nonnegative number of periods.'}if(valid&&target!=='iy'&&(!Number.isFinite(rate)||rate<=-1)){valid=false;message='The entered annual rate is not valid for these compounding settings.'}if(valid&&target==='fv'){const growth=Math.pow(1+rate,n),annuity=Math.abs(rate)<1e-12?n:(growth-1)/rate;fv=-(pv*growth+pmt*(due?1+rate:1)*annuity)}else if(valid&&target==='pv'){const growth=Math.pow(1+rate,n),annuity=Math.abs(rate)<1e-12?n:(growth-1)/rate;pv=-(fv+pmt*(due?1+rate:1)*annuity)/growth}else if(valid&&target==='pmt'){const growth=Math.pow(1+rate,n),annuity=(Math.abs(rate)<1e-12?n:(growth-1)/rate)*(due?1+rate:1);if(Math.abs(annuity)<1e-12){valid=false;message='Payment cannot be solved when the annuity factor is zero.'}else pmt=-(fv+pv*growth)/annuity}else if(valid&&target==='iy'){rate=solveFinanceRate(n,pv,pmt,fv,due);if(!Number.isFinite(rate)){valid=false;message='No practical real interest-rate solution was found. Check the cash-flow signs.'}else iy=financeNominalRate(rate,py,cy)}else if(valid&&target==='n'){if(Math.abs(rate)<1e-12){if(Math.abs(pmt)<1e-12){valid=false;message='N cannot be solved when both the rate and payment are zero.'}else n=-(pv+fv)/pmt}else{const adjusted=pmt*(due?1+rate:1),ratio=(adjusted/rate-fv)/(pv+adjusted/rate);if(!(ratio>0)){valid=false;message='No positive real period solution was found. Check the cash-flow signs.'}else n=Math.log(ratio)/Math.log(1+rate)}if(!(n>=0)&&valid){valid=false;message='The entered cash flows imply a negative number of periods.'}}if(valid&&(![n,iy,pv,pmt,fv,rate].every(Number.isFinite)||n>1000000)){valid=false;message='The calculation exceeds the supported numeric range. Reduce the rate or number of periods.'}
+  if(!valid)return{valid:false,target,message,py,cy,due,n,iy,pv,pmt,fv,rate,schedule:[]};
+  const solved={n,iy,pv,pmt,fv},input=document.getElementById(`finance_${target}`);if(input)input.value=Number(solved[target].toPrecision(12));const whole=Math.floor(n+1e-10),fraction=Math.max(0,n-whole),displayPeriods=Math.min(whole,600),schedule=[];let running=pv;for(let period=1;period<=displayPeriods;period++){const opening=running,payment=pmt,interest=due?(running+payment)*rate:running*rate;running=due?(running+payment)*(1+rate):running*(1+rate)+payment;schedule.push({period:String(period),opening,payment,interest,ending:running})}if(whole<=600&&fraction>1e-8){const opening=running,payment=pmt*fraction,partialRate=Math.pow(1+rate,fraction)-1,interest=due?(running+payment)*partialRate:running*partialRate;running=due?(running+payment)*(1+partialRate):running*(1+partialRate)+payment;schedule.push({period:`${whole+1} (${F(fraction,3)} partial)`,opening,payment,interest,ending:running})}const effectiveAnnual=(Math.pow(1+rate,py)-1)*100,totalPayments=pmt*n,balance=-fv,totalInterest=balance-pv-totalPayments,residual=financeEquation(rate,n,pv,pmt,fv,due),scheduleCapped=whole>600;return{valid:true,target,py,cy,due,n,iy,pv,pmt,fv,rate,effectiveAnnual,totalPayments,totalInterest,residual,balance,schedule,scheduleCapped};}
 function salaryProjection(){const current=Math.max(0,V('salary')),unit=document.getElementById('raise_unit')?.value||'percent',entered=V('raise_amount'),raiseDollars=unit==='dollar'?entered:current*entered/100,raisePercent=current?raiseDollars/current*100:0,annual=Math.max(0,current+raiseDollars),periods=Math.max(1,Math.floor(V('pay_periods'))),hours=Math.max(.1,V('hours_week')),weeks=Math.max(.1,V('weeks_year')),inflation=Math.max(-99,V('inflation_rate')),realRaise=((1+raisePercent/100)/(1+inflation/100)-1)*100;return{current,unit,entered,raiseDollars,raisePercent,annual,periods,hours,weeks,inflation,realRaise,monthly:annual/12,perPeriod:annual/periods,weekly:annual/weeks,hourly:annual/(hours*weeks),oldMonthly:current/12,oldPerPeriod:current/periods,oldWeekly:current/weeks,oldHourly:current/(hours*weeks)}}
 function discountProjection(){const price=Math.max(0,V('price')),first=Math.max(0,Math.min(100,V('discount'))),second=Math.max(0,Math.min(100,V('discount_two'))),quantity=Math.max(1,Math.floor(V('quantity'))),taxRate=Math.max(0,V('sales_tax')),fees=Math.max(0,V('checkout_fees')),multiplier=(1-first/100)*(1-second/100),unitPrice=price*multiplier,effective=(1-multiplier)*100,subtotal=unitPrice*quantity,savings=(price-unitPrice)*quantity,tax=subtotal*taxRate/100,total=subtotal+tax+fees;return{price,first,second,quantity,taxRate,fees,multiplier,unitPrice,effective,subtotal,savings,tax,total}}
 const FEDERAL_2026={single:[[12400,.10],[50400,.12],[105700,.22],[201775,.24],[256225,.32],[640600,.35],[Infinity,.37]],joint:[[24800,.10],[100800,.12],[211400,.22],[403550,.24],[512450,.32],[768700,.35],[Infinity,.37]],head:[[17700,.10],[67450,.12],[105700,.22],[201750,.24],[256200,.32],[640600,.35],[Infinity,.37]]};
@@ -2463,7 +2520,7 @@ function electricalLoadProjection(){const continuous=Math.max(0,V('el_continuous
 function wattsAmpsProjection(){const watts=Math.max(0,V('wa_watts')),voltage=Math.max(.001,V('wa_voltage')),phase=document.getElementById('wa_phase')?.value||'single',pf=phase==='dc'?1:Math.max(.01,Math.min(1,V('wa_pf'))),multiplier=phase==='three'?Math.sqrt(3):1,amps=watts/(voltage*pf*multiplier),va=watts/pf,vars=Math.sqrt(Math.max(0,va*va-watts*watts)),continuous=document.getElementById('wa_continuous')?.value==='yes',planningAmps=amps*(continuous?1.25:1);return{watts,voltage,phase,pf,multiplier,amps,va,vars,continuous,planningAmps}}
 function ampsWattsProjection(){const amps=Math.max(0,V('aw_amps')),voltage=Math.max(.001,V('aw_voltage')),phase=document.getElementById('aw_phase')?.value||'single',pf=phase==='dc'?1:Math.max(.01,Math.min(1,V('aw_pf'))),multiplier=phase==='three'?Math.sqrt(3):1,va=amps*voltage*multiplier,watts=va*pf,vars=Math.sqrt(Math.max(0,va*va-watts*watts));return{amps,voltage,phase,pf,multiplier,va,watts,vars}}
 function syncFeetMeterInputs(){const reverse=document.getElementById('conversion_direction')?.value==='meters_to_feet';document.querySelectorAll('[data-feet-input]').forEach(el=>el.classList.toggle('is-hidden',reverse));document.querySelectorAll('[data-meter-input]').forEach(el=>el.classList.toggle('is-hidden',!reverse));return reverse}
-function clearCalcForm(){const form=document.querySelector('.calc');if(!form)return;form.querySelectorAll('input').forEach(input=>{if(input.type==='checkbox')input.checked=false;else input.value=''});form.querySelectorAll('textarea').forEach(textarea=>{textarea.value=''});form.querySelectorAll('select').forEach(select=>{select.selectedIndex=0});form.querySelectorAll('details').forEach(item=>{item.open=false});syncMortgageCosts();syncConcreteFields();syncRoofFields();syncAreaFields();syncPayDeductionFields();syncSalesTaxFields();syncPercentFields();syncFractionFields();syncBmiFields();show('<strong>0</strong><br>Enter values to calculate a new result.');const engine=currentEngine();if(engine==='cn_mortgage')renderMortgage(0,0,1,0,0,0,0,0,0,0,0,0,0,new Date());if(engine==='loan_page')renderLoanPage()}
+function clearCalcForm(){const form=document.querySelector('.calc');if(!form)return;form.querySelectorAll('input').forEach(input=>{if(input.type==='checkbox')input.checked=false;else input.value=''});form.querySelectorAll('textarea').forEach(textarea=>{textarea.value=''});form.querySelectorAll('select').forEach(select=>{select.selectedIndex=0});form.querySelectorAll('details').forEach(item=>{item.open=false});syncMortgageCosts();syncConcreteFields();syncRoofFields();syncAreaFields();syncPayDeductionFields();syncSalesTaxFields();syncPercentFields();syncFractionFields();syncBmiFields();syncFinanceTarget();show('<strong>0</strong><br>Enter values to calculate a new result.');const engine=currentEngine();if(engine==='cn_mortgage')renderMortgage(0,0,1,0,0,0,0,0,0,0,0,0,0,new Date());if(engine==='loan_page')renderLoanPage()}
 function calc(e){
  switch(e){
   case'trade_value':{let price=V('price'),age=V('age'),miles=V('miles'),cond=V('condition');let ageF=Math.pow(.84,age),expected=Math.max(1,age)*12000,mileageF=Math.max(.72,Math.min(1.12,1-(miles-expected)*0.000003));let r=price*ageF*mileageF*cond;show(`<strong>${USD(Math.max(0,r))}</strong><br>Illustrative estimate, not a dealer quote or appraisal.`);break}
@@ -2506,6 +2563,7 @@ function calc(e){
   case'car_loan':{let price=V('price'),tax=price*V('tax')/100,fees=V('fees'),include=(document.getElementById('include_fees')?.value||'0')==='1';let base=Math.max(0,price-V('incentives')-V('down')-V('trade')+V('owed')),P=Math.max(0,base+(include?tax+fees:0));let rr=V('apr')/1200,n=Math.max(1,V('months'));let pay=rr?P*rr*Math.pow(1+rr,n)/(Math.pow(1+rr,n)-1):P/n,upfront=V('down')+(include?0:tax+fees);show(`<strong>${USD(pay)} / month</strong><br>Total loan amount: ${USD(P)}; upfront payment: ${USD(upfront)}; sale tax: ${USD(tax)}.`);break}
   case'loan':{let P=V('amount'),rr=V('apr')/1200,n=Math.max(1,(V('years')*12)+(V('months_extra')||V('months')));let pay=rr?P*rr*Math.pow(1+rr,n)/(Math.pow(1+rr,n)-1):P/n,total=pay*n;show(`<strong>${USD(pay)} / month</strong><br>Total paid: ${USD(total)}; total interest: ${USD(total-P)}.`);break}
   case'loan_page':{renderLoanPage();break}
+  case'finance_tvm':{const p=financeProjection();if(!p.valid)show(`<strong>Check the inputs</strong><br>${p.message}`);else{const labels={fv:'Future value',pmt:'Periodic payment',iy:'Annual interest rate',n:'Number of periods',pv:'Present value'},value=p.target==='iy'?`${F(p.iy,8)}%`:p.target==='n'?F(p.n,8):USD(p[p.target]);show(`<strong>${value} ${labels[p.target].toLowerCase()}</strong><br>${F(p.rate*100,6)}% effective rate per payment period; ${F(p.effectiveAnnual,6)}% effective annual rate.`)}break}
   case'compound':{const p=compoundProjection();show(`<strong>${USD(p.balance)} ending balance</strong><br>${USD(p.contributed)} contributed; ${USD(p.totalInterest)} net interest; ${USD(p.buyingPower)} inflation-adjusted buying power.`);renderCompound(p);break}
   case'salary_advanced':{const p=salaryProjection();show(`<strong>${USD(p.annual)} new annual salary</strong><br>${USD(p.raiseDollars)} raise (${F(p.raisePercent,2)}%); ${USD(p.perPeriod)} per selected pay period; ${USD(p.hourly)} hourly equivalent.`);break}
   case'discount_advanced':{const p=discountProjection();show(`<strong>${USD(p.total)} estimated checkout total</strong><br>${USD(p.unitPrice)} discounted unit price; ${USD(p.savings)} total savings; ${F(p.effective,2)}% effective discount.`);break}
@@ -2633,7 +2691,11 @@ function renderGeneric(cards, bars, rows) {
 function renderGenericFromEngine(engine) {
   if (!document.getElementById("genericSummary")) return;
   let cards=[], bars=[], rows=[];
-  if (engine === "feet_meters") {
+  if (engine === "finance_tvm") {
+    const p=financeProjection(),schedule=document.querySelector('#financeSchedule tbody'),labels={fv:'Future value',pmt:'Periodic payment',iy:'Annual interest rate',n:'Number of periods',pv:'Present value'};
+    if(!p.valid){cards=[["Result","Check inputs",p.message],["Solved variable",labels[p.target],"Selected target."],["Periodic rate","Unavailable","No valid solution."],["Schedule","Unavailable","Correct the inputs first."]];bars=[{label:"Result",value:0,display:"Unavailable"}];rows=[["Validation","Unable to calculate",p.message]];if(schedule)schedule.innerHTML=''}
+    else{const solved=p.target==='iy'?`${F(p.iy,8)}%`:p.target==='n'?F(p.n,8):USD(p[p.target]);cards=[[labels[p.target],solved,"Calculated TVM variable."],["Periodic rate",`${F(p.rate*100,6)}%`,`${F(p.py,0)} payment periods per year.`],["Effective annual rate",`${F(p.effectiveAnnual,6)}%`,`Derived from the payment-period rate.`],["Ending balance",USD(p.balance),`Should offset FV under the sign convention.`]];bars=[{label:"Present value",value:p.pv,display:USD(p.pv)},{label:"Total payments",value:p.totalPayments,display:USD(p.totalPayments)},{label:"Future value",value:p.fv,display:USD(p.fv)},{label:"Total interest",value:p.totalInterest,display:USD(p.totalInterest)}];rows=[["Solved variable",labels[p.target],solved],["Number of periods (N)",F(p.n,8),`${F(p.py,0)} payments per year.`],["Nominal annual rate (I/Y)",`${F(p.iy,8)}%`,`${F(p.cy,0)} compounding periods per year.`],["Present value (PV)",USD(p.pv),"Starting cash flow."],["Periodic payment (PMT)",USD(p.pmt),p.due?"Paid at the beginning of each period.":"Paid at the end of each period."],["Future value (FV)",USD(p.fv),"Opposite-side terminal cash flow."],["Effective periodic rate",`${F(p.rate*100,8)}%`,"Rate applied per payment period."],["Effective annual rate",`${F(p.effectiveAnnual,8)}%`,"Compounded payment-period rate."],["Sum of periodic payments",USD(p.totalPayments),"PMT multiplied by N."],["Total interest",USD(p.totalInterest),"Implied interest across all periods."],["Equation residual",USD(p.residual),"Rounding check; should be close to zero."]];if(p.scheduleCapped)rows.push(["Schedule display","First 600 periods","The result still uses the full entered period count."]);if(schedule)schedule.innerHTML=p.schedule.map(item=>`<tr><td>${item.period}</td><td>${USD(item.opening)}</td><td>${USD(item.payment)}</td><td>${USD(item.interest)}</td><td>${USD(item.ending)}</td></tr>`).join('')}
+  } else if (engine === "feet_meters") {
     const reverse=document.getElementById('conversion_direction')?.value==='meters_to_feet';
     const meters=reverse?V('meters'):(V('feet')+V('inches')/12)*0.3048, totalFeet=meters/0.3048, wholeFeet=Math.floor(totalFeet), inches=(totalFeet-wholeFeet)*12;
     cards=[["Meters",`${F(meters,6)} m`,"SI length."],["Decimal feet",`${F(totalFeet,6)} ft`,"Feet as a decimal."],["Feet and inches",`${wholeFeet} ft ${F(inches,3)} in`,"US customary format."],["Total inches",`${F(totalFeet*12,3)} in`,"Combined length in inches."]];
