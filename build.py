@@ -14,7 +14,7 @@ KEYWORD_STATS = ROOT / "exports" / "keyword-stats-positive.json"
 SEO_STRATEGY = ROOT / "exports" / "seo-keyword-strategy-2026-09-05.json"
 PUBLIC_BASE_PATH = os.environ.get("PUBLIC_BASE_PATH", "").strip().rstrip("/")
 PUBLIC_SITE_DOMAIN = os.environ.get("PUBLIC_SITE_DOMAIN", "").strip()
-ASSET_VERSION = "20260918d"
+ASSET_VERSION = "20260918e"
 CALCULATOR_REDIRECTS = {
     "concrete-calculator": "concrete-volume-calculator",
     "loan-payment-calculator": "loan-calculator",
@@ -617,6 +617,8 @@ def calculator_net_template(keyword, slug, cat):
         base.update({"engine": "sales_tax_advanced", "desc": "Add sales tax to a purchase, reverse tax from a tax-inclusive total, or calculate the tax rate from before-tax and after-tax prices.", "formula": "Sales tax = taxable amount x tax rate; tax-inclusive total = before-tax total + sales tax.", "inputs": []})
     elif slug == "percent-calculator":
         base.update({"engine": "percent_advanced", "desc": "Solve six common percentage problems: percent of a number, percent of total, reverse percentage, percent change, percentage difference, and increase or decrease by a percent.", "formula": "Percentage calculations compare a part with a whole, or a change with its original value.", "inputs": []})
+    elif slug == "fraction-calculator":
+        base.update({"engine": "fraction_advanced", "desc": "Add, subtract, multiply, and divide fractions or mixed numbers, simplify fractions, and convert decimals to fractions with step-by-step results.", "formula": "Fractions are normalized and reduced by their greatest common divisor.", "inputs": []})
     elif slug == "take-home-pay-calculator":
         base.update({"engine": "take_home_pay", "desc": "Estimate 2026 US take-home pay from federal income tax brackets, Social Security, Medicare, state or local tax, pay frequency, and payroll deductions.", "formula": "Take-home pay = gross pay - estimated federal income tax - FICA taxes - state or local tax - pre-tax and post-tax deductions.", "inputs": []})
     elif "mortgage" in text:
@@ -784,6 +786,8 @@ def seo_title(calc):
         return "Loan Calculator: Payment & Interest | NS Calculators"
     if calc.get("slug") == "percent-calculator":
         return "Percentage Calculator: Change, Difference & More"
+    if calc.get("slug") == "fraction-calculator":
+        return "Fraction Calculator: Add, Subtract, Multiply & Divide"
     if calc.get("slug") == "compound-interest-calculator":
         return "Compound Interest Calculator | NS Calculators"
     if calc.get("slug") == "take-home-pay-calculator":
@@ -810,6 +814,8 @@ def seo_description(calc):
     context = f" for {display_group(calculator_group(calc)).lower()}" if calc.get("seo_context_label") else ""
     if calc.get("slug") == "percent-calculator":
         return "Calculate a percentage of a number, percent of total, reverse percentage, percent change, percentage difference, or a percentage increase or decrease."
+    if calc.get("slug") == "fraction-calculator":
+        return "Calculate fractions and mixed numbers with step-by-step addition, subtraction, multiplication, division, simplification, decimal, and percent results."
     if calc.get("slug") == "compound-interest-calculator":
         return "Calculate compound interest with monthly and annual contributions, tax, inflation, years and months, detailed growth charts, and an annual schedule."
     if calc.get("slug") == "truck-payload-calculator":
@@ -989,6 +995,24 @@ def percent_input_html():
 <div class="field is-hidden" data-percent-mode="adjust"><label for="pct_base">Starting value</label><input id="pct_base" type="number" step="any" value="200"></div>
 <div class="field is-hidden" data-percent-mode="adjust"><label for="pct_adjust">Percent change</label><div class="input-unit"><input id="pct_adjust" type="number" step="any" min="0" value="15"><span>%</span></div></div>
 <div class="field field-wide is-hidden" data-percent-mode="adjust"><label for="pct_direction">Operation</label><select id="pct_direction"><option value="increase" selected>Increase by the percentage</option><option value="decrease">Decrease by the percentage</option></select></div>
+</div>"""
+
+
+def fraction_input_html():
+    return """<div class="fields fraction-fields">
+<div class="field field-wide"><label for="fraction_mode">Calculate</label><select id="fraction_mode"><option value="arithmetic" selected>Fraction and mixed-number arithmetic</option><option value="simplify">Simplify a fraction</option><option value="decimal">Convert a decimal to a fraction</option></select></div>
+<div class="field-group-label" data-fraction-mode="arithmetic">First number</div>
+<div class="field" data-fraction-mode="arithmetic"><label for="frac_a_whole">Whole</label><input id="frac_a_whole" type="number" step="1" value="0"></div>
+<div class="field" data-fraction-mode="arithmetic"><label for="frac_a_num">Numerator</label><input id="frac_a_num" type="number" step="1" value="1"></div>
+<div class="field" data-fraction-mode="arithmetic"><label for="frac_a_den">Denominator</label><input id="frac_a_den" type="number" step="1" value="2"></div>
+<div class="field field-wide" data-fraction-mode="arithmetic"><label for="fraction_operation">Operation</label><select id="fraction_operation"><option value="add" selected>Add (+)</option><option value="subtract">Subtract (-)</option><option value="multiply">Multiply (x)</option><option value="divide">Divide (divide)</option></select></div>
+<div class="field-group-label" data-fraction-mode="arithmetic">Second number</div>
+<div class="field" data-fraction-mode="arithmetic"><label for="frac_b_whole">Whole</label><input id="frac_b_whole" type="number" step="1" value="0"></div>
+<div class="field" data-fraction-mode="arithmetic"><label for="frac_b_num">Numerator</label><input id="frac_b_num" type="number" step="1" value="1"></div>
+<div class="field" data-fraction-mode="arithmetic"><label for="frac_b_den">Denominator</label><input id="frac_b_den" type="number" step="1" value="3"></div>
+<div class="field is-hidden" data-fraction-mode="simplify"><label for="frac_simple_num">Numerator</label><input id="frac_simple_num" type="number" step="1" value="42"></div>
+<div class="field is-hidden" data-fraction-mode="simplify"><label for="frac_simple_den">Denominator</label><input id="frac_simple_den" type="number" step="1" value="56"></div>
+<div class="field field-wide is-hidden" data-fraction-mode="decimal"><label for="fraction_decimal">Decimal</label><input id="fraction_decimal" type="number" step="any" value="0.375"></div>
 </div>"""
 
 
@@ -1477,6 +1501,20 @@ def conversion_copy(calc):
 
 
 def high_value_calculator_copy(calc):
+    if calc.get("slug") == "fraction-calculator":
+        return """
+<h2>Fraction calculator with mixed numbers</h2><p>Use the arithmetic mode to add, subtract, multiply, or divide proper fractions, improper fractions, whole numbers, and mixed numbers. Enter a negative sign on the whole-number field to make the entire mixed number negative. If the whole number is zero, put the negative sign on the numerator.</p>
+<h2>Adding and subtracting fractions</h2><p>Fractions need a common denominator before their numerators can be combined. This calculator shows the least common denominator and the equivalent fractions used in the operation, then reduces the answer to lowest terms.</p>
+<p class="formula">a/b + c/d = (a x d + c x b) / (b x d)</p>
+<p class="formula">a/b - c/d = (a x d - c x b) / (b x d)</p>
+<h2>Multiplying and dividing fractions</h2><p>To multiply fractions, multiply the numerators and denominators. To divide, multiply the first fraction by the reciprocal of the second. Division is undefined when the second fraction equals zero.</p>
+<p class="formula">a/b x c/d = (a x c) / (b x d)</p>
+<p class="formula">a/b divide c/d = (a x d) / (b x c)</p>
+<h2>Mixed numbers and improper fractions</h2><p>A mixed number combines a whole number and a proper fraction. Before calculating, the tool converts each mixed number to an improper fraction. For example, 1 1/2 becomes 3/2 because 1 x 2 + 1 = 3.</p>
+<h2>Simplify a fraction</h2><p>Select Simplify a fraction to divide the numerator and denominator by their greatest common divisor. For example, the greatest common divisor of 42 and 56 is 14, so 42/56 reduces to 3/4.</p>
+<h2>Convert a decimal to a fraction</h2><p>Select Convert a decimal to a fraction to express a terminating decimal as an exact fraction based on the entered decimal places. For example, 0.375 becomes 375/1000 and reduces to 3/8.</p>
+<h2>Decimal and percentage equivalents</h2><p>Every valid result includes a decimal and percentage equivalent. The decimal is the numerator divided by the denominator; the percentage is that decimal multiplied by 100.</p>
+<h2>Frequently asked questions</h2><h3>Can the denominator be zero?</h3><p>No. A fraction with a denominator of zero is undefined, so the calculator displays an error instead of a numerical result.</p><h3>How do I enter a whole number?</h3><p>Enter the number in the Whole field and use 0 as the numerator. You can also enter the whole number as a numerator over 1.</p><h3>Does the calculator reduce answers automatically?</h3><p>Yes. It divides the numerator and denominator by their greatest common divisor and keeps the denominator positive.</p>"""
     if calc.get("slug") == "sales-tax-calculator":
         return """
 <h2>Sales tax calculator</h2><p>Choose Add tax to calculate sales tax and the checkout total from a before-tax price. Choose Reverse tax when you know the tax-inclusive total and rate. Choose Find the sales tax rate when both the before-tax and after-tax prices are known.</p>
@@ -1774,6 +1812,13 @@ def default_calculator_copy(calc):
 
 
 def analysis_extra_html(calc):
+    if calc.get("slug") == "fraction-calculator":
+        return """<section class="mortgage-dashboard generic-dashboard fraction-dashboard" aria-label="Fraction calculation results">
+<div class="section-head stack"><h2>Fraction Results</h2><p>Review the simplified answer, equivalent forms, and calculation steps.</p></div>
+<div class="summary-grid" id="genericSummary"></div>
+<div class="chart-grid"><div class="chart-card compact-chart"><h3>Value Comparison</h3><canvas id="genericChart" width="620" height="230" aria-label="Fraction operands and result comparison" data-chart-type="bars"></canvas></div></div>
+<div class="table-card"><h3>Step-by-Step Calculation</h3><div class="table-scroll"><table class="data-table" id="genericTable"><thead><tr><th>Step</th><th>Value</th><th>Note</th></tr></thead><tbody></tbody></table></div></div>
+</section>"""
     if calc.get("slug") == "percent-calculator":
         return """<section class="mortgage-dashboard generic-dashboard percent-dashboard" aria-label="Percentage calculation results">
 <div class="section-head stack"><h2>Percentage Results</h2><p>Review the answer, formula, inputs, and related values.</p></div>
@@ -1926,6 +1971,9 @@ def calculator_page(site, calc, related):
     elif calc.get("slug") == "percent-calculator":
         fields = percent_input_html()
         page_engine = "percent_advanced"
+    elif calc.get("slug") == "fraction-calculator":
+        fields = fraction_input_html()
+        page_engine = "fraction_advanced"
     elif calc.get("slug") == "truck-payload-calculator":
         fields = truck_payload_input_html()
     elif calc.get("slug") == "towing-capacity-calculator":
@@ -2123,6 +2171,9 @@ body{background:var(--bg)}.site-header{border-bottom-color:#dbe7f4}.primary{back
 @media(max-width:560px){.vehicle-weight-fields{grid-template-columns:repeat(2,minmax(0,1fr))}.vehicle-weight-fields .field label{min-height:34px;display:flex;align-items:end}.vehicle-weight-fields .field-wide{grid-column:1/-1}}
 @media(max-width:560px){.fuel-fields{grid-template-columns:repeat(2,minmax(0,1fr))}.fuel-fields .field label{min-height:34px;display:flex;align-items:end}}
 @media(max-width:560px){.vehicle-value-fields{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px!important}.vehicle-value-fields .field label{min-height:28px;display:flex;align-items:end;font-size:12px!important}.vehicle-value-fields .field-wide{grid-column:1/-1}.vehicle-value-fields .field input,.vehicle-value-fields .field select{height:36px!important}.calculator-article:has(.vehicle-value-fields) .calc{padding:10px}.calculator-article:has(.vehicle-value-fields) .calc h2{margin-bottom:6px;font-size:17px}.calculator-article:has(.vehicle-value-fields) .calc-actions{margin-top:8px}.calculator-article:has(.vehicle-value-fields) .calc-actions .btn{min-height:36px;padding:7px 10px}.calculator-article:has(.vehicle-value-fields) .result{padding:9px 10px}}
+.fraction-fields{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px!important}.fraction-fields .field-wide{grid-column:1/-1}.fraction-dashboard .chart-grid{grid-template-columns:1fr}.fraction-dashboard .chart-card canvas{max-height:230px}.calculator-article:has(.fraction-fields) .calculator-layout.split-analysis{grid-template-columns:minmax(400px,460px) minmax(0,1fr)}
+@media(max-width:900px){.calculator-article:has(.fraction-fields) .calculator-layout.split-analysis{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:560px){.fraction-fields{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px!important}.fraction-fields .field label{font-size:12px!important}.fraction-fields .field input{padding:0 7px}.calculator-article:has(.fraction-fields) .calc{padding:10px}.fraction-dashboard .summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .fitment-fields{gap:8px!important}.tire-size-fields{grid-template-columns:repeat(3,minmax(0,1fr))}.wheel-offset-fields{grid-template-columns:repeat(2,minmax(0,1fr))}.field-group-label{grid-column:1/-1;margin-top:2px;padding-bottom:3px;border-bottom:1px solid var(--line);color:var(--brand);font-size:13px;font-weight:850}.fitment-dashboard .chart-grid{grid-template-columns:1fr}.fitment-dashboard .chart-card canvas{max-height:230px}.calculator-article:has(.fitment-fields) .calculator-layout.split-analysis{grid-template-columns:minmax(390px,460px) minmax(0,1fr)}
 @media(max-width:900px){.calculator-article:has(.fitment-fields) .calculator-layout.split-analysis{grid-template-columns:minmax(0,1fr)}}
 @media(max-width:560px){.fitment-fields{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px!important}.tire-size-fields{grid-template-columns:repeat(3,minmax(0,1fr))}.fitment-fields .field label{min-height:28px;display:flex;align-items:end;font-size:12px!important}.fitment-fields .field-wide{grid-column:1/-1}.fitment-fields .field input{height:36px!important;padding:0 6px}.fitment-fields .input-unit input,.fitment-fields .input-unit span{height:36px!important}.fitment-fields .input-unit span{padding:0 6px;font-size:12px}.field-group-label{margin-top:0;font-size:12px}.calculator-article:has(.fitment-fields) .calc{padding:10px}.calculator-article:has(.fitment-fields) .calc h2{margin-bottom:6px;font-size:17px}.calculator-article:has(.fitment-fields) .calc-actions{margin-top:8px}.calculator-article:has(.fitment-fields) .calc-actions .btn{min-height:36px;padding:7px 10px}.calculator-article:has(.fitment-fields) .result{padding:9px 10px;font-size:12px}.calculator-article:has(.fitment-fields) .result strong{font-size:23px}.fitment-dashboard .summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
@@ -2248,6 +2299,14 @@ function syncSalesTaxFields(){const mode=document.getElementById('sales_mode')?.
 function salesTaxProjection(){const mode=syncSalesTaxFields();let rate=Math.max(0,V('sales_rate')),before=0,tax=0,after=0,price=Math.max(0,V('sales_price')),quantity=1,discount=0,discountedUnit=price,merchandise=0,shipping=0,taxableBase=0,savings=0,shippingTaxable=false;if(mode==='reverse'){after=Math.max(0,V('sales_total'));before=after/(1+rate/100);tax=after-before;taxableBase=before;merchandise=before}else if(mode==='rate'){before=price;after=Math.max(0,V('sales_after'));tax=Math.max(0,after-before);rate=before?tax/before*100:0;taxableBase=before;merchandise=before}else{quantity=Math.max(1,Math.floor(V('sales_quantity')));discount=Math.max(0,Math.min(100,V('sales_discount')));discountedUnit=price*(1-discount/100);merchandise=discountedUnit*quantity;shipping=Math.max(0,V('sales_shipping'));shippingTaxable=document.getElementById('sales_shipping_taxable')?.value==='yes';taxableBase=merchandise+(shippingTaxable?shipping:0);tax=taxableBase*rate/100;before=merchandise+shipping;after=before+tax;savings=(price-discountedUnit)*quantity}return{mode,rate,before,tax,after,price,quantity,discount,discountedUnit,merchandise,shipping,taxableBase,savings,shippingTaxable}}
 function syncPercentFields(){const mode=document.getElementById('percent_mode')?.value||'percent_of';document.querySelectorAll('[data-percent-mode]').forEach(el=>el.classList.toggle('is-hidden',el.dataset.percentMode!==mode));return mode}
 function percentageProjection(){const mode=syncPercentFields();let result=0,answer='',detail='',formula='',valid=true,a=0,b=0,change=0,average=0,direction='';if(mode==='what_percent'){a=V('pct_part');b=V('pct_whole');valid=b!==0;result=valid?a/b*100:0;answer=valid?`${F(result,4)}%`:'Undefined';detail=valid?`${F(a,4)} is ${F(result,4)}% of ${F(b,4)}.`:'The whole cannot be zero.';formula='part / whole x 100'}else if(mode==='find_whole'){a=V('pct_known_part');b=V('pct_known_percent');valid=b!==0;result=valid?a/(b/100):0;answer=valid?F(result,4):'Undefined';detail=valid?`${F(a,4)} is ${F(b,4)}% of ${F(result,4)}.`:'The percentage cannot be zero.';formula='part / (percentage / 100)'}else if(mode==='change'){a=V('pct_old');b=V('pct_new');change=b-a;valid=a!==0;result=valid?change/Math.abs(a)*100:0;direction=result>0?'increase':result<0?'decrease':'no change';answer=valid?`${result>0?'+':''}${F(result,4)}%`:'Undefined';detail=valid?`${F(a,4)} to ${F(b,4)} is a ${F(Math.abs(result),4)}% ${direction}.`:'Percent change from an original value of zero is undefined.';formula='(new - original) / |original| x 100'}else if(mode==='difference'){a=V('pct_value_one');b=V('pct_value_two');change=Math.abs(a-b);average=(Math.abs(a)+Math.abs(b))/2;valid=average!==0;result=valid?change/average*100:0;answer=valid?`${F(result,4)}%`:'Undefined';detail=valid?`${F(a,4)} and ${F(b,4)} differ by ${F(result,4)}%.`:'Percentage difference is undefined when both values are zero.';formula='|value 1 - value 2| / average magnitude x 100'}else if(mode==='adjust'){a=V('pct_base');b=Math.max(0,V('pct_adjust'));direction=document.getElementById('pct_direction')?.value||'increase';change=a*b/100*(direction==='decrease'?-1:1);result=a+change;answer=F(result,4);detail=`${F(a,4)} ${direction}d by ${F(b,4)}% is ${F(result,4)}.`;formula=`starting value x (1 ${direction==='decrease'?'-':'+'} percentage / 100)`}else{a=V('pct_percent');b=V('pct_value');result=a/100*b;answer=F(result,4);detail=`${F(a,4)}% of ${F(b,4)} is ${F(result,4)}.`;formula='percentage / 100 x whole'}return{mode,result,answer,detail,formula,valid,a,b,change,average,direction}}
+function fractionGcd(a,b){a=Math.abs(Math.trunc(a));b=Math.abs(Math.trunc(b));while(b){const t=b;b=a%b;a=t}return a||1}
+function fractionNormalize(n,d){n=Math.trunc(n);d=Math.trunc(d);if(!Number.isFinite(n)||!Number.isFinite(d)||d===0)return null;if(d<0){n=-n;d=-d}const divisor=fractionGcd(n,d);return{n:n/divisor,d:d/divisor,gcd:divisor}}
+function fractionMixed(whole,num,den){whole=Math.trunc(whole);num=Math.trunc(num);den=Math.trunc(den);if(den===0)return null;const sign=(whole<0||num<0?-1:1)*(den<0?-1:1);return fractionNormalize(sign*(Math.abs(whole)*Math.abs(den)+Math.abs(num)),Math.abs(den))}
+function fractionText(value){if(!value)return'Undefined';return value.d===1?String(value.n):`${value.n}/${value.d}`}
+function mixedText(value){if(!value)return'Undefined';if(value.n===0)return'0';const sign=value.n<0?'-':'',absolute=Math.abs(value.n),whole=Math.floor(absolute/value.d),remainder=absolute%value.d;if(!remainder)return`${sign}${whole}`;return whole?`${sign}${whole} ${remainder}/${value.d}`:`${sign}${remainder}/${value.d}`}
+function decimalFraction(){const input=document.getElementById('fraction_decimal'),raw=(input?.value||'0').trim(),value=Number(raw);if(!Number.isFinite(value))return null;let normalized=raw.toLowerCase();if(normalized.includes('e'))normalized=value.toFixed(12).replace(/0+$/,'').replace(/\.$/,'');const decimals=(normalized.split('.')[1]||'').length,scale=Math.pow(10,Math.min(12,decimals)),numerator=Math.round(value*scale);return fractionNormalize(numerator,scale)}
+function syncFractionFields(){const mode=document.getElementById('fraction_mode')?.value||'arithmetic';document.querySelectorAll('[data-fraction-mode]').forEach(el=>el.classList.toggle('is-hidden',el.dataset.fractionMode!==mode));return mode}
+function fractionProjection(){const mode=syncFractionFields();let a=null,b=null,result=null,rawN=0,rawD=1,operator='',operation='',step='',lcd=0;if(mode==='decimal'){result=decimalFraction();const decimal=Number(document.getElementById('fraction_decimal')?.value||0);return{mode,valid:!!result,a:null,b:null,result,rawN:result?.n||0,rawD:result?.d||1,operator:'=',operation:'Decimal conversion',step:`${F(decimal,12)} expressed over a power of 10 and reduced.`,lcd:0}}if(mode==='simplify'){rawN=Math.trunc(V('frac_simple_num'));rawD=Math.trunc(V('frac_simple_den'));result=fractionNormalize(rawN,rawD);return{mode,valid:!!result,a:null,b:null,result,rawN,rawD,operator:'=',operation:'Simplification',step:result?`Divide numerator and denominator by ${fractionGcd(rawN,rawD)}.`:'A denominator of zero is undefined.',lcd:0}}a=fractionMixed(V('frac_a_whole'),V('frac_a_num'),V('frac_a_den'));b=fractionMixed(V('frac_b_whole'),V('frac_b_num'),V('frac_b_den'));operation=document.getElementById('fraction_operation')?.value||'add';operator={add:'+',subtract:'-',multiply:'x',divide:'/'}[operation];if(!a||!b)return{mode,valid:false,a,b,result:null,rawN:0,rawD:0,operator,operation,step:'Each denominator must be nonzero.',lcd:0};if(operation==='add'||operation==='subtract'){rawD=a.d*b.d;rawN=operation==='add'?a.n*b.d+b.n*a.d:a.n*b.d-b.n*a.d;lcd=Math.abs(a.d*b.d)/fractionGcd(a.d,b.d);step=`Use common denominator ${lcd}, combine the numerators, then reduce.`}else if(operation==='multiply'){rawN=a.n*b.n;rawD=a.d*b.d;step='Multiply the numerators and denominators, then reduce.'}else{if(b.n===0)return{mode,valid:false,a,b,result:null,rawN:0,rawD:0,operator,operation,step:'Division by a zero fraction is undefined.',lcd:0};rawN=a.n*b.d;rawD=a.d*b.n;step='Multiply the first fraction by the reciprocal of the second, then reduce.'}result=fractionNormalize(rawN,rawD);return{mode,valid:!!result,a,b,result,rawN,rawD,operator,operation,step,lcd}}
 function tradeInProjection(){const comparable=Math.max(0,V('comparable')),adjustment=V('market_adjustment'),margin=Math.max(0,V('dealer_margin')),reconditioning=Math.max(0,V('reconditioning')),payoff=Math.max(0,V('payoff')),replacement=Math.max(0,V('replacement_price')),taxRate=Math.max(0,V('tax_rate'))/100,trade=Math.max(0,comparable+adjustment-margin-reconditioning),equity=trade-payoff,taxSavings=Math.min(trade,replacement)*taxRate;return{comparable,adjustment,margin,reconditioning,payoff,replacement,taxRate,trade,equity,taxSavings,effective:trade+taxSavings}}
 function usedCarProjection(){const benchmark=Math.max(0,V('retail_benchmark')),condition=V('condition_adjustment'),mileage=V('mileage_adjustment'),options=V('options_adjustment'),regional=V('regional_adjustment'),spread=Math.max(0,Math.min(50,V('dealer_spread'))),retail=Math.max(0,benchmark*(1+condition/100)*(1+regional/100)+mileage+options),privateValue=retail*(1-spread/200),trade=retail*(1-spread/100);return{benchmark,condition,mileage,options,regional,spread,retail,privateValue,trade}}
 function tireSpec(width,aspect,rim){const sidewall=width*aspect/100,diameter=rim+2*sidewall/25.4,circumference=Math.PI*diameter,revsPerMile=63360/circumference;return{width,aspect,rim,sidewall,diameter,circumference,revsPerMile}}
@@ -2328,6 +2387,7 @@ function calc(e){
   case'take_home_pay':{const p=takeHomeProjection();show(`<strong>${USD(p.perPay)} take-home per paycheck</strong><br>${USD(p.net)} annual net pay; ${USD(p.monthly)} monthly average; ${F(p.effective,2)}% estimated total tax rate.`);break}
   case'sales_tax_advanced':{const p=salesTaxProjection();if(p.mode==='rate')show(`<strong>${F(p.rate,3)}% implied sales tax rate</strong><br>${USD(p.tax)} tax between ${USD(p.before)} before tax and ${USD(p.after)} after tax.`);else if(p.mode==='reverse')show(`<strong>${USD(p.before)} before tax</strong><br>${USD(p.tax)} tax removed from the ${USD(p.after)} tax-inclusive total at ${F(p.rate,3)}%.`);else show(`<strong>${USD(p.after)} after-tax total</strong><br>${USD(p.tax)} sales tax on ${USD(p.taxableBase)} taxable amount at ${F(p.rate,3)}%.`);break}
   case'percent_advanced':{const p=percentageProjection();show(`<strong>${p.answer}</strong><br>${p.detail}`);break}
+  case'fraction_advanced':{const p=fractionProjection();if(!p.valid)show(`<strong>Undefined</strong><br>${p.step}`);else show(`<strong>${fractionText(p.result)}</strong><br>${mixedText(p.result)}; decimal ${F(p.result.n/p.result.d,10)}; ${F(p.result.n/p.result.d*100,6)}%.`);break}
   case'discount':{let r=V('price')*(1-V('discount')/100);show(`<strong>${USD(r)}</strong><br>Savings: ${USD(V('price')-r)}.`);break}
   case'salary':{let r=V('salary')*(1+V('increase')/100);show(`<strong>${USD(r)}</strong><br>Annual increase: ${USD(r-V('salary'))}.`);break}
   case'dome':{let radius=V('diameter')/2,area=2*Math.PI*radius*radius,vol=2/3*Math.PI*Math.pow(radius,3);show(`<strong>${F(area,2)} sq ft</strong><br>Approx. curved area; ${F(vol,2)} cu ft volume.`);break}
@@ -2514,6 +2574,23 @@ function renderGenericFromEngine(engine) {
     cards=[["Take-home pay",USD(net),"Estimated annual net pay."],["Monthly net",USD(net/12),"Estimated monthly take-home."],["Estimated tax",USD(tax),"Taxable income times rate."],["Taxable income",USD(taxable),"Income minus deductions."]];
     bars=[{label:"Take-home",value:net,display:USD(net)},{label:"Tax",value:tax,display:USD(tax)},{label:"Deductions",value:V('deductions'),display:USD(V('deductions'))}];
     rows=[["Gross income",USD(income),"Entered annual income."],["Deductions",USD(V('deductions')),"Entered deductions."],["Effective rate",`${F(V('taxrate'),2)}%`,"Applied to taxable income."],["Net pay",USD(net),"Estimated take-home."]];
+  } else if (engine === "fraction_advanced") {
+    const p=fractionProjection();
+    if(!p.valid){cards=[["Result","Undefined",p.step],["Status","Check inputs","Denominators and divisors must be nonzero."],["Decimal","Undefined","No finite result."],["Percentage","Undefined","No finite result."]];bars=[{label:"Result",value:0,display:"Undefined"}];rows=[["Validation","Undefined",p.step]]}
+    else{
+      const decimal=p.result.n/p.result.d,improper=fractionText(p.result),mixed=mixedText(p.result),percent=`${F(decimal*100,6)}%`;
+      cards=[["Simplified fraction",improper,"Answer in lowest terms."],["Mixed number",mixed,"Whole-number and fractional form."],["Decimal",F(decimal,10),"Numerator divided by denominator."],["Percentage",percent,"Decimal multiplied by 100."]];
+      if(p.mode==='arithmetic'){
+        bars=[{label:"First number",value:p.a.n/p.a.d,display:fractionText(p.a)},{label:"Second number",value:p.b.n/p.b.d,display:fractionText(p.b)},{label:"Result",value:decimal,display:improper}];
+        rows=[["Convert first number",fractionText(p.a),"Improper fraction in lowest terms."],["Convert second number",fractionText(p.b),"Improper fraction in lowest terms."],["Operation",`${fractionText(p.a)} ${p.operator} ${fractionText(p.b)}`,p.step],["Before reduction",`${p.rawN}/${p.rawD}`,"Numerator and denominator after the operation."],["Greatest common divisor",F(fractionGcd(p.rawN,p.rawD),0),"Divide both terms by this value."],["Simplified fraction",improper,"Final fraction in lowest terms."],["Mixed number",mixed,"Equivalent mixed-number form."],["Decimal",F(decimal,10),"Equivalent decimal value."],["Percentage",percent,"Equivalent percentage."]];
+      }else if(p.mode==='simplify'){
+        bars=[{label:"Original numerator",value:p.rawN,display:F(p.rawN,0)},{label:"Original denominator",value:p.rawD,display:F(p.rawD,0)},{label:"Result",value:decimal,display:improper}];
+        rows=[["Original fraction",`${p.rawN}/${p.rawD}`,"Entered fraction."],["Greatest common divisor",F(fractionGcd(p.rawN,p.rawD),0),p.step],["Simplified fraction",improper,"Final fraction in lowest terms."],["Mixed number",mixed,"Equivalent mixed-number form."],["Decimal",F(decimal,10),"Equivalent decimal value."],["Percentage",percent,"Equivalent percentage."]];
+      }else{
+        const entered=document.getElementById('fraction_decimal')?.value||'0';bars=[{label:"Entered decimal",value:Number(entered),display:entered},{label:"Numerator",value:p.result.n,display:F(p.result.n,0)},{label:"Denominator",value:p.result.d,display:F(p.result.d,0)}];
+        rows=[["Entered decimal",entered,"Original value."],["Power-of-ten fraction",p.step,"Built from the decimal places."],["Simplified fraction",improper,"Final fraction in lowest terms."],["Mixed number",mixed,"Equivalent mixed-number form."],["Percentage",percent,"Equivalent percentage."]];
+      }
+    }
   } else if (engine === "percent_advanced") {
     const p=percentageProjection();
     if(p.mode==='what_percent'){
