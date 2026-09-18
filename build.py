@@ -14,7 +14,7 @@ KEYWORD_STATS = ROOT / "exports" / "keyword-stats-positive.json"
 SEO_STRATEGY = ROOT / "exports" / "seo-keyword-strategy-2026-09-05.json"
 PUBLIC_BASE_PATH = os.environ.get("PUBLIC_BASE_PATH", "").strip().rstrip("/")
 PUBLIC_SITE_DOMAIN = os.environ.get("PUBLIC_SITE_DOMAIN", "").strip()
-ASSET_VERSION = "20260918a"
+ASSET_VERSION = "20260918b"
 CALCULATOR_REDIRECTS = {
     "concrete-calculator": "concrete-volume-calculator",
     "loan-payment-calculator": "loan-calculator",
@@ -613,7 +613,9 @@ def calculator_net_template(keyword, slug, cat):
         "example": f"Enter sample values to generate an illustrative {keyword.lower()} result.",
         "inputs": [["amount", "Amount", "number", 1000], ["rate", "Rate (%)", "number", 5], ["years", "Years", "number", 10]],
     }
-    if slug == "take-home-pay-calculator":
+    if slug == "sales-tax-calculator":
+        base.update({"engine": "sales_tax_advanced", "desc": "Add sales tax to a purchase, reverse tax from a tax-inclusive total, or calculate the tax rate from before-tax and after-tax prices.", "formula": "Sales tax = taxable amount x tax rate; tax-inclusive total = before-tax total + sales tax.", "inputs": []})
+    elif slug == "take-home-pay-calculator":
         base.update({"engine": "take_home_pay", "desc": "Estimate 2026 US take-home pay from federal income tax brackets, Social Security, Medicare, state or local tax, pay frequency, and payroll deductions.", "formula": "Take-home pay = gross pay - estimated federal income tax - FICA taxes - state or local tax - pre-tax and post-tax deductions.", "inputs": []})
     elif "mortgage" in text:
         base.update({"engine": "cn_mortgage", "desc": "Estimate a mortgage payment with principal, interest, taxes, insurance, PMI, HOA, extra payments, and total payoff costs.", "formula": "Monthly payment = principal and interest + optional annual taxes, insurance, PMI, HOA, and other costs divided by 12. Extra payments reduce payoff time and total interest.", "inputs": [["price", "Home price ($)", "number", 400000], ["down", "Down payment ($)", "number", 20], ["apr", "Interest rate (%)", "number", 6.81], ["years", "Loan term (years)", "number", 30], ["start", "Start month", "month", "2026-09"], ["tax", "Property tax", "number", 1.2], ["insurance", "Home insurance", "number", 1500], ["pmi", "PMI", "number", 0], ["hoa", "HOA", "number", 0], ["other", "Other costs", "number", 4000], ["increase", "Annual tax/insurance increase (%)", "number", 0], ["extra_monthly", "Extra monthly pay ($)", "number", 0], ["extra_yearly", "Extra yearly pay ($)", "number", 0], ["extra_once", "One-time extra pay ($)", "number", 0]]})
@@ -778,6 +780,8 @@ def seo_title(calc):
         return "Loan Calculator: Payment & Interest | NS Calculators"
     if calc.get("slug") == "take-home-pay-calculator":
         return "Take Home Pay Calculator 2026 | NS Calculators"
+    if calc.get("slug") == "sales-tax-calculator":
+        return "Sales Tax Calculator: Add or Reverse Tax | NS Calculators"
     title = smart_title(primary_keyword(calc))
     if calc.get("seo_context_label"):
         context = smart_title(calc["seo_context_label"])
@@ -848,6 +852,8 @@ def seo_description(calc):
         return "Calculate one or two discounts, savings, quantity, sales tax, fees, effective discount, and the estimated final checkout total."
     if calc.get("slug") == "take-home-pay-calculator":
         return "Estimate 2026 US take-home pay by paycheck with federal brackets, Social Security, Medicare, state tax, and payroll deductions."
+    if calc.get("slug") == "sales-tax-calculator":
+        return "Add sales tax, reverse tax from a total, or find the tax rate with quantity, discount, shipping, and taxable-shipping options."
     if calc.get("engine") == "linear_convert":
         return f"Use this free {keyword} to convert units instantly with the formula, example, and related conversion calculators."
     if calc.get("engine") in ("cn_mortgage", "loan_page", "car_loan"):
@@ -932,6 +938,22 @@ def take_home_pay_input_html():
 <div class="field"><label for="pay_state_rate">State and local effective rate</label><div class="input-unit"><input id="pay_state_rate" type="number" step="any" min="0" value="5"><span>%</span></div></div>
 <div class="field"><label for="pay_posttax">Post-tax deductions</label><div class="input-unit"><input id="pay_posttax" type="number" step="any" min="0" value="600"><span>$/yr</span></div></div>
 <div class="field field-wide"><label for="pay_extra">Extra federal withholding</label><div class="input-unit"><input id="pay_extra" type="number" step="any" min="0" value="0"><span>$/paycheck</span></div></div>
+</div></details>
+</div>"""
+
+
+def sales_tax_input_html():
+    return """<div class="fields sales-tax-fields">
+<div class="field field-wide"><label for="sales_mode">Calculate</label><select id="sales_mode"><option value="add" selected>Add tax to a purchase</option><option value="reverse">Reverse tax from a total</option><option value="rate">Find the sales tax rate</option></select></div>
+<div class="field" data-sales-add data-sales-rate><label for="sales_price">Price before tax</label><div class="input-unit"><input id="sales_price" type="number" step="any" min="0" value="100"><span>$</span></div></div>
+<div class="field is-hidden" data-sales-reverse><label for="sales_total">Tax-inclusive total</label><div class="input-unit"><input id="sales_total" type="number" step="any" min="0" value="108.25"><span>$</span></div></div>
+<div class="field is-hidden" data-sales-rate><label for="sales_after">Price after tax</label><div class="input-unit"><input id="sales_after" type="number" step="any" min="0" value="108.25"><span>$</span></div></div>
+<div class="field" data-sales-rate-input><label for="sales_rate">Combined sales tax rate</label><div class="input-unit"><input id="sales_rate" type="number" step="any" min="0" value="8.25"><span>%</span></div></div>
+<details class="more-options field-wide" data-sales-add><summary>Quantity, discount, and shipping</summary><div class="fields">
+<div class="field"><label for="sales_quantity">Quantity</label><input id="sales_quantity" type="number" step="1" min="1" value="1"></div>
+<div class="field"><label for="sales_discount">Discount</label><div class="input-unit"><input id="sales_discount" type="number" step="any" min="0" max="100" value="0"><span>%</span></div></div>
+<div class="field"><label for="sales_shipping">Shipping and handling</label><div class="input-unit"><input id="sales_shipping" type="number" step="any" min="0" value="0"><span>$</span></div></div>
+<div class="field"><label for="sales_shipping_taxable">Tax shipping?</label><select id="sales_shipping_taxable"><option value="no" selected>No</option><option value="yes">Yes</option></select></div>
 </div></details>
 </div>"""
 
@@ -1421,6 +1443,21 @@ def conversion_copy(calc):
 
 
 def high_value_calculator_copy(calc):
+    if calc.get("slug") == "sales-tax-calculator":
+        return """
+<h2>Sales tax calculator</h2><p>Choose Add tax to calculate sales tax and the checkout total from a before-tax price. Choose Reverse tax when you know the tax-inclusive total and rate. Choose Find the sales tax rate when both the before-tax and after-tax prices are known.</p>
+<p class="formula">sales tax = taxable amount x sales tax rate / 100</p>
+<p class="formula">after-tax total = before-tax total + sales tax</p>
+<h2>Add sales tax example</h2><p>A $100 taxable purchase at an 8.25% combined rate produces $8.25 of sales tax and a $108.25 total. If a discount applies, this calculator reduces the merchandise price before calculating tax.</p>
+<h2>Reverse sales tax</h2><p>To remove sales tax from a tax-inclusive total, divide the total by one plus the rate as a decimal. For example, $108.25 divided by 1.0825 gives a $100 before-tax price and $8.25 tax.</p>
+<p class="formula">before-tax price = tax-inclusive total / (1 + tax rate / 100)</p>
+<h2>Find the sales tax rate</h2><p>Subtract the before-tax price from the after-tax price to find the tax amount, then divide by the before-tax price. A price that rises from $100 to $108.25 has an 8.25% implied sales tax rate.</p>
+<p class="formula">tax rate = (after-tax price - before-tax price) / before-tax price x 100</p>
+<h2>Discounts, quantity, and shipping</h2><p>In Add tax mode, the discount is applied to each item's price before multiplying by quantity. Shipping is added separately. Turn on Tax shipping only when shipping or handling is taxable for the actual transaction. For a broader promotion comparison, use the <a href="/discount-calculator/">discount calculator</a>.</p>
+<h2>Use the correct combined rate</h2><p>Sales tax rules and rates can differ by state, county, city, product, and transaction. <a href="https://www.usa.gov/state-taxes" rel="external noopener">USAGov</a> notes that states and municipalities can charge different percentages on different goods or no tax on some items. Use the combined rate from the relevant state or local tax authority rather than a statewide rate alone.</p>
+<p>The <a href="https://www.irs.gov/credits-deductions/individuals/use-the-sales-tax-deduction-calculator" rel="external noopener">IRS sales-tax deduction guidance</a> also explains that local tax bases and rates can vary within a state. This calculator estimates transaction tax; it does not determine whether an item, buyer, seller, or shipping charge is taxable.</p>
+<h2>Total purchase cost</h2><p>The <a href="https://consumer.ftc.gov/articles/online-shopping" rel="external noopener">FTC online-shopping guide</a> recommends comparing the total cost, including shipping, handling, taxes, and other fees. Review the seller's checkout total before paying.</p>
+<h2>Frequently asked questions</h2><h3>How do I add 7% sales tax?</h3><p>Multiply the taxable price by 0.07, then add that tax to the original price. A $50 purchase has $3.50 tax and a $53.50 total.</p><h3>How do I remove tax from a total?</h3><p>Divide the tax-inclusive total by one plus the rate as a decimal. Do not simply subtract the rate from the total.</p><h3>Does sales tax apply before or after a discount?</h3><p>This calculator applies tax after the entered discount. Actual treatment can vary with the jurisdiction and promotion.</p>"""
     if calc.get("slug") == "take-home-pay-calculator":
         return """
 <h2>2026 US take-home pay estimate</h2><p>This calculator starts with annual gross wages, applies the selected 2026 federal filing-status brackets and deduction, estimates employee Social Security and Medicare taxes, then subtracts the state or local rate and payroll deductions you enter. Results include annual, monthly, and selected-paycheck take-home pay.</p>
@@ -1451,7 +1488,7 @@ def high_value_calculator_copy(calc):
 <p class="formula">checkout total = discounted unit price x quantity + estimated tax + fees</p>
 <h2>Discount example with sales tax</h2><p>Twenty percent off a $100 item saves $20 and leaves an $80 sale price. With 8.25% sales tax and no other fees, the estimated checkout total is $86.60.</p>
 <h2>How stacked discounts work</h2><p>Successive discounts are multiplied, not added. A 20% discount followed by another 10% discount leaves 80% x 90% = 72% of the original price, so the effective discount is 28%, not 30%.</p>
-<h2>Quantity, tax, and fees</h2><p>Savings and merchandise subtotal are multiplied by quantity. Estimated tax is applied to the discounted merchandise subtotal, then the entered shipping or fees are added. Actual taxability, rates, shipping treatment, exemptions, and marketplace fees depend on the location and transaction. The <a href="https://www.irs.gov/credits-deductions/individuals/use-the-sales-tax-deduction-calculator" rel="external noopener">IRS sales-tax calculator guidance</a> notes that local rates can vary within a state, so use the rate shown for the actual purchase.</p>
+<h2>Quantity, tax, and fees</h2><p>Savings and merchandise subtotal are multiplied by quantity. Estimated tax is applied to the discounted merchandise subtotal, then the entered shipping or fees are added. Actual taxability, rates, shipping treatment, exemptions, and marketplace fees depend on the location and transaction. Use the dedicated <a href="/sales-tax-calculator/">sales tax calculator</a> to add tax, reverse tax from a total, or infer a rate. The <a href="https://www.irs.gov/credits-deductions/individuals/use-the-sales-tax-deduction-calculator" rel="external noopener">IRS sales-tax calculator guidance</a> notes that local rates can vary within a state, so use the rate shown for the actual purchase.</p>
 <h2>Compare the full offer</h2><p>Check model, size, shipping, return policy, and conditions attached to a low advertised price. The <a href="https://consumer.ftc.gov/articles/online-shopping" rel="external noopener">FTC online-shopping guide</a> recommends comparing item details and shipping fees, not only the headline price.</p>
 <h2>Frequently asked questions</h2><h3>How much is 25% off $80?</h3><p>The savings are $20 and the discounted price is $60 before tax and fees.</p><h3>Do I add two discounts together?</h3><p>No. Apply the second percentage to the price remaining after the first discount.</p><h3>Is sales tax charged before or after a discount?</h3><p>This calculator applies the entered rate after discounts. Actual taxable amounts can differ by jurisdiction and promotion type.</p>"""
     if calc.get("slug") == "loan-calculator":
@@ -1691,6 +1728,13 @@ def default_calculator_copy(calc):
 
 
 def analysis_extra_html(calc):
+    if calc.get("slug") == "sales-tax-calculator":
+        return """<section class="mortgage-dashboard generic-dashboard finance-dashboard" aria-label="Sales tax results">
+<div class="section-head stack"><h2>Sales Tax Results</h2><p>Review the before-tax amount, sales tax, and final total.</p></div>
+<div class="summary-grid" id="genericSummary"></div>
+<div class="chart-grid"><div class="chart-card compact-chart"><h3>Purchase Breakdown</h3><canvas id="genericChart" width="620" height="230" aria-label="Before-tax amount, sales tax, and final total" data-chart-type="bars"></canvas></div></div>
+<div class="table-card"><h3>Calculation Details</h3><div class="table-scroll"><table class="data-table" id="genericTable"><thead><tr><th>Metric</th><th>Value</th><th>Note</th></tr></thead><tbody></tbody></table></div></div>
+</section>"""
     if calc.get("slug") == "take-home-pay-calculator":
         return """<section class="mortgage-dashboard generic-dashboard finance-dashboard" aria-label="Take-home pay results">
 <div class="section-head stack"><h2>Take-Home Pay Results</h2><p>Compare gross pay, taxes, deductions, and net pay for 2026.</p></div>
@@ -1823,6 +1867,9 @@ def calculator_page(site, calc, related):
     elif calc.get("slug") == "take-home-pay-calculator":
         fields = take_home_pay_input_html()
         page_engine = "take_home_pay"
+    elif calc.get("slug") == "sales-tax-calculator":
+        fields = sales_tax_input_html()
+        page_engine = "sales_tax_advanced"
     elif calc.get("slug") == "truck-payload-calculator":
         fields = truck_payload_input_html()
     elif calc.get("slug") == "towing-capacity-calculator":
@@ -2134,6 +2181,8 @@ function progressiveTax(income,brackets){let tax=0,lower=0;for(const[upper,rate]
 function marginalRate(income,brackets){return(brackets.find(([upper])=>income<=upper)||brackets.at(-1))[1]}
 function syncPayDeductionFields(){const custom=document.getElementById('pay_deduction_mode')?.value==='custom';document.querySelectorAll('[data-pay-custom]').forEach(el=>el.classList.toggle('is-hidden',!custom));return custom}
 function takeHomeProjection(){const gross=Math.max(0,V('pay_gross')),status=document.getElementById('pay_status')?.value||'single',periods=Math.max(1,Math.floor(V('pay_periods'))),retirement=Math.max(0,V('pay_retirement')),pretax=Math.max(0,V('pay_pretax')),posttax=Math.max(0,V('pay_posttax')),stateRate=Math.max(0,V('pay_state_rate')),extraPerPay=Math.max(0,V('pay_extra')),custom=syncPayDeductionFields(),deduction=custom?Math.max(0,V('pay_custom_deduction')):STANDARD_DEDUCTION_2026[status],federalTaxable=Math.max(0,gross-retirement-pretax-deduction),brackets=FEDERAL_2026[status],federal=progressiveTax(federalTaxable,brackets),marginal=marginalRate(federalTaxable,brackets),ficaWages=Math.max(0,gross-pretax),social=Math.min(ficaWages,184500)*.062,medicareThreshold=status==='joint'?250000:200000,medicare=ficaWages*.0145+Math.max(0,ficaWages-medicareThreshold)*.009,stateTaxable=Math.max(0,gross-retirement-pretax),state=stateTaxable*stateRate/100,extra=extraPerPay*periods,totalTax=federal+social+medicare+state+extra,totalDeductions=retirement+pretax+posttax,net=Math.max(0,gross-totalTax-totalDeductions),effective=gross?totalTax/gross*100:0;return{gross,status,periods,retirement,pretax,posttax,stateRate,extraPerPay,extra,deduction,custom,federalTaxable,federal,marginal,ficaWages,social,medicareThreshold,medicare,stateTaxable,state,totalTax,totalDeductions,net,effective,perPay:net/periods,grossPerPay:gross/periods,monthly:net/12}}
+function syncSalesTaxFields(){const mode=document.getElementById('sales_mode')?.value||'add';document.querySelectorAll('[data-sales-add],[data-sales-reverse],[data-sales-rate]').forEach(el=>{const show=(mode==='add'&&el.hasAttribute('data-sales-add'))||(mode==='reverse'&&el.hasAttribute('data-sales-reverse'))||(mode==='rate'&&el.hasAttribute('data-sales-rate'));el.classList.toggle('is-hidden',!show)});document.querySelectorAll('[data-sales-rate-input]').forEach(el=>el.classList.toggle('is-hidden',mode==='rate'));return mode}
+function salesTaxProjection(){const mode=syncSalesTaxFields();let rate=Math.max(0,V('sales_rate')),before=0,tax=0,after=0,price=Math.max(0,V('sales_price')),quantity=1,discount=0,discountedUnit=price,merchandise=0,shipping=0,taxableBase=0,savings=0,shippingTaxable=false;if(mode==='reverse'){after=Math.max(0,V('sales_total'));before=after/(1+rate/100);tax=after-before;taxableBase=before;merchandise=before}else if(mode==='rate'){before=price;after=Math.max(0,V('sales_after'));tax=Math.max(0,after-before);rate=before?tax/before*100:0;taxableBase=before;merchandise=before}else{quantity=Math.max(1,Math.floor(V('sales_quantity')));discount=Math.max(0,Math.min(100,V('sales_discount')));discountedUnit=price*(1-discount/100);merchandise=discountedUnit*quantity;shipping=Math.max(0,V('sales_shipping'));shippingTaxable=document.getElementById('sales_shipping_taxable')?.value==='yes';taxableBase=merchandise+(shippingTaxable?shipping:0);tax=taxableBase*rate/100;before=merchandise+shipping;after=before+tax;savings=(price-discountedUnit)*quantity}return{mode,rate,before,tax,after,price,quantity,discount,discountedUnit,merchandise,shipping,taxableBase,savings,shippingTaxable}}
 function tradeInProjection(){const comparable=Math.max(0,V('comparable')),adjustment=V('market_adjustment'),margin=Math.max(0,V('dealer_margin')),reconditioning=Math.max(0,V('reconditioning')),payoff=Math.max(0,V('payoff')),replacement=Math.max(0,V('replacement_price')),taxRate=Math.max(0,V('tax_rate'))/100,trade=Math.max(0,comparable+adjustment-margin-reconditioning),equity=trade-payoff,taxSavings=Math.min(trade,replacement)*taxRate;return{comparable,adjustment,margin,reconditioning,payoff,replacement,taxRate,trade,equity,taxSavings,effective:trade+taxSavings}}
 function usedCarProjection(){const benchmark=Math.max(0,V('retail_benchmark')),condition=V('condition_adjustment'),mileage=V('mileage_adjustment'),options=V('options_adjustment'),regional=V('regional_adjustment'),spread=Math.max(0,Math.min(50,V('dealer_spread'))),retail=Math.max(0,benchmark*(1+condition/100)*(1+regional/100)+mileage+options),privateValue=retail*(1-spread/200),trade=retail*(1-spread/100);return{benchmark,condition,mileage,options,regional,spread,retail,privateValue,trade}}
 function tireSpec(width,aspect,rim){const sidewall=width*aspect/100,diameter=rim+2*sidewall/25.4,circumference=Math.PI*diameter,revsPerMile=63360/circumference;return{width,aspect,rim,sidewall,diameter,circumference,revsPerMile}}
@@ -2165,7 +2214,7 @@ function electricalLoadProjection(){const continuous=Math.max(0,V('el_continuous
 function wattsAmpsProjection(){const watts=Math.max(0,V('wa_watts')),voltage=Math.max(.001,V('wa_voltage')),phase=document.getElementById('wa_phase')?.value||'single',pf=phase==='dc'?1:Math.max(.01,Math.min(1,V('wa_pf'))),multiplier=phase==='three'?Math.sqrt(3):1,amps=watts/(voltage*pf*multiplier),va=watts/pf,vars=Math.sqrt(Math.max(0,va*va-watts*watts)),continuous=document.getElementById('wa_continuous')?.value==='yes',planningAmps=amps*(continuous?1.25:1);return{watts,voltage,phase,pf,multiplier,amps,va,vars,continuous,planningAmps}}
 function ampsWattsProjection(){const amps=Math.max(0,V('aw_amps')),voltage=Math.max(.001,V('aw_voltage')),phase=document.getElementById('aw_phase')?.value||'single',pf=phase==='dc'?1:Math.max(.01,Math.min(1,V('aw_pf'))),multiplier=phase==='three'?Math.sqrt(3):1,va=amps*voltage*multiplier,watts=va*pf,vars=Math.sqrt(Math.max(0,va*va-watts*watts));return{amps,voltage,phase,pf,multiplier,va,watts,vars}}
 function syncFeetMeterInputs(){const reverse=document.getElementById('conversion_direction')?.value==='meters_to_feet';document.querySelectorAll('[data-feet-input]').forEach(el=>el.classList.toggle('is-hidden',reverse));document.querySelectorAll('[data-meter-input]').forEach(el=>el.classList.toggle('is-hidden',!reverse));return reverse}
-function clearCalcForm(){const form=document.querySelector('.calc');if(!form)return;form.querySelectorAll('input').forEach(input=>{if(input.type==='checkbox')input.checked=false;else input.value=''});form.querySelectorAll('select').forEach(select=>{select.selectedIndex=0});form.querySelectorAll('details').forEach(item=>{item.open=false});syncMortgageCosts();syncConcreteFields();syncRoofFields();syncAreaFields();syncPayDeductionFields();show('<strong>0</strong><br>Enter values to calculate a new result.');const engine=currentEngine();if(engine==='cn_mortgage')renderMortgage(0,0,1,0,0,0,0,0,0,0,0,0,0,new Date());if(engine==='loan_page')renderLoanPage()}
+function clearCalcForm(){const form=document.querySelector('.calc');if(!form)return;form.querySelectorAll('input').forEach(input=>{if(input.type==='checkbox')input.checked=false;else input.value=''});form.querySelectorAll('select').forEach(select=>{select.selectedIndex=0});form.querySelectorAll('details').forEach(item=>{item.open=false});syncMortgageCosts();syncConcreteFields();syncRoofFields();syncAreaFields();syncPayDeductionFields();syncSalesTaxFields();show('<strong>0</strong><br>Enter values to calculate a new result.');const engine=currentEngine();if(engine==='cn_mortgage')renderMortgage(0,0,1,0,0,0,0,0,0,0,0,0,0,new Date());if(engine==='loan_page')renderLoanPage()}
 function calc(e){
  switch(e){
   case'trade_value':{let price=V('price'),age=V('age'),miles=V('miles'),cond=V('condition');let ageF=Math.pow(.84,age),expected=Math.max(1,age)*12000,mileageF=Math.max(.72,Math.min(1.12,1-(miles-expected)*0.000003));let r=price*ageF*mileageF*cond;show(`<strong>${USD(Math.max(0,r))}</strong><br>Illustrative estimate, not a dealer quote or appraisal.`);break}
@@ -2212,6 +2261,7 @@ function calc(e){
   case'salary_advanced':{const p=salaryProjection();show(`<strong>${USD(p.annual)} new annual salary</strong><br>${USD(p.raiseDollars)} raise (${F(p.raisePercent,2)}%); ${USD(p.perPeriod)} per selected pay period; ${USD(p.hourly)} hourly equivalent.`);break}
   case'discount_advanced':{const p=discountProjection();show(`<strong>${USD(p.total)} estimated checkout total</strong><br>${USD(p.unitPrice)} discounted unit price; ${USD(p.savings)} total savings; ${F(p.effective,2)}% effective discount.`);break}
   case'take_home_pay':{const p=takeHomeProjection();show(`<strong>${USD(p.perPay)} take-home per paycheck</strong><br>${USD(p.net)} annual net pay; ${USD(p.monthly)} monthly average; ${F(p.effective,2)}% estimated total tax rate.`);break}
+  case'sales_tax_advanced':{const p=salesTaxProjection();if(p.mode==='rate')show(`<strong>${F(p.rate,3)}% implied sales tax rate</strong><br>${USD(p.tax)} tax between ${USD(p.before)} before tax and ${USD(p.after)} after tax.`);else if(p.mode==='reverse')show(`<strong>${USD(p.before)} before tax</strong><br>${USD(p.tax)} tax removed from the ${USD(p.after)} tax-inclusive total at ${F(p.rate,3)}%.`);else show(`<strong>${USD(p.after)} after-tax total</strong><br>${USD(p.tax)} sales tax on ${USD(p.taxableBase)} taxable amount at ${F(p.rate,3)}%.`);break}
   case'discount':{let r=V('price')*(1-V('discount')/100);show(`<strong>${USD(r)}</strong><br>Savings: ${USD(V('price')-r)}.`);break}
   case'salary':{let r=V('salary')*(1+V('increase')/100);show(`<strong>${USD(r)}</strong><br>Annual increase: ${USD(r-V('salary'))}.`);break}
   case'dome':{let radius=V('diameter')/2,area=2*Math.PI*radius*radius,vol=2/3*Math.PI*Math.pow(radius,3);show(`<strong>${F(area,2)} sq ft</strong><br>Approx. curved area; ${F(vol,2)} cu ft volume.`);break}
@@ -2383,6 +2433,12 @@ function renderGenericFromEngine(engine) {
     cards=[["Ending balance",USD(total),"Principal plus interest."],["Interest earned",USD(interest),"Simple interest amount."],["Principal",USD(P),"Starting amount."],["Rate",`${F(V('rate'),2)}%`,"Annual simple rate."]];
     bars=[{label:"Principal",value:P,display:USD(P)},{label:"Interest",value:interest,display:USD(interest)}];
     rows=[["Principal",USD(P),"Starting balance."],["Rate",`${F(V('rate'),2)}%`,"Annual rate."],["Time",`${F(V('years'),2)} years`,"Entered period."],["Ending balance",USD(total),"Principal plus interest."]];
+  } else if (engine === "sales_tax_advanced") {
+    const p=salesTaxProjection(),modeLabel=p.mode==='reverse'?"Reverse tax":p.mode==='rate'?"Find tax rate":"Add tax";
+    cards=[[p.mode==='rate'?"Implied tax rate":"After-tax total",p.mode==='rate'?`${F(p.rate,3)}%`:USD(p.after),p.mode==='rate'?"Derived from before-tax and after-tax prices.":"Before-tax total plus sales tax."],["Sales tax",USD(p.tax),`${F(p.rate,3)}% of the taxable amount.`],["Before-tax total",USD(p.before),p.mode==='reverse'?"Calculated from the tax-inclusive total.":"Merchandise and entered shipping before tax."],["Taxable amount",USD(p.taxableBase),"Amount used to calculate tax."]];
+    bars=[{label:"Before-tax total",value:p.before,display:USD(p.before)},{label:"Sales tax",value:p.tax,display:USD(p.tax)},{label:"After-tax total",value:p.after,display:USD(p.after)}];
+    rows=[["Calculation mode",modeLabel,"Selected sales-tax operation."],["Sales tax rate",`${F(p.rate,3)}%`,p.mode==='rate'?"Calculated from the two prices.":"Entered combined rate."],["Before-tax total",USD(p.before),p.mode==='add'?"Discounted merchandise plus shipping.":"Amount before sales tax."],["Taxable amount",USD(p.taxableBase),p.mode==='add'&&p.shippingTaxable?"Includes merchandise and shipping.":"Amount subject to the entered rate."],["Sales tax",USD(p.tax),"Taxable amount times the rate."],["After-tax total",USD(p.after),"Before-tax total plus sales tax."]];
+    if(p.mode==='add')rows.splice(2,0,["Original unit price",USD(p.price),"Price before discount."],["Discounted unit price",USD(p.discountedUnit),`${F(p.discount,2)}% entered discount.`],["Quantity",F(p.quantity,0),"Number of items."],["Merchandise subtotal",USD(p.merchandise),"Discounted unit price times quantity."],["Shipping",USD(p.shipping),p.shippingTaxable?"Included in taxable amount.":"Not included in taxable amount."],["Discount savings",USD(p.savings),"Savings across all items."]);
   } else if (engine === "take_home_pay") {
     const p=takeHomeProjection(),statusLabel=p.status==='joint'?"Married filing jointly":p.status==='head'?"Head of household":"Single";
     cards=[["Take-home / paycheck",USD(p.perPay),`${F(p.periods,0)} paychecks per year.`],["Annual take-home",USD(p.net),"After estimated taxes and deductions."],["Monthly average",USD(p.monthly),"Annual net pay divided by 12."],["Effective tax rate",`${F(p.effective,2)}%`,"Estimated taxes divided by gross pay."]];
