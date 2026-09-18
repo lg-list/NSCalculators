@@ -14,7 +14,7 @@ KEYWORD_STATS = ROOT / "exports" / "keyword-stats-positive.json"
 SEO_STRATEGY = ROOT / "exports" / "seo-keyword-strategy-2026-09-05.json"
 PUBLIC_BASE_PATH = os.environ.get("PUBLIC_BASE_PATH", "").strip().rstrip("/")
 PUBLIC_SITE_DOMAIN = os.environ.get("PUBLIC_SITE_DOMAIN", "").strip()
-ASSET_VERSION = "20260918i"
+ASSET_VERSION = "20260918j"
 CALCULATOR_REDIRECTS = {
     "concrete-calculator": "concrete-volume-calculator",
     "loan-payment-calculator": "loan-calculator",
@@ -634,6 +634,8 @@ def calculator_net_template(keyword, slug, cat):
         base.update({"engine": "cn_mortgage", "desc": "Estimate a mortgage payment with principal, interest, taxes, insurance, PMI, HOA, extra payments, and total payoff costs.", "formula": "Monthly payment = principal and interest + optional annual taxes, insurance, PMI, HOA, and other costs divided by 12. Extra payments reduce payoff time and total interest.", "inputs": [["price", "Home price ($)", "number", 400000], ["down", "Down payment ($)", "number", 20], ["apr", "Interest rate (%)", "number", 6.81], ["years", "Loan term (years)", "number", 30], ["start", "Start month", "month", "2026-09"], ["tax", "Property tax", "number", 1.2], ["insurance", "Home insurance", "number", 1500], ["pmi", "PMI", "number", 0], ["hoa", "HOA", "number", 0], ["other", "Other costs", "number", 4000], ["increase", "Annual tax/insurance increase (%)", "number", 0], ["extra_monthly", "Extra monthly pay ($)", "number", 0], ["extra_yearly", "Extra yearly pay ($)", "number", 0], ["extra_once", "One-time extra pay ($)", "number", 0]]})
     elif slug == "loan-calculator":
         base.update({"engine": "loan_page", "desc": "Calculate amortized loan payments, deferred payment loan maturity value, and bond present value using the same three loan models shown on Calculator.net.", "formula": "Amortized payment uses an effective payback-period rate. Deferred payment compounds principal to maturity. Bond value discounts the predetermined due amount to the loan start.", "inputs": []})
+    elif slug == "interest-calculator":
+        base.update({"engine": "interest_advanced", "desc": "Compare simple and compound interest with recurring contributions, compounding frequency, estimated interest tax, and inflation-adjusted buying power.", "formula": "Simple interest uses principal x rate x time; compound interest applies growth to principal plus accumulated interest.", "inputs": []})
     elif "auto loan" in text or ("car" in text and "loan" in text):
         base.update({"engine": "car_loan", "desc": "Estimate an auto loan payment including price, tax, fees, cash incentives, down payment, trade-in, amount owed on trade-in, and whether taxes and fees are financed.", "formula": "Loan amount = auto price - cash incentives - down payment - trade-in value + amount owed on trade-in, plus taxes and fees when included in the loan. Payment uses monthly amortization.", "inputs": [["price", "Auto Price ($)", "number", 50000], ["months", "Loan Term (months)", "number", 60], ["apr", "Interest Rate (%)", "number", 5], ["incentives", "Cash Incentives ($)", "number", 0], ["down", "Down Payment ($)", "number", 10000], ["trade", "Trade-in Value ($)", "number", 0], ["owed", "Amount Owed on Trade-in ($)", "number", 0], ["tax", "Sales Tax (%)", "number", 3], ["fees", "Title, Registration and Other Fees ($)", "number", 2800], ["include_fees", "Include taxes and fees in loan", "select", [["0", "No"], ["1", "Yes"]]]]})
     elif "loan" in text or "payment calculator" in text:
@@ -805,6 +807,8 @@ def seo_title(calc):
         return "Salary Calculator: Hourly, Monthly & Annual Pay"
     if calc.get("slug") == "finance-calculator":
         return "Finance Calculator: PV, FV, PMT, Rate & Periods"
+    if calc.get("slug") == "interest-calculator":
+        return "Interest Calculator: Simple vs Compound Interest"
     if calc.get("slug") == "compound-interest-calculator":
         return "Compound Interest Calculator | NS Calculators"
     if calc.get("slug") == "take-home-pay-calculator":
@@ -841,6 +845,8 @@ def seo_description(calc):
         return "Convert hourly, daily, weekly, biweekly, semimonthly, monthly, quarterly, or annual salary and compare pay adjusted for unpaid days off."
     if calc.get("slug") == "finance-calculator":
         return "Solve future value, present value, payment, annual interest rate, or number of periods with payment timing, compounding settings, and a schedule."
+    if calc.get("slug") == "interest-calculator":
+        return "Compare simple and compound interest with deposits, compounding frequency, tax, inflation, charts, and an annual growth schedule."
     if calc.get("slug") == "compound-interest-calculator":
         return "Calculate compound interest with monthly and annual contributions, tax, inflation, years and months, detailed growth charts, and an annual schedule."
     if calc.get("slug") == "truck-payload-calculator":
@@ -1712,6 +1718,17 @@ def high_value_calculator_copy(calc):
 <h2>Common feet to meters conversions</h2><div class="table-scroll"><table class="data-table"><thead><tr><th>Feet</th><th>Meters</th><th>Feet</th><th>Meters</th></tr></thead><tbody><tr><td>1 ft</td><td>0.3048 m</td><td>10 ft</td><td>3.048 m</td></tr><tr><td>3 ft</td><td>0.9144 m</td><td>25 ft</td><td>7.62 m</td></tr><tr><td>5 ft</td><td>1.524 m</td><td>50 ft</td><td>15.24 m</td></tr><tr><td>6 ft</td><td>1.8288 m</td><td>100 ft</td><td>30.48 m</td></tr></tbody></table></div>
 <h2>Measurement reference</h2><p>The international foot is exactly 0.3048 meter. The meter is the SI base unit for length; see the <a href="https://www.nist.gov/pml/owm/si-units-length" rel="external noopener">NIST guide to SI length</a> for the official US measurement reference.</p>
 <h2>Frequently asked questions</h2><h3>How many meters are in one foot?</h3><p>One foot equals exactly 0.3048 meter.</p><h3>How do I convert meters back to feet?</h3><p>Divide meters by 0.3048. This calculator also separates the decimal result into whole feet and remaining inches.</p>"""
+    if calc.get("slug") == "interest-calculator":
+        return """
+<h2>Simple interest versus compound interest</h2><p>Simple interest is calculated only on the money contributed. Compound interest is calculated on contributions plus interest already credited. This calculator runs both methods with the same rate, deposits, timing, tax estimate, and duration so the difference is visible rather than theoretical.</p>
+<p class="formula">simple balance = contributions + (contributed principal x annual rate x time invested)</p>
+<p class="formula">compound growth = balance x effective monthly rate, repeated each month</p>
+<h2>Worked example</h2><p>Start with $10,000, add $200 at the end of each month, and earn a 6% nominal annual rate compounded monthly for 10 years. The calculator compares the ending balances, total interest, and the extra amount created by earning interest on prior interest. Change the contribution timing to see why earlier deposits usually finish with more.</p>
+<h2>How recurring deposits are treated</h2><p>Monthly contributions are added every month and annual contributions once per complete year. In the simple-interest comparison, each deposit earns simple interest only for the time it remains invested. In the compound comparison, each deposit can earn interest on both principal and previously credited interest. The <a href="https://www.investor.gov/financial-tools-calculators/calculators/compound-interest-calculator" rel="external noopener">SEC Investor.gov calculator</a> also models starting principal, recurring deposits, time, rate, and compounding frequency.</p>
+<h2>Compounding frequency and effective yield</h2><p>The nominal annual rate is converted to an effective monthly rate from the selected daily, weekly, monthly, quarterly, annual, or continuous frequency. More frequent compounding usually produces a higher effective annual yield when the nominal rate is unchanged. The <a href="https://www.consumerfinance.gov/ask-cfpb/how-does-compound-interest-work-en-1683/" rel="external noopener">Consumer Financial Protection Bureau</a> explains that compound interest adds interest to principal, allowing future interest to be earned on a larger balance.</p>
+<h2>Tax and inflation assumptions</h2><p>The optional tax rate is an illustration applied to positive interest as it accrues. It does not model tax brackets, account type, deductions, losses, or the timing rules on a tax return. Inflation converts each ending balance to estimated purchasing power in today's dollars. Rates, returns, and inflation are held constant and are not forecasts.</p>
+<h2>When to use each result</h2><p>Simple interest is useful for understanding principal-only growth and some short-term arrangements. Compound interest is the better model when credited interest remains in an account. For a dedicated compound-only schedule, use the <a href="/compound-interest-calculator/">compound interest calculator</a>. The <a href="https://www.fdic.gov/consumer-resource-center/chapter-5-compound-interest" rel="external noopener">FDIC compound-interest guide</a> provides additional consumer examples.</p>
+<h2>Frequently asked questions</h2><h3>Do monthly deposits earn a full year of interest?</h3><p>No. Each deposit begins earning from its selected beginning- or end-of-month timing, so later deposits have less time to grow.</p><h3>Is the entered rate APY?</h3><p>No. It is treated as a nominal annual rate. The results table shows the effective annual yield generated by the selected compounding frequency.</p><h3>Can simple interest ever be higher?</h3><p>With a positive rate and otherwise identical inputs, compounding is normally equal to or higher than simple interest. Negative rates, taxes, or unusual cash-flow timing can change that relationship.</p>"""
     if calc.get("slug") == "compound-interest-calculator":
         return """
 <h2>How compound interest is calculated</h2><p>Compound interest earns a return on the original principal and on interest already added to the balance. This calculator supports daily, weekly, biweekly, semimonthly, monthly, quarterly, semi-annual, annual, and continuous compounding, plus monthly and annual contributions.</p>
@@ -2033,6 +2050,14 @@ def analysis_extra_html(calc):
 <div class="chart-grid"><div class="chart-card compact-chart"><h3>{chart_title}</h3><canvas id="genericChart" width="620" height="230" aria-label="{chart_title}" data-chart-type="bars"></canvas></div></div>
 <div class="table-card"><h3>Calculation Details</h3><div class="table-scroll"><table class="data-table" id="genericTable"><thead><tr><th>Metric</th><th>Value</th><th>Note</th></tr></thead><tbody></tbody></table></div></div>
 </section>"""
+    if calc.get("slug") == "interest-calculator":
+        return """<section class="mortgage-dashboard generic-dashboard interest-compare-dashboard" aria-label="Simple and compound interest comparison">
+<div class="section-head stack"><h2>Interest Comparison</h2><p>Compare ending balances, interest earned, and inflation-adjusted buying power.</p></div>
+<div class="summary-grid" id="genericSummary"></div>
+<div class="chart-grid"><div class="chart-card compact-chart"><h3>Balance Components</h3><canvas id="genericChart" width="620" height="230" aria-label="Simple and compound interest balance comparison" data-chart-type="bars"></canvas></div></div>
+<div class="table-card"><h3>Calculation Details</h3><div class="table-scroll"><table class="data-table" id="genericTable"><thead><tr><th>Metric</th><th>Value</th><th>Note</th></tr></thead><tbody></tbody></table></div></div>
+<div class="table-card"><h3>Annual Comparison</h3><div class="table-scroll"><table class="data-table" id="interestSchedule"><thead><tr><th>Period</th><th>Total contributed</th><th>Simple balance</th><th>Compound balance</th><th>Compound advantage</th></tr></thead><tbody></tbody></table></div></div>
+</section>"""
     if calc.get("slug") == "compound-interest-calculator":
         return """<section class="mortgage-dashboard compound-dashboard" aria-label="Compound interest result details">
 <div class="section-head stack"><h2>Growth Summary</h2><p>Compare contributions, interest, taxes, and inflation-adjusted buying power.</p></div>
@@ -2103,6 +2128,9 @@ def calculator_page(site, calc, related):
     elif calc.get("slug") == "feet-to-meters-calculator":
         fields = feet_to_meters_input_html()
         page_engine = "feet_meters"
+    elif calc.get("slug") == "interest-calculator":
+        fields = compound_interest_input_html()
+        page_engine = "interest_advanced"
     elif calc.get("slug") == "compound-interest-calculator":
         fields = compound_interest_input_html()
     elif calc.get("slug") == "salary-increase-calculator":
@@ -2457,6 +2485,29 @@ function compoundProjection(){
   const totalInterest=totalGrossInterest-totalTax,contributed=principal+totalDeposits,buyingPower=balance/Math.pow(1+inflation,totalMonths/12),durationLabel=extraMonths?`${years} yr ${extraMonths} mo`:`${years} yr`;
   return {principal,annual,years,extraMonths,totalMonths,frequency,monthly,annualContribution,taxRate,inflation,timing,balance,totalGrossInterest,totalTax,totalInterest,totalDeposits,contributed,buyingPower,schedule,effectiveAnnual,durationLabel};
 }
+function interestComparisonProjection(){
+  const compound=compoundProjection();
+  let simplePrincipal=compound.principal,simpleGrossInterest=0,simpleTax=0,totalDeposits=0;const schedule=[];
+  for(let month=1;month<=compound.totalMonths;month++){
+    if(compound.timing==='beginning'){
+      simplePrincipal+=compound.monthly;totalDeposits+=compound.monthly;
+      if((month-1)%12===0){simplePrincipal+=compound.annualContribution;totalDeposits+=compound.annualContribution}
+    }
+    const gross=simplePrincipal*compound.annual/12,tax=Math.max(0,gross)*compound.taxRate;
+    simpleGrossInterest+=gross;simpleTax+=tax;
+    if(compound.timing!=='beginning'){
+      simplePrincipal+=compound.monthly;totalDeposits+=compound.monthly;
+      if(month%12===0){simplePrincipal+=compound.annualContribution;totalDeposits+=compound.annualContribution}
+    }
+    if(month%12===0||month===compound.totalMonths){
+      const wholeYears=Math.floor(month/12),remaining=month%12,period=remaining?(wholeYears?`${wholeYears} yr ${remaining} mo`:`${remaining} mo`):`${wholeYears} yr`,compoundRow=compound.schedule[schedule.length],simpleBalance=simplePrincipal+simpleGrossInterest-simpleTax,compoundBalance=compoundRow?.balance??compound.balance;
+      schedule.push({period,contributed:compound.principal+totalDeposits,simpleBalance,compoundBalance,advantage:compoundBalance-simpleBalance});
+    }
+  }
+  if(!schedule.length)schedule.push({period:'Start',contributed:compound.principal,simpleBalance:compound.principal,compoundBalance:compound.principal,advantage:0});
+  const simpleInterest=simpleGrossInterest-simpleTax,simpleBalance=simplePrincipal+simpleInterest,simpleBuyingPower=simpleBalance/Math.pow(1+compound.inflation,compound.totalMonths/12),advantage=compound.balance-simpleBalance;
+  return {compound,simplePrincipal,simpleGrossInterest,simpleTax,simpleInterest,simpleBalance,simpleBuyingPower,advantage,schedule};
+}
 function syncFinanceTarget(){const target=document.getElementById('finance_solve')?.value||'fv';document.querySelectorAll('[data-finance-value]').forEach(field=>{const active=field.dataset.financeValue===target;field.classList.toggle('finance-solve-target',active);const input=field.querySelector('input');if(input){input.disabled=active;input.setAttribute('aria-disabled',active?'true':'false')}});return target}
 function financePeriodicRate(annual,py,cy){return Math.pow(1+annual/100/cy,cy/py)-1}
 function financeNominalRate(periodic,py,cy){return cy*(Math.pow(1+periodic,py/cy)-1)*100}
@@ -2564,6 +2615,7 @@ function calc(e){
   case'loan':{let P=V('amount'),rr=V('apr')/1200,n=Math.max(1,(V('years')*12)+(V('months_extra')||V('months')));let pay=rr?P*rr*Math.pow(1+rr,n)/(Math.pow(1+rr,n)-1):P/n,total=pay*n;show(`<strong>${USD(pay)} / month</strong><br>Total paid: ${USD(total)}; total interest: ${USD(total-P)}.`);break}
   case'loan_page':{renderLoanPage();break}
   case'finance_tvm':{const p=financeProjection();if(!p.valid)show(`<strong>Check the inputs</strong><br>${p.message}`);else{const labels={fv:'Future value',pmt:'Periodic payment',iy:'Annual interest rate',n:'Number of periods',pv:'Present value'},value=p.target==='iy'?`${F(p.iy,8)}%`:p.target==='n'?F(p.n,8):USD(p[p.target]);show(`<strong>${value} ${labels[p.target].toLowerCase()}</strong><br>${F(p.rate*100,6)}% effective rate per payment period; ${F(p.effectiveAnnual,6)}% effective annual rate.`)}break}
+  case'interest_advanced':{const p=interestComparisonProjection();show(`<strong>${USD(p.compound.balance)} compound balance</strong><br>${USD(p.simpleBalance)} with simple interest; ${USD(p.advantage)} compound advantage; ${USD(p.compound.buyingPower)} compound buying power in today's dollars.`);break}
   case'compound':{const p=compoundProjection();show(`<strong>${USD(p.balance)} ending balance</strong><br>${USD(p.contributed)} contributed; ${USD(p.totalInterest)} net interest; ${USD(p.buyingPower)} inflation-adjusted buying power.`);renderCompound(p);break}
   case'salary_advanced':{const p=salaryProjection();show(`<strong>${USD(p.annual)} new annual salary</strong><br>${USD(p.raiseDollars)} raise (${F(p.raisePercent,2)}%); ${USD(p.perPeriod)} per selected pay period; ${USD(p.hourly)} hourly equivalent.`);break}
   case'discount_advanced':{const p=discountProjection();show(`<strong>${USD(p.total)} estimated checkout total</strong><br>${USD(p.unitPrice)} discounted unit price; ${USD(p.savings)} total savings; ${F(p.effective,2)}% effective discount.`);break}
@@ -2645,16 +2697,20 @@ function drawGenericBars(canvas, bars) {
   bars.slice(0, 6).forEach((bar, index) => {
     const y = 34 + index * 40;
     const label = String(bar.label).slice(0, 22);
-    const width = (canvas.width - 210) * Math.abs(bar.value) / max;
     const pct = Math.abs(bar.value) / total * 100;
+    const valueText = `${bar.display || F(bar.value, 2)} (${F(pct,1)}%)`;
+    const valueWidth = ctx.measureText(valueText).width;
+    const valueX = Math.max(250, canvas.width - valueWidth - 16);
+    const trackWidth = Math.max(80, valueX - 170);
+    const width = trackWidth * Math.abs(bar.value) / max;
     ctx.fillStyle = "#344054";
     ctx.fillText(label, 16, y + 16);
     ctx.fillStyle = "#eef3f8";
-    ctx.fillRect(158, y, canvas.width - 198, 24);
+    ctx.fillRect(158, y, trackWidth, 24);
     ctx.fillStyle = colors[index % colors.length];
     ctx.fillRect(158, y, Math.max(4, width), 24);
     ctx.fillStyle = "#152033";
-    ctx.fillText(`${bar.display || F(bar.value, 2)} (${F(pct,1)}%)`, 166 + Math.max(8, width), y + 17);
+    ctx.fillText(valueText, valueX, y + 17);
   });
 }
 
@@ -2711,6 +2767,12 @@ function renderGenericFromEngine(engine) {
     cards=[["Monthly Pay",USD(pay),"Estimated auto loan payment."],["Total Loan Amount",USD(P),"Amount financed."],["Sale Tax",USD(tax),"Estimated tax from entered rate."],["Upfront Payment",USD(upfront),"Down payment plus taxes and fees when not financed."]];
     bars=[{label:"Loan amount",value:P,display:USD(P)},{label:"Interest",value:total-P,display:USD(total-P)},{label:"Upfront",value:upfront,display:USD(upfront)}];
     rows=[["Monthly Pay",USD(pay),"Payment every month."],["Total Loan Amount",USD(P),"Balance used for amortization."],["Total of Payments",USD(total),"Monthly payment times term."],["Total Loan Interest",USD(total-P),"Total paid minus loan amount."],["Sale Tax",USD(tax),"Auto price times tax rate."],["Upfront Payment",USD(upfront),"Due at purchase if not financed."]];
+  } else if (engine === "interest_advanced") {
+    const p=interestComparisonProjection(),c=p.compound,schedule=document.querySelector('#interestSchedule tbody'),frequency=c.frequency===0?'Continuous':`${F(c.frequency,0)} times/year`;
+    cards=[["Compound ending balance",USD(c.balance),`${F(c.effectiveAnnual*100,3)}% effective annual yield.`],["Simple ending balance",USD(p.simpleBalance),"Interest does not earn additional interest."],["Compound advantage",USD(p.advantage),"Difference between the two methods."],["Today's buying power",USD(c.buyingPower),`${F(c.inflation*100,2)}% assumed inflation.`]];
+    bars=[{label:"Initial investment",value:c.principal,display:USD(c.principal)},{label:"Additional deposits",value:c.totalDeposits,display:USD(c.totalDeposits)},{label:"Simple net interest",value:p.simpleInterest,display:USD(p.simpleInterest)},{label:"Compound net interest",value:c.totalInterest,display:USD(c.totalInterest)}];
+    rows=[["Initial investment",USD(c.principal),"Starting principal."],["Additional deposits",USD(c.totalDeposits),`${USD(c.monthly)} monthly and ${USD(c.annualContribution)} annually.`],["Total contributed",USD(c.contributed),"Initial investment plus deposits."],["Nominal annual rate",`${F(c.annual*100,3)}%`,"Entered annual rate."],["Compounding frequency",frequency,"Used only for the compound projection."],["Effective annual yield",`${F(c.effectiveAnnual*100,4)}%`,"Yield before the illustrative tax estimate."],["Simple gross interest",USD(p.simpleGrossInterest),"Interest earned only on contributed principal."],["Compound gross interest",USD(c.totalGrossInterest),"Includes interest earned on prior interest."],["Estimated simple interest tax",USD(p.simpleTax),`${F(c.taxRate*100,2)}% entered tax rate.`],["Estimated compound interest tax",USD(c.totalTax),`${F(c.taxRate*100,2)}% entered tax rate.`],["Simple ending balance",USD(p.simpleBalance),"Contributions plus net simple interest."],["Compound ending balance",USD(c.balance),"Contributions plus net compound interest."],["Compound advantage",USD(p.advantage),"Compound balance minus simple balance."],["Simple buying power",USD(p.simpleBuyingPower),`${F(c.inflation*100,2)}% assumed inflation.`],["Compound buying power",USD(c.buyingPower),`${F(c.inflation*100,2)}% assumed inflation.`]];
+    if(schedule)schedule.innerHTML=p.schedule.map(item=>`<tr><td>${item.period}</td><td>${USD(item.contributed)}</td><td>${USD(item.simpleBalance)}</td><td>${USD(item.compoundBalance)}</td><td>${USD(item.advantage)}</td></tr>`).join('');
   } else if (engine === "compound" || engine === "cn_retirement") {
     const P=V('principal'), rr=V('rate')/1200, n=V('years')*12, pmt=V('monthly'), fv=P*Math.pow(1+rr,n)+(rr?pmt*(Math.pow(1+rr,n)-1)/rr:pmt*n), contrib=P+pmt*n, growth=fv-contrib;
     cards=[["Future value",USD(fv),"Projected ending balance."],["Contributions",USD(contrib),"Starting amount plus deposits."],["Growth",USD(growth),"Estimated investment return."],["Time",`${F(V('years'),1)} years`,"Growth period."]];

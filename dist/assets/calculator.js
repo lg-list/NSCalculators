@@ -29,6 +29,29 @@ function compoundProjection(){
   const totalInterest=totalGrossInterest-totalTax,contributed=principal+totalDeposits,buyingPower=balance/Math.pow(1+inflation,totalMonths/12),durationLabel=extraMonths?`${years} yr ${extraMonths} mo`:`${years} yr`;
   return {principal,annual,years,extraMonths,totalMonths,frequency,monthly,annualContribution,taxRate,inflation,timing,balance,totalGrossInterest,totalTax,totalInterest,totalDeposits,contributed,buyingPower,schedule,effectiveAnnual,durationLabel};
 }
+function interestComparisonProjection(){
+  const compound=compoundProjection();
+  let simplePrincipal=compound.principal,simpleGrossInterest=0,simpleTax=0,totalDeposits=0;const schedule=[];
+  for(let month=1;month<=compound.totalMonths;month++){
+    if(compound.timing==='beginning'){
+      simplePrincipal+=compound.monthly;totalDeposits+=compound.monthly;
+      if((month-1)%12===0){simplePrincipal+=compound.annualContribution;totalDeposits+=compound.annualContribution}
+    }
+    const gross=simplePrincipal*compound.annual/12,tax=Math.max(0,gross)*compound.taxRate;
+    simpleGrossInterest+=gross;simpleTax+=tax;
+    if(compound.timing!=='beginning'){
+      simplePrincipal+=compound.monthly;totalDeposits+=compound.monthly;
+      if(month%12===0){simplePrincipal+=compound.annualContribution;totalDeposits+=compound.annualContribution}
+    }
+    if(month%12===0||month===compound.totalMonths){
+      const wholeYears=Math.floor(month/12),remaining=month%12,period=remaining?(wholeYears?`${wholeYears} yr ${remaining} mo`:`${remaining} mo`):`${wholeYears} yr`,compoundRow=compound.schedule[schedule.length],simpleBalance=simplePrincipal+simpleGrossInterest-simpleTax,compoundBalance=compoundRow?.balance??compound.balance;
+      schedule.push({period,contributed:compound.principal+totalDeposits,simpleBalance,compoundBalance,advantage:compoundBalance-simpleBalance});
+    }
+  }
+  if(!schedule.length)schedule.push({period:'Start',contributed:compound.principal,simpleBalance:compound.principal,compoundBalance:compound.principal,advantage:0});
+  const simpleInterest=simpleGrossInterest-simpleTax,simpleBalance=simplePrincipal+simpleInterest,simpleBuyingPower=simpleBalance/Math.pow(1+compound.inflation,compound.totalMonths/12),advantage=compound.balance-simpleBalance;
+  return {compound,simplePrincipal,simpleGrossInterest,simpleTax,simpleInterest,simpleBalance,simpleBuyingPower,advantage,schedule};
+}
 function syncFinanceTarget(){const target=document.getElementById('finance_solve')?.value||'fv';document.querySelectorAll('[data-finance-value]').forEach(field=>{const active=field.dataset.financeValue===target;field.classList.toggle('finance-solve-target',active);const input=field.querySelector('input');if(input){input.disabled=active;input.setAttribute('aria-disabled',active?'true':'false')}});return target}
 function financePeriodicRate(annual,py,cy){return Math.pow(1+annual/100/cy,cy/py)-1}
 function financeNominalRate(periodic,py,cy){return cy*(Math.pow(1+periodic,py/cy)-1)*100}
@@ -136,6 +159,7 @@ function calc(e){
   case'loan':{let P=V('amount'),rr=V('apr')/1200,n=Math.max(1,(V('years')*12)+(V('months_extra')||V('months')));let pay=rr?P*rr*Math.pow(1+rr,n)/(Math.pow(1+rr,n)-1):P/n,total=pay*n;show(`<strong>${USD(pay)} / month</strong><br>Total paid: ${USD(total)}; total interest: ${USD(total-P)}.`);break}
   case'loan_page':{renderLoanPage();break}
   case'finance_tvm':{const p=financeProjection();if(!p.valid)show(`<strong>Check the inputs</strong><br>${p.message}`);else{const labels={fv:'Future value',pmt:'Periodic payment',iy:'Annual interest rate',n:'Number of periods',pv:'Present value'},value=p.target==='iy'?`${F(p.iy,8)}%`:p.target==='n'?F(p.n,8):USD(p[p.target]);show(`<strong>${value} ${labels[p.target].toLowerCase()}</strong><br>${F(p.rate*100,6)}% effective rate per payment period; ${F(p.effectiveAnnual,6)}% effective annual rate.`)}break}
+  case'interest_advanced':{const p=interestComparisonProjection();show(`<strong>${USD(p.compound.balance)} compound balance</strong><br>${USD(p.simpleBalance)} with simple interest; ${USD(p.advantage)} compound advantage; ${USD(p.compound.buyingPower)} compound buying power in today's dollars.`);break}
   case'compound':{const p=compoundProjection();show(`<strong>${USD(p.balance)} ending balance</strong><br>${USD(p.contributed)} contributed; ${USD(p.totalInterest)} net interest; ${USD(p.buyingPower)} inflation-adjusted buying power.`);renderCompound(p);break}
   case'salary_advanced':{const p=salaryProjection();show(`<strong>${USD(p.annual)} new annual salary</strong><br>${USD(p.raiseDollars)} raise (${F(p.raisePercent,2)}%); ${USD(p.perPeriod)} per selected pay period; ${USD(p.hourly)} hourly equivalent.`);break}
   case'discount_advanced':{const p=discountProjection();show(`<strong>${USD(p.total)} estimated checkout total</strong><br>${USD(p.unitPrice)} discounted unit price; ${USD(p.savings)} total savings; ${F(p.effective,2)}% effective discount.`);break}
@@ -217,16 +241,20 @@ function drawGenericBars(canvas, bars) {
   bars.slice(0, 6).forEach((bar, index) => {
     const y = 34 + index * 40;
     const label = String(bar.label).slice(0, 22);
-    const width = (canvas.width - 210) * Math.abs(bar.value) / max;
     const pct = Math.abs(bar.value) / total * 100;
+    const valueText = `${bar.display || F(bar.value, 2)} (${F(pct,1)}%)`;
+    const valueWidth = ctx.measureText(valueText).width;
+    const valueX = Math.max(250, canvas.width - valueWidth - 16);
+    const trackWidth = Math.max(80, valueX - 170);
+    const width = trackWidth * Math.abs(bar.value) / max;
     ctx.fillStyle = "#344054";
     ctx.fillText(label, 16, y + 16);
     ctx.fillStyle = "#eef3f8";
-    ctx.fillRect(158, y, canvas.width - 198, 24);
+    ctx.fillRect(158, y, trackWidth, 24);
     ctx.fillStyle = colors[index % colors.length];
     ctx.fillRect(158, y, Math.max(4, width), 24);
     ctx.fillStyle = "#152033";
-    ctx.fillText(`${bar.display || F(bar.value, 2)} (${F(pct,1)}%)`, 166 + Math.max(8, width), y + 17);
+    ctx.fillText(valueText, valueX, y + 17);
   });
 }
 
@@ -283,6 +311,12 @@ function renderGenericFromEngine(engine) {
     cards=[["Monthly Pay",USD(pay),"Estimated auto loan payment."],["Total Loan Amount",USD(P),"Amount financed."],["Sale Tax",USD(tax),"Estimated tax from entered rate."],["Upfront Payment",USD(upfront),"Down payment plus taxes and fees when not financed."]];
     bars=[{label:"Loan amount",value:P,display:USD(P)},{label:"Interest",value:total-P,display:USD(total-P)},{label:"Upfront",value:upfront,display:USD(upfront)}];
     rows=[["Monthly Pay",USD(pay),"Payment every month."],["Total Loan Amount",USD(P),"Balance used for amortization."],["Total of Payments",USD(total),"Monthly payment times term."],["Total Loan Interest",USD(total-P),"Total paid minus loan amount."],["Sale Tax",USD(tax),"Auto price times tax rate."],["Upfront Payment",USD(upfront),"Due at purchase if not financed."]];
+  } else if (engine === "interest_advanced") {
+    const p=interestComparisonProjection(),c=p.compound,schedule=document.querySelector('#interestSchedule tbody'),frequency=c.frequency===0?'Continuous':`${F(c.frequency,0)} times/year`;
+    cards=[["Compound ending balance",USD(c.balance),`${F(c.effectiveAnnual*100,3)}% effective annual yield.`],["Simple ending balance",USD(p.simpleBalance),"Interest does not earn additional interest."],["Compound advantage",USD(p.advantage),"Difference between the two methods."],["Today's buying power",USD(c.buyingPower),`${F(c.inflation*100,2)}% assumed inflation.`]];
+    bars=[{label:"Initial investment",value:c.principal,display:USD(c.principal)},{label:"Additional deposits",value:c.totalDeposits,display:USD(c.totalDeposits)},{label:"Simple net interest",value:p.simpleInterest,display:USD(p.simpleInterest)},{label:"Compound net interest",value:c.totalInterest,display:USD(c.totalInterest)}];
+    rows=[["Initial investment",USD(c.principal),"Starting principal."],["Additional deposits",USD(c.totalDeposits),`${USD(c.monthly)} monthly and ${USD(c.annualContribution)} annually.`],["Total contributed",USD(c.contributed),"Initial investment plus deposits."],["Nominal annual rate",`${F(c.annual*100,3)}%`,"Entered annual rate."],["Compounding frequency",frequency,"Used only for the compound projection."],["Effective annual yield",`${F(c.effectiveAnnual*100,4)}%`,"Yield before the illustrative tax estimate."],["Simple gross interest",USD(p.simpleGrossInterest),"Interest earned only on contributed principal."],["Compound gross interest",USD(c.totalGrossInterest),"Includes interest earned on prior interest."],["Estimated simple interest tax",USD(p.simpleTax),`${F(c.taxRate*100,2)}% entered tax rate.`],["Estimated compound interest tax",USD(c.totalTax),`${F(c.taxRate*100,2)}% entered tax rate.`],["Simple ending balance",USD(p.simpleBalance),"Contributions plus net simple interest."],["Compound ending balance",USD(c.balance),"Contributions plus net compound interest."],["Compound advantage",USD(p.advantage),"Compound balance minus simple balance."],["Simple buying power",USD(p.simpleBuyingPower),`${F(c.inflation*100,2)}% assumed inflation.`],["Compound buying power",USD(c.buyingPower),`${F(c.inflation*100,2)}% assumed inflation.`]];
+    if(schedule)schedule.innerHTML=p.schedule.map(item=>`<tr><td>${item.period}</td><td>${USD(item.contributed)}</td><td>${USD(item.simpleBalance)}</td><td>${USD(item.compoundBalance)}</td><td>${USD(item.advantage)}</td></tr>`).join('');
   } else if (engine === "compound" || engine === "cn_retirement") {
     const P=V('principal'), rr=V('rate')/1200, n=V('years')*12, pmt=V('monthly'), fv=P*Math.pow(1+rr,n)+(rr?pmt*(Math.pow(1+rr,n)-1)/rr:pmt*n), contrib=P+pmt*n, growth=fv-contrib;
     cards=[["Future value",USD(fv),"Projected ending balance."],["Contributions",USD(contrib),"Starting amount plus deposits."],["Growth",USD(growth),"Estimated investment return."],["Time",`${F(V('years'),1)} years`,"Growth period."]];
