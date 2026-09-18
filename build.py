@@ -14,7 +14,7 @@ KEYWORD_STATS = ROOT / "exports" / "keyword-stats-positive.json"
 SEO_STRATEGY = ROOT / "exports" / "seo-keyword-strategy-2026-09-05.json"
 PUBLIC_BASE_PATH = os.environ.get("PUBLIC_BASE_PATH", "").strip().rstrip("/")
 PUBLIC_SITE_DOMAIN = os.environ.get("PUBLIC_SITE_DOMAIN", "").strip()
-ASSET_VERSION = "20260917q"
+ASSET_VERSION = "20260918a"
 CALCULATOR_REDIRECTS = {
     "concrete-calculator": "concrete-volume-calculator",
     "loan-payment-calculator": "loan-calculator",
@@ -613,7 +613,9 @@ def calculator_net_template(keyword, slug, cat):
         "example": f"Enter sample values to generate an illustrative {keyword.lower()} result.",
         "inputs": [["amount", "Amount", "number", 1000], ["rate", "Rate (%)", "number", 5], ["years", "Years", "number", 10]],
     }
-    if "mortgage" in text:
+    if slug == "take-home-pay-calculator":
+        base.update({"engine": "take_home_pay", "desc": "Estimate 2026 US take-home pay from federal income tax brackets, Social Security, Medicare, state or local tax, pay frequency, and payroll deductions.", "formula": "Take-home pay = gross pay - estimated federal income tax - FICA taxes - state or local tax - pre-tax and post-tax deductions.", "inputs": []})
+    elif "mortgage" in text:
         base.update({"engine": "cn_mortgage", "desc": "Estimate a mortgage payment with principal, interest, taxes, insurance, PMI, HOA, extra payments, and total payoff costs.", "formula": "Monthly payment = principal and interest + optional annual taxes, insurance, PMI, HOA, and other costs divided by 12. Extra payments reduce payoff time and total interest.", "inputs": [["price", "Home price ($)", "number", 400000], ["down", "Down payment ($)", "number", 20], ["apr", "Interest rate (%)", "number", 6.81], ["years", "Loan term (years)", "number", 30], ["start", "Start month", "month", "2026-09"], ["tax", "Property tax", "number", 1.2], ["insurance", "Home insurance", "number", 1500], ["pmi", "PMI", "number", 0], ["hoa", "HOA", "number", 0], ["other", "Other costs", "number", 4000], ["increase", "Annual tax/insurance increase (%)", "number", 0], ["extra_monthly", "Extra monthly pay ($)", "number", 0], ["extra_yearly", "Extra yearly pay ($)", "number", 0], ["extra_once", "One-time extra pay ($)", "number", 0]]})
     elif slug == "loan-calculator":
         base.update({"engine": "loan_page", "desc": "Calculate amortized loan payments, deferred payment loan maturity value, and bond present value using the same three loan models shown on Calculator.net.", "formula": "Amortized payment uses an effective payback-period rate. Deferred payment compounds principal to maturity. Bond value discounts the predetermined due amount to the loan start.", "inputs": []})
@@ -774,6 +776,8 @@ def seo_keywords(calc):
 def seo_title(calc):
     if calc.get("slug") == "loan-calculator":
         return "Loan Calculator: Payment & Interest | NS Calculators"
+    if calc.get("slug") == "take-home-pay-calculator":
+        return "Take Home Pay Calculator 2026 | NS Calculators"
     title = smart_title(primary_keyword(calc))
     if calc.get("seo_context_label"):
         context = smart_title(calc["seo_context_label"])
@@ -842,6 +846,8 @@ def seo_description(calc):
         return "Calculate a raise by percent or dollars and compare new annual, monthly, biweekly, weekly, hourly, and inflation-adjusted pay."
     if calc.get("slug") == "discount-calculator":
         return "Calculate one or two discounts, savings, quantity, sales tax, fees, effective discount, and the estimated final checkout total."
+    if calc.get("slug") == "take-home-pay-calculator":
+        return "Estimate 2026 US take-home pay by paycheck with federal brackets, Social Security, Medicare, state tax, and payroll deductions."
     if calc.get("engine") == "linear_convert":
         return f"Use this free {keyword} to convert units instantly with the formula, example, and related conversion calculators."
     if calc.get("engine") in ("cn_mortgage", "loan_page", "car_loan"):
@@ -910,6 +916,23 @@ def discount_input_html():
 <div class="field"><label for="discount">First discount</label><div class="input-unit"><input id="discount" type="number" step="any" min="0" max="100" value="20"><span>%</span></div></div>
 <div class="field"><label for="discount_two">Second discount</label><div class="input-unit"><input id="discount_two" type="number" step="any" min="0" max="100" value="0"><span>%</span></div></div>
 <details class="more-options field-wide"><summary>Quantity, tax, and fees</summary><div class="fields"><div class="field"><label for="quantity">Quantity</label><input id="quantity" type="number" step="1" min="1" value="1"></div><div class="field"><label for="sales_tax">Estimated sales tax</label><div class="input-unit"><input id="sales_tax" type="number" step="any" min="0" value="8.25"><span>%</span></div></div><div class="field field-wide"><label for="checkout_fees">Shipping and other fees</label><div class="input-unit"><input id="checkout_fees" type="number" step="any" min="0" value="0"><span>$</span></div></div></div></details>
+</div>"""
+
+
+def take_home_pay_input_html():
+    return """<div class="fields take-home-fields">
+<div class="field"><label for="pay_gross">Annual gross salary</label><div class="input-unit"><input id="pay_gross" type="number" step="any" min="0" value="75000"><span>$</span></div></div>
+<div class="field"><label for="pay_status">Federal filing status</label><select id="pay_status"><option value="single" selected>Single</option><option value="joint">Married filing jointly</option><option value="head">Head of household</option></select></div>
+<div class="field field-wide"><label for="pay_periods">Pay frequency</label><select id="pay_periods"><option value="12">Monthly (12 paychecks)</option><option value="24">Semimonthly (24 paychecks)</option><option value="26" selected>Biweekly (26 paychecks)</option><option value="52">Weekly (52 paychecks)</option></select></div>
+<details class="more-options field-wide"><summary>Deductions, state tax, and withholding</summary><div class="fields">
+<div class="field"><label for="pay_retirement">Pre-tax retirement contribution</label><div class="input-unit"><input id="pay_retirement" type="number" step="any" min="0" value="4500"><span>$/yr</span></div></div>
+<div class="field"><label for="pay_pretax">Other pre-tax benefits</label><div class="input-unit"><input id="pay_pretax" type="number" step="any" min="0" value="2400"><span>$/yr</span></div></div>
+<div class="field"><label for="pay_deduction_mode">Federal deduction</label><select id="pay_deduction_mode"><option value="standard" selected>2026 standard deduction</option><option value="custom">Custom deduction amount</option></select></div>
+<div class="field is-hidden" data-pay-custom><label for="pay_custom_deduction">Custom federal deduction</label><div class="input-unit"><input id="pay_custom_deduction" type="number" step="any" min="0" value="0"><span>$</span></div></div>
+<div class="field"><label for="pay_state_rate">State and local effective rate</label><div class="input-unit"><input id="pay_state_rate" type="number" step="any" min="0" value="5"><span>%</span></div></div>
+<div class="field"><label for="pay_posttax">Post-tax deductions</label><div class="input-unit"><input id="pay_posttax" type="number" step="any" min="0" value="600"><span>$/yr</span></div></div>
+<div class="field field-wide"><label for="pay_extra">Extra federal withholding</label><div class="input-unit"><input id="pay_extra" type="number" step="any" min="0" value="0"><span>$/paycheck</span></div></div>
+</div></details>
 </div>"""
 
 
@@ -1398,6 +1421,17 @@ def conversion_copy(calc):
 
 
 def high_value_calculator_copy(calc):
+    if calc.get("slug") == "take-home-pay-calculator":
+        return """
+<h2>2026 US take-home pay estimate</h2><p>This calculator starts with annual gross wages, applies the selected 2026 federal filing-status brackets and deduction, estimates employee Social Security and Medicare taxes, then subtracts the state or local rate and payroll deductions you enter. Results include annual, monthly, and selected-paycheck take-home pay.</p>
+<p class="formula">take-home pay = gross wages - pre-tax deductions - federal income tax - Social Security - Medicare - state or local tax - post-tax deductions - extra withholding</p>
+<h2>Federal income tax calculation</h2><p>Federal taxable income is gross wages minus the entered pre-tax amounts and either the 2026 standard deduction or your custom deduction. The calculator applies progressive tax brackets, meaning each rate applies only to the income inside that bracket. It does not multiply all income by your highest marginal rate.</p>
+<p>For 2026, the standard deduction is $16,100 for single filers, $32,200 for married couples filing jointly, and $24,150 for heads of household. See the <a href="https://www.irs.gov/newsroom/irs-releases-tax-inflation-adjustments-for-tax-year-2026-including-amendments-from-the-one-big-beautiful-bill" rel="external noopener">IRS 2026 inflation adjustments</a> and <a href="https://www.irs.gov/irb/2025-45_IRB" rel="external noopener">Revenue Procedure 2025-32</a>.</p>
+<h2>Social Security and Medicare in 2026</h2><p>The employee Social Security rate is 6.2% on covered wages up to the 2026 wage base of $184,500. Medicare is 1.45% on covered wages with no ordinary wage cap. The calculator also estimates the 0.9% Additional Medicare Tax above the filing-status threshold. These parameters come from <a href="https://www.irs.gov/publications/p15" rel="external noopener">IRS Publication 15 (2026)</a> and the <a href="https://www.ssa.gov/oact/COLA/cbb.html" rel="external noopener">Social Security Administration contribution and benefit base</a>.</p>
+<h2>How payroll deductions are treated</h2><p>The pre-tax retirement field reduces the federal income-tax estimate but not Social Security or Medicare wages, which is the common treatment for elective 401(k) deferrals. The other pre-tax benefits field is assumed to reduce both federal taxable income and FICA wages. Actual treatment depends on the plan and deduction type. Post-tax deductions reduce take-home pay but not taxable wages.</p>
+<h2>Worked example</h2><p>Using the default $75,000 salary, single filing status, $4,500 retirement contribution, $2,400 other pre-tax benefits, 5% state or local rate, and $600 post-tax deductions, the model estimates about $52,389 in annual take-home pay, or about $2,015 across 26 biweekly paychecks.</p>
+<h2>Estimate versus an actual paycheck</h2><p>This is an annual planning estimate, not payroll software or tax advice. It does not model W-4 dependents and credits, multiple jobs, bonus withholding, local tax rules, unemployment or disability insurance, HSA limits, age-based deductions, itemized-deduction limits, refundable credits, no-tax-on-tips or overtime deductions, or employer-specific benefit timing. Compare the result with your pay stub and use the <a href="https://www.irs.gov/individuals/tax-withholding-estimator" rel="external noopener">IRS Tax Withholding Estimator</a> when you need W-4 guidance.</p>
+<h2>Frequently asked questions</h2><h3>Is take-home pay the same as net pay?</h3><p>They generally refer to the amount left after taxes and payroll deductions. A pay stub may use net pay for the exact employer calculation.</p><h3>Does a 401(k) contribution reduce Social Security tax?</h3><p>Traditional elective 401(k) deferrals generally reduce federal taxable income but remain subject to Social Security and Medicare taxes, which is how this calculator treats the retirement field.</p><h3>Why can my paycheck differ?</h3><p>Payroll withholding uses W-4 elections, payroll-period tables, benefit timing, rounding, and state rules. This tool annualizes those items for comparison.</p>"""
     if calc.get("slug") == "salary-increase-calculator":
         return """
 <h2>How to calculate a salary increase</h2><p>Enter your current gross annual salary and a raise as either a percentage or a fixed annual dollar amount. The calculator converts the raise into both formats and then shows the new annual salary across common pay periods.</p>
@@ -1657,6 +1691,13 @@ def default_calculator_copy(calc):
 
 
 def analysis_extra_html(calc):
+    if calc.get("slug") == "take-home-pay-calculator":
+        return """<section class="mortgage-dashboard generic-dashboard finance-dashboard" aria-label="Take-home pay results">
+<div class="section-head stack"><h2>Take-Home Pay Results</h2><p>Compare gross pay, taxes, deductions, and net pay for 2026.</p></div>
+<div class="summary-grid" id="genericSummary"></div>
+<div class="chart-grid"><div class="chart-card compact-chart"><h3>Annual Pay Breakdown</h3><canvas id="genericChart" width="620" height="230" aria-label="Annual gross pay, taxes, deductions, and take-home pay" data-chart-type="bars"></canvas></div></div>
+<div class="table-card"><h3>Tax and Pay Details</h3><div class="table-scroll"><table class="data-table" id="genericTable"><thead><tr><th>Metric</th><th>Value</th><th>Note</th></tr></thead><tbody></tbody></table></div></div>
+</section>"""
     if calc.get("slug") in ("salary-increase-calculator", "discount-calculator"):
         labels = {
             "salary-increase-calculator": ("Raise and Pay Results", "Annual Pay Comparison"),
@@ -1779,6 +1820,9 @@ def calculator_page(site, calc, related):
     elif calc.get("slug") == "discount-calculator":
         fields = discount_input_html()
         page_engine = "discount_advanced"
+    elif calc.get("slug") == "take-home-pay-calculator":
+        fields = take_home_pay_input_html()
+        page_engine = "take_home_pay"
     elif calc.get("slug") == "truck-payload-calculator":
         fields = truck_payload_input_html()
     elif calc.get("slug") == "towing-capacity-calculator":
@@ -2084,6 +2128,12 @@ function compoundProjection(){
 }
 function salaryProjection(){const current=Math.max(0,V('salary')),unit=document.getElementById('raise_unit')?.value||'percent',entered=V('raise_amount'),raiseDollars=unit==='dollar'?entered:current*entered/100,raisePercent=current?raiseDollars/current*100:0,annual=Math.max(0,current+raiseDollars),periods=Math.max(1,Math.floor(V('pay_periods'))),hours=Math.max(.1,V('hours_week')),weeks=Math.max(.1,V('weeks_year')),inflation=Math.max(-99,V('inflation_rate')),realRaise=((1+raisePercent/100)/(1+inflation/100)-1)*100;return{current,unit,entered,raiseDollars,raisePercent,annual,periods,hours,weeks,inflation,realRaise,monthly:annual/12,perPeriod:annual/periods,weekly:annual/weeks,hourly:annual/(hours*weeks),oldMonthly:current/12,oldPerPeriod:current/periods,oldWeekly:current/weeks,oldHourly:current/(hours*weeks)}}
 function discountProjection(){const price=Math.max(0,V('price')),first=Math.max(0,Math.min(100,V('discount'))),second=Math.max(0,Math.min(100,V('discount_two'))),quantity=Math.max(1,Math.floor(V('quantity'))),taxRate=Math.max(0,V('sales_tax')),fees=Math.max(0,V('checkout_fees')),multiplier=(1-first/100)*(1-second/100),unitPrice=price*multiplier,effective=(1-multiplier)*100,subtotal=unitPrice*quantity,savings=(price-unitPrice)*quantity,tax=subtotal*taxRate/100,total=subtotal+tax+fees;return{price,first,second,quantity,taxRate,fees,multiplier,unitPrice,effective,subtotal,savings,tax,total}}
+const FEDERAL_2026={single:[[12400,.10],[50400,.12],[105700,.22],[201775,.24],[256225,.32],[640600,.35],[Infinity,.37]],joint:[[24800,.10],[100800,.12],[211400,.22],[403550,.24],[512450,.32],[768700,.35],[Infinity,.37]],head:[[17700,.10],[67450,.12],[105700,.22],[201750,.24],[256200,.32],[640600,.35],[Infinity,.37]]};
+const STANDARD_DEDUCTION_2026={single:16100,joint:32200,head:24150};
+function progressiveTax(income,brackets){let tax=0,lower=0;for(const[upper,rate]of brackets){const amount=Math.max(0,Math.min(income,upper)-lower);tax+=amount*rate;if(income<=upper)break;lower=upper}return tax}
+function marginalRate(income,brackets){return(brackets.find(([upper])=>income<=upper)||brackets.at(-1))[1]}
+function syncPayDeductionFields(){const custom=document.getElementById('pay_deduction_mode')?.value==='custom';document.querySelectorAll('[data-pay-custom]').forEach(el=>el.classList.toggle('is-hidden',!custom));return custom}
+function takeHomeProjection(){const gross=Math.max(0,V('pay_gross')),status=document.getElementById('pay_status')?.value||'single',periods=Math.max(1,Math.floor(V('pay_periods'))),retirement=Math.max(0,V('pay_retirement')),pretax=Math.max(0,V('pay_pretax')),posttax=Math.max(0,V('pay_posttax')),stateRate=Math.max(0,V('pay_state_rate')),extraPerPay=Math.max(0,V('pay_extra')),custom=syncPayDeductionFields(),deduction=custom?Math.max(0,V('pay_custom_deduction')):STANDARD_DEDUCTION_2026[status],federalTaxable=Math.max(0,gross-retirement-pretax-deduction),brackets=FEDERAL_2026[status],federal=progressiveTax(federalTaxable,brackets),marginal=marginalRate(federalTaxable,brackets),ficaWages=Math.max(0,gross-pretax),social=Math.min(ficaWages,184500)*.062,medicareThreshold=status==='joint'?250000:200000,medicare=ficaWages*.0145+Math.max(0,ficaWages-medicareThreshold)*.009,stateTaxable=Math.max(0,gross-retirement-pretax),state=stateTaxable*stateRate/100,extra=extraPerPay*periods,totalTax=federal+social+medicare+state+extra,totalDeductions=retirement+pretax+posttax,net=Math.max(0,gross-totalTax-totalDeductions),effective=gross?totalTax/gross*100:0;return{gross,status,periods,retirement,pretax,posttax,stateRate,extraPerPay,extra,deduction,custom,federalTaxable,federal,marginal,ficaWages,social,medicareThreshold,medicare,stateTaxable,state,totalTax,totalDeductions,net,effective,perPay:net/periods,grossPerPay:gross/periods,monthly:net/12}}
 function tradeInProjection(){const comparable=Math.max(0,V('comparable')),adjustment=V('market_adjustment'),margin=Math.max(0,V('dealer_margin')),reconditioning=Math.max(0,V('reconditioning')),payoff=Math.max(0,V('payoff')),replacement=Math.max(0,V('replacement_price')),taxRate=Math.max(0,V('tax_rate'))/100,trade=Math.max(0,comparable+adjustment-margin-reconditioning),equity=trade-payoff,taxSavings=Math.min(trade,replacement)*taxRate;return{comparable,adjustment,margin,reconditioning,payoff,replacement,taxRate,trade,equity,taxSavings,effective:trade+taxSavings}}
 function usedCarProjection(){const benchmark=Math.max(0,V('retail_benchmark')),condition=V('condition_adjustment'),mileage=V('mileage_adjustment'),options=V('options_adjustment'),regional=V('regional_adjustment'),spread=Math.max(0,Math.min(50,V('dealer_spread'))),retail=Math.max(0,benchmark*(1+condition/100)*(1+regional/100)+mileage+options),privateValue=retail*(1-spread/200),trade=retail*(1-spread/100);return{benchmark,condition,mileage,options,regional,spread,retail,privateValue,trade}}
 function tireSpec(width,aspect,rim){const sidewall=width*aspect/100,diameter=rim+2*sidewall/25.4,circumference=Math.PI*diameter,revsPerMile=63360/circumference;return{width,aspect,rim,sidewall,diameter,circumference,revsPerMile}}
@@ -2115,7 +2165,7 @@ function electricalLoadProjection(){const continuous=Math.max(0,V('el_continuous
 function wattsAmpsProjection(){const watts=Math.max(0,V('wa_watts')),voltage=Math.max(.001,V('wa_voltage')),phase=document.getElementById('wa_phase')?.value||'single',pf=phase==='dc'?1:Math.max(.01,Math.min(1,V('wa_pf'))),multiplier=phase==='three'?Math.sqrt(3):1,amps=watts/(voltage*pf*multiplier),va=watts/pf,vars=Math.sqrt(Math.max(0,va*va-watts*watts)),continuous=document.getElementById('wa_continuous')?.value==='yes',planningAmps=amps*(continuous?1.25:1);return{watts,voltage,phase,pf,multiplier,amps,va,vars,continuous,planningAmps}}
 function ampsWattsProjection(){const amps=Math.max(0,V('aw_amps')),voltage=Math.max(.001,V('aw_voltage')),phase=document.getElementById('aw_phase')?.value||'single',pf=phase==='dc'?1:Math.max(.01,Math.min(1,V('aw_pf'))),multiplier=phase==='three'?Math.sqrt(3):1,va=amps*voltage*multiplier,watts=va*pf,vars=Math.sqrt(Math.max(0,va*va-watts*watts));return{amps,voltage,phase,pf,multiplier,va,watts,vars}}
 function syncFeetMeterInputs(){const reverse=document.getElementById('conversion_direction')?.value==='meters_to_feet';document.querySelectorAll('[data-feet-input]').forEach(el=>el.classList.toggle('is-hidden',reverse));document.querySelectorAll('[data-meter-input]').forEach(el=>el.classList.toggle('is-hidden',!reverse));return reverse}
-function clearCalcForm(){const form=document.querySelector('.calc');if(!form)return;form.querySelectorAll('input').forEach(input=>{if(input.type==='checkbox')input.checked=false;else input.value=''});form.querySelectorAll('select').forEach(select=>{select.selectedIndex=0});form.querySelectorAll('details').forEach(item=>{item.open=false});syncMortgageCosts();syncConcreteFields();syncRoofFields();syncAreaFields();show('<strong>0</strong><br>Enter values to calculate a new result.');const engine=currentEngine();if(engine==='cn_mortgage')renderMortgage(0,0,1,0,0,0,0,0,0,0,0,0,0,new Date());if(engine==='loan_page')renderLoanPage()}
+function clearCalcForm(){const form=document.querySelector('.calc');if(!form)return;form.querySelectorAll('input').forEach(input=>{if(input.type==='checkbox')input.checked=false;else input.value=''});form.querySelectorAll('select').forEach(select=>{select.selectedIndex=0});form.querySelectorAll('details').forEach(item=>{item.open=false});syncMortgageCosts();syncConcreteFields();syncRoofFields();syncAreaFields();syncPayDeductionFields();show('<strong>0</strong><br>Enter values to calculate a new result.');const engine=currentEngine();if(engine==='cn_mortgage')renderMortgage(0,0,1,0,0,0,0,0,0,0,0,0,0,new Date());if(engine==='loan_page')renderLoanPage()}
 function calc(e){
  switch(e){
   case'trade_value':{let price=V('price'),age=V('age'),miles=V('miles'),cond=V('condition');let ageF=Math.pow(.84,age),expected=Math.max(1,age)*12000,mileageF=Math.max(.72,Math.min(1.12,1-(miles-expected)*0.000003));let r=price*ageF*mileageF*cond;show(`<strong>${USD(Math.max(0,r))}</strong><br>Illustrative estimate, not a dealer quote or appraisal.`);break}
@@ -2161,6 +2211,7 @@ function calc(e){
   case'compound':{const p=compoundProjection();show(`<strong>${USD(p.balance)}</strong><br>Total contributions: ${USD(p.principal+p.totalDeposits)}; estimated interest: ${USD(p.totalInterest)}.`);renderCompound(p);break}
   case'salary_advanced':{const p=salaryProjection();show(`<strong>${USD(p.annual)} new annual salary</strong><br>${USD(p.raiseDollars)} raise (${F(p.raisePercent,2)}%); ${USD(p.perPeriod)} per selected pay period; ${USD(p.hourly)} hourly equivalent.`);break}
   case'discount_advanced':{const p=discountProjection();show(`<strong>${USD(p.total)} estimated checkout total</strong><br>${USD(p.unitPrice)} discounted unit price; ${USD(p.savings)} total savings; ${F(p.effective,2)}% effective discount.`);break}
+  case'take_home_pay':{const p=takeHomeProjection();show(`<strong>${USD(p.perPay)} take-home per paycheck</strong><br>${USD(p.net)} annual net pay; ${USD(p.monthly)} monthly average; ${F(p.effective,2)}% estimated total tax rate.`);break}
   case'discount':{let r=V('price')*(1-V('discount')/100);show(`<strong>${USD(r)}</strong><br>Savings: ${USD(V('price')-r)}.`);break}
   case'salary':{let r=V('salary')*(1+V('increase')/100);show(`<strong>${USD(r)}</strong><br>Annual increase: ${USD(r-V('salary'))}.`);break}
   case'dome':{let radius=V('diameter')/2,area=2*Math.PI*radius*radius,vol=2/3*Math.PI*Math.pow(radius,3);show(`<strong>${F(area,2)} sq ft</strong><br>Approx. curved area; ${F(vol,2)} cu ft volume.`);break}
@@ -2332,6 +2383,11 @@ function renderGenericFromEngine(engine) {
     cards=[["Ending balance",USD(total),"Principal plus interest."],["Interest earned",USD(interest),"Simple interest amount."],["Principal",USD(P),"Starting amount."],["Rate",`${F(V('rate'),2)}%`,"Annual simple rate."]];
     bars=[{label:"Principal",value:P,display:USD(P)},{label:"Interest",value:interest,display:USD(interest)}];
     rows=[["Principal",USD(P),"Starting balance."],["Rate",`${F(V('rate'),2)}%`,"Annual rate."],["Time",`${F(V('years'),2)} years`,"Entered period."],["Ending balance",USD(total),"Principal plus interest."]];
+  } else if (engine === "take_home_pay") {
+    const p=takeHomeProjection(),statusLabel=p.status==='joint'?"Married filing jointly":p.status==='head'?"Head of household":"Single";
+    cards=[["Take-home / paycheck",USD(p.perPay),`${F(p.periods,0)} paychecks per year.`],["Annual take-home",USD(p.net),"After estimated taxes and deductions."],["Monthly average",USD(p.monthly),"Annual net pay divided by 12."],["Effective tax rate",`${F(p.effective,2)}%`,"Estimated taxes divided by gross pay."]];
+    bars=[{label:"Gross pay",value:p.gross,display:USD(p.gross)},{label:"Take-home pay",value:p.net,display:USD(p.net)},{label:"Estimated taxes",value:p.totalTax,display:USD(p.totalTax)},{label:"Payroll deductions",value:p.totalDeductions,display:USD(p.totalDeductions)}];
+    rows=[["Gross annual salary",USD(p.gross),USD(p.grossPerPay)+" gross per paycheck."],["Filing status",statusLabel,"Used for 2026 federal brackets and deduction."],["Federal deduction",USD(p.deduction),p.custom?"Entered custom deduction.":"2026 standard deduction."],["Federal taxable income",USD(p.federalTaxable),"Gross less modeled pre-tax amounts and deduction."],["Federal income tax",USD(p.federal),`${F(p.marginal*100,0)}% estimated marginal bracket.`],["Social Security",USD(p.social),"6.2% up to the $184,500 wage base."],["Medicare",USD(p.medicare),"1.45% plus applicable Additional Medicare Tax."],["State and local tax",USD(p.state),`${F(p.stateRate,2)}% entered effective rate.`],["Extra federal withholding",USD(p.extra),USD(p.extraPerPay)+" per paycheck."],["Pre-tax retirement",USD(p.retirement),"Reduces modeled federal taxable income, not FICA wages."],["Other pre-tax benefits",USD(p.pretax),"Assumed to reduce income-tax and FICA wages."],["Post-tax deductions",USD(p.posttax),"Reduces take-home pay only."],["Total estimated taxes",USD(p.totalTax),"Federal, FICA, state or local, and extra withholding."],["Annual take-home pay",USD(p.net),"Gross pay less modeled taxes and deductions."]];
   } else if (engine === "cn_tax_salary") {
     const income=V('income'), taxable=Math.max(0,income-V('deductions')), tax=taxable*V('taxrate')/100, net=income-tax;
     cards=[["Take-home pay",USD(net),"Estimated annual net pay."],["Monthly net",USD(net/12),"Estimated monthly take-home."],["Estimated tax",USD(tax),"Taxable income times rate."],["Taxable income",USD(taxable),"Income minus deductions."]];
