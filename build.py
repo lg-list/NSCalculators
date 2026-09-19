@@ -14,7 +14,7 @@ KEYWORD_STATS = ROOT / "exports" / "keyword-stats-positive.json"
 SEO_STRATEGY = ROOT / "exports" / "seo-keyword-strategy-2026-09-05.json"
 PUBLIC_BASE_PATH = os.environ.get("PUBLIC_BASE_PATH", "").strip().rstrip("/")
 PUBLIC_SITE_DOMAIN = os.environ.get("PUBLIC_SITE_DOMAIN", "").strip()
-ASSET_VERSION = "20260918j"
+ASSET_VERSION = "20260918k"
 CALCULATOR_REDIRECTS = {
     "concrete-calculator": "concrete-volume-calculator",
     "loan-payment-calculator": "loan-calculator",
@@ -636,6 +636,8 @@ def calculator_net_template(keyword, slug, cat):
         base.update({"engine": "loan_page", "desc": "Calculate amortized loan payments, deferred payment loan maturity value, and bond present value using the same three loan models shown on Calculator.net.", "formula": "Amortized payment uses an effective payback-period rate. Deferred payment compounds principal to maturity. Bond value discounts the predetermined due amount to the loan start.", "inputs": []})
     elif slug == "interest-calculator":
         base.update({"engine": "interest_advanced", "desc": "Compare simple and compound interest with recurring contributions, compounding frequency, estimated interest tax, and inflation-adjusted buying power.", "formula": "Simple interest uses principal x rate x time; compound interest applies growth to principal plus accumulated interest.", "inputs": []})
+    elif slug == "payment-calculator":
+        base.update({"engine": "payment_advanced", "desc": "Calculate a monthly loan payment from a fixed term or calculate payoff time from a fixed monthly payment, with total interest and a full amortization schedule.", "formula": "Payment = P x r x (1+r)^n / ((1+r)^n - 1); payoff periods = -ln(1 - P x r / payment) / ln(1+r).", "inputs": []})
     elif "auto loan" in text or ("car" in text and "loan" in text):
         base.update({"engine": "car_loan", "desc": "Estimate an auto loan payment including price, tax, fees, cash incentives, down payment, trade-in, amount owed on trade-in, and whether taxes and fees are financed.", "formula": "Loan amount = auto price - cash incentives - down payment - trade-in value + amount owed on trade-in, plus taxes and fees when included in the loan. Payment uses monthly amortization.", "inputs": [["price", "Auto Price ($)", "number", 50000], ["months", "Loan Term (months)", "number", 60], ["apr", "Interest Rate (%)", "number", 5], ["incentives", "Cash Incentives ($)", "number", 0], ["down", "Down Payment ($)", "number", 10000], ["trade", "Trade-in Value ($)", "number", 0], ["owed", "Amount Owed on Trade-in ($)", "number", 0], ["tax", "Sales Tax (%)", "number", 3], ["fees", "Title, Registration and Other Fees ($)", "number", 2800], ["include_fees", "Include taxes and fees in loan", "select", [["0", "No"], ["1", "Yes"]]]]})
     elif "loan" in text or "payment calculator" in text:
@@ -809,6 +811,8 @@ def seo_title(calc):
         return "Finance Calculator: PV, FV, PMT, Rate & Periods"
     if calc.get("slug") == "interest-calculator":
         return "Interest Calculator: Simple vs Compound Interest"
+    if calc.get("slug") == "payment-calculator":
+        return "Payment Calculator: Monthly Payment or Loan Term"
     if calc.get("slug") == "compound-interest-calculator":
         return "Compound Interest Calculator | NS Calculators"
     if calc.get("slug") == "take-home-pay-calculator":
@@ -847,6 +851,8 @@ def seo_description(calc):
         return "Solve future value, present value, payment, annual interest rate, or number of periods with payment timing, compounding settings, and a schedule."
     if calc.get("slug") == "interest-calculator":
         return "Compare simple and compound interest with deposits, compounding frequency, tax, inflation, charts, and an annual growth schedule."
+    if calc.get("slug") == "payment-calculator":
+        return "Calculate a monthly loan payment or payoff term with fixed-payment and fixed-term modes, total interest, payoff time, and an amortization schedule."
     if calc.get("slug") == "compound-interest-calculator":
         return "Calculate compound interest with monthly and annual contributions, tax, inflation, years and months, detailed growth charts, and an annual schedule."
     if calc.get("slug") == "truck-payload-calculator":
@@ -1392,6 +1398,21 @@ def payback_options(selected="month"):
     return "".join(f'<option value="{h(value)}"{" selected" if value == selected else ""}>{h(label)}</option>' for value, label in options)
 
 
+def payment_input_html():
+    return """<div class="loan-mode-tabs payment-mode-tabs" role="tablist" aria-label="Payment calculation mode">
+<button class="is-active" type="button" role="tab" aria-selected="true" data-payment-mode="term">Fixed Term</button>
+<button type="button" role="tab" aria-selected="false" data-payment-mode="payment">Fixed Payments</button>
+</div><div class="fields payment-fields">
+<div class="field"><label for="payment_amount">Loan amount</label><div class="input-unit"><input id="payment_amount" type="number" step="any" min="0" value="200000"><span>$</span></div></div>
+<div class="field"><label for="payment_rate">Interest rate</label><div class="input-unit"><input id="payment_rate" type="number" step="any" min="0" value="6"><span>%</span></div></div>
+<div class="field" data-payment-term><label for="payment_years">Loan term</label><div class="input-unit"><input id="payment_years" type="number" step="1" min="0" value="15"><span>years</span></div></div>
+<div class="field" data-payment-term><label for="payment_months">Additional months</label><div class="input-unit"><input id="payment_months" type="number" step="1" min="0" max="11" value="0"><span>months</span></div></div>
+<div class="field field-wide is-hidden" data-payment-fixed><label for="payment_monthly">Monthly payment</label><div class="input-unit"><input id="payment_monthly" type="number" step="any" min="0" value="1687.71"><span>$/mo</span></div></div>
+<div class="field-note field-wide" data-payment-term>Enter a repayment period to calculate the required monthly payment.</div>
+<div class="field-note field-wide is-hidden" data-payment-fixed>Enter the amount you can pay each month to estimate the payoff time.</div>
+</div>"""
+
+
 def loan_input_html():
     return f"""<div class="loan-mode-tabs" role="tablist" aria-label="Loan model"><button class="is-active" type="button" role="tab" aria-selected="true" data-loan-mode="monthlyfixed">Amortized</button><button type="button" role="tab" aria-selected="false" data-loan-mode="intheend">Deferred</button><button type="button" role="tab" aria-selected="false" data-loan-mode="fixedend">Bond</button></div><div class="loan-mode-stack">
 <section class="loan-mode-input is-active" id="monthlyfixed"><h3>Amortized Loan</h3><p>Fixed payments paid periodically until the loan is paid off.</p><div class="fields loan-fields">
@@ -1696,6 +1717,19 @@ def high_value_calculator_copy(calc):
 <h2>Quantity, tax, and fees</h2><p>Savings and merchandise subtotal are multiplied by quantity. Estimated tax is applied to the discounted merchandise subtotal, then the entered shipping or fees are added. Actual taxability, rates, shipping treatment, exemptions, and marketplace fees depend on the location and transaction. Use the dedicated <a href="/sales-tax-calculator/">sales tax calculator</a> to add tax, reverse tax from a total, or infer a rate. The <a href="https://www.irs.gov/credits-deductions/individuals/use-the-sales-tax-deduction-calculator" rel="external noopener">IRS sales-tax calculator guidance</a> notes that local rates can vary within a state, so use the rate shown for the actual purchase.</p>
 <h2>Compare the full offer</h2><p>Check model, size, shipping, return policy, and conditions attached to a low advertised price. The <a href="https://consumer.ftc.gov/articles/online-shopping" rel="external noopener">FTC online-shopping guide</a> recommends comparing item details and shipping fees, not only the headline price.</p>
 <h2>Frequently asked questions</h2><h3>How much is 25% off $80?</h3><p>The savings are $20 and the discounted price is $60 before tax and fees.</p><h3>Do I add two discounts together?</h3><p>No. Apply the second percentage to the price remaining after the first discount.</p><h3>Is sales tax charged before or after a discount?</h3><p>This calculator applies the entered rate after discounts. Actual taxable amounts can differ by jurisdiction and promotion type.</p>"""
+    if calc.get("slug") == "payment-calculator":
+        return """
+<h2>Monthly payment or payoff term</h2><p>This payment calculator answers either side of a common fixed-rate loan decision. Fixed Term calculates the monthly payment needed to repay a balance within a chosen number of years and months. Fixed Payments calculates how long repayment takes when the monthly amount is already known.</p>
+<h2>Fixed-term payment formula</h2><p>For a fully amortizing loan, each payment covers that month's interest and reduces principal. P is the starting principal, r is the monthly interest rate, and n is the number of monthly payments.</p>
+<p class="formula">monthly payment = P x r x (1 + r)^n / ((1 + r)^n - 1)</p>
+<p>At a zero interest rate, the payment is simply principal divided by the number of months. A $200,000 loan at 6% for 15 years produces a monthly payment of about $1,687.71 before fees, taxes, or insurance.</p>
+<h2>Fixed monthly payment formula</h2><p>When payment is known, the calculator rearranges the amortization equation to solve for the number of months. The monthly payment must be greater than the first month's interest. Otherwise the balance cannot decline under the entered assumptions.</p>
+<p class="formula">months = -ln(1 - principal x monthly rate / payment) / ln(1 + monthly rate)</p>
+<h2>How the amortization schedule works</h2><p>Interest is calculated from the balance at the beginning of each month. The rest of the payment reduces principal. Because the balance generally falls over time, the interest portion declines while the principal portion rises. The final payment can be smaller than the regular payment so the schedule does not overpay the balance.</p>
+<h2>Interest rate versus APR</h2><p>This calculator applies the entered percentage as a fixed nominal annual rate divided by 12. It does not independently add origination fees, points, closing costs, insurance, or other charges. The <a href="https://www.consumerfinance.gov/ask-cfpb/what-is-the-difference-between-a-loan-interest-rate-and-the-apr-en-733/" rel="external noopener">Consumer Financial Protection Bureau</a> explains that APR is a broader borrowing-cost measure that can include the interest rate and certain fees. Use the disclosed APR when comparing offers if you want those eligible costs reflected in the rate.</p>
+<h2>Choosing a term or payment</h2><p>A longer term usually lowers the required monthly payment but raises total interest. A larger fixed payment shortens the payoff period and normally lowers interest. Compare both modes using the same principal and rate. For mortgages with taxes and insurance, use the <a href="/mortgage-calculator/">mortgage calculator</a>; for multiple compounding and payment frequencies, use the <a href="/loan-calculator/">loan calculator</a>.</p>
+<h2>Important assumptions</h2><p>The calculation assumes a fixed rate, one payment each month, no missed or late payments, and no fees or prepayment penalties. Actual lenders can use daily interest, different rounding, payment dates, variable rates, or other contractual rules. Review the promissory note and lender disclosures before making a borrowing decision.</p>
+<h2>Frequently asked questions</h2><h3>Why is my fixed payment too low?</h3><p>If the payment does not exceed monthly interest, it cannot reduce principal. Increase the payment, lower the balance, or use a lower rate.</p><h3>Does an extra monthly payment reduce interest?</h3><p>Usually yes. In Fixed Payments mode, enter the total amount you plan to pay each month; the schedule shows the shorter estimated term and reduced interest.</p><h3>Does this calculate a payoff date?</h3><p>It calculates the number of monthly payments and expresses that duration in years and months. It does not account for a lender's exact billing date or daily-interest convention.</p>"""
     if calc.get("slug") == "loan-calculator":
         return """
 <h2>Loan payment calculator</h2><p>Use the amortized-loan section for a conventional fixed-payment installment loan. Enter principal, annual interest rate, term, compounding frequency, and payment frequency to calculate each payment, total payments, total interest, and the full amortization schedule.</p>
@@ -2047,8 +2081,16 @@ def analysis_extra_html(calc):
         return f"""<section class="mortgage-dashboard generic-dashboard fitment-dashboard" aria-label="{aria}">
 <div class="section-head stack"><h2>{title}</h2><p>Review the main fitment changes, supporting dimensions, and calculation details.</p></div>
 <div class="summary-grid" id="genericSummary"></div>
-<div class="chart-grid"><div class="chart-card compact-chart"><h3>{chart_title}</h3><canvas id="genericChart" width="620" height="230" aria-label="{chart_title}" data-chart-type="bars"></canvas></div></div>
+	<div class="chart-grid"><div class="chart-card compact-chart"><h3>{chart_title}</h3><canvas id="genericChart" width="620" height="230" aria-label="{chart_title}" data-chart-type="bars"></canvas></div></div>
+	<div class="table-card"><h3>Calculation Details</h3><div class="table-scroll"><table class="data-table" id="genericTable"><thead><tr><th>Metric</th><th>Value</th><th>Note</th></tr></thead><tbody></tbody></table></div></div>
+	</section>"""
+    if calc.get("slug") == "payment-calculator":
+        return """<section class="mortgage-dashboard generic-dashboard payment-dashboard" aria-label="Loan payment results">
+<div class="section-head stack"><h2>Payment Results</h2><p>Review the payment, payoff time, borrowing cost, and month-by-month balance.</p></div>
+<div class="summary-grid" id="genericSummary"></div>
+<div class="chart-grid"><div class="chart-card compact-chart"><h3>Principal and Interest</h3><canvas id="genericChart" width="620" height="190" aria-label="Principal, total interest, and monthly payment comparison" data-chart-type="bars"></canvas></div></div>
 <div class="table-card"><h3>Calculation Details</h3><div class="table-scroll"><table class="data-table" id="genericTable"><thead><tr><th>Metric</th><th>Value</th><th>Note</th></tr></thead><tbody></tbody></table></div></div>
+<div class="table-card"><h3>Monthly Amortization Schedule</h3><div class="table-scroll"><table class="data-table" id="paymentSchedule"><thead><tr><th>Month</th><th>Payment</th><th>Principal</th><th>Interest</th><th>Ending balance</th></tr></thead><tbody></tbody></table></div></div>
 </section>"""
     if calc.get("slug") == "interest-calculator":
         return """<section class="mortgage-dashboard generic-dashboard interest-compare-dashboard" aria-label="Simple and compound interest comparison">
@@ -2128,6 +2170,9 @@ def calculator_page(site, calc, related):
     elif calc.get("slug") == "feet-to-meters-calculator":
         fields = feet_to_meters_input_html()
         page_engine = "feet_meters"
+    elif calc.get("slug") == "payment-calculator":
+        fields = payment_input_html()
+        page_engine = "payment_advanced"
     elif calc.get("slug") == "interest-calculator":
         fields = compound_interest_input_html()
         page_engine = "interest_advanced"
@@ -2327,6 +2372,9 @@ CSS = r'''
 .input-unit{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;border:1px solid #cfd7e4;border-radius:9px;background:#fff;overflow:hidden}.input-unit input,.input-unit select{border:0!important;border-radius:0!important;height:42px!important}.input-unit input{min-width:0}.input-unit select,.input-unit span{height:42px;display:grid;place-items:center;border-left:1px solid #dfe5ee;background:#f8fafc;color:#344054;padding:0 10px;font-weight:760}.input-unit select{min-width:72px}.field-wide{grid-column:1/-1}.is-hidden{display:none!important}.checkline{display:flex!important;align-items:center;gap:10px;min-height:42px;margin:0!important;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#f8fafc;color:var(--ink);font-size:16px!important}.checkline input{width:18px;height:18px;accent-color:var(--brand)}.mortgage-cost-fields[hidden],.mortgage-cost-fields.is-hidden{display:none!important}.calculator-article:has(#mortgageSummary) .field label{font-size:16px;margin-bottom:4px}.calculator-article:has(#mortgageSummary) .field input,.calculator-article:has(#mortgageSummary) .field select{font-size:16px}.calculator-article:has(#mortgageSummary) .field>input,.calculator-article:has(#mortgageSummary) .field>select{height:42px;padding:0 10px}.calculator-article:has(#mortgageSummary) .mortgage-fields{gap:9px;margin-top:9px}.calculator-article:has(#mortgageSummary) .mortgage-fields:first-child{margin-top:0}
 .calc-actions{display:flex;gap:10px;align-items:center;margin-top:14px}.calc-actions .calc-btn{margin-top:0;flex:1}.clear-btn{min-width:92px}.more-options{margin-top:10px;border:1px solid var(--line);border-radius:10px;background:#fff}.more-options summary{min-height:42px;display:flex;align-items:center;padding:0 12px;cursor:pointer;color:var(--brand);font-size:16px;font-weight:850}.more-options summary::marker{color:var(--accent)}.more-options .mortgage-fields{padding:0 12px 12px}.calculator-article:has(#mortgageSummary) .calc-actions{margin-top:10px}.calculator-article:has(#mortgageSummary) .calc-actions .calc-btn,.calculator-article:has(#mortgageSummary) .clear-btn{min-height:42px;font-size:16px;padding:9px 14px}
 .loan-mode-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-bottom:10px;padding:4px;border:1px solid var(--line);border-radius:10px;background:#edf2f7}.loan-mode-tabs button{min-height:38px;border:0;border-radius:7px;background:transparent;color:#475467;font:800 14px/1 system-ui,sans-serif;cursor:pointer}.loan-mode-tabs button.is-active{background:#fff;color:var(--brand);box-shadow:0 2px 8px rgba(21,32,51,.12)}.loan-mode-stack{display:grid;gap:12px}.loan-mode-input{display:none;padding:12px;border:1px solid var(--line);border-radius:12px;background:#f8fafc}.loan-mode-input.is-active{display:block}.loan-mode-input h3{margin:0 0 4px;font-size:18px;letter-spacing:-.015em}.loan-mode-input p{margin:0 0 10px;color:var(--muted);font-size:13px;line-height:1.35}.loan-fields{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.loan-results{display:grid;gap:14px}.loan-result-panel{display:none;background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;box-shadow:0 10px 28px rgba(21,32,51,.05)}.loan-result-panel.is-active{display:block}.loan-result-panel .summary-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:10px 0 12px}.loan-chart-row{display:grid;grid-template-columns:minmax(260px,.9fr) minmax(260px,1fr);gap:12px;align-items:start}.loan-result-table{margin-top:0}.table-toggle{margin-top:10px;border:0;background:transparent;padding:0;cursor:pointer}.is-collapsed{display:none}.calculator-article:has(.loan-results) .calculator-layout.split-analysis{grid-template-columns:minmax(430px,500px) minmax(0,1fr)}.calculator-article:has(.loan-results) .result strong{font-size:30px}.calculator-article:has(.loan-results) .calc{padding:14px}.calculator-article:has(.loan-results) .chart-card canvas{max-height:none}
+.payment-mode-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}.payment-fields .field-wide{grid-column:1/-1}.payment-dashboard .chart-grid{grid-template-columns:1fr}.payment-dashboard .chart-card canvas{max-height:190px}.calculator-article:has(.payment-fields) .calculator-layout.split-analysis{grid-template-columns:minmax(360px,420px) minmax(0,1fr)}
+@media(max-width:900px){.calculator-article:has(.payment-fields) .calculator-layout.split-analysis{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:560px){.payment-fields{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px!important}.payment-fields .field label{min-height:28px;display:flex;align-items:end;font-size:12px!important}.payment-fields .field input{height:36px!important;padding:0 7px}.payment-fields .input-unit input,.payment-fields .input-unit span{height:36px!important}.payment-fields .input-unit span{padding:0 7px;font-size:12px}.payment-dashboard .summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.calculator-article:has(.payment-fields) .calc{padding:10px}.calculator-article:has(.payment-fields) .result strong{font-size:23px}}
 @media(max-width:1180px){.nav{align-items:center}.navlinks{flex:0 0 auto;overflow:visible;flex-wrap:nowrap;justify-content:flex-end;padding-bottom:0}.category-nav-link{flex:initial}}
 @media(max-width:1100px){.category-tools{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:900px){.hero-grid,.feature-layout,.proof-grid,.scientific-home,.browse-panel,.scientific-panel,.chart-grid,.calculator-layout.split-analysis,.seo-keywords{grid-template-columns:1fr}.calculator-pane{position:static}.keyword-chip-list{justify-content:flex-start}.category-grid,.tool-grid,.home-category-grid,.popular-list,.summary-grid{grid-template-columns:repeat(2,1fr)}.category-tools{grid-template-columns:repeat(2,1fr)}.directory-links{grid-template-columns:repeat(2,1fr)}.proof-points,.faq-grid,.faq-list,.related{grid-template-columns:1fr 1fr}.search-panel{box-shadow:none}.stats{grid-template-columns:repeat(2,1fr)}}
@@ -2508,6 +2556,37 @@ function interestComparisonProjection(){
   const simpleInterest=simpleGrossInterest-simpleTax,simpleBalance=simplePrincipal+simpleInterest,simpleBuyingPower=simpleBalance/Math.pow(1+compound.inflation,compound.totalMonths/12),advantage=compound.balance-simpleBalance;
   return {compound,simplePrincipal,simpleGrossInterest,simpleTax,simpleInterest,simpleBalance,simpleBuyingPower,advantage,schedule};
 }
+function syncPaymentMode(nextMode){
+  const mode=nextMode||document.querySelector('[data-payment-mode].is-active')?.dataset.paymentMode||'term';
+  document.querySelectorAll('[data-payment-mode]').forEach(button=>{const active=button.dataset.paymentMode===mode;button.classList.toggle('is-active',active);button.setAttribute('aria-selected',active?'true':'false')});
+  document.querySelectorAll('[data-payment-term]').forEach(el=>el.classList.toggle('is-hidden',mode!=='term'));
+  document.querySelectorAll('[data-payment-fixed]').forEach(el=>el.classList.toggle('is-hidden',mode!=='payment'));
+  return mode;
+}
+function paymentProjection(){
+  const mode=syncPaymentMode(),principal=Math.max(0,V('payment_amount')),annual=Math.max(0,V('payment_rate'))/100,rate=annual/12;
+  let regularPayment=0,monthsExact=0,months=0,valid=true,message='';
+  if(!(principal>0)){valid=false;message='Enter a loan amount greater than zero.'}
+  if(mode==='term'){
+    months=Math.max(0,Math.floor(V('payment_years'))*12+Math.floor(V('payment_months')));monthsExact=months;
+    if(months<1){valid=false;message='Enter a loan term of at least one month.'}
+    else regularPayment=rate?principal*rate*Math.pow(1+rate,months)/(Math.pow(1+rate,months)-1):principal/months;
+  }else{
+    regularPayment=Math.max(0,V('payment_monthly'));
+    if(!(regularPayment>0)){valid=false;message='Enter a monthly payment greater than zero.'}
+    else if(rate&&regularPayment<=principal*rate){valid=false;message='The payment must be greater than the first month of interest to reduce the balance.'}
+    else{monthsExact=rate?-Math.log(1-principal*rate/regularPayment)/Math.log(1+rate):principal/regularPayment;months=Math.ceil(monthsExact-1e-10)}
+  }
+  if(valid&&(!Number.isFinite(regularPayment)||!Number.isFinite(monthsExact)||months>1200)){valid=false;message='The payoff period exceeds 100 years. Increase the payment or review the inputs.'}
+  if(!valid)return{valid:false,mode,principal,annual,rate,regularPayment,monthsExact,months,message,schedule:[]};
+  let balance=principal,totalPaid=0,totalInterest=0;const schedule=[];
+  for(let month=1;month<=months&&balance>.005;month++){
+    const interest=balance*rate,due=balance+interest,payment=Math.min(regularPayment,due),principalPaid=Math.max(0,payment-interest);balance=Math.max(0,due-payment);totalPaid+=payment;totalInterest+=interest;
+    schedule.push({month,payment,principal:principalPaid,interest,balance});
+  }
+  const payoffMonths=schedule.length,years=Math.floor(payoffMonths/12),remainingMonths=payoffMonths%12,termLabel=[years?`${years} year${years===1?'':'s'}`:'',remainingMonths?`${remainingMonths} month${remainingMonths===1?'':'s'}`:''].filter(Boolean).join(' ')||'0 months';
+  return{valid:true,mode,principal,annual,rate,regularPayment,monthsExact,payoffMonths,termLabel,totalPaid,totalInterest,schedule};
+}
 function syncFinanceTarget(){const target=document.getElementById('finance_solve')?.value||'fv';document.querySelectorAll('[data-finance-value]').forEach(field=>{const active=field.dataset.financeValue===target;field.classList.toggle('finance-solve-target',active);const input=field.querySelector('input');if(input){input.disabled=active;input.setAttribute('aria-disabled',active?'true':'false')}});return target}
 function financePeriodicRate(annual,py,cy){return Math.pow(1+annual/100/cy,cy/py)-1}
 function financeNominalRate(periodic,py,cy){return cy*(Math.pow(1+periodic,py/cy)-1)*100}
@@ -2571,7 +2650,7 @@ function electricalLoadProjection(){const continuous=Math.max(0,V('el_continuous
 function wattsAmpsProjection(){const watts=Math.max(0,V('wa_watts')),voltage=Math.max(.001,V('wa_voltage')),phase=document.getElementById('wa_phase')?.value||'single',pf=phase==='dc'?1:Math.max(.01,Math.min(1,V('wa_pf'))),multiplier=phase==='three'?Math.sqrt(3):1,amps=watts/(voltage*pf*multiplier),va=watts/pf,vars=Math.sqrt(Math.max(0,va*va-watts*watts)),continuous=document.getElementById('wa_continuous')?.value==='yes',planningAmps=amps*(continuous?1.25:1);return{watts,voltage,phase,pf,multiplier,amps,va,vars,continuous,planningAmps}}
 function ampsWattsProjection(){const amps=Math.max(0,V('aw_amps')),voltage=Math.max(.001,V('aw_voltage')),phase=document.getElementById('aw_phase')?.value||'single',pf=phase==='dc'?1:Math.max(.01,Math.min(1,V('aw_pf'))),multiplier=phase==='three'?Math.sqrt(3):1,va=amps*voltage*multiplier,watts=va*pf,vars=Math.sqrt(Math.max(0,va*va-watts*watts));return{amps,voltage,phase,pf,multiplier,va,watts,vars}}
 function syncFeetMeterInputs(){const reverse=document.getElementById('conversion_direction')?.value==='meters_to_feet';document.querySelectorAll('[data-feet-input]').forEach(el=>el.classList.toggle('is-hidden',reverse));document.querySelectorAll('[data-meter-input]').forEach(el=>el.classList.toggle('is-hidden',!reverse));return reverse}
-function clearCalcForm(){const form=document.querySelector('.calc');if(!form)return;form.querySelectorAll('input').forEach(input=>{if(input.type==='checkbox')input.checked=false;else input.value=''});form.querySelectorAll('textarea').forEach(textarea=>{textarea.value=''});form.querySelectorAll('select').forEach(select=>{select.selectedIndex=0});form.querySelectorAll('details').forEach(item=>{item.open=false});syncMortgageCosts();syncConcreteFields();syncRoofFields();syncAreaFields();syncPayDeductionFields();syncSalesTaxFields();syncPercentFields();syncFractionFields();syncBmiFields();syncFinanceTarget();show('<strong>0</strong><br>Enter values to calculate a new result.');const engine=currentEngine();if(engine==='cn_mortgage')renderMortgage(0,0,1,0,0,0,0,0,0,0,0,0,0,new Date());if(engine==='loan_page')renderLoanPage()}
+function clearCalcForm(){const form=document.querySelector('.calc');if(!form)return;form.querySelectorAll('input').forEach(input=>{if(input.type==='checkbox')input.checked=false;else input.value=''});form.querySelectorAll('textarea').forEach(textarea=>{textarea.value=''});form.querySelectorAll('select').forEach(select=>{select.selectedIndex=0});form.querySelectorAll('details').forEach(item=>{item.open=false});syncMortgageCosts();syncConcreteFields();syncRoofFields();syncAreaFields();syncPayDeductionFields();syncSalesTaxFields();syncPercentFields();syncFractionFields();syncBmiFields();syncFinanceTarget();syncPaymentMode();show('<strong>0</strong><br>Enter values to calculate a new result.');const engine=currentEngine();if(engine==='cn_mortgage')renderMortgage(0,0,1,0,0,0,0,0,0,0,0,0,0,new Date());if(engine==='loan_page')renderLoanPage()}
 function calc(e){
  switch(e){
   case'trade_value':{let price=V('price'),age=V('age'),miles=V('miles'),cond=V('condition');let ageF=Math.pow(.84,age),expected=Math.max(1,age)*12000,mileageF=Math.max(.72,Math.min(1.12,1-(miles-expected)*0.000003));let r=price*ageF*mileageF*cond;show(`<strong>${USD(Math.max(0,r))}</strong><br>Illustrative estimate, not a dealer quote or appraisal.`);break}
@@ -2615,6 +2694,7 @@ function calc(e){
   case'loan':{let P=V('amount'),rr=V('apr')/1200,n=Math.max(1,(V('years')*12)+(V('months_extra')||V('months')));let pay=rr?P*rr*Math.pow(1+rr,n)/(Math.pow(1+rr,n)-1):P/n,total=pay*n;show(`<strong>${USD(pay)} / month</strong><br>Total paid: ${USD(total)}; total interest: ${USD(total-P)}.`);break}
   case'loan_page':{renderLoanPage();break}
   case'finance_tvm':{const p=financeProjection();if(!p.valid)show(`<strong>Check the inputs</strong><br>${p.message}`);else{const labels={fv:'Future value',pmt:'Periodic payment',iy:'Annual interest rate',n:'Number of periods',pv:'Present value'},value=p.target==='iy'?`${F(p.iy,8)}%`:p.target==='n'?F(p.n,8):USD(p[p.target]);show(`<strong>${value} ${labels[p.target].toLowerCase()}</strong><br>${F(p.rate*100,6)}% effective rate per payment period; ${F(p.effectiveAnnual,6)}% effective annual rate.`)}break}
+  case'payment_advanced':{const p=paymentProjection();if(!p.valid)show(`<strong>Payment cannot repay this loan</strong><br>${p.message}`);else show(`<strong>${USD(p.regularPayment)} monthly payment</strong><br>${p.termLabel} to payoff; ${USD(p.totalInterest)} total interest; ${USD(p.totalPaid)} total paid.`);break}
   case'interest_advanced':{const p=interestComparisonProjection();show(`<strong>${USD(p.compound.balance)} compound balance</strong><br>${USD(p.simpleBalance)} with simple interest; ${USD(p.advantage)} compound advantage; ${USD(p.compound.buyingPower)} compound buying power in today's dollars.`);break}
   case'compound':{const p=compoundProjection();show(`<strong>${USD(p.balance)} ending balance</strong><br>${USD(p.contributed)} contributed; ${USD(p.totalInterest)} net interest; ${USD(p.buyingPower)} inflation-adjusted buying power.`);renderCompound(p);break}
   case'salary_advanced':{const p=salaryProjection();show(`<strong>${USD(p.annual)} new annual salary</strong><br>${USD(p.raiseDollars)} raise (${F(p.raisePercent,2)}%); ${USD(p.perPeriod)} per selected pay period; ${USD(p.hourly)} hourly equivalent.`);break}
@@ -2767,6 +2847,10 @@ function renderGenericFromEngine(engine) {
     cards=[["Monthly Pay",USD(pay),"Estimated auto loan payment."],["Total Loan Amount",USD(P),"Amount financed."],["Sale Tax",USD(tax),"Estimated tax from entered rate."],["Upfront Payment",USD(upfront),"Down payment plus taxes and fees when not financed."]];
     bars=[{label:"Loan amount",value:P,display:USD(P)},{label:"Interest",value:total-P,display:USD(total-P)},{label:"Upfront",value:upfront,display:USD(upfront)}];
     rows=[["Monthly Pay",USD(pay),"Payment every month."],["Total Loan Amount",USD(P),"Balance used for amortization."],["Total of Payments",USD(total),"Monthly payment times term."],["Total Loan Interest",USD(total-P),"Total paid minus loan amount."],["Sale Tax",USD(tax),"Auto price times tax rate."],["Upfront Payment",USD(upfront),"Due at purchase if not financed."]];
+  } else if (engine === "payment_advanced") {
+    const p=paymentProjection(),schedule=document.querySelector('#paymentSchedule tbody'),modeLabel=p.mode==='term'?'Fixed Term':'Fixed Payments';
+    if(!p.valid){cards=[["Result","Check inputs",p.message],["Calculation mode",modeLabel,"Selected payment mode."],["Monthly payment","Unavailable","No amortizing payment calculated."],["Payoff time","Unavailable","Review the entered values."]];bars=[{label:"Loan amount",value:p.principal,display:USD(p.principal)},{label:"Interest",value:0,display:"Unavailable"}];rows=[["Validation","Unable to calculate",p.message],["Calculation mode",modeLabel,"Selected payment mode."],["Loan amount",USD(p.principal),"Entered principal."],["Annual interest rate",`${F(p.annual*100,3)}%`,"Fixed nominal annual rate."]];if(schedule)schedule.innerHTML=''}
+    else{cards=[["Monthly payment",USD(p.regularPayment),p.mode==='term'?"Required payment for the entered term.":"Entered fixed payment."],["Payoff time",p.termLabel,`${F(p.monthsExact,3)} calculated months.`],["Total interest",USD(p.totalInterest),"Total paid minus principal."],["Total paid",USD(p.totalPaid),`${F(p.payoffMonths,0)} scheduled payments.`]];bars=[{label:"Loan principal",value:p.principal,display:USD(p.principal)},{label:"Total interest",value:p.totalInterest,display:USD(p.totalInterest)},{label:"Monthly payment",value:p.regularPayment,display:USD(p.regularPayment)}];rows=[["Calculation mode",modeLabel,p.mode==='term'?"Solve for monthly payment.":"Solve for payoff time."],["Loan amount",USD(p.principal),"Starting principal."],["Annual interest rate",`${F(p.annual*100,3)}%`,"Nominal rate divided by 12 each month."],["Monthly rate",`${F(p.rate*100,6)}%`,"Rate applied to the opening balance."],["Regular monthly payment",USD(p.regularPayment),"The final payment can be smaller."],["Calculated payoff periods",F(p.monthsExact,6),"Unrounded mathematical result."],["Scheduled payoff time",p.termLabel,`${F(p.payoffMonths,0)} whole monthly payments.`],["Total interest",USD(p.totalInterest),"Sum of monthly interest charges."],["Total paid",USD(p.totalPaid),"Principal plus interest."]];if(schedule)schedule.innerHTML=p.schedule.map(item=>`<tr><td>${F(item.month,0)}</td><td>${USD(item.payment)}</td><td>${USD(item.principal)}</td><td>${USD(item.interest)}</td><td>${USD(item.balance)}</td></tr>`).join('')}
   } else if (engine === "interest_advanced") {
     const p=interestComparisonProjection(),c=p.compound,schedule=document.querySelector('#interestSchedule tbody'),frequency=c.frequency===0?'Continuous':`${F(c.frequency,0)} times/year`;
     cards=[["Compound ending balance",USD(c.balance),`${F(c.effectiveAnnual*100,3)}% effective annual yield.`],["Simple ending balance",USD(p.simpleBalance),"Interest does not earn additional interest."],["Compound advantage",USD(p.advantage),"Difference between the two methods."],["Today's buying power",USD(c.buyingPower),`${F(c.inflation*100,2)}% assumed inflation.`]];
@@ -3231,6 +3315,11 @@ function setLoanMode(mode) {
 document.addEventListener("click", event => {
   const tab = event.target.closest("[data-loan-mode]");
   if (tab) setLoanMode(tab.dataset.loanMode);
+});
+
+document.addEventListener("click", event => {
+  const tab = event.target.closest("[data-payment-mode]");
+  if(tab){syncPaymentMode(tab.dataset.paymentMode);calc('payment_advanced')}
 });
 
 document.addEventListener("click", event => {

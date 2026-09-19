@@ -52,6 +52,37 @@ function interestComparisonProjection(){
   const simpleInterest=simpleGrossInterest-simpleTax,simpleBalance=simplePrincipal+simpleInterest,simpleBuyingPower=simpleBalance/Math.pow(1+compound.inflation,compound.totalMonths/12),advantage=compound.balance-simpleBalance;
   return {compound,simplePrincipal,simpleGrossInterest,simpleTax,simpleInterest,simpleBalance,simpleBuyingPower,advantage,schedule};
 }
+function syncPaymentMode(nextMode){
+  const mode=nextMode||document.querySelector('[data-payment-mode].is-active')?.dataset.paymentMode||'term';
+  document.querySelectorAll('[data-payment-mode]').forEach(button=>{const active=button.dataset.paymentMode===mode;button.classList.toggle('is-active',active);button.setAttribute('aria-selected',active?'true':'false')});
+  document.querySelectorAll('[data-payment-term]').forEach(el=>el.classList.toggle('is-hidden',mode!=='term'));
+  document.querySelectorAll('[data-payment-fixed]').forEach(el=>el.classList.toggle('is-hidden',mode!=='payment'));
+  return mode;
+}
+function paymentProjection(){
+  const mode=syncPaymentMode(),principal=Math.max(0,V('payment_amount')),annual=Math.max(0,V('payment_rate'))/100,rate=annual/12;
+  let regularPayment=0,monthsExact=0,months=0,valid=true,message='';
+  if(!(principal>0)){valid=false;message='Enter a loan amount greater than zero.'}
+  if(mode==='term'){
+    months=Math.max(0,Math.floor(V('payment_years'))*12+Math.floor(V('payment_months')));monthsExact=months;
+    if(months<1){valid=false;message='Enter a loan term of at least one month.'}
+    else regularPayment=rate?principal*rate*Math.pow(1+rate,months)/(Math.pow(1+rate,months)-1):principal/months;
+  }else{
+    regularPayment=Math.max(0,V('payment_monthly'));
+    if(!(regularPayment>0)){valid=false;message='Enter a monthly payment greater than zero.'}
+    else if(rate&&regularPayment<=principal*rate){valid=false;message='The payment must be greater than the first month of interest to reduce the balance.'}
+    else{monthsExact=rate?-Math.log(1-principal*rate/regularPayment)/Math.log(1+rate):principal/regularPayment;months=Math.ceil(monthsExact-1e-10)}
+  }
+  if(valid&&(!Number.isFinite(regularPayment)||!Number.isFinite(monthsExact)||months>1200)){valid=false;message='The payoff period exceeds 100 years. Increase the payment or review the inputs.'}
+  if(!valid)return{valid:false,mode,principal,annual,rate,regularPayment,monthsExact,months,message,schedule:[]};
+  let balance=principal,totalPaid=0,totalInterest=0;const schedule=[];
+  for(let month=1;month<=months&&balance>.005;month++){
+    const interest=balance*rate,due=balance+interest,payment=Math.min(regularPayment,due),principalPaid=Math.max(0,payment-interest);balance=Math.max(0,due-payment);totalPaid+=payment;totalInterest+=interest;
+    schedule.push({month,payment,principal:principalPaid,interest,balance});
+  }
+  const payoffMonths=schedule.length,years=Math.floor(payoffMonths/12),remainingMonths=payoffMonths%12,termLabel=[years?`${years} year${years===1?'':'s'}`:'',remainingMonths?`${remainingMonths} month${remainingMonths===1?'':'s'}`:''].filter(Boolean).join(' ')||'0 months';
+  return{valid:true,mode,principal,annual,rate,regularPayment,monthsExact,payoffMonths,termLabel,totalPaid,totalInterest,schedule};
+}
 function syncFinanceTarget(){const target=document.getElementById('finance_solve')?.value||'fv';document.querySelectorAll('[data-finance-value]').forEach(field=>{const active=field.dataset.financeValue===target;field.classList.toggle('finance-solve-target',active);const input=field.querySelector('input');if(input){input.disabled=active;input.setAttribute('aria-disabled',active?'true':'false')}});return target}
 function financePeriodicRate(annual,py,cy){return Math.pow(1+annual/100/cy,cy/py)-1}
 function financeNominalRate(periodic,py,cy){return cy*(Math.pow(1+periodic,py/cy)-1)*100}
@@ -115,7 +146,7 @@ function electricalLoadProjection(){const continuous=Math.max(0,V('el_continuous
 function wattsAmpsProjection(){const watts=Math.max(0,V('wa_watts')),voltage=Math.max(.001,V('wa_voltage')),phase=document.getElementById('wa_phase')?.value||'single',pf=phase==='dc'?1:Math.max(.01,Math.min(1,V('wa_pf'))),multiplier=phase==='three'?Math.sqrt(3):1,amps=watts/(voltage*pf*multiplier),va=watts/pf,vars=Math.sqrt(Math.max(0,va*va-watts*watts)),continuous=document.getElementById('wa_continuous')?.value==='yes',planningAmps=amps*(continuous?1.25:1);return{watts,voltage,phase,pf,multiplier,amps,va,vars,continuous,planningAmps}}
 function ampsWattsProjection(){const amps=Math.max(0,V('aw_amps')),voltage=Math.max(.001,V('aw_voltage')),phase=document.getElementById('aw_phase')?.value||'single',pf=phase==='dc'?1:Math.max(.01,Math.min(1,V('aw_pf'))),multiplier=phase==='three'?Math.sqrt(3):1,va=amps*voltage*multiplier,watts=va*pf,vars=Math.sqrt(Math.max(0,va*va-watts*watts));return{amps,voltage,phase,pf,multiplier,va,watts,vars}}
 function syncFeetMeterInputs(){const reverse=document.getElementById('conversion_direction')?.value==='meters_to_feet';document.querySelectorAll('[data-feet-input]').forEach(el=>el.classList.toggle('is-hidden',reverse));document.querySelectorAll('[data-meter-input]').forEach(el=>el.classList.toggle('is-hidden',!reverse));return reverse}
-function clearCalcForm(){const form=document.querySelector('.calc');if(!form)return;form.querySelectorAll('input').forEach(input=>{if(input.type==='checkbox')input.checked=false;else input.value=''});form.querySelectorAll('textarea').forEach(textarea=>{textarea.value=''});form.querySelectorAll('select').forEach(select=>{select.selectedIndex=0});form.querySelectorAll('details').forEach(item=>{item.open=false});syncMortgageCosts();syncConcreteFields();syncRoofFields();syncAreaFields();syncPayDeductionFields();syncSalesTaxFields();syncPercentFields();syncFractionFields();syncBmiFields();syncFinanceTarget();show('<strong>0</strong><br>Enter values to calculate a new result.');const engine=currentEngine();if(engine==='cn_mortgage')renderMortgage(0,0,1,0,0,0,0,0,0,0,0,0,0,new Date());if(engine==='loan_page')renderLoanPage()}
+function clearCalcForm(){const form=document.querySelector('.calc');if(!form)return;form.querySelectorAll('input').forEach(input=>{if(input.type==='checkbox')input.checked=false;else input.value=''});form.querySelectorAll('textarea').forEach(textarea=>{textarea.value=''});form.querySelectorAll('select').forEach(select=>{select.selectedIndex=0});form.querySelectorAll('details').forEach(item=>{item.open=false});syncMortgageCosts();syncConcreteFields();syncRoofFields();syncAreaFields();syncPayDeductionFields();syncSalesTaxFields();syncPercentFields();syncFractionFields();syncBmiFields();syncFinanceTarget();syncPaymentMode();show('<strong>0</strong><br>Enter values to calculate a new result.');const engine=currentEngine();if(engine==='cn_mortgage')renderMortgage(0,0,1,0,0,0,0,0,0,0,0,0,0,new Date());if(engine==='loan_page')renderLoanPage()}
 function calc(e){
  switch(e){
   case'trade_value':{let price=V('price'),age=V('age'),miles=V('miles'),cond=V('condition');let ageF=Math.pow(.84,age),expected=Math.max(1,age)*12000,mileageF=Math.max(.72,Math.min(1.12,1-(miles-expected)*0.000003));let r=price*ageF*mileageF*cond;show(`<strong>${USD(Math.max(0,r))}</strong><br>Illustrative estimate, not a dealer quote or appraisal.`);break}
@@ -159,6 +190,7 @@ function calc(e){
   case'loan':{let P=V('amount'),rr=V('apr')/1200,n=Math.max(1,(V('years')*12)+(V('months_extra')||V('months')));let pay=rr?P*rr*Math.pow(1+rr,n)/(Math.pow(1+rr,n)-1):P/n,total=pay*n;show(`<strong>${USD(pay)} / month</strong><br>Total paid: ${USD(total)}; total interest: ${USD(total-P)}.`);break}
   case'loan_page':{renderLoanPage();break}
   case'finance_tvm':{const p=financeProjection();if(!p.valid)show(`<strong>Check the inputs</strong><br>${p.message}`);else{const labels={fv:'Future value',pmt:'Periodic payment',iy:'Annual interest rate',n:'Number of periods',pv:'Present value'},value=p.target==='iy'?`${F(p.iy,8)}%`:p.target==='n'?F(p.n,8):USD(p[p.target]);show(`<strong>${value} ${labels[p.target].toLowerCase()}</strong><br>${F(p.rate*100,6)}% effective rate per payment period; ${F(p.effectiveAnnual,6)}% effective annual rate.`)}break}
+  case'payment_advanced':{const p=paymentProjection();if(!p.valid)show(`<strong>Payment cannot repay this loan</strong><br>${p.message}`);else show(`<strong>${USD(p.regularPayment)} monthly payment</strong><br>${p.termLabel} to payoff; ${USD(p.totalInterest)} total interest; ${USD(p.totalPaid)} total paid.`);break}
   case'interest_advanced':{const p=interestComparisonProjection();show(`<strong>${USD(p.compound.balance)} compound balance</strong><br>${USD(p.simpleBalance)} with simple interest; ${USD(p.advantage)} compound advantage; ${USD(p.compound.buyingPower)} compound buying power in today's dollars.`);break}
   case'compound':{const p=compoundProjection();show(`<strong>${USD(p.balance)} ending balance</strong><br>${USD(p.contributed)} contributed; ${USD(p.totalInterest)} net interest; ${USD(p.buyingPower)} inflation-adjusted buying power.`);renderCompound(p);break}
   case'salary_advanced':{const p=salaryProjection();show(`<strong>${USD(p.annual)} new annual salary</strong><br>${USD(p.raiseDollars)} raise (${F(p.raisePercent,2)}%); ${USD(p.perPeriod)} per selected pay period; ${USD(p.hourly)} hourly equivalent.`);break}
@@ -311,6 +343,10 @@ function renderGenericFromEngine(engine) {
     cards=[["Monthly Pay",USD(pay),"Estimated auto loan payment."],["Total Loan Amount",USD(P),"Amount financed."],["Sale Tax",USD(tax),"Estimated tax from entered rate."],["Upfront Payment",USD(upfront),"Down payment plus taxes and fees when not financed."]];
     bars=[{label:"Loan amount",value:P,display:USD(P)},{label:"Interest",value:total-P,display:USD(total-P)},{label:"Upfront",value:upfront,display:USD(upfront)}];
     rows=[["Monthly Pay",USD(pay),"Payment every month."],["Total Loan Amount",USD(P),"Balance used for amortization."],["Total of Payments",USD(total),"Monthly payment times term."],["Total Loan Interest",USD(total-P),"Total paid minus loan amount."],["Sale Tax",USD(tax),"Auto price times tax rate."],["Upfront Payment",USD(upfront),"Due at purchase if not financed."]];
+  } else if (engine === "payment_advanced") {
+    const p=paymentProjection(),schedule=document.querySelector('#paymentSchedule tbody'),modeLabel=p.mode==='term'?'Fixed Term':'Fixed Payments';
+    if(!p.valid){cards=[["Result","Check inputs",p.message],["Calculation mode",modeLabel,"Selected payment mode."],["Monthly payment","Unavailable","No amortizing payment calculated."],["Payoff time","Unavailable","Review the entered values."]];bars=[{label:"Loan amount",value:p.principal,display:USD(p.principal)},{label:"Interest",value:0,display:"Unavailable"}];rows=[["Validation","Unable to calculate",p.message],["Calculation mode",modeLabel,"Selected payment mode."],["Loan amount",USD(p.principal),"Entered principal."],["Annual interest rate",`${F(p.annual*100,3)}%`,"Fixed nominal annual rate."]];if(schedule)schedule.innerHTML=''}
+    else{cards=[["Monthly payment",USD(p.regularPayment),p.mode==='term'?"Required payment for the entered term.":"Entered fixed payment."],["Payoff time",p.termLabel,`${F(p.monthsExact,3)} calculated months.`],["Total interest",USD(p.totalInterest),"Total paid minus principal."],["Total paid",USD(p.totalPaid),`${F(p.payoffMonths,0)} scheduled payments.`]];bars=[{label:"Loan principal",value:p.principal,display:USD(p.principal)},{label:"Total interest",value:p.totalInterest,display:USD(p.totalInterest)},{label:"Monthly payment",value:p.regularPayment,display:USD(p.regularPayment)}];rows=[["Calculation mode",modeLabel,p.mode==='term'?"Solve for monthly payment.":"Solve for payoff time."],["Loan amount",USD(p.principal),"Starting principal."],["Annual interest rate",`${F(p.annual*100,3)}%`,"Nominal rate divided by 12 each month."],["Monthly rate",`${F(p.rate*100,6)}%`,"Rate applied to the opening balance."],["Regular monthly payment",USD(p.regularPayment),"The final payment can be smaller."],["Calculated payoff periods",F(p.monthsExact,6),"Unrounded mathematical result."],["Scheduled payoff time",p.termLabel,`${F(p.payoffMonths,0)} whole monthly payments.`],["Total interest",USD(p.totalInterest),"Sum of monthly interest charges."],["Total paid",USD(p.totalPaid),"Principal plus interest."]];if(schedule)schedule.innerHTML=p.schedule.map(item=>`<tr><td>${F(item.month,0)}</td><td>${USD(item.payment)}</td><td>${USD(item.principal)}</td><td>${USD(item.interest)}</td><td>${USD(item.balance)}</td></tr>`).join('')}
   } else if (engine === "interest_advanced") {
     const p=interestComparisonProjection(),c=p.compound,schedule=document.querySelector('#interestSchedule tbody'),frequency=c.frequency===0?'Continuous':`${F(c.frequency,0)} times/year`;
     cards=[["Compound ending balance",USD(c.balance),`${F(c.effectiveAnnual*100,3)}% effective annual yield.`],["Simple ending balance",USD(p.simpleBalance),"Interest does not earn additional interest."],["Compound advantage",USD(p.advantage),"Difference between the two methods."],["Today's buying power",USD(c.buyingPower),`${F(c.inflation*100,2)}% assumed inflation.`]];
@@ -775,6 +811,11 @@ function setLoanMode(mode) {
 document.addEventListener("click", event => {
   const tab = event.target.closest("[data-loan-mode]");
   if (tab) setLoanMode(tab.dataset.loanMode);
+});
+
+document.addEventListener("click", event => {
+  const tab = event.target.closest("[data-payment-mode]");
+  if(tab){syncPaymentMode(tab.dataset.paymentMode);calc('payment_advanced')}
 });
 
 document.addEventListener("click", event => {
