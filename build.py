@@ -638,6 +638,8 @@ def calculator_net_template(keyword, slug, cat):
         base.update({"engine": "interest_advanced", "desc": "Compare simple and compound interest with recurring contributions, compounding frequency, estimated interest tax, and inflation-adjusted buying power.", "formula": "Simple interest uses principal x rate x time; compound interest applies growth to principal plus accumulated interest.", "inputs": []})
     elif slug == "payment-calculator":
         base.update({"engine": "payment_advanced", "desc": "Calculate a monthly loan payment from a fixed term or calculate payoff time from a fixed monthly payment, with total interest and a full amortization schedule.", "formula": "Payment = P x r x (1+r)^n / ((1+r)^n - 1); payoff periods = -ln(1 - P x r / payment) / ln(1+r).", "inputs": []})
+    elif slug == "amortization-calculator":
+        base.update({"engine": "amortization_advanced", "desc": "Build a monthly and annual loan amortization schedule, then test how recurring or one-time extra principal payments change interest and payoff time.", "formula": "Payment = P x r x (1+r)^n / ((1+r)^n - 1); each month, principal paid = payment - interest + extra principal.", "inputs": []})
     elif "auto loan" in text or ("car" in text and "loan" in text):
         base.update({"engine": "car_loan", "desc": "Estimate an auto loan payment including price, tax, fees, cash incentives, down payment, trade-in, amount owed on trade-in, and whether taxes and fees are financed.", "formula": "Loan amount = auto price - cash incentives - down payment - trade-in value + amount owed on trade-in, plus taxes and fees when included in the loan. Payment uses monthly amortization.", "inputs": [["price", "Auto Price ($)", "number", 50000], ["months", "Loan Term (months)", "number", 60], ["apr", "Interest Rate (%)", "number", 5], ["incentives", "Cash Incentives ($)", "number", 0], ["down", "Down Payment ($)", "number", 10000], ["trade", "Trade-in Value ($)", "number", 0], ["owed", "Amount Owed on Trade-in ($)", "number", 0], ["tax", "Sales Tax (%)", "number", 3], ["fees", "Title, Registration and Other Fees ($)", "number", 2800], ["include_fees", "Include taxes and fees in loan", "select", [["0", "No"], ["1", "Yes"]]]]})
     elif "loan" in text or "payment calculator" in text:
@@ -811,6 +813,8 @@ def seo_title(calc):
         return "Finance Calculator: PV, FV, PMT, Rate & Periods"
     if calc.get("slug") == "interest-calculator":
         return "Interest Calculator: Simple vs Compound Interest"
+    if calc.get("slug") == "amortization-calculator":
+        return "Amortization Calculator with Extra Payments & Schedule"
     if calc.get("slug") == "payment-calculator":
         return "Payment Calculator: Monthly Payment or Loan Term"
     if calc.get("slug") == "compound-interest-calculator":
@@ -853,6 +857,8 @@ def seo_description(calc):
         return "Compare simple and compound interest with deposits, compounding frequency, tax, inflation, charts, and an annual growth schedule."
     if calc.get("slug") == "payment-calculator":
         return "Calculate a monthly loan payment or payoff term with fixed-payment and fixed-term modes, total interest, payoff time, and an amortization schedule."
+    if calc.get("slug") == "amortization-calculator":
+        return "Calculate monthly loan payments, total interest, payoff date, and full amortization schedules. Compare monthly, yearly, and one-time extra payments."
     if calc.get("slug") == "compound-interest-calculator":
         return "Calculate compound interest with monthly and annual contributions, tax, inflation, years and months, detailed growth charts, and an annual schedule."
     if calc.get("slug") == "truck-payload-calculator":
@@ -1413,6 +1419,22 @@ def payment_input_html():
 </div>"""
 
 
+def amortization_input_html():
+    return """<div class="fields amortization-fields">
+<div class="field"><label for="amort_amount">Loan amount</label><div class="input-unit"><input id="amort_amount" type="number" step="any" min="0" value="200000"><span>$</span></div></div>
+<div class="field"><label for="amort_rate">Interest rate</label><div class="input-unit"><input id="amort_rate" type="number" step="any" min="0" value="6"><span>%</span></div></div>
+<div class="field"><label for="amort_years">Loan term</label><div class="input-unit"><input id="amort_years" type="number" step="1" min="0" value="15"><span>years</span></div></div>
+<div class="field"><label for="amort_months">Additional months</label><div class="input-unit"><input id="amort_months" type="number" step="1" min="0" max="11" value="0"><span>months</span></div></div>
+<div class="field field-wide"><label for="amort_start">Loan start month</label><input id="amort_start" type="month" value="2026-09"></div>
+<details class="more-options field-wide"><summary>Optional extra payments</summary><div class="fields">
+<div class="field"><label for="amort_extra_monthly">Extra monthly principal</label><div class="input-unit"><input id="amort_extra_monthly" type="number" step="any" min="0" value="0"><span>$/mo</span></div></div>
+<div class="field"><label for="amort_extra_yearly">Extra yearly principal</label><div class="input-unit"><input id="amort_extra_yearly" type="number" step="any" min="0" value="0"><span>$/yr</span></div></div>
+<div class="field"><label for="amort_extra_once">One-time extra principal</label><div class="input-unit"><input id="amort_extra_once" type="number" step="any" min="0" value="0"><span>$</span></div></div>
+<div class="field"><label for="amort_extra_date">One-time payment month</label><input id="amort_extra_date" type="month" value="2027-09"></div>
+</div><p class="option-note">Extra amounts are applied directly to principal. Confirm that your lender accepts extra principal payments and whether a prepayment penalty applies.</p></details>
+</div>"""
+
+
 def loan_input_html():
     return f"""<div class="loan-mode-tabs" role="tablist" aria-label="Loan model"><button class="is-active" type="button" role="tab" aria-selected="true" data-loan-mode="monthlyfixed">Amortized</button><button type="button" role="tab" aria-selected="false" data-loan-mode="intheend">Deferred</button><button type="button" role="tab" aria-selected="false" data-loan-mode="fixedend">Bond</button></div><div class="loan-mode-stack">
 <section class="loan-mode-input is-active" id="monthlyfixed"><h3>Amortized Loan</h3><p>Fixed payments paid periodically until the loan is paid off.</p><div class="fields loan-fields">
@@ -1730,6 +1752,17 @@ def high_value_calculator_copy(calc):
 <h2>Choosing a term or payment</h2><p>A longer term usually lowers the required monthly payment but raises total interest. A larger fixed payment shortens the payoff period and normally lowers interest. Compare both modes using the same principal and rate. For mortgages with taxes and insurance, use the <a href="/mortgage-calculator/">mortgage calculator</a>; for multiple compounding and payment frequencies, use the <a href="/loan-calculator/">loan calculator</a>.</p>
 <h2>Important assumptions</h2><p>The calculation assumes a fixed rate, one payment each month, no missed or late payments, and no fees or prepayment penalties. Actual lenders can use daily interest, different rounding, payment dates, variable rates, or other contractual rules. Review the promissory note and lender disclosures before making a borrowing decision.</p>
 <h2>Frequently asked questions</h2><h3>Why is my fixed payment too low?</h3><p>If the payment does not exceed monthly interest, it cannot reduce principal. Increase the payment, lower the balance, or use a lower rate.</p><h3>Does an extra monthly payment reduce interest?</h3><p>Usually yes. In Fixed Payments mode, enter the total amount you plan to pay each month; the schedule shows the shorter estimated term and reduced interest.</p><h3>Does this calculate a payoff date?</h3><p>It calculates the number of monthly payments and expresses that duration in years and months. It does not account for a lender's exact billing date or daily-interest convention.</p>"""
+    if calc.get("slug") == "amortization-calculator":
+        return """
+<h2>Loan amortization schedule</h2><p>An amortization schedule separates every payment into interest and principal. Interest is calculated from the opening balance, so early payments generally contain more interest. As principal falls, less interest accrues and more of the same scheduled payment reduces the balance.</p>
+<p class="formula">monthly payment = P x r x (1 + r)^n / ((1 + r)^n - 1)</p>
+<p>Here, P is the loan amount, r is the monthly interest rate, and n is the number of monthly payments. At a zero rate, payment equals principal divided by the number of months.</p>
+<h2>Amortization example</h2><p>A $200,000 fixed-rate loan at 6% for 15 years has a scheduled monthly payment of about $1,687.71. Without fees or extra payments, 180 payments total about $303,788 and include about $103,788 of interest.</p>
+<h2>How extra payments change the loan</h2><p>Extra principal reduces the balance before later interest is calculated. The calculator supports an extra amount every month, an annual extra payment, and one dated one-time payment. Results compare the accelerated schedule with the original contractual schedule so you can see estimated interest and time saved.</p>
+<h2>Interest rate versus APR</h2><p>This model treats the entered percentage as a fixed nominal annual rate divided by 12. It does not separately add origination fees, points, closing costs, insurance, or taxes. The <a href="https://www.consumerfinance.gov/ask-cfpb/what-is-the-difference-between-a-loan-interest-rate-and-the-apr-en-733/" rel="external noopener">Consumer Financial Protection Bureau</a> explains that APR can include the interest rate plus certain lender fees. Use the rate that matches the schedule you want to model.</p>
+<h2>Assumptions and limits</h2><p>The schedule assumes monthly payments, a fixed rate, no missed or late payments, and extra amounts applied directly to principal. Some lenders use daily interest, different rounding, payment-date conventions, prepayment penalties, or special instructions for principal-only payments. Compare this estimate with the lender's own payoff statement.</p>
+<h2>Related loan tools</h2><p>Use the <a href="/mortgage-calculator/">mortgage calculator</a> when property tax and insurance matter, the <a href="/payment-calculator/">payment calculator</a> to solve for either payment or payoff term, and the <a href="/loan-calculator/">loan calculator</a> for custom compounding or repayment frequencies.</p>
+<h2>Frequently asked questions</h2><h3>What is the difference between principal and interest?</h3><p>Principal is the amount borrowed or still owed. Interest is the borrowing charge calculated from the outstanding balance.</p><h3>Do extra payments always save interest?</h3><p>They generally save interest on a fixed-rate amortizing loan when the lender applies them promptly to principal and no offsetting fee applies.</p><h3>Why can my lender's schedule differ?</h3><p>Lenders may use exact payment dates, daily interest, contractual rounding, escrow, fees, or principal-payment processing rules that this monthly planning model does not include.</p>"""
     if calc.get("slug") == "loan-calculator":
         return """
 <h2>Loan payment calculator</h2><p>Use the amortized-loan section for a conventional fixed-payment installment loan. Enter principal, annual interest rate, term, compounding frequency, and payment frequency to calculate each payment, total payments, total interest, and the full amortization schedule.</p>
@@ -1980,6 +2013,15 @@ def default_calculator_copy(calc):
 
 
 def analysis_extra_html(calc):
+    if calc.get("slug") == "amortization-calculator":
+        return """<section class="mortgage-dashboard generic-dashboard amortization-dashboard" aria-label="Loan amortization results">
+<div class="section-head stack"><h2>Amortization Results</h2><p>Review payment, interest, payoff timing, savings, and the balance schedule.</p></div>
+<div class="summary-grid" id="genericSummary"></div>
+<div class="chart-grid"><div class="chart-card compact-chart"><h3>Principal and Interest</h3><canvas id="genericChart" width="380" height="200" aria-label="Loan principal and interest breakdown" data-chart-type="pie" data-center-label="total paid"></canvas></div></div>
+<div class="table-card"><h3>Calculation Details</h3><div class="table-scroll"><table class="data-table" id="genericTable"><thead><tr><th>Metric</th><th>Value</th><th>Note</th></tr></thead><tbody></tbody></table></div></div>
+<div class="table-card"><h3>Annual Amortization Schedule</h3><div class="table-scroll"><table class="data-table" id="amortAnnual"><thead><tr><th>Year</th><th>Payments</th><th>Principal</th><th>Interest</th><th>Ending balance</th></tr></thead><tbody></tbody></table></div></div>
+<details class="schedule-details"><summary>View monthly amortization schedule</summary><div class="table-card"><div class="table-scroll"><table class="data-table" id="amortMonthly"><thead><tr><th>Month</th><th>Payment</th><th>Principal</th><th>Interest</th><th>Extra</th><th>Ending balance</th></tr></thead><tbody></tbody></table></div></div></details>
+</section>"""
     if calc.get("slug") == "finance-calculator":
         return """<section class="mortgage-dashboard generic-dashboard finance-tvm-dashboard" aria-label="Time value of money results">
 <div class="section-head stack"><h2>Finance Calculator Results</h2><p>Review the solved TVM value, rates, cash flows, and period-by-period schedule.</p></div>
@@ -2173,6 +2215,9 @@ def calculator_page(site, calc, related):
     elif calc.get("slug") == "payment-calculator":
         fields = payment_input_html()
         page_engine = "payment_advanced"
+    elif calc.get("slug") == "amortization-calculator":
+        fields = amortization_input_html()
+        page_engine = "amortization_advanced"
     elif calc.get("slug") == "interest-calculator":
         fields = compound_interest_input_html()
         page_engine = "interest_advanced"
@@ -2278,6 +2323,7 @@ def calculator_page(site, calc, related):
     rel = "".join(card(c, compact=True) for c in related)
     content = high_value_calculator_copy(calc) or conversion_copy(calc) or default_calculator_copy(calc)
     extra = analysis_extra_html(calc)
+    calculator_asset_version = "20260919b" if calc.get("slug") == "amortization-calculator" else ASSET_VERSION
     if calc.get("engine") == "loan_page":
         calc_html = f"""<section class="calc loan-page-calc"><h2>Calculator</h2>{fields}<div class="result" id="result">Enter your values and select Calculate.</div></section>"""
     else:
@@ -2287,7 +2333,7 @@ def calculator_page(site, calc, related):
 <article class="article calculator-article"><span class="pill icon-pill">{category_icon(calc["cat"], "pill-icon")}{h(calc['cat'])} calculator</span><div class="page-title-icon">{category_icon(calc["cat"], "title-icon")}<h1>{h(calc['title'])}</h1></div><p class="lead">{h(calc['desc'])}</p>{opportunity_notice(calc)}{keyword_section(calc)}
 {primary_tool}
 <div class="prose">{content}</div>
-<h2>Related calculators</h2><div class="related">{rel}</div></article></div></main><script src="/assets/calculator.js?v={ASSET_VERSION}"></script>"""
+<h2>Related calculators</h2><div class="related">{rel}</div></article></div></main><script src="/assets/calculator.js?v={calculator_asset_version}"></script>"""
     crumbs = [
         ("Home", "/"),
         (f"{calc['cat']} Calculators", f"/{slugify_cat(calc['cat'])}/"),
@@ -2644,6 +2690,20 @@ function paymentProjection(){
   const payoffMonths=schedule.length,years=Math.floor(payoffMonths/12),remainingMonths=payoffMonths%12,termLabel=[years?`${years} year${years===1?'':'s'}`:'',remainingMonths?`${remainingMonths} month${remainingMonths===1?'':'s'}`:''].filter(Boolean).join(' ')||'0 months';
   return{valid:true,mode,principal,annual,rate,regularPayment,monthsExact,payoffMonths,termLabel,totalPaid,totalInterest,schedule};
 }
+function amortizationProjection(){
+  const principal=Math.max(0,V('amort_amount')),annual=Math.max(0,V('amort_rate'))/100,rate=annual/12,termMonths=Math.max(0,Math.floor(V('amort_years'))*12+Math.floor(V('amort_months'))),extraMonthly=Math.max(0,V('amort_extra_monthly')),extraYearly=Math.max(0,V('amort_extra_yearly')),extraOnce=Math.max(0,V('amort_extra_once')),startValue=document.getElementById('amort_start')?.value||'',oneTimeValue=document.getElementById('amort_extra_date')?.value||'';
+  let valid=principal>0&&termMonths>0&&termMonths<=1200,message='';
+  if(!(principal>0))message='Enter a loan amount greater than zero.';else if(!(termMonths>0))message='Enter a loan term of at least one month.';else if(termMonths>1200)message='The loan term cannot exceed 100 years.';
+  const regularPayment=valid?(rate?principal*rate*Math.pow(1+rate,termMonths)/(Math.pow(1+rate,termMonths)-1):principal/termMonths):0;
+  const monthIndex=value=>{if(!/^\d{4}-\d{2}$/.test(value))return null;const[y,m]=value.split('-').map(Number);return y*12+m-1},startIndex=monthIndex(startValue),oneTimeIndex=monthIndex(oneTimeValue),oneTimeMonth=startIndex!==null&&oneTimeIndex!==null?oneTimeIndex-startIndex+1:null;
+  const build=(withExtras)=>{let balance=principal,totalPaid=0,totalInterest=0,totalExtra=0;const schedule=[];for(let month=1;month<=1200&&balance>.005;month++){const interest=balance*rate,scheduledPrincipal=Math.max(0,regularPayment-interest),requested=withExtras?(extraMonthly+(month%12===0?extraYearly:0)+(month===oneTimeMonth?extraOnce:0)):0,principalPaid=Math.min(balance,scheduledPrincipal+requested),extraPaid=Math.max(0,principalPaid-Math.min(balance,scheduledPrincipal)),payment=interest+principalPaid;balance=Math.max(0,balance-principalPaid);totalPaid+=payment;totalInterest+=interest;totalExtra+=extraPaid;schedule.push({month,payment,principal:principalPaid,interest,extra:extraPaid,balance});if(month>=termMonths&&!withExtras&&balance>.005){valid=false;message='The schedule did not amortize within the entered term.';break}}return{schedule,totalPaid,totalInterest,totalExtra,payoffMonths:schedule.length,balance}};
+  if(!valid)return{valid:false,message,principal,annual,rate,termMonths,regularPayment,schedule:[],annualRows:[]};
+  const baseline=build(false),accelerated=build(true),active=extraMonthly>0||extraYearly>0||(extraOnce>0&&oneTimeMonth!==null&&oneTimeMonth>0),selected=active?accelerated:baseline;
+  if(selected.balance>.005)return{valid:false,message:'The loan did not pay off within the supported 100-year schedule.',principal,annual,rate,termMonths,regularPayment,schedule:[],annualRows:[]};
+  const annualRows=[];for(let i=0;i<selected.schedule.length;i+=12){const chunk=selected.schedule.slice(i,i+12);annualRows.push({year:Math.floor(i/12)+1,payments:chunk.reduce((s,x)=>s+x.payment,0),principal:chunk.reduce((s,x)=>s+x.principal,0),interest:chunk.reduce((s,x)=>s+x.interest,0),balance:chunk.at(-1).balance})}
+  const payoffDate=startIndex===null?'Not set':new Date(Date.UTC(Math.floor((startIndex+selected.payoffMonths-1)/12),(startIndex+selected.payoffMonths-1)%12,1)).toLocaleDateString('en-US',{month:'long',year:'numeric',timeZone:'UTC'}),years=Math.floor(selected.payoffMonths/12),months=selected.payoffMonths%12,termLabel=[years?`${years} year${years===1?'':'s'}`:'',months?`${months} month${months===1?'':'s'}`:''].filter(Boolean).join(' ')||'0 months';
+  return{valid:true,principal,annual,rate,termMonths,regularPayment,active,extraMonthly,extraYearly,extraOnce,oneTimeMonth,schedule:selected.schedule,annualRows,totalPaid:selected.totalPaid,totalInterest:selected.totalInterest,totalExtra:selected.totalExtra,payoffMonths:selected.payoffMonths,payoffDate,termLabel,interestSaved:Math.max(0,baseline.totalInterest-selected.totalInterest),monthsSaved:Math.max(0,baseline.payoffMonths-selected.payoffMonths),baseline};
+}
 function syncFinanceTarget(){const target=document.getElementById('finance_solve')?.value||'fv';document.querySelectorAll('[data-finance-value]').forEach(field=>{const active=field.dataset.financeValue===target;field.classList.toggle('finance-solve-target',active);const input=field.querySelector('input');if(input){input.disabled=active;input.setAttribute('aria-disabled',active?'true':'false')}});return target}
 function financePeriodicRate(annual,py,cy){return Math.pow(1+annual/100/cy,cy/py)-1}
 function financeNominalRate(periodic,py,cy){return cy*(Math.pow(1+periodic,py/cy)-1)*100}
@@ -2752,6 +2812,7 @@ function calc(e){
   case'loan_page':{renderLoanPage();break}
   case'finance_tvm':{const p=financeProjection();if(!p.valid)show(`<strong>Check the inputs</strong><br>${p.message}`);else{const labels={fv:'Future value',pmt:'Periodic payment',iy:'Annual interest rate',n:'Number of periods',pv:'Present value'},value=p.target==='iy'?`${F(p.iy,8)}%`:p.target==='n'?F(p.n,8):USD(p[p.target]);show(`<strong>${value} ${labels[p.target].toLowerCase()}</strong><br>${F(p.rate*100,6)}% effective rate per payment period; ${F(p.effectiveAnnual,6)}% effective annual rate.`)}break}
   case'payment_advanced':{const p=paymentProjection();if(!p.valid)show(`<strong>Payment cannot repay this loan</strong><br>${p.message}`);else show(`<strong>${USD(p.regularPayment)} monthly payment</strong><br>${p.termLabel} to payoff; ${USD(p.totalInterest)} total interest; ${USD(p.totalPaid)} total paid.`);break}
+  case'amortization_advanced':{const p=amortizationProjection();if(!p.valid)show(`<strong>Unable to build the schedule</strong><br>${p.message}`);else show(`<strong>${USD(p.regularPayment)} scheduled monthly payment</strong><br>${p.termLabel} to payoff (${p.payoffDate}); ${USD(p.totalInterest)} total interest${p.active?`; ${USD(p.interestSaved)} interest saved`:''}.`);break}
   case'interest_advanced':{const p=interestComparisonProjection();show(`<strong>${USD(p.compound.balance)} compound balance</strong><br>${USD(p.simpleBalance)} with simple interest; ${USD(p.advantage)} compound advantage; ${USD(p.compound.buyingPower)} compound buying power in today's dollars.`);break}
   case'compound':{const p=compoundProjection();show(`<strong>${USD(p.balance)} ending balance</strong><br>${USD(p.contributed)} contributed; ${USD(p.totalInterest)} net interest; ${USD(p.buyingPower)} inflation-adjusted buying power.`);renderCompound(p);break}
   case'salary_advanced':{const p=salaryProjection();show(`<strong>${USD(p.annual)} new annual salary</strong><br>${USD(p.raiseDollars)} raise (${F(p.raisePercent,2)}%); ${USD(p.perPeriod)} per selected pay period; ${USD(p.hourly)} hourly equivalent.`);break}
@@ -2884,7 +2945,11 @@ function renderGeneric(cards, bars, rows) {
 function renderGenericFromEngine(engine) {
   if (!document.getElementById("genericSummary")) return;
   let cards=[], bars=[], rows=[];
-  if (engine === "finance_tvm") {
+  if (engine === "amortization_advanced") {
+    const p=amortizationProjection(),annual=document.querySelector('#amortAnnual tbody'),monthly=document.querySelector('#amortMonthly tbody');
+    if(!p.valid){cards=[["Result","Check inputs",p.message],["Monthly payment","Unavailable","No schedule calculated."],["Payoff date","Unavailable","Review the entered values."],["Total interest","Unavailable","Review the entered values."]];bars=[{label:"Principal",value:p.principal||0,display:USD(p.principal||0)},{label:"Interest",value:0,display:"Unavailable"}];rows=[["Validation","Unable to calculate",p.message]];if(annual)annual.innerHTML='';if(monthly)monthly.innerHTML=''}
+    else{cards=[["Scheduled payment",USD(p.regularPayment),"Monthly principal and interest."],["Payoff date",p.payoffDate,p.termLabel],["Total interest",USD(p.totalInterest),p.active?`${USD(p.interestSaved)} saved with extras.`:"No extra principal entered."],["Time saved",`${F(p.monthsSaved,0)} months`,p.active?`${USD(p.totalExtra)} extra principal paid.`:"Add extra payments to compare."]];bars=[{label:"Principal",value:p.principal,display:USD(p.principal)},{label:"Interest",value:p.totalInterest,display:USD(p.totalInterest)}];rows=[["Loan amount",USD(p.principal),"Starting principal."],["Annual interest rate",`${F(p.annual*100,3)}%`,"Fixed nominal rate divided by 12."],["Scheduled monthly payment",USD(p.regularPayment),"Excludes optional extra principal."],["Original payoff term",`${F(p.baseline.payoffMonths,0)} months`,"Schedule without extra payments."],["Estimated payoff",p.payoffDate,`${F(p.payoffMonths,0)} monthly payments.`],["Total paid",USD(p.totalPaid),"Principal plus interest."],["Total interest",USD(p.totalInterest),"Sum of monthly interest."],["Extra principal paid",USD(p.totalExtra),"Recurring and one-time extras."],["Interest saved",USD(p.interestSaved),"Compared with the original schedule."],["Time saved",`${F(p.monthsSaved,0)} months`,"Compared with the original schedule."]];if(annual)annual.innerHTML=p.annualRows.map(x=>`<tr><td>${x.year}</td><td>${USD(x.payments)}</td><td>${USD(x.principal)}</td><td>${USD(x.interest)}</td><td>${USD(x.balance)}</td></tr>`).join('');if(monthly)monthly.innerHTML=p.schedule.map(x=>`<tr><td>${x.month}</td><td>${USD(x.payment)}</td><td>${USD(x.principal)}</td><td>${USD(x.interest)}</td><td>${USD(x.extra)}</td><td>${USD(x.balance)}</td></tr>`).join('')}
+  } else if (engine === "finance_tvm") {
     const p=financeProjection(),schedule=document.querySelector('#financeSchedule tbody'),labels={fv:'Future value',pmt:'Periodic payment',iy:'Annual interest rate',n:'Number of periods',pv:'Present value'};
     if(!p.valid){cards=[["Result","Check inputs",p.message],["Solved variable",labels[p.target],"Selected target."],["Periodic rate","Unavailable","No valid solution."],["Schedule","Unavailable","Correct the inputs first."]];bars=[{label:"Result",value:0,display:"Unavailable"}];rows=[["Validation","Unable to calculate",p.message]];if(schedule)schedule.innerHTML=''}
     else{const solved=p.target==='iy'?`${F(p.iy,8)}%`:p.target==='n'?F(p.n,8):USD(p[p.target]);cards=[[labels[p.target],solved,"Calculated TVM variable."],["Periodic rate",`${F(p.rate*100,6)}%`,`${F(p.py,0)} payment periods per year.`],["Effective annual rate",`${F(p.effectiveAnnual,6)}%`,`Derived from the payment-period rate.`],["Ending balance",USD(p.balance),`Should offset FV under the sign convention.`]];bars=[{label:"Present value",value:p.pv,display:USD(p.pv)},{label:"Total payments",value:p.totalPayments,display:USD(p.totalPayments)},{label:"Future value",value:p.fv,display:USD(p.fv)},{label:"Total interest",value:p.totalInterest,display:USD(p.totalInterest)}];rows=[["Solved variable",labels[p.target],solved],["Number of periods (N)",F(p.n,8),`${F(p.py,0)} payments per year.`],["Nominal annual rate (I/Y)",`${F(p.iy,8)}%`,`${F(p.cy,0)} compounding periods per year.`],["Present value (PV)",USD(p.pv),"Starting cash flow."],["Periodic payment (PMT)",USD(p.pmt),p.due?"Paid at the beginning of each period.":"Paid at the end of each period."],["Future value (FV)",USD(p.fv),"Opposite-side terminal cash flow."],["Effective periodic rate",`${F(p.rate*100,8)}%`,"Rate applied per payment period."],["Effective annual rate",`${F(p.effectiveAnnual,8)}%`,"Compounded payment-period rate."],["Sum of periodic payments",USD(p.totalPayments),"PMT multiplied by N."],["Total interest",USD(p.totalInterest),"Implied interest across all periods."],["Equation residual",USD(p.residual),"Rounding check; should be close to zero."]];if(p.scheduleCapped)rows.push(["Schedule display","First 600 periods","The result still uses the full entered period count."]);if(schedule)schedule.innerHTML=p.schedule.map(item=>`<tr><td>${item.period}</td><td>${USD(item.opening)}</td><td>${USD(item.payment)}</td><td>${USD(item.interest)}</td><td>${USD(item.ending)}</td></tr>`).join('')}
