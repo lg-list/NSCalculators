@@ -644,6 +644,8 @@ def calculator_net_template(keyword, slug, cat):
         base.update({"engine": "retirement_advanced", "desc": "Estimate how much you need to retire, the monthly savings required, sustainable retirement withdrawals, or how long an existing nest egg may last.", "formula": "Retirement projections combine compound growth, recurring contributions, inflation-adjusted income needs, and an assumed fixed investment return.", "inputs": []})
     elif slug == "401k-calculator":
         base.update({"engine": "401k_advanced", "desc": "Project a 401(k) balance and retirement income, estimate early-withdrawal taxes and penalties, or calculate employer matching contributions.", "formula": "The projection compounds employee and employer contributions monthly; withdrawal estimates apply entered tax rates and any modeled 10% additional tax.", "inputs": []})
+    elif slug == "social-security-calculator":
+        base.update({"engine": "social_security_advanced", "desc": "Compare Social Security retirement claiming ages, estimate lifetime benefits and break-even age, or apply the 2026 retirement earnings test.", "formula": "Worker retirement benefits are adjusted by claiming months before or after full retirement age; cumulative values include entered COLA and investment-return assumptions.", "inputs": []})
     elif "auto loan" in text or ("car" in text and "loan" in text):
         base.update({"engine": "car_loan", "desc": "Estimate an auto loan payment including price, tax, fees, cash incentives, down payment, trade-in, amount owed on trade-in, and whether taxes and fees are financed.", "formula": "Loan amount = auto price - cash incentives - down payment - trade-in value + amount owed on trade-in, plus taxes and fees when included in the loan. Payment uses monthly amortization.", "inputs": [["price", "Auto Price ($)", "number", 50000], ["months", "Loan Term (months)", "number", 60], ["apr", "Interest Rate (%)", "number", 5], ["incentives", "Cash Incentives ($)", "number", 0], ["down", "Down Payment ($)", "number", 10000], ["trade", "Trade-in Value ($)", "number", 0], ["owed", "Amount Owed on Trade-in ($)", "number", 0], ["tax", "Sales Tax (%)", "number", 3], ["fees", "Title, Registration and Other Fees ($)", "number", 2800], ["include_fees", "Include taxes and fees in loan", "select", [["0", "No"], ["1", "Yes"]]]]})
     elif "loan" in text or "payment calculator" in text:
@@ -823,6 +825,8 @@ def seo_title(calc):
         return "Retirement Calculator: Savings, Income & Withdrawal Plan"
     if calc.get("slug") == "401k-calculator":
         return "401(k) Calculator: Balance, Match & Withdrawal"
+    if calc.get("slug") == "social-security-calculator":
+        return "Social Security Calculator: Claim Age & Benefits"
     if calc.get("slug") == "payment-calculator":
         return "Payment Calculator: Monthly Payment or Loan Term"
     if calc.get("slug") == "compound-interest-calculator":
@@ -871,6 +875,8 @@ def seo_description(calc):
         return "Estimate your retirement savings target, monthly savings gap, retirement income, and how long money may last with inflation-adjusted projections."
     if calc.get("slug") == "401k-calculator":
         return "Project your 401(k) balance, employer match, and retirement income. Estimate early-withdrawal taxes and penalties using current 2026 limits."
+    if calc.get("slug") == "social-security-calculator":
+        return "Compare Social Security claiming ages, lifetime retirement benefits, break-even timing, and 2026 earnings-test withholding using official SSA rules."
     if calc.get("slug") == "compound-interest-calculator":
         return "Calculate compound interest with monthly and annual contributions, tax, inflation, years and months, detailed growth charts, and an annual schedule."
     if calc.get("slug") == "truck-payload-calculator":
@@ -1538,6 +1544,41 @@ def k401_input_html():
 </div>"""
 
 
+def social_security_input_html():
+    return """<div class="loan-mode-tabs social-security-mode-tabs" role="tablist" aria-label="Social Security calculation mode" style="grid-template-columns:repeat(3,minmax(0,1fr))">
+<button class="is-active" type="button" role="tab" aria-selected="true" data-ss-mode="planner">Claim age planner</button>
+<button type="button" role="tab" aria-selected="false" data-ss-mode="compare">Compare two ages</button>
+<button type="button" role="tab" aria-selected="false" data-ss-mode="earnings">2026 earnings test</button>
+</div><div class="social-security-mode-stack">
+<section class="social-security-mode-panel" data-ss-panel="planner"><div class="fields">
+<div class="field"><label for="ss_birth_year">Birth year</label><input id="ss_birth_year" type="number" step="1" min="1930" max="2000" value="1960"></div>
+<div class="field"><label for="ss_fra_benefit">Monthly benefit at full retirement age</label><div class="input-unit"><input id="ss_fra_benefit" type="number" step="any" min="0" value="2000"><span>$/mo</span></div></div>
+<div class="field"><label for="ss_claim_years">Planned claim age</label><div class="input-unit"><input id="ss_claim_years" type="number" step="1" min="62" max="70" value="67"><span>years</span></div></div>
+<div class="field"><label for="ss_claim_months">Additional claim-age months</label><div class="input-unit"><input id="ss_claim_months" type="number" step="1" min="0" max="11" value="0"><span>months</span></div></div>
+<div class="field"><label for="ss_life_age">Life expectancy</label><input id="ss_life_age" type="number" step="1" min="62" max="120" value="90"></div>
+<div class="field"><label for="ss_cola">Annual cost-of-living adjustment</label><div class="input-unit"><input id="ss_cola" type="number" step="any" min="-99" value="2.5"><span>%/yr</span></div></div>
+<div class="field field-wide"><label for="ss_return">Annual investment return on received benefits</label><div class="input-unit"><input id="ss_return" type="number" step="any" min="-99" value="4"><span>%/yr</span></div></div>
+</div><p class="field-note">Use the monthly full-retirement-age estimate from your Social Security account. This tool adjusts that entered estimate; it does not calculate your earnings-record benefit.</p></section>
+<section class="social-security-mode-panel is-hidden" data-ss-panel="compare"><div class="fields">
+<div class="field"><label for="ss_compare_age1_years">Option 1 claim age</label><div class="input-unit"><input id="ss_compare_age1_years" type="number" step="1" min="62" max="70" value="62"><span>years</span></div></div>
+<div class="field"><label for="ss_compare_age1_months">Option 1 additional months</label><div class="input-unit"><input id="ss_compare_age1_months" type="number" step="1" min="0" max="11" value="0"><span>months</span></div></div>
+<div class="field"><label for="ss_compare_payment1">Option 1 monthly benefit</label><div class="input-unit"><input id="ss_compare_payment1" type="number" step="any" min="0" value="1400"><span>$/mo</span></div></div>
+<div class="field"><label for="ss_compare_age2_years">Option 2 claim age</label><div class="input-unit"><input id="ss_compare_age2_years" type="number" step="1" min="62" max="70" value="67"><span>years</span></div></div>
+<div class="field"><label for="ss_compare_age2_months">Option 2 additional months</label><div class="input-unit"><input id="ss_compare_age2_months" type="number" step="1" min="0" max="11" value="0"><span>months</span></div></div>
+<div class="field"><label for="ss_compare_payment2">Option 2 monthly benefit</label><div class="input-unit"><input id="ss_compare_payment2" type="number" step="any" min="0" value="2000"><span>$/mo</span></div></div>
+<div class="field"><label for="ss_compare_life">Life expectancy</label><input id="ss_compare_life" type="number" step="1" min="62" max="120" value="90"></div>
+<div class="field"><label for="ss_compare_cola">Annual cost-of-living adjustment</label><div class="input-unit"><input id="ss_compare_cola" type="number" step="any" min="-99" value="2.5"><span>%/yr</span></div></div>
+<div class="field field-wide"><label for="ss_compare_return">Annual investment return</label><div class="input-unit"><input id="ss_compare_return" type="number" step="any" min="-99" value="4"><span>%/yr</span></div></div>
+</div><p class="field-note">Enter the claim-age payment estimates shown in your official SSA record. The comparison compounds any benefits received before the later option begins.</p></section>
+<section class="social-security-mode-panel is-hidden" data-ss-panel="earnings"><div class="fields">
+<div class="field"><label for="ss_earnings_status">2026 age status</label><select id="ss_earnings_status"><option value="under">Under full retirement age all year</option><option value="reaches">Reach full retirement age in 2026</option><option value="fra">At or above full retirement age</option></select></div>
+<div class="field"><label for="ss_earnings_income">Countable work earnings</label><div class="input-unit"><input id="ss_earnings_income" type="number" step="any" min="0" value="40000"><span>$</span></div></div>
+<div class="field"><label for="ss_earnings_benefit">Monthly retirement benefit</label><div class="input-unit"><input id="ss_earnings_benefit" type="number" step="any" min="0" value="2000"><span>$/mo</span></div></div>
+<div class="field"><label for="ss_earnings_months">Benefit months in 2026</label><input id="ss_earnings_months" type="number" step="1" min="1" max="12" value="12"></div>
+</div><p class="field-note">For the year you reach full retirement age, enter only countable earnings before the FRA month. The special monthly rule and later benefit recomputation are not modeled.</p></section>
+</div>"""
+
+
 def loan_input_html():
     return f"""<div class="loan-mode-tabs" role="tablist" aria-label="Loan model"><button class="is-active" type="button" role="tab" aria-selected="true" data-loan-mode="monthlyfixed">Amortized</button><button type="button" role="tab" aria-selected="false" data-loan-mode="intheend">Deferred</button><button type="button" role="tab" aria-selected="false" data-loan-mode="fixedend">Bond</button></div><div class="loan-mode-stack">
 <section class="loan-mode-input is-active" id="monthlyfixed"><h3>Amortized Loan</h3><p>Fixed payments paid periodically until the loan is paid off.</p><div class="fields loan-fields">
@@ -1891,6 +1932,18 @@ def high_value_calculator_copy(calc):
 <p>The IRS lists exceptions that are more detailed than this form can capture. The separation-from-service exception generally concerns distributions after leaving the employer in or after the year you reach age 55 and usually applies to that employer's plan, not automatically to an IRA. Review the <a href="https://www.irs.gov/retirement-plans/plan-participant-employee/retirement-topics-exceptions-to-tax-on-early-distributions" rel="external noopener">IRS guidance on early distributions</a> before relying on an exception.</p>
 <h2>Assumptions and limitations</h2><p>The projection assumes a constant return, steady contributions, annual salary growth, no fees, and fully vested employer contributions. Actual returns vary, plan expenses reduce growth, matching and vesting formulas differ, and a loan or rollover can change the account path. The retirement-income estimate is a deterministic inflation-adjusted withdrawal through life expectancy; it is not a guarantee and does not model market sequence risk, taxes in retirement, or required minimum distributions.</p>
 <h2>Frequently asked questions</h2><h3>Does the calculator distinguish traditional and Roth 401(k) contributions?</h3><p>No. Both can share the same investment-growth projection, but their current and future tax treatment differs. The balance result is pre-tax or after-tax only to the extent your actual account is.</p><h3>Is employer match part of my employee limit?</h3><p>Employer match does not count toward the employee elective-deferral limit, but it generally counts toward the separate overall annual-additions limit.</p><h3>What return should I use?</h3><p>Use several scenarios rather than one optimistic number. Returns are not guaranteed, and fees, asset allocation, and the timing of gains and losses can materially change the outcome.</p><h3>Can I use this for a 403(b) or TSP?</h3><p>The growth math may be useful, but plan rules, matching formulas, contribution limits, and withdrawal exceptions can differ. Verify the rules for the specific plan.</p>"""
+    if calc.get("slug") == "social-security-calculator":
+        return """
+<h2>Social Security claiming age calculator</h2><p>This calculator compares U.S. retired-worker benefits from age 62 through age 70. Start with the monthly benefit shown for your full retirement age in your <a href="https://www.ssa.gov/prepare/get-benefits-estimate" rel="external noopener">official Social Security estimate</a>. The tool applies the SSA claiming-age adjustment to that amount and compares the cumulative value of each start age through the life expectancy you enter.</p>
+<p class="formula">early reduction = 5/9 of 1% for each of the first 36 months before FRA, plus 5/12 of 1% for each additional month</p>
+<p class="formula">delayed retirement credit for people born in 1943 or later = 2/3 of 1% for each month after FRA, stopping at age 70</p>
+<h2>Full retirement age by birth year</h2><p>Full retirement age is 66 for people born from 1943 through 1954, then rises by two months for each birth year from 1955 through 1959. It is 67 for people born in 1960 or later. The <a href="https://www.ssa.gov/benefits/retirement/planner/ageincrease.html" rel="external noopener">SSA retirement age calculator</a> notes a special convention for January 1 birthdays: use the previous birth year when determining FRA.</p>
+<h2>How the claim-age comparison works</h2><p>The planner calculates an estimated monthly benefit at each possible claiming month, applies the cost-of-living adjustment you enter, and optionally compounds benefits already received at the entered investment return. It selects the claim age with the highest modeled value at life expectancy. That is a financial comparison only, not a recommendation.</p>
+<p>The two-age mode is useful when your SSA account already provides distinct payment estimates. It compares cumulative benefits, investment-adjusted values, and the simple break-even age when the larger later payment catches up with benefits collected earlier. Taxes are not included.</p>
+<h2>2026 retirement earnings test</h2><p>If you receive retirement benefits while working before full retirement age, SSA may withhold part of the benefit. In 2026, the lower annual exempt amount is $24,480, with $1 withheld for every $2 earned above that amount. In the year you reach FRA, the higher amount is $65,160 and $1 is withheld for every $3 above the limit, counting only earnings before the FRA month. Beginning with the FRA month, earnings no longer reduce benefits. See the <a href="https://www.ssa.gov/benefits/retirement/planner/whileworking.html" rel="external noopener">SSA working while receiving benefits guidance</a>.</p>
+<p>SSA later recalculates the monthly benefit to credit months in which benefits were reduced or withheld. The earnings-test mode estimates current-year withholding only; it does not model that later adjustment, the special first-year monthly rule, or work outside the United States.</p>
+<h2>What this calculator does not estimate</h2><p>It does not recreate your primary insurance amount from a 35-year earnings record, estimate disability or survivor benefits, model spousal coordination, determine eligibility, calculate Medicare premiums, or calculate federal and state tax on benefits. Actual payments also reflect SSA rounding and individual record details. Use the result for scenario comparison and verify decisions with SSA.</p>
+<h2>Frequently asked questions</h2><h3>Is age 70 always the best time to claim?</h3><p>No. Delaying increases the monthly amount, but the financially preferable age depends on longevity, investment return, cash needs, health, work, taxes, and household or survivor considerations.</p><h3>Why should I enter my SSA estimate instead of salary?</h3><p>Retirement benefits depend on indexed earnings across up to 35 years, not one current salary. Your SSA record is a stronger starting point than a shortcut based only on today's pay.</p><h3>Does the earnings test permanently lose withheld benefits?</h3><p>SSA states that benefits are recalculated at full retirement age to credit months when benefits were withheld. This calculator does not estimate that later increase.</p><h3>Does delaying after age 70 increase benefits?</h3><p>No. Delayed retirement credits stop at age 70.</p>"""
     if calc.get("slug") == "loan-calculator":
         return """
 <h2>Loan payment calculator</h2><p>Use the amortized-loan section for a conventional fixed-payment installment loan. Enter principal, annual interest rate, term, compounding frequency, and payment frequency to calculate each payment, total payments, total interest, and the full amortization schedule.</p>
@@ -2141,6 +2194,14 @@ def default_calculator_copy(calc):
 
 
 def analysis_extra_html(calc):
+    if calc.get("slug") == "social-security-calculator":
+        return """<section class="mortgage-dashboard generic-dashboard social-security-dashboard" aria-label="Social Security calculation results">
+<div class="section-head stack"><h2>Social Security Results</h2><p>Compare claiming ages, cumulative benefits, break-even timing, or 2026 earnings-test withholding.</p></div>
+<div class="summary-grid" id="genericSummary"></div>
+<div class="chart-grid"><div class="chart-card compact-chart"><h3>Benefit Comparison</h3><canvas id="genericChart" width="620" height="230" aria-label="Social Security benefit comparison" data-chart-type="bars"></canvas></div></div>
+<div class="table-card"><h3>Calculation Details</h3><div class="table-scroll"><table class="data-table" id="genericTable"><thead><tr><th>Metric</th><th>Value</th><th>Note</th></tr></thead><tbody></tbody></table></div></div>
+<div class="table-card" id="ssScheduleCard"><h3>Claim Age Comparison</h3><div class="table-scroll"><table class="data-table" id="ssSchedule"><thead><tr><th>Claim age</th><th>Benefit factor</th><th>Starting monthly</th><th>Lifetime paid</th><th>Value at life expectancy</th></tr></thead><tbody></tbody></table></div></div>
+</section>"""
     if calc.get("slug") == "401k-calculator":
         return """<section class="mortgage-dashboard generic-dashboard k401-dashboard" aria-label="401(k) calculation results">
 <div class="section-head stack"><h2>401(k) Results</h2><p>Review the balance, contributions, taxes or matching details for the selected mode.</p></div>
@@ -2368,6 +2429,9 @@ def calculator_page(site, calc, related):
     elif calc.get("slug") == "401k-calculator":
         fields = k401_input_html()
         page_engine = "401k_advanced"
+    elif calc.get("slug") == "social-security-calculator":
+        fields = social_security_input_html()
+        page_engine = "social_security_advanced"
     elif calc.get("slug") == "interest-calculator":
         fields = compound_interest_input_html()
         page_engine = "interest_advanced"
@@ -2473,7 +2537,7 @@ def calculator_page(site, calc, related):
     rel = "".join(card(c, compact=True) for c in related)
     content = high_value_calculator_copy(calc) or conversion_copy(calc) or default_calculator_copy(calc)
     extra = analysis_extra_html(calc)
-    calculator_asset_versions = {"amortization-calculator": "20260919b", "retirement-calculator": "20260919c", "401k-calculator": "20260920a"}
+    calculator_asset_versions = {"amortization-calculator": "20260919b", "retirement-calculator": "20260919c", "401k-calculator": "20260920a", "social-security-calculator": "20260920b"}
     calculator_asset_version = calculator_asset_versions.get(calc.get("slug"), ASSET_VERSION)
     if calc.get("engine") == "loan_page":
         calc_html = f"""<section class="calc loan-page-calc"><h2>Calculator</h2>{fields}<div class="result" id="result">Enter your values and select Calculate.</div></section>"""
@@ -2942,6 +3006,50 @@ function k401Projection(){
   rows=[["Annual salary",USD(salary),"Entered eligible compensation."],["Age-based 2026 deferral limit",USD(deferralLimit),age>=60&&age<=63?"Includes age 60-63 catch-up.":age>=50?"Includes age 50+ catch-up.":"Base limit."],["Entered contribution rate",`${F(enteredRate*100,2)}%`,`${USD(rawEmployee)} before the modeled limit.`],["Actual employee contribution",USD(employee),`${USD(employee/periods)} per pay period.`],["Employer match",USD(employer),`${USD(employer/periods)} per pay period.`],["Maximum stated employer match",USD(fullEmployer),`Requires at least ${F(fullRate,2)}% of pay, subject to plan terms.`],["Maximum full-year rate before limit",`${F(ceilingRate,2)}%`,`Modeled 2026 limit divided by salary.`],["Combined contribution",USD(combined),"Before investment gains or losses."]];
   result=`<strong>${USD(employer)} estimated annual employer match</strong><br>Contribute at least ${F(fullRate,2)}% of pay to capture the full stated match; modeled combined contribution: ${USD(combined)}.`;return finish({employee,employer,combined,fullEmployer,fullRate});
 }
+function syncSocialSecurityMode(nextMode){
+  const mode=nextMode||document.querySelector('[data-ss-mode].is-active')?.dataset.ssMode||'planner';
+  document.querySelectorAll('[data-ss-mode]').forEach(button=>{const active=button.dataset.ssMode===mode;button.classList.toggle('is-active',active);button.setAttribute('aria-selected',active?'true':'false')});
+  document.querySelectorAll('[data-ss-panel]').forEach(panel=>panel.classList.toggle('is-hidden',panel.dataset.ssPanel!==mode));
+  document.getElementById('ssScheduleCard')?.classList.toggle('is-hidden',mode!=='planner');
+  return mode;
+}
+function socialSecurityFraMonths(year){if(year<=1937)return 65*12;if(year<=1942)return 65*12+(year-1937)*2;if(year<=1954)return 66*12;if(year<=1959)return 66*12+(year-1954)*2;return 67*12}
+function socialSecurityCreditRate(year){if(year>=1943)return .08;if(year>=1941)return .075;if(year>=1939)return .07;if(year>=1937)return .065;if(year>=1935)return .06;if(year>=1933)return .055;if(year>=1931)return .05;if(year>=1929)return .045;if(year>=1927)return .04;if(year>=1925)return .035;return .03}
+function socialSecurityFactor(year,claimMonths){const fra=socialSecurityFraMonths(year),claim=Math.max(62*12,Math.min(70*12,claimMonths));if(claim<fra){const early=fra-claim;return 1-Math.min(36,early)/180-Math.max(0,early-36)/240}return 1+(Math.min(70*12,claim)-fra)*socialSecurityCreditRate(year)/12}
+function socialSecurityAgeLabel(months){const years=Math.floor(months/12),extra=Math.round(months-years*12);return extra?`${years} years ${extra} months`:`${years}`}
+function socialSecurityPath(claimMonths,monthlyBenefit,lifeMonths,colaAnnual,returnAnnual){const cola=Math.pow(1+colaAnnual,1/12)-1,rate=Math.pow(1+returnAnnual,1/12)-1;let payment=monthlyBenefit,total=0,value=0,monthsPaid=0;for(let month=claimMonths;month<lifeMonths;month++){value=value*(1+rate)+payment;total+=payment;monthsPaid++;payment*=1+cola}return{total,value,monthsPaid,endingPayment:payment}}
+function socialSecurityProjection(){
+  const mode=syncSocialSecurityMode();let valid=true,message='',cards=[],bars=[],rows=[],schedule=[],result='';const finish=(payload={})=>({valid,message,mode,cards,bars,rows,schedule,result,...payload});
+  if(mode==='planner'){
+    const birthYear=Math.floor(V('ss_birth_year')),fraBenefit=Math.max(0,V('ss_fra_benefit')),claimMonths=Math.floor(V('ss_claim_years'))*12+Math.floor(V('ss_claim_months')),lifeMonths=Math.floor(V('ss_life_age'))*12,cola=Math.max(-.99,V('ss_cola')/100),annualReturn=Math.max(-.99,V('ss_return')/100),fraMonths=socialSecurityFraMonths(birthYear);
+    if(!(fraBenefit>0)){valid=false;message='Enter a full-retirement-age monthly benefit greater than zero.';return finish()}if(claimMonths<62*12||claimMonths>70*12){valid=false;message='Claim age must be between 62 and 70.';return finish()}if(lifeMonths<=claimMonths){valid=false;message='Life expectancy must be greater than the planned claim age.';return finish()}
+    const factor=socialSecurityFactor(birthYear,claimMonths),monthly=fraBenefit*factor,path=socialSecurityPath(claimMonths,monthly,lifeMonths,cola,annualReturn);let best=null;
+    for(let candidate=62*12;candidate<=70*12;candidate++){if(candidate>=lifeMonths)break;const candidateFactor=socialSecurityFactor(birthYear,candidate),candidateMonthly=fraBenefit*candidateFactor,candidatePath=socialSecurityPath(candidate,candidateMonthly,lifeMonths,cola,annualReturn),item={claimMonths:candidate,factor:candidateFactor,monthly:candidateMonthly,...candidatePath};if(!best||item.value>best.value)best=item;if(candidate%12===0)schedule.push(item)}
+    if(!schedule.some(x=>x.claimMonths===claimMonths))schedule.push({claimMonths,factor,monthly,...path});schedule.sort((a,b)=>a.claimMonths-b.claimMonths);
+    const fraLabel=socialSecurityAgeLabel(fraMonths),plannedLabel=socialSecurityAgeLabel(claimMonths),adjustment=(factor-1)*100;
+    cards=[["Estimated monthly benefit",USD(monthly),`${adjustment>=0?'+':''}${F(adjustment,2)}% versus the entered FRA amount.`],["Modeled value at life expectancy",USD(path.value),`${F(annualReturn*100,2)}% assumed investment return.`],["Total benefits paid",USD(path.total),`${path.monthsPaid} modeled monthly payments.`],["Highest modeled claim age",best?socialSecurityAgeLabel(best.claimMonths):"Unavailable",best?`${USD(best.value)} at life expectancy.`:"Review the inputs."]];
+    bars=[{label:"Age 62 monthly",value:fraBenefit*socialSecurityFactor(birthYear,62*12),display:USD(fraBenefit*socialSecurityFactor(birthYear,62*12))},{label:"Planned monthly",value:monthly,display:USD(monthly)},{label:"FRA monthly",value:fraBenefit,display:USD(fraBenefit)},{label:"Age 70 monthly",value:fraBenefit*socialSecurityFactor(birthYear,70*12),display:USD(fraBenefit*socialSecurityFactor(birthYear,70*12))}];
+    rows=[["Birth year",String(birthYear),"January 1 birthdays may use the previous year under SSA rules."],["Full retirement age",fraLabel,"Age for the entered unreduced benefit."],["Entered FRA monthly benefit",USD(fraBenefit),"Use an estimate from your SSA record."],["Planned claim age",plannedLabel,claimMonths<fraMonths?"Before full retirement age.":claimMonths>fraMonths?"After full retirement age.":"At full retirement age."],["Claim-age benefit factor",`${F(factor*100,3)}%`,"Applied to the entered FRA benefit."],["Estimated starting monthly benefit",USD(monthly),"Before taxes, Medicare premiums, or earnings-test withholding."],["Total benefits through life expectancy",USD(path.total),`${F(cola*100,2)}% annual COLA assumption.`],["Investment-adjusted value",USD(path.value),`Value at age ${Math.floor(lifeMonths/12)} using ${F(annualReturn*100,2)}% annual return.`],["Highest modeled claim age",best?socialSecurityAgeLabel(best.claimMonths):"Unavailable","Financial model only; not a personal recommendation."]];
+    result=`<strong>${USD(monthly)} estimated monthly benefit at age ${plannedLabel}</strong><br>Full retirement age: ${fraLabel}; highest modeled value through age ${Math.floor(lifeMonths/12)} starts at ${best?socialSecurityAgeLabel(best.claimMonths):'an unavailable age'}.`;return finish({monthly,factor,path,best});
+  }
+  if(mode==='compare'){
+    const age1=Math.floor(V('ss_compare_age1_years'))*12+Math.floor(V('ss_compare_age1_months')),age2=Math.floor(V('ss_compare_age2_years'))*12+Math.floor(V('ss_compare_age2_months')),payment1=Math.max(0,V('ss_compare_payment1')),payment2=Math.max(0,V('ss_compare_payment2')),lifeMonths=Math.floor(V('ss_compare_life'))*12,cola=Math.max(-.99,V('ss_compare_cola')/100),annualReturn=Math.max(-.99,V('ss_compare_return')/100);
+    if(age1<62*12||age1>70*12||age2<62*12||age2>70*12){valid=false;message='Both claim ages must be between 62 and 70.';return finish()}if(!(payment1>0&&payment2>0)){valid=false;message='Enter both monthly benefit amounts.';return finish()}if(lifeMonths<=Math.max(age1,age2)){valid=false;message='Life expectancy must be greater than both claim ages.';return finish()}
+    const path1=socialSecurityPath(age1,payment1,lifeMonths,cola,annualReturn),path2=socialSecurityPath(age2,payment2,lifeMonths,cola,annualReturn);let cumulative1=0,cumulative2=0,p1=payment1,p2=payment2,breakEven=null,colaMonthly=Math.pow(1+cola,1/12)-1,minAge=Math.min(age1,age2);
+    for(let month=minAge;month<=120*12;month++){if(month>=age1){cumulative1+=p1;p1*=1+colaMonthly}if(month>=age2){cumulative2+=p2;p2*=1+colaMonthly}if(month>=Math.max(age1,age2)&&((age1<age2&&cumulative2>=cumulative1)||(age2<age1&&cumulative1>=cumulative2))){breakEven=month+1;break}}
+    const winner=path1.value>=path2.value?'Option 1':'Option 2',difference=Math.abs(path1.value-path2.value),breakLabel=breakEven?socialSecurityAgeLabel(breakEven):'Not reached by age 120';
+    cards=[["Higher modeled value",winner,`${USD(difference)} difference at life expectancy.`],["Option 1 value",USD(path1.value),`Claim at ${socialSecurityAgeLabel(age1)}.`],["Option 2 value",USD(path2.value),`Claim at ${socialSecurityAgeLabel(age2)}.`],["Cumulative break-even age",breakLabel,"Based on benefit payments with entered COLA."]];
+    bars=[{label:"Option 1 paid",value:path1.total,display:USD(path1.total)},{label:"Option 2 paid",value:path2.total,display:USD(path2.total)},{label:"Option 1 ending value",value:path1.value,display:USD(path1.value)},{label:"Option 2 ending value",value:path2.value,display:USD(path2.value)}];
+    rows=[["Option 1 claim age",socialSecurityAgeLabel(age1),`${USD(payment1)} starting monthly benefit.`],["Option 2 claim age",socialSecurityAgeLabel(age2),`${USD(payment2)} starting monthly benefit.`],["Life expectancy",`${Math.floor(lifeMonths/12)} years`,`Comparison endpoint.`],["Option 1 total paid",USD(path1.total),`${path1.monthsPaid} monthly payments.`],["Option 2 total paid",USD(path2.total),`${path2.monthsPaid} monthly payments.`],["Option 1 investment-adjusted value",USD(path1.value),`${F(annualReturn*100,2)}% assumed return.`],["Option 2 investment-adjusted value",USD(path2.value),`${F(annualReturn*100,2)}% assumed return.`],["Cumulative break-even age",breakLabel,"Ignores taxes and household or survivor benefits."],["Higher value at life expectancy",winner,`${USD(difference)} modeled difference.`]];
+    result=`<strong>${winner} has ${USD(difference)} more modeled value</strong><br>Cumulative benefits break even at ${breakLabel}; comparison runs through age ${Math.floor(lifeMonths/12)}.`;return finish({path1,path2,breakEven,winner,difference});
+  }
+  const status=document.getElementById('ss_earnings_status')?.value||'under',earnings=Math.max(0,V('ss_earnings_income')),monthly=Math.max(0,V('ss_earnings_benefit')),months=Math.max(1,Math.min(12,Math.floor(V('ss_earnings_months')))),annualBenefit=monthly*months,limit=status==='under'?24480:status==='reaches'?65160:Infinity,divisor=status==='under'?2:status==='reaches'?3:Infinity,excess=Number.isFinite(limit)?Math.max(0,earnings-limit):0,withheld=Number.isFinite(divisor)?Math.min(annualBenefit,excess/divisor):0,payable=Math.max(0,annualBenefit-withheld),statusLabel=status==='under'?'Under FRA all year':status==='reaches'?'Reach FRA during 2026':'At or above FRA';
+  if(!(monthly>0)){valid=false;message='Enter a monthly retirement benefit greater than zero.';return finish()}
+  cards=[["Estimated 2026 benefits payable",USD(payable),`${months} entered benefit months.`],["Estimated benefits withheld",USD(withheld),withheld?`Based on ${USD(excess)} earnings above the limit.`:"No withholding under the selected status."],["Applicable earnings limit",Number.isFinite(limit)?USD(limit):"No limit",statusLabel],["Gross scheduled benefits",USD(annualBenefit),`${USD(monthly)} per month.`]];
+  bars=[{label:"Benefits payable",value:payable,display:USD(payable)},{label:"Benefits withheld",value:withheld,display:USD(withheld)}];
+  rows=[["2026 age status",statusLabel,"Determines the annual earnings-test rule."],["Countable work earnings",USD(earnings),status==='reaches'?"Enter only earnings before the FRA month.":"Wages and net self-employment income."],["Applicable exempt amount",Number.isFinite(limit)?USD(limit):"No limit",status==='under'?"2026 lower exempt amount.":status==='reaches'?"2026 higher exempt amount.":"No earnings test beginning with the FRA month."],["Earnings above exempt amount",USD(excess),"Countable earnings minus the applicable limit."],["Gross scheduled benefits",USD(annualBenefit),`${months} months at ${USD(monthly)}.`],["Estimated withheld benefits",USD(withheld),status==='under'?"$1 withheld per $2 above the limit.":status==='reaches'?"$1 withheld per $3 above the limit.":"No withholding modeled."],["Estimated benefits payable",USD(payable),"Before taxes, Medicare premiums, or other deductions."]];
+  result=`<strong>${USD(payable)} estimated 2026 benefits payable</strong><br>${USD(withheld)} withheld under the selected earnings-test status from ${USD(annualBenefit)} scheduled benefits.`;return finish({payable,withheld,annualBenefit,limit});
+}
 function syncFinanceTarget(){const target=document.getElementById('finance_solve')?.value||'fv';document.querySelectorAll('[data-finance-value]').forEach(field=>{const active=field.dataset.financeValue===target;field.classList.toggle('finance-solve-target',active);const input=field.querySelector('input');if(input){input.disabled=active;input.setAttribute('aria-disabled',active?'true':'false')}});return target}
 function financePeriodicRate(annual,py,cy){return Math.pow(1+annual/100/cy,cy/py)-1}
 function financeNominalRate(periodic,py,cy){return cy*(Math.pow(1+periodic,py/cy)-1)*100}
@@ -3005,7 +3113,7 @@ function electricalLoadProjection(){const continuous=Math.max(0,V('el_continuous
 function wattsAmpsProjection(){const watts=Math.max(0,V('wa_watts')),voltage=Math.max(.001,V('wa_voltage')),phase=document.getElementById('wa_phase')?.value||'single',pf=phase==='dc'?1:Math.max(.01,Math.min(1,V('wa_pf'))),multiplier=phase==='three'?Math.sqrt(3):1,amps=watts/(voltage*pf*multiplier),va=watts/pf,vars=Math.sqrt(Math.max(0,va*va-watts*watts)),continuous=document.getElementById('wa_continuous')?.value==='yes',planningAmps=amps*(continuous?1.25:1);return{watts,voltage,phase,pf,multiplier,amps,va,vars,continuous,planningAmps}}
 function ampsWattsProjection(){const amps=Math.max(0,V('aw_amps')),voltage=Math.max(.001,V('aw_voltage')),phase=document.getElementById('aw_phase')?.value||'single',pf=phase==='dc'?1:Math.max(.01,Math.min(1,V('aw_pf'))),multiplier=phase==='three'?Math.sqrt(3):1,va=amps*voltage*multiplier,watts=va*pf,vars=Math.sqrt(Math.max(0,va*va-watts*watts));return{amps,voltage,phase,pf,multiplier,va,watts,vars}}
 function syncFeetMeterInputs(){const reverse=document.getElementById('conversion_direction')?.value==='meters_to_feet';document.querySelectorAll('[data-feet-input]').forEach(el=>el.classList.toggle('is-hidden',reverse));document.querySelectorAll('[data-meter-input]').forEach(el=>el.classList.toggle('is-hidden',!reverse));return reverse}
-function clearCalcForm(){const form=document.querySelector('.calc');if(!form)return;form.querySelectorAll('input').forEach(input=>{if(input.type==='checkbox')input.checked=false;else input.value=''});form.querySelectorAll('textarea').forEach(textarea=>{textarea.value=''});form.querySelectorAll('select').forEach(select=>{select.selectedIndex=0});form.querySelectorAll('details').forEach(item=>{item.open=false});syncMortgageCosts();syncConcreteFields();syncRoofFields();syncAreaFields();syncPayDeductionFields();syncSalesTaxFields();syncPercentFields();syncFractionFields();syncBmiFields();syncFinanceTarget();syncPaymentMode();syncRetirementMode();syncK401Mode();show('<strong>0</strong><br>Enter values to calculate a new result.');const engine=currentEngine();if(engine==='cn_mortgage')renderMortgage(0,0,1,0,0,0,0,0,0,0,0,0,0,new Date());if(engine==='loan_page')renderLoanPage()}
+function clearCalcForm(){const form=document.querySelector('.calc');if(!form)return;form.querySelectorAll('input').forEach(input=>{if(input.type==='checkbox')input.checked=false;else input.value=''});form.querySelectorAll('textarea').forEach(textarea=>{textarea.value=''});form.querySelectorAll('select').forEach(select=>{select.selectedIndex=0});form.querySelectorAll('details').forEach(item=>{item.open=false});syncMortgageCosts();syncConcreteFields();syncRoofFields();syncAreaFields();syncPayDeductionFields();syncSalesTaxFields();syncPercentFields();syncFractionFields();syncBmiFields();syncFinanceTarget();syncPaymentMode();syncRetirementMode();syncK401Mode();syncSocialSecurityMode();show('<strong>0</strong><br>Enter values to calculate a new result.');const engine=currentEngine();if(engine==='cn_mortgage')renderMortgage(0,0,1,0,0,0,0,0,0,0,0,0,0,new Date());if(engine==='loan_page')renderLoanPage()}
 function calc(e){
  switch(e){
   case'trade_value':{let price=V('price'),age=V('age'),miles=V('miles'),cond=V('condition');let ageF=Math.pow(.84,age),expected=Math.max(1,age)*12000,mileageF=Math.max(.72,Math.min(1.12,1-(miles-expected)*0.000003));let r=price*ageF*mileageF*cond;show(`<strong>${USD(Math.max(0,r))}</strong><br>Illustrative estimate, not a dealer quote or appraisal.`);break}
@@ -3053,6 +3161,7 @@ function calc(e){
   case'amortization_advanced':{const p=amortizationProjection();if(!p.valid)show(`<strong>Unable to build the schedule</strong><br>${p.message}`);else show(`<strong>${USD(p.regularPayment)} scheduled monthly payment</strong><br>${p.termLabel} to payoff (${p.payoffDate}); ${USD(p.totalInterest)} total interest${p.active?`; ${USD(p.interestSaved)} interest saved`:''}.`);break}
   case'retirement_advanced':{const p=retirementProjection();if(!p.valid)show(`<strong>Unable to calculate</strong><br>${p.message}`);else show(p.result);break}
   case'401k_advanced':{const p=k401Projection();if(!p.valid)show(`<strong>Unable to calculate</strong><br>${p.message}`);else show(p.result);break}
+  case'social_security_advanced':{const p=socialSecurityProjection();if(!p.valid)show(`<strong>Unable to calculate</strong><br>${p.message}`);else show(p.result);break}
   case'interest_advanced':{const p=interestComparisonProjection();show(`<strong>${USD(p.compound.balance)} compound balance</strong><br>${USD(p.simpleBalance)} with simple interest; ${USD(p.advantage)} compound advantage; ${USD(p.compound.buyingPower)} compound buying power in today's dollars.`);break}
   case'compound':{const p=compoundProjection();show(`<strong>${USD(p.balance)} ending balance</strong><br>${USD(p.contributed)} contributed; ${USD(p.totalInterest)} net interest; ${USD(p.buyingPower)} inflation-adjusted buying power.`);renderCompound(p);break}
   case'salary_advanced':{const p=salaryProjection();show(`<strong>${USD(p.annual)} new annual salary</strong><br>${USD(p.raiseDollars)} raise (${F(p.raisePercent,2)}%); ${USD(p.perPeriod)} per selected pay period; ${USD(p.hourly)} hourly equivalent.`);break}
@@ -3185,7 +3294,11 @@ function renderGeneric(cards, bars, rows) {
 function renderGenericFromEngine(engine) {
   if (!document.getElementById("genericSummary")) return;
   let cards=[], bars=[], rows=[];
-  if (engine === "401k_advanced") {
+  if (engine === "social_security_advanced") {
+    const p=socialSecurityProjection(),schedule=document.querySelector('#ssSchedule tbody');
+    if(!p.valid){cards=[["Result","Check inputs",p.message],["Benefit estimate","Unavailable","Correct the entered values."],["Comparison","Unavailable","No calculation completed."],["Details","Unavailable","Correct the inputs first."]];bars=[{label:"Result",value:0,display:"Unavailable"}];rows=[["Validation","Unable to calculate",p.message]];if(schedule)schedule.innerHTML=''}
+    else{cards=p.cards;bars=p.bars;rows=p.rows;if(schedule)schedule.innerHTML=p.schedule.map(x=>`<tr><td>${socialSecurityAgeLabel(x.claimMonths)}</td><td>${F(x.factor*100,2)}%</td><td>${USD(x.monthly)}</td><td>${USD(x.total)}</td><td>${USD(x.value)}</td></tr>`).join('')}
+  } else if (engine === "401k_advanced") {
     const p=k401Projection(),schedule=document.querySelector('#k401Schedule tbody');
     if(!p.valid){cards=[["Result","Check inputs",p.message],["401(k) estimate","Unavailable","Correct the entered values."],["Breakdown","Unavailable","No calculation completed."],["Details","Unavailable","Correct the inputs first."]];bars=[{label:"Result",value:0,display:"Unavailable"}];rows=[["Validation","Unable to calculate",p.message]];if(schedule)schedule.innerHTML=''}
     else{cards=p.cards;bars=p.bars;rows=p.rows;if(schedule)schedule.innerHTML=p.schedule.map(x=>`<tr><td>${F(x.age,0)}</td><td>${USD(x.salary)}</td><td>${USD(x.employee)}</td><td>${USD(x.employer)}</td><td>${USD(x.growth)}</td><td>${USD(x.balance)}</td></tr>`).join('')}
@@ -3700,6 +3813,11 @@ document.addEventListener("click", event => {
 document.addEventListener("click", event => {
   const tab = event.target.closest("[data-k401-mode]");
   if(tab){syncK401Mode(tab.dataset.k401Mode);calc('401k_advanced')}
+});
+
+document.addEventListener("click", event => {
+  const tab = event.target.closest("[data-ss-mode]");
+  if(tab){syncSocialSecurityMode(tab.dataset.ssMode);calc('social_security_advanced')}
 });
 
 document.addEventListener("click", event => {
