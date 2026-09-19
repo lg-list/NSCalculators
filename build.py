@@ -642,6 +642,8 @@ def calculator_net_template(keyword, slug, cat):
         base.update({"engine": "amortization_advanced", "desc": "Build a monthly and annual loan amortization schedule, then test how recurring or one-time extra principal payments change interest and payoff time.", "formula": "Payment = P x r x (1+r)^n / ((1+r)^n - 1); each month, principal paid = payment - interest + extra principal.", "inputs": []})
     elif slug == "retirement-calculator":
         base.update({"engine": "retirement_advanced", "desc": "Estimate how much you need to retire, the monthly savings required, sustainable retirement withdrawals, or how long an existing nest egg may last.", "formula": "Retirement projections combine compound growth, recurring contributions, inflation-adjusted income needs, and an assumed fixed investment return.", "inputs": []})
+    elif slug == "401k-calculator":
+        base.update({"engine": "401k_advanced", "desc": "Project a 401(k) balance and retirement income, estimate early-withdrawal taxes and penalties, or calculate employer matching contributions.", "formula": "The projection compounds employee and employer contributions monthly; withdrawal estimates apply entered tax rates and any modeled 10% additional tax.", "inputs": []})
     elif "auto loan" in text or ("car" in text and "loan" in text):
         base.update({"engine": "car_loan", "desc": "Estimate an auto loan payment including price, tax, fees, cash incentives, down payment, trade-in, amount owed on trade-in, and whether taxes and fees are financed.", "formula": "Loan amount = auto price - cash incentives - down payment - trade-in value + amount owed on trade-in, plus taxes and fees when included in the loan. Payment uses monthly amortization.", "inputs": [["price", "Auto Price ($)", "number", 50000], ["months", "Loan Term (months)", "number", 60], ["apr", "Interest Rate (%)", "number", 5], ["incentives", "Cash Incentives ($)", "number", 0], ["down", "Down Payment ($)", "number", 10000], ["trade", "Trade-in Value ($)", "number", 0], ["owed", "Amount Owed on Trade-in ($)", "number", 0], ["tax", "Sales Tax (%)", "number", 3], ["fees", "Title, Registration and Other Fees ($)", "number", 2800], ["include_fees", "Include taxes and fees in loan", "select", [["0", "No"], ["1", "Yes"]]]]})
     elif "loan" in text or "payment calculator" in text:
@@ -819,6 +821,8 @@ def seo_title(calc):
         return "Amortization Calculator with Extra Payments & Schedule"
     if calc.get("slug") == "retirement-calculator":
         return "Retirement Calculator: Savings, Income & Withdrawal Plan"
+    if calc.get("slug") == "401k-calculator":
+        return "401(k) Calculator: Balance, Match & Withdrawal"
     if calc.get("slug") == "payment-calculator":
         return "Payment Calculator: Monthly Payment or Loan Term"
     if calc.get("slug") == "compound-interest-calculator":
@@ -865,6 +869,8 @@ def seo_description(calc):
         return "Calculate monthly loan payments, total interest, payoff date, and full amortization schedules. Compare monthly, yearly, and one-time extra payments."
     if calc.get("slug") == "retirement-calculator":
         return "Estimate your retirement savings target, monthly savings gap, retirement income, and how long money may last with inflation-adjusted projections."
+    if calc.get("slug") == "401k-calculator":
+        return "Project your 401(k) balance, employer match, and retirement income. Estimate early-withdrawal taxes and penalties using current 2026 limits."
     if calc.get("slug") == "compound-interest-calculator":
         return "Calculate compound interest with monthly and annual contributions, tax, inflation, years and months, detailed growth charts, and an annual schedule."
     if calc.get("slug") == "truck-payload-calculator":
@@ -1488,6 +1494,50 @@ def retirement_input_html():
 </div>"""
 
 
+def k401_input_html():
+    return """<div class="loan-mode-tabs k401-mode-tabs" role="tablist" aria-label="401(k) calculation mode" style="grid-template-columns:repeat(3,minmax(0,1fr))">
+<button class="is-active" type="button" role="tab" aria-selected="true" data-k401-mode="projection">401(k) projection</button>
+<button type="button" role="tab" aria-selected="false" data-k401-mode="withdrawal">Early withdrawal</button>
+<button type="button" role="tab" aria-selected="false" data-k401-mode="match">Employer match</button>
+</div><div class="k401-mode-stack">
+<section class="k401-mode-panel" data-k401-panel="projection"><div class="fields">
+<div class="field"><label for="k401_age">Current age</label><input id="k401_age" type="number" step="1" min="18" max="100" value="35"></div>
+<div class="field"><label for="k401_retirement_age">Retirement age</label><input id="k401_retirement_age" type="number" step="1" min="19" max="100" value="67"></div>
+<div class="field"><label for="k401_life_age">Life expectancy</label><input id="k401_life_age" type="number" step="1" min="20" max="120" value="90"></div>
+<div class="field"><label for="k401_salary">Current annual salary</label><div class="input-unit"><input id="k401_salary" type="number" step="any" min="0" value="75000"><span>$/yr</span></div></div>
+<div class="field"><label for="k401_balance">Current 401(k) balance</label><div class="input-unit"><input id="k401_balance" type="number" step="any" min="0" value="50000"><span>$</span></div></div>
+<div class="field"><label for="k401_contribution">Employee contribution</label><div class="input-unit"><input id="k401_contribution" type="number" step="any" min="0" value="6"><span>% of pay</span></div></div>
+<div class="field"><label for="k401_match">Employer match</label><div class="input-unit"><input id="k401_match" type="number" step="any" min="0" value="50"><span>%</span></div></div>
+<div class="field"><label for="k401_match_limit">Employer match limit</label><div class="input-unit"><input id="k401_match_limit" type="number" step="any" min="0" value="6"><span>% of pay</span></div></div>
+<div class="field"><label for="k401_salary_growth">Annual salary increase</label><div class="input-unit"><input id="k401_salary_growth" type="number" step="any" min="-99" value="3"><span>%/yr</span></div></div>
+<div class="field"><label for="k401_return">Annual investment return</label><div class="input-unit"><input id="k401_return" type="number" step="any" min="-99" value="7"><span>%/yr</span></div></div>
+<div class="field"><label for="k401_inflation">Inflation rate</label><div class="input-unit"><input id="k401_inflation" type="number" step="any" min="-99" value="3"><span>%/yr</span></div></div>
+<div class="field"><label for="k401_retirement_return">Return during retirement</label><div class="input-unit"><input id="k401_retirement_return" type="number" step="any" min="-99" value="5"><span>%/yr</span></div></div>
+</div><p class="field-note">Contribution percentages are projected from salary. The results flag the current 2026 employee deferral limit but do not predict future IRS limit changes.</p></section>
+<section class="k401-mode-panel is-hidden" data-k401-panel="withdrawal"><div class="fields">
+<div class="field"><label for="k401_withdraw_age">Age at withdrawal</label><input id="k401_withdraw_age" type="number" step="any" min="18" max="120" value="45"></div>
+<div class="field"><label for="k401_withdraw_amount">Early withdrawal amount</label><div class="input-unit"><input id="k401_withdraw_amount" type="number" step="any" min="0" value="50000"><span>$</span></div></div>
+<div class="field"><label for="k401_federal_tax">Federal income tax rate</label><div class="input-unit"><input id="k401_federal_tax" type="number" step="any" min="0" value="22"><span>%</span></div></div>
+<div class="field"><label for="k401_state_tax">State income tax rate</label><div class="input-unit"><input id="k401_state_tax" type="number" step="any" min="0" value="5"><span>%</span></div></div>
+<div class="field"><label for="k401_local_tax">Local income tax rate</label><div class="input-unit"><input id="k401_local_tax" type="number" step="any" min="0" value="0"><span>%</span></div></div>
+<div class="field"><label for="k401_employed">Still employed by plan sponsor?</label><select id="k401_employed"><option value="yes">Yes</option><option value="no">No</option></select></div>
+<div class="field"><label for="k401_left_55">Separated in or after year age 55?</label><select id="k401_left_55"><option value="no">No</option><option value="yes">Yes</option></select></div>
+<div class="field"><label for="k401_disability">Qualifying disability?</label><select id="k401_disability"><option value="no">No</option><option value="yes">Yes</option></select></div>
+<div class="field field-wide"><label for="k401_other_exception">Another verified penalty exception?</label><select id="k401_other_exception"><option value="no">No</option><option value="yes">Yes</option></select></div>
+</div><p class="field-note">This is a gross estimate. Tax withholding is not necessarily your final tax, and exception eligibility depends on IRS rules and plan facts.</p></section>
+<section class="k401-mode-panel is-hidden" data-k401-panel="match"><div class="fields">
+<div class="field"><label for="k401_match_salary">Current annual salary</label><div class="input-unit"><input id="k401_match_salary" type="number" step="any" min="0" value="75000"><span>$/yr</span></div></div>
+<div class="field"><label for="k401_match_age">Age at year end</label><input id="k401_match_age" type="number" step="1" min="18" max="100" value="35"></div>
+<div class="field"><label for="k401_match_contribution">Your contribution</label><div class="input-unit"><input id="k401_match_contribution" type="number" step="any" min="0" value="6"><span>% of pay</span></div></div>
+<div class="field"><label for="k401_match_rate1">Employer match: first tier</label><div class="input-unit"><input id="k401_match_rate1" type="number" step="any" min="0" value="100"><span>% match</span></div></div>
+<div class="field"><label for="k401_match_limit1">First-tier contribution band</label><div class="input-unit"><input id="k401_match_limit1" type="number" step="any" min="0" value="3"><span>% of pay</span></div></div>
+<div class="field"><label for="k401_match_rate2">Employer match: second tier</label><div class="input-unit"><input id="k401_match_rate2" type="number" step="any" min="0" value="50"><span>% match</span></div></div>
+<div class="field"><label for="k401_match_limit2">Second-tier contribution band</label><div class="input-unit"><input id="k401_match_limit2" type="number" step="any" min="0" value="2"><span>% of pay</span></div></div>
+<div class="field"><label for="k401_pay_periods">Pay periods per year</label><select id="k401_pay_periods"><option value="12">12 monthly</option><option value="24">24 semimonthly</option><option value="26" selected>26 biweekly</option><option value="52">52 weekly</option></select></div>
+</div><p class="field-note">The match formula assumes the second tier begins after the first contribution band. Confirm your plan formula, true-up policy, and vesting rules.</p></section>
+</div>"""
+
+
 def loan_input_html():
     return f"""<div class="loan-mode-tabs" role="tablist" aria-label="Loan model"><button class="is-active" type="button" role="tab" aria-selected="true" data-loan-mode="monthlyfixed">Amortized</button><button type="button" role="tab" aria-selected="false" data-loan-mode="intheend">Deferred</button><button type="button" role="tab" aria-selected="false" data-loan-mode="fixedend">Bond</button></div><div class="loan-mode-stack">
 <section class="loan-mode-input is-active" id="monthlyfixed"><h3>Amortized Loan</h3><p>Fixed payments paid periodically until the loan is paid off.</p><div class="fields loan-fields">
@@ -1828,6 +1878,19 @@ def high_value_calculator_copy(calc):
 <h2>Inflation and investment return</h2><p>Inflation increases the future dollar amount needed to maintain purchasing power. Investment return grows savings but is not guaranteed. The <a href="https://www.investor.gov/financial-tools-calculators/calculators/compound-interest-calculator" rel="external noopener">Investor.gov compound interest calculator</a> likewise treats contribution, time, return, and compounding assumptions as inputs rather than predictions. Test conservative and optimistic scenarios instead of relying on one result.</p>
 <h2>Important limitations</h2><p>Results are educational estimates, not financial, tax, or investment advice. The model does not include taxes, investment fees, market volatility, required minimum distributions, contribution limits, health-care or long-term-care shocks, changes in benefits, or account-specific withdrawal rules. A constant return is especially unrealistic year to year; poor returns early in retirement can reduce sustainability even when the long-run average is unchanged.</p>
 <h2>Frequently asked questions</h2><h3>Should I enter Social Security in today's dollars?</h3><p>Yes. In the first mode, other retirement income is entered in today's dollars and grows with the same inflation assumption as the retirement spending target.</p><h3>Does the 4% rule guarantee that money will last?</h3><p>No. It is a planning guideline, not a guarantee. This calculator instead uses your return, inflation, and time horizon to create a deterministic projection.</p><h3>Why does a small return change have a large effect?</h3><p>Long time horizons compound differences in assumed returns. Compare several scenarios and pay attention to fees and inflation.</p><h3>Where can I estimate Social Security?</h3><p>Use your official SSA earnings record and benefit estimator for a personalized amount, then enter that monthly estimate here.</p>"""
+    if calc.get("slug") == "401k-calculator":
+        return """
+<h2>401(k) balance and retirement income projection</h2><p>The projection mode grows your current balance with employee contributions and employer matching contributions through the retirement age you enter. Salary and contributions are updated once per year, while account growth and deposits are modeled monthly. The result separates your starting balance, employee deposits, employer match, and estimated investment growth.</p>
+<p class="formula">monthly employee contribution = annual salary x contribution rate / 12</p>
+<p class="formula">monthly employer match = annual salary x min(contribution rate, match limit) x match rate / 12</p>
+<h2>2026 401(k) contribution limits</h2><p>The <a href="https://www.irs.gov/retirement-plans/plan-participant-employee/retirement-topics-401k-and-profit-sharing-plan-contribution-limits" rel="external noopener">IRS 401(k) contribution limits</a> set the 2026 employee elective-deferral limit at $24,500. A plan may allow an additional $8,000 catch-up contribution for participants age 50 or older, while people who attain ages 60 through 63 in 2026 may have an $11,250 catch-up limit. The general combined employee-and-employer annual-additions limit is $72,000, excluding permitted catch-up contributions.</p>
+<p>Future limits are unknown and may change with cost-of-living adjustments. The projection therefore does not force today's dollar limit across every future year. Instead, it shows whether the first-year contribution exceeds the current 2026 limit. Your plan may impose a lower limit, and contributions across multiple plans may need to be aggregated.</p>
+<h2>How employer matching works</h2><p>An employer match is usually based on how much of your salary you contribute, up to one or more plan thresholds. For example, a plan might match 100% of the first 3% of pay and 50% of the next 2%. The employer-match mode handles that two-tier structure and estimates the contribution rate needed to capture the full stated match.</p>
+<p>Some plans calculate matching every pay period and do not provide a year-end true-up. Contributing too much early in the year can then reduce later matches after you reach the employee deferral limit. The calculator shows a full-year contribution ceiling, but only your plan administrator can confirm whether a true-up applies.</p>
+<h2>Early 401(k) withdrawal estimate</h2><p>Early distributions are generally included in taxable income and may also face a 10% additional tax. The withdrawal mode applies the federal, state, and local rates you enter, then adds the modeled 10% amount unless age or the selected exception inputs indicate otherwise. It is an estimate of net proceeds, not a tax return calculation.</p>
+<p>The IRS lists exceptions that are more detailed than this form can capture. The separation-from-service exception generally concerns distributions after leaving the employer in or after the year you reach age 55 and usually applies to that employer's plan, not automatically to an IRA. Review the <a href="https://www.irs.gov/retirement-plans/plan-participant-employee/retirement-topics-exceptions-to-tax-on-early-distributions" rel="external noopener">IRS guidance on early distributions</a> before relying on an exception.</p>
+<h2>Assumptions and limitations</h2><p>The projection assumes a constant return, steady contributions, annual salary growth, no fees, and fully vested employer contributions. Actual returns vary, plan expenses reduce growth, matching and vesting formulas differ, and a loan or rollover can change the account path. The retirement-income estimate is a deterministic inflation-adjusted withdrawal through life expectancy; it is not a guarantee and does not model market sequence risk, taxes in retirement, or required minimum distributions.</p>
+<h2>Frequently asked questions</h2><h3>Does the calculator distinguish traditional and Roth 401(k) contributions?</h3><p>No. Both can share the same investment-growth projection, but their current and future tax treatment differs. The balance result is pre-tax or after-tax only to the extent your actual account is.</p><h3>Is employer match part of my employee limit?</h3><p>Employer match does not count toward the employee elective-deferral limit, but it generally counts toward the separate overall annual-additions limit.</p><h3>What return should I use?</h3><p>Use several scenarios rather than one optimistic number. Returns are not guaranteed, and fees, asset allocation, and the timing of gains and losses can materially change the outcome.</p><h3>Can I use this for a 403(b) or TSP?</h3><p>The growth math may be useful, but plan rules, matching formulas, contribution limits, and withdrawal exceptions can differ. Verify the rules for the specific plan.</p>"""
     if calc.get("slug") == "loan-calculator":
         return """
 <h2>Loan payment calculator</h2><p>Use the amortized-loan section for a conventional fixed-payment installment loan. Enter principal, annual interest rate, term, compounding frequency, and payment frequency to calculate each payment, total payments, total interest, and the full amortization schedule.</p>
@@ -2078,6 +2141,14 @@ def default_calculator_copy(calc):
 
 
 def analysis_extra_html(calc):
+    if calc.get("slug") == "401k-calculator":
+        return """<section class="mortgage-dashboard generic-dashboard k401-dashboard" aria-label="401(k) calculation results">
+<div class="section-head stack"><h2>401(k) Results</h2><p>Review the balance, contributions, taxes or matching details for the selected mode.</p></div>
+<div class="summary-grid" id="genericSummary"></div>
+<div class="chart-grid"><div class="chart-card compact-chart"><h3>Result Breakdown</h3><canvas id="genericChart" width="620" height="230" aria-label="401(k) result breakdown" data-chart-type="bars"></canvas></div></div>
+<div class="table-card"><h3>Calculation Details</h3><div class="table-scroll"><table class="data-table" id="genericTable"><thead><tr><th>Metric</th><th>Value</th><th>Note</th></tr></thead><tbody></tbody></table></div></div>
+<div class="table-card" id="k401ScheduleCard"><h3>Annual 401(k) Projection</h3><div class="table-scroll"><table class="data-table" id="k401Schedule"><thead><tr><th>Age</th><th>Salary</th><th>Employee</th><th>Employer</th><th>Growth</th><th>Ending balance</th></tr></thead><tbody></tbody></table></div></div>
+</section>"""
     if calc.get("slug") == "retirement-calculator":
         return """<section class="mortgage-dashboard generic-dashboard retirement-dashboard" aria-label="Retirement planning results">
 <div class="section-head stack"><h2>Retirement Plan</h2><p>Review the target, projected balance, income estimate, and year-by-year outlook.</p></div>
@@ -2294,6 +2365,9 @@ def calculator_page(site, calc, related):
     elif calc.get("slug") == "retirement-calculator":
         fields = retirement_input_html()
         page_engine = "retirement_advanced"
+    elif calc.get("slug") == "401k-calculator":
+        fields = k401_input_html()
+        page_engine = "401k_advanced"
     elif calc.get("slug") == "interest-calculator":
         fields = compound_interest_input_html()
         page_engine = "interest_advanced"
@@ -2399,7 +2473,7 @@ def calculator_page(site, calc, related):
     rel = "".join(card(c, compact=True) for c in related)
     content = high_value_calculator_copy(calc) or conversion_copy(calc) or default_calculator_copy(calc)
     extra = analysis_extra_html(calc)
-    calculator_asset_versions = {"amortization-calculator": "20260919b", "retirement-calculator": "20260919c"}
+    calculator_asset_versions = {"amortization-calculator": "20260919b", "retirement-calculator": "20260919c", "401k-calculator": "20260920a"}
     calculator_asset_version = calculator_asset_versions.get(calc.get("slug"), ASSET_VERSION)
     if calc.get("engine") == "loan_page":
         calc_html = f"""<section class="calc loan-page-calc"><h2>Calculator</h2>{fields}<div class="result" id="result">Enter your values and select Calculate.</div></section>"""
@@ -2827,6 +2901,47 @@ function retirementProjection(){
   const perpetual=balance>.005,years=Math.floor(months/12),remaining=months%12,duration=perpetual?'More than 100 years':[years?`${years} year${years===1?'':'s'}`:'',remaining?`${remaining} month${remaining===1?'':'s'}`:''].filter(Boolean).join(' '),endingMonthly=withdrawal;
   cards=[["Estimated duration",duration,perpetual?"Balance remains after 100 modeled years.":"Until the modeled balance is depleted."],["Starting monthly withdrawal",USD(startingWithdrawal),`${F(inflation*100,2)}% annual increase.`],["Total withdrawn",USD(totalWithdrawn),"Across the modeled period."],["Final monthly withdrawal",USD(endingMonthly),"Inflation-adjusted amount near the end."]];bars=[{label:"Starting amount",value:amount,display:USD(amount)},{label:"Total withdrawn",value:totalWithdrawn,display:USD(totalWithdrawn)},{label:"Final balance",value:balance,display:USD(balance)}];rows=[["Starting amount",USD(amount),"Available retirement savings."],["Starting monthly withdrawal",USD(startingWithdrawal),"First modeled withdrawal."],["Average annual return",`${F(annualReturn*100,2)}%`,"Constant assumed return."],["Annual withdrawal increase",`${F(inflation*100,2)}%`,"Applied monthly at an equivalent rate."],["Estimated duration",duration,perpetual?"Projection capped at 100 years.":`${months} monthly withdrawals.`],["Total withdrawn",USD(totalWithdrawn),"Nominal dollars over time."],["Remaining balance",USD(balance),"Balance at the end of the modeled period."]];result=`<strong>${duration}</strong><br>${USD(amount)} with a starting ${USD(startingWithdrawal)} monthly withdrawal and ${F(inflation*100,2)}% annual increases.`;return finish({months,duration,totalWithdrawn,balance});
 }
+function syncK401Mode(nextMode){
+  const mode=nextMode||document.querySelector('[data-k401-mode].is-active')?.dataset.k401Mode||'projection';
+  document.querySelectorAll('[data-k401-mode]').forEach(button=>{const active=button.dataset.k401Mode===mode;button.classList.toggle('is-active',active);button.setAttribute('aria-selected',active?'true':'false')});
+  document.querySelectorAll('[data-k401-panel]').forEach(panel=>panel.classList.toggle('is-hidden',panel.dataset.k401Panel!==mode));
+  document.getElementById('k401ScheduleCard')?.classList.toggle('is-hidden',mode!=='projection');
+  return mode;
+}
+function k401DeferralLimit(age){return 24500+(age>=60&&age<=63?11250:age>=50?8000:0)}
+function k401Projection(){
+  const mode=syncK401Mode();let valid=true,message='',cards=[],bars=[],rows=[],schedule=[],result='';
+  const finish=(payload={})=>({valid,message,mode,cards,bars,rows,schedule,result,...payload});
+  if(mode==='projection'){
+    const age=Math.floor(V('k401_age')),retirementAge=Math.floor(V('k401_retirement_age')),lifeAge=Math.floor(V('k401_life_age')),salary=Math.max(0,V('k401_salary')),startingBalance=Math.max(0,V('k401_balance')),employeeRate=Math.max(0,V('k401_contribution')/100),matchRate=Math.max(0,V('k401_match')/100),matchLimit=Math.max(0,V('k401_match_limit')/100),salaryGrowth=Math.max(-.99,V('k401_salary_growth')/100),annualReturn=Math.max(-.99,V('k401_return')/100),inflation=Math.max(-.99,V('k401_inflation')/100),retirementReturn=Math.max(-.99,V('k401_retirement_return')/100),workYears=retirementAge-age,retirementYears=lifeAge-retirementAge;
+    if(!(workYears>0)){valid=false;message='Retirement age must be greater than current age.';return finish()}if(!(retirementYears>0)){valid=false;message='Life expectancy must be greater than retirement age.';return finish()}
+    const monthlyReturn=Math.pow(1+annualReturn,1/12)-1,retirementMonthly=Math.pow(1+retirementReturn,1/12)-1,inflationMonthly=Math.pow(1+inflation,1/12)-1;let balance=startingBalance,totalEmployee=0,totalEmployer=0,totalGrowth=0,yearEmployee=0,yearEmployer=0,yearGrowth=0,currentSalary=salary;
+    for(let month=1;month<=workYears*12;month++){
+      const employee=currentSalary*employeeRate/12,employer=currentSalary*Math.min(employeeRate,matchLimit)*matchRate/12,growth=balance*monthlyReturn;balance+=employee+employer+growth;totalEmployee+=employee;totalEmployer+=employer;totalGrowth+=growth;yearEmployee+=employee;yearEmployer+=employer;yearGrowth+=growth;
+      if(month%12===0){schedule.push({age:age+month/12,salary:currentSalary,employee:yearEmployee,employer:yearEmployer,growth:yearGrowth,balance});currentSalary*=1+salaryGrowth;yearEmployee=0;yearEmployer=0;yearGrowth=0}
+    }
+    const todayBalance=balance/Math.pow(1+inflation,workYears),firstMonthly=retirementGrowingWithdrawal(balance,retirementMonthly,inflationMonthly,retirementYears*12),todayMonthly=firstMonthly/Math.pow(1+inflation,workYears),firstYearEmployee=salary*employeeRate,limit=k401DeferralLimit(age),limitNote=firstYearEmployee>limit?`${USD(firstYearEmployee-limit)} above the modeled 2026 age-based employee limit.`:`${USD(limit-firstYearEmployee)} below the modeled 2026 age-based employee limit.`;
+    cards=[["401(k) at retirement",USD(balance),`${USD(todayBalance)} in today's purchasing power.`],["Starting monthly income",USD(firstMonthly),`${USD(todayMonthly)} in today's purchasing power.`],["Employee contributions",USD(totalEmployee),`${F(employeeRate*100,2)}% of projected salary.`],["Employer contributions",USD(totalEmployer),`${F(matchRate*100,1)}% match up to ${F(matchLimit*100,1)}% of pay.`]];
+    bars=[{label:"Starting balance",value:startingBalance,display:USD(startingBalance)},{label:"Employee deposits",value:totalEmployee,display:USD(totalEmployee)},{label:"Employer match",value:totalEmployer,display:USD(totalEmployer)},{label:"Investment growth",value:Math.max(0,totalGrowth),display:USD(totalGrowth)}];
+    rows=[["Years until retirement",`${workYears} years`,`Age ${age} to ${retirementAge}.`],["Years modeled in retirement",`${retirementYears} years`,`Through age ${lifeAge}.`],["Starting balance",USD(startingBalance),"Current 401(k) value."],["First-year employee contribution",USD(firstYearEmployee),limitNote],["2026 age-based employee limit",USD(limit),age>=60&&age<=63?"Includes the higher age 60-63 catch-up amount.":age>=50?"Includes the general age 50+ catch-up amount.":"Base elective-deferral limit."],["Total employee contributions",USD(totalEmployee),"Projected salary-based deposits."],["Total employer contributions",USD(totalEmployer),"Assumes the entered match continues."],["Estimated investment growth",USD(totalGrowth),`${F(annualReturn*100,2)}% constant annual return.`],["Balance at retirement",USD(balance),"Before retirement withdrawals and taxes."],["Starting monthly retirement income",USD(firstMonthly),`${F(retirementReturn*100,2)}% return and ${F(inflation*100,2)}% inflation during retirement.`]];
+    result=`<strong>${USD(balance)} projected 401(k) balance</strong><br>${USD(firstMonthly)} estimated starting monthly retirement income; ${USD(totalEmployer)} projected employer match.`;return finish({balance,totalEmployee,totalEmployer,totalGrowth,firstMonthly});
+  }
+  if(mode==='withdrawal'){
+    const age=V('k401_withdraw_age'),amount=Math.max(0,V('k401_withdraw_amount')),federal=Math.min(1,Math.max(0,V('k401_federal_tax')/100)),state=Math.min(1,Math.max(0,V('k401_state_tax')/100)),local=Math.min(1,Math.max(0,V('k401_local_tax')/100)),employed=document.getElementById('k401_employed')?.value==='yes',left55=document.getElementById('k401_left_55')?.value==='yes',disability=document.getElementById('k401_disability')?.value==='yes',other=document.getElementById('k401_other_exception')?.value==='yes';
+    if(!(amount>0)){valid=false;message='Enter a withdrawal amount greater than zero.';return finish()}
+    const ageExempt=age>=59.5,separationExempt=!employed&&left55&&age>=55,penaltyExempt=ageExempt||separationExempt||disability||other,federalTax=amount*federal,stateTax=amount*state,localTax=amount*local,penalty=penaltyExempt?0:amount*.10,totalCost=federalTax+stateTax+localTax+penalty,net=Math.max(0,amount-totalCost),reason=ageExempt?'Age 59.5 or older selected.':separationExempt?'Modeled age-55 separation exception selected.':disability?'Qualifying disability selected.':other?'Other verified exception selected.':'No modeled exception selected.';
+    cards=[["Estimated cash received",USD(net),`${F(amount?net/amount*100:0,1)}% of the requested withdrawal.`],["Estimated income taxes",USD(federalTax+stateTax+localTax),"Using the entered marginal rates."],["Additional tax",USD(penalty),penaltyExempt?"No 10% amount modeled.":"10% amount modeled."],["Total estimated cost",USD(totalCost),"Income taxes plus additional tax."]];
+    bars=[{label:"Cash received",value:net,display:USD(net)},{label:"Federal tax",value:federalTax,display:USD(federalTax)},{label:"State and local",value:stateTax+localTax,display:USD(stateTax+localTax)},{label:"Additional tax",value:penalty,display:USD(penalty)}];
+    rows=[["Requested withdrawal",USD(amount),"Gross distribution."],["Federal income tax estimate",USD(federalTax),`${F(federal*100,2)}% entered rate.`],["State income tax estimate",USD(stateTax),`${F(state*100,2)}% entered rate.`],["Local income tax estimate",USD(localTax),`${F(local*100,2)}% entered rate.`],["Modeled 10% additional tax",USD(penalty),reason],["Total estimated taxes and penalty",USD(totalCost),"Does not model withholding or tax brackets."],["Estimated cash received",USD(net),"Gross distribution minus modeled costs."]];
+    result=`<strong>${USD(net)} estimated cash received</strong><br>${USD(totalCost)} in modeled income taxes and additional tax from a ${USD(amount)} withdrawal.`;return finish({amount,net,totalCost,penalty});
+  }
+  const salary=Math.max(0,V('k401_match_salary')),age=Math.floor(V('k401_match_age')),enteredRate=Math.max(0,V('k401_match_contribution')/100),rate1=Math.max(0,V('k401_match_rate1')/100),limit1=Math.max(0,V('k401_match_limit1')/100),rate2=Math.max(0,V('k401_match_rate2')/100),limit2=Math.max(0,V('k401_match_limit2')/100),periods=Math.max(1,Math.round(V('k401_pay_periods'))),deferralLimit=k401DeferralLimit(age),rawEmployee=salary*enteredRate,employee=Math.min(rawEmployee,deferralLimit),actualRate=salary?employee/salary:0,firstBand=Math.min(actualRate,limit1),secondBand=Math.min(Math.max(0,actualRate-limit1),limit2),employer=salary*(firstBand*rate1+secondBand*rate2),fullEmployer=salary*(limit1*rate1+limit2*rate2),fullRate=(limit1+limit2)*100,ceilingRate=salary?deferralLimit/salary*100:0,captured=fullEmployer?employer/fullEmployer*100:100,combined=employee+employer;
+  if(!(salary>0)){valid=false;message='Enter an annual salary greater than zero.';return finish()}
+  cards=[["Annual employer match",USD(employer),`${F(captured,1)}% of the stated maximum match.`],["Your annual contribution",USD(employee),rawEmployee>deferralLimit?`Capped at the modeled ${USD(deferralLimit)} 2026 limit.`:`${F(actualRate*100,2)}% of pay.`],["Combined annual contribution",USD(combined),"Employee plus employer amount."],["Contribution rate for full match",`${F(fullRate,2)}%`,`${USD(fullEmployer)} maximum stated match.`]];
+  bars=[{label:"Employee contribution",value:employee,display:USD(employee)},{label:"Employer match",value:employer,display:USD(employer)},{label:"Uncaptured match",value:Math.max(0,fullEmployer-employer),display:USD(Math.max(0,fullEmployer-employer))}];
+  rows=[["Annual salary",USD(salary),"Entered eligible compensation."],["Age-based 2026 deferral limit",USD(deferralLimit),age>=60&&age<=63?"Includes age 60-63 catch-up.":age>=50?"Includes age 50+ catch-up.":"Base limit."],["Entered contribution rate",`${F(enteredRate*100,2)}%`,`${USD(rawEmployee)} before the modeled limit.`],["Actual employee contribution",USD(employee),`${USD(employee/periods)} per pay period.`],["Employer match",USD(employer),`${USD(employer/periods)} per pay period.`],["Maximum stated employer match",USD(fullEmployer),`Requires at least ${F(fullRate,2)}% of pay, subject to plan terms.`],["Maximum full-year rate before limit",`${F(ceilingRate,2)}%`,`Modeled 2026 limit divided by salary.`],["Combined contribution",USD(combined),"Before investment gains or losses."]];
+  result=`<strong>${USD(employer)} estimated annual employer match</strong><br>Contribute at least ${F(fullRate,2)}% of pay to capture the full stated match; modeled combined contribution: ${USD(combined)}.`;return finish({employee,employer,combined,fullEmployer,fullRate});
+}
 function syncFinanceTarget(){const target=document.getElementById('finance_solve')?.value||'fv';document.querySelectorAll('[data-finance-value]').forEach(field=>{const active=field.dataset.financeValue===target;field.classList.toggle('finance-solve-target',active);const input=field.querySelector('input');if(input){input.disabled=active;input.setAttribute('aria-disabled',active?'true':'false')}});return target}
 function financePeriodicRate(annual,py,cy){return Math.pow(1+annual/100/cy,cy/py)-1}
 function financeNominalRate(periodic,py,cy){return cy*(Math.pow(1+periodic,py/cy)-1)*100}
@@ -2890,7 +3005,7 @@ function electricalLoadProjection(){const continuous=Math.max(0,V('el_continuous
 function wattsAmpsProjection(){const watts=Math.max(0,V('wa_watts')),voltage=Math.max(.001,V('wa_voltage')),phase=document.getElementById('wa_phase')?.value||'single',pf=phase==='dc'?1:Math.max(.01,Math.min(1,V('wa_pf'))),multiplier=phase==='three'?Math.sqrt(3):1,amps=watts/(voltage*pf*multiplier),va=watts/pf,vars=Math.sqrt(Math.max(0,va*va-watts*watts)),continuous=document.getElementById('wa_continuous')?.value==='yes',planningAmps=amps*(continuous?1.25:1);return{watts,voltage,phase,pf,multiplier,amps,va,vars,continuous,planningAmps}}
 function ampsWattsProjection(){const amps=Math.max(0,V('aw_amps')),voltage=Math.max(.001,V('aw_voltage')),phase=document.getElementById('aw_phase')?.value||'single',pf=phase==='dc'?1:Math.max(.01,Math.min(1,V('aw_pf'))),multiplier=phase==='three'?Math.sqrt(3):1,va=amps*voltage*multiplier,watts=va*pf,vars=Math.sqrt(Math.max(0,va*va-watts*watts));return{amps,voltage,phase,pf,multiplier,va,watts,vars}}
 function syncFeetMeterInputs(){const reverse=document.getElementById('conversion_direction')?.value==='meters_to_feet';document.querySelectorAll('[data-feet-input]').forEach(el=>el.classList.toggle('is-hidden',reverse));document.querySelectorAll('[data-meter-input]').forEach(el=>el.classList.toggle('is-hidden',!reverse));return reverse}
-function clearCalcForm(){const form=document.querySelector('.calc');if(!form)return;form.querySelectorAll('input').forEach(input=>{if(input.type==='checkbox')input.checked=false;else input.value=''});form.querySelectorAll('textarea').forEach(textarea=>{textarea.value=''});form.querySelectorAll('select').forEach(select=>{select.selectedIndex=0});form.querySelectorAll('details').forEach(item=>{item.open=false});syncMortgageCosts();syncConcreteFields();syncRoofFields();syncAreaFields();syncPayDeductionFields();syncSalesTaxFields();syncPercentFields();syncFractionFields();syncBmiFields();syncFinanceTarget();syncPaymentMode();syncRetirementMode();show('<strong>0</strong><br>Enter values to calculate a new result.');const engine=currentEngine();if(engine==='cn_mortgage')renderMortgage(0,0,1,0,0,0,0,0,0,0,0,0,0,new Date());if(engine==='loan_page')renderLoanPage()}
+function clearCalcForm(){const form=document.querySelector('.calc');if(!form)return;form.querySelectorAll('input').forEach(input=>{if(input.type==='checkbox')input.checked=false;else input.value=''});form.querySelectorAll('textarea').forEach(textarea=>{textarea.value=''});form.querySelectorAll('select').forEach(select=>{select.selectedIndex=0});form.querySelectorAll('details').forEach(item=>{item.open=false});syncMortgageCosts();syncConcreteFields();syncRoofFields();syncAreaFields();syncPayDeductionFields();syncSalesTaxFields();syncPercentFields();syncFractionFields();syncBmiFields();syncFinanceTarget();syncPaymentMode();syncRetirementMode();syncK401Mode();show('<strong>0</strong><br>Enter values to calculate a new result.');const engine=currentEngine();if(engine==='cn_mortgage')renderMortgage(0,0,1,0,0,0,0,0,0,0,0,0,0,new Date());if(engine==='loan_page')renderLoanPage()}
 function calc(e){
  switch(e){
   case'trade_value':{let price=V('price'),age=V('age'),miles=V('miles'),cond=V('condition');let ageF=Math.pow(.84,age),expected=Math.max(1,age)*12000,mileageF=Math.max(.72,Math.min(1.12,1-(miles-expected)*0.000003));let r=price*ageF*mileageF*cond;show(`<strong>${USD(Math.max(0,r))}</strong><br>Illustrative estimate, not a dealer quote or appraisal.`);break}
@@ -2937,6 +3052,7 @@ function calc(e){
   case'payment_advanced':{const p=paymentProjection();if(!p.valid)show(`<strong>Payment cannot repay this loan</strong><br>${p.message}`);else show(`<strong>${USD(p.regularPayment)} monthly payment</strong><br>${p.termLabel} to payoff; ${USD(p.totalInterest)} total interest; ${USD(p.totalPaid)} total paid.`);break}
   case'amortization_advanced':{const p=amortizationProjection();if(!p.valid)show(`<strong>Unable to build the schedule</strong><br>${p.message}`);else show(`<strong>${USD(p.regularPayment)} scheduled monthly payment</strong><br>${p.termLabel} to payoff (${p.payoffDate}); ${USD(p.totalInterest)} total interest${p.active?`; ${USD(p.interestSaved)} interest saved`:''}.`);break}
   case'retirement_advanced':{const p=retirementProjection();if(!p.valid)show(`<strong>Unable to calculate</strong><br>${p.message}`);else show(p.result);break}
+  case'401k_advanced':{const p=k401Projection();if(!p.valid)show(`<strong>Unable to calculate</strong><br>${p.message}`);else show(p.result);break}
   case'interest_advanced':{const p=interestComparisonProjection();show(`<strong>${USD(p.compound.balance)} compound balance</strong><br>${USD(p.simpleBalance)} with simple interest; ${USD(p.advantage)} compound advantage; ${USD(p.compound.buyingPower)} compound buying power in today's dollars.`);break}
   case'compound':{const p=compoundProjection();show(`<strong>${USD(p.balance)} ending balance</strong><br>${USD(p.contributed)} contributed; ${USD(p.totalInterest)} net interest; ${USD(p.buyingPower)} inflation-adjusted buying power.`);renderCompound(p);break}
   case'salary_advanced':{const p=salaryProjection();show(`<strong>${USD(p.annual)} new annual salary</strong><br>${USD(p.raiseDollars)} raise (${F(p.raisePercent,2)}%); ${USD(p.perPeriod)} per selected pay period; ${USD(p.hourly)} hourly equivalent.`);break}
@@ -3069,7 +3185,11 @@ function renderGeneric(cards, bars, rows) {
 function renderGenericFromEngine(engine) {
   if (!document.getElementById("genericSummary")) return;
   let cards=[], bars=[], rows=[];
-  if (engine === "retirement_advanced") {
+  if (engine === "401k_advanced") {
+    const p=k401Projection(),schedule=document.querySelector('#k401Schedule tbody');
+    if(!p.valid){cards=[["Result","Check inputs",p.message],["401(k) estimate","Unavailable","Correct the entered values."],["Breakdown","Unavailable","No calculation completed."],["Details","Unavailable","Correct the inputs first."]];bars=[{label:"Result",value:0,display:"Unavailable"}];rows=[["Validation","Unable to calculate",p.message]];if(schedule)schedule.innerHTML=''}
+    else{cards=p.cards;bars=p.bars;rows=p.rows;if(schedule)schedule.innerHTML=p.schedule.map(x=>`<tr><td>${F(x.age,0)}</td><td>${USD(x.salary)}</td><td>${USD(x.employee)}</td><td>${USD(x.employer)}</td><td>${USD(x.growth)}</td><td>${USD(x.balance)}</td></tr>`).join('')}
+  } else if (engine === "retirement_advanced") {
     const p=retirementProjection(),schedule=document.querySelector('#retirementSchedule tbody');
     if(!p.valid){cards=[["Result","Check inputs",p.message],["Retirement target","Unavailable","Correct the ages or amounts."],["Projection","Unavailable","No projection calculated."],["Annual schedule","Unavailable","Correct the inputs first."]];bars=[{label:"Result",value:0,display:"Unavailable"}];rows=[["Validation","Unable to calculate",p.message]];if(schedule)schedule.innerHTML=''}
     else{cards=p.cards;bars=p.bars;rows=p.rows;if(schedule)schedule.innerHTML=p.schedule.map(x=>`<tr><td>${x.label}</td><td>${x.cashflow<0?'-':''}${USD(Math.abs(x.cashflow))}</td><td>${USD(x.growth)}</td><td>${USD(x.balance)}</td></tr>`).join('')}
@@ -3575,6 +3695,11 @@ document.addEventListener("click", event => {
 document.addEventListener("click", event => {
   const tab = event.target.closest("[data-retirement-mode]");
   if(tab){syncRetirementMode(tab.dataset.retirementMode);calc('retirement_advanced')}
+});
+
+document.addEventListener("click", event => {
+  const tab = event.target.closest("[data-k401-mode]");
+  if(tab){syncK401Mode(tab.dataset.k401Mode);calc('401k_advanced')}
 });
 
 document.addEventListener("click", event => {
