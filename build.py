@@ -12,13 +12,14 @@ SRC = ROOT / "src" / "data" / "calculators.json"
 DIST = ROOT / "dist"
 KEYWORD_STATS = ROOT / "exports" / "keyword-stats-positive.json"
 SEO_STRATEGY = ROOT / "exports" / "seo-keyword-strategy-2026-09-05.json"
+RMD_JOINT_LIFE_TABLE = ROOT / "src" / "data" / "rmd-joint-life-table.json"
 PUBLIC_BASE_PATH = os.environ.get("PUBLIC_BASE_PATH", "").strip().rstrip("/")
 PUBLIC_SITE_DOMAIN = os.environ.get("PUBLIC_SITE_DOMAIN", "").strip()
 ASSET_VERSION = "20260919a"
 CALCULATOR_REDIRECTS = {
     "concrete-calculator": "concrete-volume-calculator",
     "loan-payment-calculator": "loan-calculator",
-    "financial-calculator": "financial-calculators",
+    "financial-calculator": "finance-calculator",
 }
 
 CATEGORY_ORDER = [
@@ -646,6 +647,8 @@ def calculator_net_template(keyword, slug, cat):
         base.update({"engine": "401k_advanced", "desc": "Project a 401(k) balance and retirement income, estimate early-withdrawal taxes and penalties, or calculate employer matching contributions.", "formula": "The projection compounds employee and employer contributions monthly; withdrawal estimates apply entered tax rates and any modeled 10% additional tax.", "inputs": []})
     elif slug == "social-security-calculator":
         base.update({"engine": "social_security_advanced", "desc": "Compare Social Security retirement claiming ages, estimate lifetime benefits and break-even age, or apply the 2026 retirement earnings test.", "formula": "Worker retirement benefits are adjusted by claiming months before or after full retirement age; cumulative values include entered COLA and investment-return assumptions.", "inputs": []})
+    elif slug == "rmd-calculator":
+        base.update({"engine": "rmd_advanced", "desc": "Calculate a required minimum distribution using the current IRS Uniform Lifetime or Joint and Last Survivor table, then project future annual RMDs.", "formula": "RMD = prior December 31 retirement account balance / IRS distribution period for the account owner's age and applicable life-expectancy table.", "inputs": []})
     elif "auto loan" in text or ("car" in text and "loan" in text):
         base.update({"engine": "car_loan", "desc": "Estimate an auto loan payment including price, tax, fees, cash incentives, down payment, trade-in, amount owed on trade-in, and whether taxes and fees are financed.", "formula": "Loan amount = auto price - cash incentives - down payment - trade-in value + amount owed on trade-in, plus taxes and fees when included in the loan. Payment uses monthly amortization.", "inputs": [["price", "Auto Price ($)", "number", 50000], ["months", "Loan Term (months)", "number", 60], ["apr", "Interest Rate (%)", "number", 5], ["incentives", "Cash Incentives ($)", "number", 0], ["down", "Down Payment ($)", "number", 10000], ["trade", "Trade-in Value ($)", "number", 0], ["owed", "Amount Owed on Trade-in ($)", "number", 0], ["tax", "Sales Tax (%)", "number", 3], ["fees", "Title, Registration and Other Fees ($)", "number", 2800], ["include_fees", "Include taxes and fees in loan", "select", [["0", "No"], ["1", "Yes"]]]]})
     elif "loan" in text or "payment calculator" in text:
@@ -827,6 +830,8 @@ def seo_title(calc):
         return "401(k) Calculator: Balance, Match & Withdrawal"
     if calc.get("slug") == "social-security-calculator":
         return "Social Security Calculator: Claim Age & Benefits"
+    if calc.get("slug") == "rmd-calculator":
+        return "RMD Calculator: 2026 Required Minimum Distribution"
     if calc.get("slug") == "payment-calculator":
         return "Payment Calculator: Monthly Payment or Loan Term"
     if calc.get("slug") == "compound-interest-calculator":
@@ -877,6 +882,8 @@ def seo_description(calc):
         return "Project your 401(k) balance, employer match, and retirement income. Estimate early-withdrawal taxes and penalties using current 2026 limits."
     if calc.get("slug") == "social-security-calculator":
         return "Compare Social Security claiming ages, lifetime retirement benefits, break-even timing, and 2026 earnings-test withholding using official SSA rules."
+    if calc.get("slug") == "rmd-calculator":
+        return "Calculate your 2026 required minimum distribution from an IRA or retirement account using current IRS life-expectancy tables, with a future RMD schedule."
     if calc.get("slug") == "compound-interest-calculator":
         return "Calculate compound interest with monthly and annual contributions, tax, inflation, years and months, detailed growth charts, and an annual schedule."
     if calc.get("slug") == "truck-payload-calculator":
@@ -1544,6 +1551,18 @@ def k401_input_html():
 </div>"""
 
 
+def rmd_input_html():
+    return """<div class="fields rmd-fields">
+<div class="field"><label for="rmd_birth_year">Account owner's birth year</label><input id="rmd_birth_year" type="number" step="1" min="1906" max="2008" value="1951"></div>
+<div class="field"><label for="rmd_year">Distribution year</label><input id="rmd_year" type="number" step="1" min="2022" max="2100" value="2026"></div>
+<div class="field field-wide"><label for="rmd_balance">Prior December 31 account balance</label><div class="input-unit"><input id="rmd_balance" type="number" step="any" min="0" value="300000"><span>$</span></div></div>
+<div class="field"><label for="rmd_spouse_solo">Is your spouse the sole beneficiary?</label><select id="rmd_spouse_solo"><option value="no" selected>No</option><option value="yes">Yes</option></select></div>
+<div class="field"><label for="rmd_spouse_birth_year">Spouse's birth year</label><input id="rmd_spouse_birth_year" type="number" step="1" min="1906" max="2080" value="1965"></div>
+<div class="field"><label for="rmd_return">Expected annual account return</label><div class="input-unit"><input id="rmd_return" type="number" step="any" min="-99" value="5"><span>%/yr</span></div></div>
+<div class="field"><label for="rmd_projection_years">Projection length</label><div class="input-unit"><input id="rmd_projection_years" type="number" step="1" min="1" max="40" value="20"><span>years</span></div></div>
+</div><p class="field-note">The return assumption only affects the future schedule. The selected year's RMD uses the prior December 31 balance you enter. The spouse table applies only when the spouse is the sole beneficiary and is more than 10 years younger.</p>"""
+
+
 def social_security_input_html():
     return """<div class="loan-mode-tabs social-security-mode-tabs" role="tablist" aria-label="Social Security calculation mode" style="grid-template-columns:repeat(3,minmax(0,1fr))">
 <button class="is-active" type="button" role="tab" aria-selected="true" data-ss-mode="planner">Claim age planner</button>
@@ -1766,6 +1785,17 @@ def conversion_copy(calc):
 
 
 def high_value_calculator_copy(calc):
+    if calc.get("slug") == "rmd-calculator":
+        return """
+<h2>2026 required minimum distribution calculator</h2><p>Use this calculator for an owner of a traditional IRA, SEP IRA, SIMPLE IRA, or an employer retirement account that is subject to required minimum distributions. Enter the account owner's birth year, the distribution year, and the account's value on December 31 of the previous year. The result identifies the IRS table and distribution period used, calculates the annual RMD, and builds a future schedule.</p>
+<p class="formula">required minimum distribution = prior December 31 balance / applicable IRS distribution period</p>
+<h2>Which IRS life-expectancy table applies?</h2><p>Most account owners use the Uniform Lifetime Table, Table III in <a href="https://www.irs.gov/publications/p590b" rel="external noopener">IRS Publication 590-B</a>. Use the Joint and Last Survivor Table, Table II, only when the owner's spouse is the sole beneficiary for the entire distribution year and is more than 10 years younger than the owner. The calculator checks both conditions from the entries before selecting Table II.</p>
+<h2>Worked RMD example</h2><p>An owner who is age 75 in 2026 and has a $300,000 prior-year-end balance uses the Uniform Lifetime distribution period of 24.6. Dividing $300,000 by 24.6 produces a 2026 RMD of $12,195.12. The projected schedule assumes each RMD is withdrawn at year end, after applying the entered annual return to the opening balance.</p>
+<h2>When RMDs begin</h2><p>Under current federal rules, the applicable starting age is generally 73 for people born from 1951 through 1959 and 75 for people born in 1960 or later. The <a href="https://www.irs.gov/retirement-plans/retirement-plan-and-ira-required-minimum-distributions-faqs" rel="external noopener">IRS RMD frequently asked questions</a> explain that the first distribution can generally be delayed until April 1 of the following year. Delaying it does not move the second RMD, which is still due by December 31 of that same following year, so two taxable distributions may occur in one calendar year.</p>
+<h2>Accounts and exceptions</h2><p>Roth IRA owners do not take lifetime RMDs from their own Roth IRAs. Beginning in 2024, designated Roth accounts in employer plans are also excluded from lifetime RMD requirements while the participant is alive. Some current employees can delay RMDs from their present employer's plan, but the exception generally does not apply to a person who owns more than 5% of the employer. It also does not postpone RMDs from traditional IRAs or former-employer plans.</p>
+<h2>Projection assumptions</h2><p>The first row uses the balance entered. Each later row applies the fixed annual return, subtracts the modeled year-end RMD, and carries the remaining amount into the next year. Actual balances, investment returns, beneficiary status, rollovers, and tax rules can change. The schedule is a planning scenario, not a prediction.</p>
+<h2>Important limitations</h2><p>This tool is for an account owner calculating a lifetime RMD. It does not calculate inherited IRA beneficiary distributions, the 10-year rule, annuity contract rules, qualified charitable distribution adjustments, multiple-account aggregation, or corrective excise taxes. Employer plans can have plan-specific rules. Confirm the final amount with the account custodian or a qualified tax professional; the account owner remains responsible for taking the correct amount.</p>
+<h2>Frequently asked questions</h2><h3>What balance should I enter?</h3><p>Enter the fair market value of the applicable retirement account as of December 31 immediately before the distribution year, after any adjustments your custodian or tax adviser says are required.</p><h3>Can I withdraw more than the RMD?</h3><p>Yes, but an amount above the RMD generally cannot be applied to a future year's RMD. A distribution may be taxable and may affect other tax calculations.</p><h3>Can I combine IRA RMDs?</h3><p>You generally calculate an RMD separately for each traditional IRA, then may take the combined IRA amount from one or more of those IRAs. Different aggregation rules apply to employer plans, and 403(b) accounts have separate rules.</p><h3>Does the projected return change this year's RMD?</h3><p>No. This year's RMD is based on the prior December 31 balance entered. The return assumption is used only to estimate later balances and distributions.</p>"""
     if calc.get("slug") == "finance-calculator":
         return """
 <h2>Five-key finance calculator</h2><p>This calculator solves the five core time-value-of-money variables used by common financial calculators: number of periods (N), annual interest rate (I/Y), present value (PV), periodic payment (PMT), and future value (FV). Select the value to calculate, enter the other four, and choose the payment and compounding settings.</p>
@@ -2194,6 +2224,14 @@ def default_calculator_copy(calc):
 
 
 def analysis_extra_html(calc):
+    if calc.get("slug") == "rmd-calculator":
+        return """<section class="mortgage-dashboard generic-dashboard rmd-dashboard" aria-label="Required minimum distribution results">
+<div class="section-head stack"><h2>RMD Analysis</h2><p>Review the required distribution, IRS table factor, account impact, and projected annual schedule.</p></div>
+<div class="summary-grid" id="genericSummary"></div>
+<div class="chart-grid"><div class="chart-card compact-chart"><h3>First-Year Account Impact</h3><canvas id="genericChart" width="420" height="190" aria-label="Required minimum distribution and projected account growth" data-chart-type="bar"></canvas></div></div>
+<div class="table-card"><h3>Calculation Details</h3><div class="table-scroll"><table class="data-table" id="genericTable"><thead><tr><th>Metric</th><th>Value</th><th>Note</th></tr></thead><tbody></tbody></table></div></div>
+<div class="table-card" id="rmdScheduleCard"><h3>Projected RMD Schedule</h3><div class="table-scroll"><table class="data-table" id="rmdSchedule"><thead><tr><th>Year</th><th>Age</th><th>Starting balance</th><th>Table / period</th><th>RMD</th><th>Ending balance</th></tr></thead><tbody></tbody></table></div></div>
+</section>"""
     if calc.get("slug") == "social-security-calculator":
         return """<section class="mortgage-dashboard generic-dashboard social-security-dashboard" aria-label="Social Security calculation results">
 <div class="section-head stack"><h2>Social Security Results</h2><p>Compare claiming ages, cumulative benefits, break-even timing, or 2026 earnings-test withholding.</p></div>
@@ -2432,6 +2470,9 @@ def calculator_page(site, calc, related):
     elif calc.get("slug") == "social-security-calculator":
         fields = social_security_input_html()
         page_engine = "social_security_advanced"
+    elif calc.get("slug") == "rmd-calculator":
+        fields = rmd_input_html()
+        page_engine = "rmd_advanced"
     elif calc.get("slug") == "interest-calculator":
         fields = compound_interest_input_html()
         page_engine = "interest_advanced"
@@ -2537,7 +2578,7 @@ def calculator_page(site, calc, related):
     rel = "".join(card(c, compact=True) for c in related)
     content = high_value_calculator_copy(calc) or conversion_copy(calc) or default_calculator_copy(calc)
     extra = analysis_extra_html(calc)
-    calculator_asset_versions = {"amortization-calculator": "20260919b", "retirement-calculator": "20260919c", "401k-calculator": "20260920a", "social-security-calculator": "20260920b"}
+    calculator_asset_versions = {"amortization-calculator": "20260919b", "retirement-calculator": "20260919c", "401k-calculator": "20260920a", "social-security-calculator": "20260920b", "rmd-calculator": "20260920c"}
     calculator_asset_version = calculator_asset_versions.get(calc.get("slug"), ASSET_VERSION)
     if calc.get("engine") == "loan_page":
         calc_html = f"""<section class="calc loan-page-calc"><h2>Calculator</h2>{fields}<div class="result" id="result">Enter your values and select Calculate.</div></section>"""
@@ -2624,7 +2665,7 @@ def scientific_page(site):
 
 
 def redirect_page(site, from_path, to_path, title):
-    return f"""<!doctype html><html lang="{h(site['language'])}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{h(title)}</title><meta http-equiv="refresh" content="0; url={h(to_path)}"><link rel="canonical" href="{h(site_url(site, to_path))}"><meta name="robots" content="noindex"></head><body><p><a href="{h(to_path)}">Continue to {h(title)}</a></p></body></html>"""
+    return f"""<!doctype html><html lang="{h(site['language'])}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{h(title)}</title><meta http-equiv="refresh" content="0; url={h(to_path)}"><link rel="canonical" href="{h(site_url(site, to_path))}"></head><body><p><a href="{h(to_path)}">Continue to {h(title)}</a></p></body></html>"""
 
 
 def info_pages(site):
@@ -2824,6 +2865,7 @@ const $=s=>document.querySelector(s), V=id=>parseFloat(document.getElementById(i
 const F=(n,d=2)=>Number.isFinite(n)?n.toLocaleString('en-US',{maximumFractionDigits:d}):'n/a';
 const USD=n=>new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:2}).format(Number.isFinite(n)?n:0);
 const MONEY=(n,currency='USD')=>new Intl.NumberFormat('en-US',{style:'currency',currency,maximumFractionDigits:2}).format(Number.isFinite(n)?n:0);
+const RMD_JOINT_TABLE=__RMD_JOINT_TABLE__;
 function show(html){const r=$('#result');if(r)r.innerHTML=html}
 function unitValue(id, base){return document.getElementById(`${id}_unit`)?.value==='percent'?base*V(id)/100:V(id)}
 function annualCost(id, base){return document.getElementById(`${id}_unit`)?.value==='percent'?base*V(id)/100:V(id)}
@@ -3006,6 +3048,31 @@ function k401Projection(){
   rows=[["Annual salary",USD(salary),"Entered eligible compensation."],["Age-based 2026 deferral limit",USD(deferralLimit),age>=60&&age<=63?"Includes age 60-63 catch-up.":age>=50?"Includes age 50+ catch-up.":"Base limit."],["Entered contribution rate",`${F(enteredRate*100,2)}%`,`${USD(rawEmployee)} before the modeled limit.`],["Actual employee contribution",USD(employee),`${USD(employee/periods)} per pay period.`],["Employer match",USD(employer),`${USD(employer/periods)} per pay period.`],["Maximum stated employer match",USD(fullEmployer),`Requires at least ${F(fullRate,2)}% of pay, subject to plan terms.`],["Maximum full-year rate before limit",`${F(ceilingRate,2)}%`,`Modeled 2026 limit divided by salary.`],["Combined contribution",USD(combined),"Before investment gains or losses."]];
   result=`<strong>${USD(employer)} estimated annual employer match</strong><br>Contribute at least ${F(fullRate,2)}% of pay to capture the full stated match; modeled combined contribution: ${USD(combined)}.`;return finish({employee,employer,combined,fullEmployer,fullRate});
 }
+const RMD_UNIFORM_FACTORS=[27.4,26.5,25.5,24.6,23.7,22.9,22.0,21.1,20.2,19.4,18.5,17.7,16.8,16.0,15.2,14.4,13.7,12.9,12.2,11.5,10.8,10.1,9.5,8.9,8.4,7.8,7.3,6.8,6.4,6.0,5.6,5.2,4.9,4.6,4.3,4.1,3.9,3.7,3.5,3.4,3.3,3.1,3.0,2.9,2.8,2.7,2.5,2.3,2.0];
+function rmdRequiredAge(birthYear){if(birthYear<=1950)return 72;if(birthYear<=1959)return 73;return 75}
+function rmdUniformFactor(age){const whole=Math.floor(age);if(whole<72)return null;if(whole>=120)return 2.0;return RMD_UNIFORM_FACTORS[whole-72]??null}
+function rmdJointFactor(ownerAge,spouseAge){const owner=Math.min(120,Math.floor(ownerAge)),spouse=Math.floor(spouseAge),row=RMD_JOINT_TABLE[String(owner)];if(!row||spouse<20)return null;return row[spouse-20]??null}
+function rmdProjection(){
+  const birthYear=Math.floor(V('rmd_birth_year')),year=Math.floor(V('rmd_year')),balanceInput=Math.max(0,V('rmd_balance')),spouseSolo=document.getElementById('rmd_spouse_solo')?.value==='yes',spouseBirthYear=Math.floor(V('rmd_spouse_birth_year')),annualReturn=Math.max(-.99,V('rmd_return')/100),requestedYears=Math.max(1,Math.min(40,Math.floor(V('rmd_projection_years')))),ownerAge=year-birthYear,spouseAge=year-spouseBirthYear,requiredAge=rmdRequiredAge(birthYear),firstRmdYear=birthYear+requiredAge;
+  let valid=true,message='',schedule=[],cards=[],bars=[],rows=[],result='';const finish=(payload={})=>({valid,message,cards,bars,rows,schedule,result,...payload});
+  if(!(birthYear>=1900&&birthYear<=year)){valid=false;message='Enter a valid owner birth year that is not after the distribution year.';return finish()}
+  if(!(ownerAge>=0&&ownerAge<=120)){valid=false;message='This owner calculator supports ages through 120. Review the birth and distribution years.';return finish()}
+  if(!(balanceInput>0)){valid=false;message='Enter a prior December 31 account balance greater than zero.';return finish()}
+  if(spouseSolo&&!(spouseBirthYear>=1900&&spouseBirthYear<=year)){valid=false;message='Enter a valid spouse birth year.';return finish()}
+  const jointEligible=spouseSolo&&ownerAge-spouseAge>10&&spouseAge>=20,years=Math.min(requestedYears,121-ownerAge);let balance=balanceInput,totalRmd=0;
+  for(let offset=0;offset<years;offset++){
+    const itemYear=year+offset,age=ownerAge+offset,itemSpouseAge=spouseAge+offset,required=age>=requiredAge,table=jointEligible?'Joint Life Table II':'Uniform Lifetime Table III',period=required?(jointEligible?rmdJointFactor(age,itemSpouseAge):rmdUniformFactor(age)):null;
+    if(required&&!period){valid=false;message='The IRS distribution period is unavailable for the entered age combination.';return finish()}
+    const rmd=required?balance/period:0,growth=balance*annualReturn,ending=Math.max(0,balance+growth-rmd);
+    schedule.push({year:itemYear,age,balance,table,period,rmd,growth,ending,required});totalRmd+=rmd;balance=ending;
+  }
+  const first=schedule[0],tableNote=jointEligible?'Spouse is sole beneficiary and more than 10 years younger.':spouseSolo?'The age gap is 10 years or less, so Table III applies.':'Default table for most account owners.',deadline=year<firstRmdYear?'No owner RMD is due for this year.':year===firstRmdYear?`April 1, ${year+1} is the latest first-year deadline; the next RMD is still due December 31, ${year+1}.`:`December 31, ${year}.`,rmdRate=first.rmd/balanceInput*100;
+  cards=[["Required minimum distribution",USD(first.rmd),first.required?`${F(rmdRate,3)}% of the entered balance.`:"No owner RMD due for this year."],["IRS distribution period",first.period?F(first.period,1):"Not yet applicable",first.table],["Projected year-end balance",USD(first.ending),`${F(annualReturn*100,2)}% return, then year-end RMD.`],["First RMD year",String(firstRmdYear),`Applicable starting age ${requiredAge}.`]];
+  bars=[{label:"Required distribution",value:first.rmd,display:USD(first.rmd)},{label:"Projected growth",value:Math.max(0,first.growth),display:USD(first.growth)},{label:"Projected ending balance",value:first.ending,display:USD(first.ending)}];
+  rows=[["Owner age in distribution year",String(ownerAge),`Birth year ${birthYear}.`],["Prior December 31 balance",USD(balanceInput),"Balance used for the selected year's calculation."],["RMD starting age",String(requiredAge),`Current law for a person born in ${birthYear}.`],["First RMD year",String(firstRmdYear),deadline],["IRS table",first.table,tableNote],["Distribution period",first.period?F(first.period,1):"Not applicable",first.required?"Balance is divided by this factor.":"The owner has not reached the applicable RMD age."],["Required minimum distribution",USD(first.rmd),first.required?`${F(rmdRate,4)}% of the entered balance.`:"No owner RMD is modeled for the selected year."],["Assumed annual return",`${F(annualReturn*100,2)}%`,"Used only for the future schedule."],["Projected total RMDs",USD(totalRmd),`${schedule.length} displayed year${schedule.length===1?'':'s'} through age ${schedule.at(-1).age}.`]];
+  result=first.required?`<strong>${USD(first.rmd)} required minimum distribution for ${year}</strong><br>${first.table}, ${F(first.period,1)} distribution period; ${deadline}`:`<strong>No owner RMD is due for ${year}</strong><br>Based on birth year ${birthYear}, the modeled first RMD year is ${firstRmdYear} at age ${requiredAge}.`;
+  return finish({year,ownerAge,spouseAge,requiredAge,firstRmdYear,jointEligible,balanceInput,totalRmd,first});
+}
 function syncSocialSecurityMode(nextMode){
   const mode=nextMode||document.querySelector('[data-ss-mode].is-active')?.dataset.ssMode||'planner';
   document.querySelectorAll('[data-ss-mode]').forEach(button=>{const active=button.dataset.ssMode===mode;button.classList.toggle('is-active',active);button.setAttribute('aria-selected',active?'true':'false')});
@@ -3162,6 +3229,7 @@ function calc(e){
   case'retirement_advanced':{const p=retirementProjection();if(!p.valid)show(`<strong>Unable to calculate</strong><br>${p.message}`);else show(p.result);break}
   case'401k_advanced':{const p=k401Projection();if(!p.valid)show(`<strong>Unable to calculate</strong><br>${p.message}`);else show(p.result);break}
   case'social_security_advanced':{const p=socialSecurityProjection();if(!p.valid)show(`<strong>Unable to calculate</strong><br>${p.message}`);else show(p.result);break}
+  case'rmd_advanced':{const p=rmdProjection();if(!p.valid)show(`<strong>Unable to calculate</strong><br>${p.message}`);else show(p.result);break}
   case'interest_advanced':{const p=interestComparisonProjection();show(`<strong>${USD(p.compound.balance)} compound balance</strong><br>${USD(p.simpleBalance)} with simple interest; ${USD(p.advantage)} compound advantage; ${USD(p.compound.buyingPower)} compound buying power in today's dollars.`);break}
   case'compound':{const p=compoundProjection();show(`<strong>${USD(p.balance)} ending balance</strong><br>${USD(p.contributed)} contributed; ${USD(p.totalInterest)} net interest; ${USD(p.buyingPower)} inflation-adjusted buying power.`);renderCompound(p);break}
   case'salary_advanced':{const p=salaryProjection();show(`<strong>${USD(p.annual)} new annual salary</strong><br>${USD(p.raiseDollars)} raise (${F(p.raisePercent,2)}%); ${USD(p.perPeriod)} per selected pay period; ${USD(p.hourly)} hourly equivalent.`);break}
@@ -3294,7 +3362,11 @@ function renderGeneric(cards, bars, rows) {
 function renderGenericFromEngine(engine) {
   if (!document.getElementById("genericSummary")) return;
   let cards=[], bars=[], rows=[];
-  if (engine === "social_security_advanced") {
+  if (engine === "rmd_advanced") {
+    const p=rmdProjection(),schedule=document.querySelector('#rmdSchedule tbody');
+    if(!p.valid){cards=[["Result","Check inputs",p.message],["RMD estimate","Unavailable","Correct the entered values."],["IRS table","Unavailable","No calculation completed."],["Schedule","Unavailable","Correct the inputs first."]];bars=[{label:"Result",value:0,display:"Unavailable"}];rows=[["Validation","Unable to calculate",p.message]];if(schedule)schedule.innerHTML=''}
+    else{cards=p.cards;bars=p.bars;rows=p.rows;if(schedule)schedule.innerHTML=p.schedule.map(x=>`<tr><td>${x.year}</td><td>${x.age}</td><td>${USD(x.balance)}</td><td>${x.required?`${x.table.replace(' Table','')} / ${F(x.period,1)}`:'Not yet required'}</td><td>${USD(x.rmd)}</td><td>${USD(x.ending)}</td></tr>`).join('')}
+  } else if (engine === "social_security_advanced") {
     const p=socialSecurityProjection(),schedule=document.querySelector('#ssSchedule tbody');
     if(!p.valid){cards=[["Result","Check inputs",p.message],["Benefit estimate","Unavailable","Correct the entered values."],["Comparison","Unavailable","No calculation completed."],["Details","Unavailable","Correct the inputs first."]];bars=[{label:"Result",value:0,display:"Unavailable"}];rows=[["Validation","Unable to calculate",p.message]];if(schedule)schedule.innerHTML=''}
     else{cards=p.cards;bars=p.bars;rows=p.rows;if(schedule)schedule.innerHTML=p.schedule.map(x=>`<tr><td>${socialSecurityAgeLabel(x.claimMonths)}</td><td>${F(x.factor*100,2)}%</td><td>${USD(x.monthly)}</td><td>${USD(x.total)}</td><td>${USD(x.value)}</td></tr>`).join('')}
@@ -4222,6 +4294,7 @@ LOGO_SVG = r'''
 
 def build():
     data = read_data()
+    rmd_joint_table = json.loads(RMD_JOINT_LIFE_TABLE.read_text(encoding="utf-8"))["rows"]
     site = dict(data["site"])
     if PUBLIC_SITE_DOMAIN:
         site["domain"] = PUBLIC_SITE_DOMAIN
@@ -4235,7 +4308,8 @@ def build():
     shutil.copyfile(ROOT / "vendor" / "mathjs-15.2.0.min.js", DIST / "assets" / "mathjs.min.js")
     shutil.copyfile(ROOT / "vendor" / "mathjs-LICENSE.txt", DIST / "assets" / "mathjs-LICENSE.txt")
     shutil.copyfile(ROOT / "vendor" / "mathjs-NOTICE.txt", DIST / "assets" / "mathjs-NOTICE.txt")
-    write(DIST / "assets" / "calculator.js", CALC_JS.strip() + "\n")
+    calculator_js = CALC_JS.replace("__RMD_JOINT_TABLE__", json.dumps(rmd_joint_table, separators=(",", ":")))
+    write(DIST / "assets" / "calculator.js", calculator_js.strip() + "\n")
     search_index = [
         {"title": c["title"], "slug": c["slug"], "desc": c["desc"], "cat": c["cat"], "keyword": primary_keyword(c)}
         for c in calculators
