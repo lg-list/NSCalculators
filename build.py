@@ -325,10 +325,11 @@ def nav():
 </div></header>"""
 
 
-def footer():
+def footer(include_methodology=True):
+    methodology_link = '<a href="/methodology/">Methodology</a>' if include_methodology else ""
     return """<footer class="footer"><div class="wrap footer-grid">
 <div><a class="brand footer-brand" href="/"><span class="brand-mark">""" + LOGO_MARK + """</span><span class="brand-name"><strong>NS</strong><b>Calculators</b></span></a><p>Practical browser-based tools for US users. Verify critical results with authoritative sources.</p></div>
-<div class="footer-links"><a href="/about/">About</a><a href="/privacy-policy/">Privacy Policy</a><a href="/terms/">Terms of Use</a><a href="/contact/">Contact</a></div>
+<div class="footer-links"><a href="/about/">About</a>""" + methodology_link + """<a href="/privacy-policy/">Privacy Policy</a><a href="/terms/">Terms of Use</a><a href="/contact/">Contact</a></div>
 </div></footer>"""
 
 
@@ -356,7 +357,7 @@ def page(site, title, desc, path, body, keywords=None, extra_schema=None, page_t
 <meta property="og:type" content="website"><meta property="og:site_name" content="NS Calculators"><meta property="og:locale" content="en_US"><meta property="og:title" content="{h(title)}"><meta property="og:description" content="{h(desc)}"><meta property="og:url" content="{h(site_url(site, path))}">
 <meta name="twitter:card" content="summary"><meta name="twitter:title" content="{h(title)}"><meta name="twitter:description" content="{h(desc)}">
 <link rel="canonical" href="{h(site_url(site, path))}"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="/apple-touch-icon.svg"><link rel="stylesheet" href="/assets/site.css?v={ASSET_VERSION}">
-{schema_html}<script>window.NORTHSTAR_BASE_PATH={json.dumps(PUBLIC_BASE_PATH)};</script></head><body>{nav()}{body}{footer()}</body></html>"""
+{schema_html}<script>window.NORTHSTAR_BASE_PATH={json.dumps(PUBLIC_BASE_PATH)};</script></head><body>{nav()}{body}{footer(indexable)}</body></html>"""
     return apply_base_path(html)
 
 
@@ -4330,7 +4331,23 @@ def build():
         visible_items = indexable_items or all_category_items
         write(DIST / slugify_cat(cat) / "index.html", category_page(site, cat, visible_items, indexable=bool(indexable_items)))
     for calc in calculators:
-        rel = [c for c in by_cat[calc["cat"]] if c["slug"] != calc["slug"] and calculator_group(c) == calculator_group(calc) and is_indexable_calculator(c)][:6]
+        indexable_peers = [c for c in by_cat[calc["cat"]] if is_indexable_calculator(c)]
+        if calc in indexable_peers and len(indexable_peers) > 1:
+            current_index = indexable_peers.index(calc)
+            ring = []
+            for offset in range(1, len(indexable_peers)):
+                candidate = indexable_peers[(current_index + offset) % len(indexable_peers)]
+                if candidate not in ring:
+                    ring.append(candidate)
+            same_group = [c for c in ring if calculator_group(c) == calculator_group(calc)]
+            rel = same_group[:4]
+            for candidate in ring:
+                if candidate not in rel:
+                    rel.append(candidate)
+                if len(rel) == 6:
+                    break
+        else:
+            rel = [c for c in by_cat[calc["cat"]] if c["slug"] != calc["slug"] and calculator_group(c) == calculator_group(calc) and is_indexable_calculator(c)][:6]
         write(DIST / calc["slug"] / "index.html", calculator_page(site, calc, rel))
     for source_slug, target_slug in CALCULATOR_REDIRECTS.items():
         target_calc = next((c for c in calculators if c["slug"] == target_slug), None)
