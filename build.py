@@ -807,6 +807,8 @@ def seo_keywords(calc):
 
 
 def seo_title(calc):
+    if calc.get("slug") == "feet-to-meters-calculator":
+        return "Feet to Meters Calculator (ft to m)"
     if calc.get("slug") == "loan-calculator":
         return "Loan Calculator: Payment & Interest | NS Calculators"
     if calc.get("slug") == "percent-calculator":
@@ -859,6 +861,8 @@ def seo_title(calc):
 def seo_description(calc):
     keyword = primary_keyword(calc)
     context = f" for {display_group(calculator_group(calc)).lower()}" if calc.get("seo_context_label") else ""
+    if calc.get("slug") == "feet-to-meters-calculator":
+        return "Convert feet or feet and inches to meters using the exact 0.3048 factor. Reverse meters to feet, compare common values, and see the formula."
     if calc.get("slug") == "percent-calculator":
         return "Calculate a percentage of a number, percent of total, reverse percentage, percent change, percentage difference, or a percentage increase or decrease."
     if calc.get("slug") == "fraction-calculator":
@@ -1135,10 +1139,10 @@ def salary_converter_input_html():
 def feet_to_meters_input_html():
     return """<div class="fields feet-meter-fields">
 <div class="field field-wide"><label for="conversion_direction">Conversion direction</label><select id="conversion_direction"><option value="feet_to_meters" selected>Feet and inches to meters</option><option value="meters_to_feet">Meters to feet and inches</option></select></div>
-<div class="field" data-feet-input><label for="feet">Feet</label><input id="feet" type="number" step="any" value="5"></div>
-<div class="field" data-feet-input><label for="inches">Inches</label><input id="inches" type="number" step="any" value="10"></div>
-<div class="field field-wide is-hidden" data-meter-input><label for="meters">Meters</label><input id="meters" type="number" step="any" value="1.778"></div>
-</div>"""
+<div class="field" data-feet-input><label for="feet">Feet</label><div class="input-unit"><input id="feet" type="number" step="any" min="0" value="5"><span>ft</span></div></div>
+<div class="field" data-feet-input><label for="inches">Additional inches</label><div class="input-unit"><input id="inches" type="number" step="any" min="0" value="10"><span>in</span></div></div>
+<div class="field field-wide is-hidden" data-meter-input><label for="meters">Meters</label><div class="input-unit"><input id="meters" type="number" step="any" min="0" value="1.778"><span>m</span></div></div>
+</div><p class="field-note">Results update as you type. Inches above 12 are automatically included in the total length.</p>"""
 
 
 def truck_payload_input_html():
@@ -1991,12 +1995,16 @@ def high_value_calculator_copy(calc):
 <h2>Frequently asked questions</h2><h3>Is this also a loan payment calculator?</h3><p>Yes. The amortized-loan model calculates periodic payment, total interest, total paid, and an amortization schedule.</p><h3>Can payment frequency differ from compounding frequency?</h3><p>Yes. The calculator converts the entered annual rate into an effective rate for the selected payment interval.</p><h3>Does the result include fees?</h3><p>No. Add financed fees to principal if appropriate and compare the result with the lender's legally required disclosures.</p><h3>Can I use it for mortgages or auto loans?</h3><p>The basic amortization math applies, but dedicated <a href="/mortgage-calculator/">mortgage</a> and <a href="/auto-loan-calculator/">auto loan</a> tools include costs specific to those products.</p>"""
     if calc.get("slug") == "feet-to-meters-calculator":
         return """
-<h2>How to convert feet to meters</h2><p>Multiply feet by the exact conversion factor 0.3048. When a measurement includes inches, divide the inches by 12, add that value to the feet, and then multiply the total feet by 0.3048.</p>
+<h2>How to convert feet to meters</h2><p>Multiply a length in feet by 0.3048 to convert it to meters. The factor is exact, so any rounding happens only when the result is displayed. When a measurement includes inches, divide the inches by 12, add that decimal to the feet, and then multiply the combined value by 0.3048.</p>
 <p class="formula">meters = (feet + inches / 12) x 0.3048</p>
-<h2>Feet and inches example</h2><p>For 5 feet 10 inches, the calculation is (5 + 10 / 12) x 0.3048 = 1.778 meters. The calculator also reverses meters into feet and remaining inches.</p>
-<h2>Common feet to meters conversions</h2><div class="table-scroll"><table class="data-table"><thead><tr><th>Feet</th><th>Meters</th><th>Feet</th><th>Meters</th></tr></thead><tbody><tr><td>1 ft</td><td>0.3048 m</td><td>10 ft</td><td>3.048 m</td></tr><tr><td>3 ft</td><td>0.9144 m</td><td>25 ft</td><td>7.62 m</td></tr><tr><td>5 ft</td><td>1.524 m</td><td>50 ft</td><td>15.24 m</td></tr><tr><td>6 ft</td><td>1.8288 m</td><td>100 ft</td><td>30.48 m</td></tr></tbody></table></div>
-<h2>Measurement reference</h2><p>The international foot is exactly 0.3048 meter. The meter is the SI base unit for length; see the <a href="https://www.nist.gov/pml/owm/si-units-length" rel="external noopener">NIST guide to SI length</a> for the official US measurement reference.</p>
-<h2>Frequently asked questions</h2><h3>How many meters are in one foot?</h3><p>One foot equals exactly 0.3048 meter.</p><h3>How do I convert meters back to feet?</h3><p>Divide meters by 0.3048. This calculator also separates the decimal result into whole feet and remaining inches.</p>"""
+<h2>Feet and inches example</h2><p>For 5 feet 10 inches, first convert 10 inches to 0.833333 feet. The total is 5.833333 feet, and 5.833333 x 0.3048 equals 1.778 meters. The calculator keeps the unrounded value during the calculation and also reports centimeters, decimal feet, and total inches.</p>
+<h2>Common feet to meters conversions</h2><div class="table-scroll"><table class="data-table"><thead><tr><th>Feet</th><th>Meters</th><th>Feet</th><th>Meters</th></tr></thead><tbody><tr><td>1 ft</td><td>0.3048 m</td><td>10 ft</td><td>3.048 m</td></tr><tr><td>3 ft</td><td>0.9144 m</td><td>25 ft</td><td>7.62 m</td></tr><tr><td>5 ft</td><td>1.524 m</td><td>50 ft</td><td>15.24 m</td></tr><tr><td>6 ft</td><td>1.8288 m</td><td>100 ft</td><td>30.48 m</td></tr><tr><td>10 ft</td><td>3.048 m</td><td>500 ft</td><td>152.4 m</td></tr><tr><td>20 ft</td><td>6.096 m</td><td>5,280 ft</td><td>1,609.344 m</td></tr></tbody></table></div>
+<h2>Common height conversions</h2><p>US height is often written with separate feet and inches, while many international forms request meters or centimeters. Use the second input for the inches portion rather than treating a value such as 5 ft 10 in as 5.10 decimal feet.</p><div class="table-scroll"><table class="data-table"><thead><tr><th>Height</th><th>Meters</th><th>Centimeters</th></tr></thead><tbody><tr><td>5 ft 0 in</td><td>1.524 m</td><td>152.4 cm</td></tr><tr><td>5 ft 4 in</td><td>1.6256 m</td><td>162.56 cm</td></tr><tr><td>5 ft 8 in</td><td>1.7272 m</td><td>172.72 cm</td></tr><tr><td>5 ft 10 in</td><td>1.778 m</td><td>177.8 cm</td></tr><tr><td>6 ft 0 in</td><td>1.8288 m</td><td>182.88 cm</td></tr><tr><td>6 ft 4 in</td><td>1.9304 m</td><td>193.04 cm</td></tr></tbody></table></div>
+<h2>Why 0.3048 is exact</h2><p>The modern international foot is defined as exactly 0.3048 meter. The <a href="https://www.nist.gov/pml/special-publication-811/nist-guide-si-appendix-b-conversion-factors" rel="external noopener">NIST Guide to the SI conversion tables</a> documents this relationship. Because the factor is defined rather than measured, values such as 1 foot = 0.3048 meter and 100 feet = 30.48 meters are exact before display rounding.</p>
+<h2>International foot versus US survey foot</h2><p>The former US survey foot was slightly longer, at approximately 0.3048006096 meter. NIST states that it became obsolete for most uses on January 1, 2023, with exceptions for historical and legacy applications. This calculator uses the international foot. If you are converting coordinates or archived survey records, confirm which foot definition the source data uses before calculating. See the <a href="https://www.nist.gov/pml/us-surveyfoot" rel="external noopener">NIST US survey foot reference</a> for the distinction.</p>
+<h2>Where feet-to-meter conversion is used</h2><p>Feet commonly appear in US room dimensions, building plans, property descriptions, human height, aviation altitude, and product specifications. Meters are standard in scientific work and widely used for construction and everyday measurement outside the United States. For a rectangular room, convert each dimension separately before multiplying; converting square feet to square meters requires an area factor, not the linear 0.3048 factor.</p>
+<h2>Rounding feet and meters</h2><p>Choose the number of decimal places according to the measurement itself. Two decimal places in meters are often enough for a rough room dimension, while product drawings or engineering work may require millimeters and documented tolerances. Do not report more precision than the original measurement supports. The calculator displays up to six decimal places in the headline and up to eight in the calculation details.</p>
+<h2>Frequently asked questions</h2><h3>How many meters are in one foot?</h3><p>One foot equals exactly 0.3048 meter. Multiply any number of feet by 0.3048.</p><h3>How do I convert meters back to feet?</h3><p>Divide meters by 0.3048. The reverse mode also separates the decimal result into whole feet and remaining inches.</p><h3>Is 5 feet 10 inches the same as 5.10 feet?</h3><p>No. Ten inches is 10/12, or about 0.833333 foot, so 5 ft 10 in is about 5.833333 decimal feet and exactly 1.778 meters.</p><h3>How many meters are in 100 feet?</h3><p>One hundred feet equals exactly 30.48 meters because 100 x 0.3048 = 30.48.</p><h3>Can I enter more than 12 inches?</h3><p>Yes. The calculator adds all entered inches to the total length. For example, 5 feet plus 14 inches is treated as 6 feet 2 inches.</p>"""
     if calc.get("slug") == "interest-calculator":
         return """
 <h2>Simple interest versus compound interest</h2><p>Simple interest is calculated only on the money contributed. Compound interest is calculated on contributions plus interest already credited. This calculator runs both methods with the same rate, deposits, timing, tax estimate, and duration so the difference is visible rather than theoretical.</p>
@@ -2225,6 +2233,12 @@ def default_calculator_copy(calc):
 
 
 def analysis_extra_html(calc):
+    if calc.get("slug") == "feet-to-meters-calculator":
+        return """<section class="mortgage-dashboard generic-dashboard conversion-dashboard" aria-label="Feet to meters conversion results">
+<div class="section-head stack"><h2>Conversion Results</h2><p>Compare meters, centimeters, decimal feet, and feet-and-inches notation.</p></div>
+<div class="summary-grid" id="genericSummary"></div>
+<div class="table-card"><h3>Calculation Details</h3><div class="table-scroll"><table class="data-table" id="genericTable"><thead><tr><th>Measurement</th><th>Value</th><th>How it is calculated</th></tr></thead><tbody></tbody></table></div></div>
+</section>"""
     if calc.get("slug") == "rmd-calculator":
         return """<section class="mortgage-dashboard generic-dashboard rmd-dashboard" aria-label="Required minimum distribution results">
 <div class="section-head stack"><h2>RMD Analysis</h2><p>Review the required distribution, IRS table factor, account impact, and projected annual schedule.</p></div>
@@ -2579,7 +2593,7 @@ def calculator_page(site, calc, related):
     rel = "".join(card(c, compact=True) for c in related)
     content = high_value_calculator_copy(calc) or conversion_copy(calc) or default_calculator_copy(calc)
     extra = analysis_extra_html(calc)
-    calculator_asset_versions = {"amortization-calculator": "20260919b", "retirement-calculator": "20260919c", "401k-calculator": "20260920a", "social-security-calculator": "20260920b", "rmd-calculator": "20260920c"}
+    calculator_asset_versions = {"amortization-calculator": "20260919b", "retirement-calculator": "20260919c", "401k-calculator": "20260920a", "social-security-calculator": "20260920b", "rmd-calculator": "20260920c", "feet-to-meters-calculator": "20260925a"}
     calculator_asset_version = calculator_asset_versions.get(calc.get("slug"), ASSET_VERSION)
     if calc.get("engine") == "loan_page":
         calc_html = f"""<section class="calc loan-page-calc"><h2>Calculator</h2>{fields}<div class="result" id="result">Enter your values and select Calculate.</div></section>"""
@@ -3259,7 +3273,7 @@ function calc(e){
   case'amps_watts':{let r=V('amps')*V('volts');show(`<strong>${F(r,2)} W</strong>`);break}
   case'watts_amps':{let r=V('volts')?V('watts')/V('volts'):0;show(`<strong>${F(r,2)} A</strong>`);break}
   case'linear_convert':{let r=V('value')*V('factor'),target=document.getElementById('target')?.value||'target units';show(`<strong>${F(r,8)} ${target}</strong><br>Converted with the factor shown in the formula.`);break}
-  case'feet_meters':{let reverse=syncFeetMeterInputs();if(reverse){let meters=V('meters'),totalFeet=meters/0.3048,feet=Math.floor(totalFeet),inches=(totalFeet-feet)*12;show(`<strong>${F(totalFeet,6)} feet</strong><br>${feet} ft ${F(inches,3)} in; ${F(meters,6)} meters.`)}else{let feet=V('feet'),inches=V('inches'),totalFeet=feet+inches/12,meters=totalFeet*0.3048;show(`<strong>${F(meters,6)} meters</strong><br>${F(totalFeet,6)} feet; ${F(totalFeet*12,3)} total inches.`)}break}
+  case'feet_meters':{let reverse=syncFeetMeterInputs();if(reverse){let meters=Math.max(0,V('meters')),totalFeet=meters/0.3048,feet=Math.floor(totalFeet),inches=(totalFeet-feet)*12;show(`<strong>${F(totalFeet,6)} feet</strong><br>${feet} ft ${F(inches,3)} in; ${F(meters,6)} meters; ${F(meters*100,3)} centimeters.`)}else{let feet=Math.max(0,V('feet')),inches=Math.max(0,V('inches')),totalFeet=feet+inches/12,meters=totalFeet*0.3048;show(`<strong>${F(meters,6)} meters</strong><br>${F(meters*100,3)} centimeters; ${F(totalFeet,6)} decimal feet; ${F(totalFeet*12,3)} total inches.`)}break}
   case'cn_mortgage':{let price=V('price'),down=unitValue('down',price),P=Math.max(0,price-down),rr=V('apr')/1200,n=Math.max(1,V('years')*12);let pi=rr?P*rr*Math.pow(1+rr,n)/(Math.pow(1+rr,n)-1):P/n;let include=syncMortgageCosts(),tax=include?annualCost('tax',price)/12:0,ins=include?monthlyCost('insurance',price):0,pmi=include?monthlyCost('pmi',P):0,hoa=include?monthlyCost('hoa',price):0,other=include?monthlyCost('other',price):0,inc=include?V('increase'):0,extraM=V('extra_monthly'),extraY=V('extra_yearly'),extraO=V('extra_once'),extra=tax+ins+pmi+hoa+other;let start=monthDate('start');show(`<strong>${USD(pi)} / month</strong><br>Total monthly payment with selected taxes and costs: ${USD(pi+extra+extraM)}.`);renderMortgage(P,rr,n,pi,tax,ins,pmi,hoa,other,inc,extraM,extraY,extraO,start);break}
   case'cn_simple_interest':{let P=V('principal'),i=P*V('rate')/100*V('years');show(`<strong>${USD(P+i)}</strong><br>Simple interest: ${USD(i)}.`);break}
   case'cn_retirement':{let P=V('principal'),rr=V('rate')/1200,n=V('years')*12,pmt=V('monthly');let fv=P*Math.pow(1+rr,n)+(rr?pmt*(Math.pow(1+rr,n)-1)/rr:pmt*n);show(`<strong>${USD(fv)}</strong><br>Total contributions: ${USD(P+pmt*n)}; estimated growth: ${USD(fv-P-pmt*n)}.`);break}
@@ -3353,10 +3367,12 @@ function renderGeneric(cards, bars, rows) {
   const summary = document.getElementById("genericSummary");
   const chart = document.getElementById("genericChart");
   const table = document.querySelector("#genericTable tbody");
-  if (!summary || !chart || !table) return;
+  if (!summary || !table) return;
   summary.innerHTML = cards.slice(0, 4).map(item => `<div class="summary-card"><span>${item[0]}</span><strong>${item[1]}</strong><small>${item[2]}</small></div>`).join("");
-  if (chart.dataset.chartType === "pie") drawPie(chart, bars.map(x => Math.abs(x.value)), bars.map(x => x.label));
-  else drawGenericBars(chart, bars);
+  if (chart) {
+    if (chart.dataset.chartType === "pie") drawPie(chart, bars.map(x => Math.abs(x.value)), bars.map(x => x.label));
+    else drawGenericBars(chart, bars);
+  }
   table.innerHTML = rows.map(row => `<tr><td>${row[0]}</td><td>${row[1]}</td><td>${row[2]}</td></tr>`).join("");
 }
 
@@ -3389,10 +3405,10 @@ function renderGenericFromEngine(engine) {
     else{const solved=p.target==='iy'?`${F(p.iy,8)}%`:p.target==='n'?F(p.n,8):USD(p[p.target]);cards=[[labels[p.target],solved,"Calculated TVM variable."],["Periodic rate",`${F(p.rate*100,6)}%`,`${F(p.py,0)} payment periods per year.`],["Effective annual rate",`${F(p.effectiveAnnual,6)}%`,`Derived from the payment-period rate.`],["Ending balance",USD(p.balance),`Should offset FV under the sign convention.`]];bars=[{label:"Present value",value:p.pv,display:USD(p.pv)},{label:"Total payments",value:p.totalPayments,display:USD(p.totalPayments)},{label:"Future value",value:p.fv,display:USD(p.fv)},{label:"Total interest",value:p.totalInterest,display:USD(p.totalInterest)}];rows=[["Solved variable",labels[p.target],solved],["Number of periods (N)",F(p.n,8),`${F(p.py,0)} payments per year.`],["Nominal annual rate (I/Y)",`${F(p.iy,8)}%`,`${F(p.cy,0)} compounding periods per year.`],["Present value (PV)",USD(p.pv),"Starting cash flow."],["Periodic payment (PMT)",USD(p.pmt),p.due?"Paid at the beginning of each period.":"Paid at the end of each period."],["Future value (FV)",USD(p.fv),"Opposite-side terminal cash flow."],["Effective periodic rate",`${F(p.rate*100,8)}%`,"Rate applied per payment period."],["Effective annual rate",`${F(p.effectiveAnnual,8)}%`,"Compounded payment-period rate."],["Sum of periodic payments",USD(p.totalPayments),"PMT multiplied by N."],["Total interest",USD(p.totalInterest),"Implied interest across all periods."],["Equation residual",USD(p.residual),"Rounding check; should be close to zero."]];if(p.scheduleCapped)rows.push(["Schedule display","First 600 periods","The result still uses the full entered period count."]);if(schedule)schedule.innerHTML=p.schedule.map(item=>`<tr><td>${item.period}</td><td>${USD(item.opening)}</td><td>${USD(item.payment)}</td><td>${USD(item.interest)}</td><td>${USD(item.ending)}</td></tr>`).join('')}
   } else if (engine === "feet_meters") {
     const reverse=document.getElementById('conversion_direction')?.value==='meters_to_feet';
-    const meters=reverse?V('meters'):(V('feet')+V('inches')/12)*0.3048, totalFeet=meters/0.3048, wholeFeet=Math.floor(totalFeet), inches=(totalFeet-wholeFeet)*12;
-    cards=[["Meters",`${F(meters,6)} m`,"SI length."],["Decimal feet",`${F(totalFeet,6)} ft`,"Feet as a decimal."],["Feet and inches",`${wholeFeet} ft ${F(inches,3)} in`,"US customary format."],["Total inches",`${F(totalFeet*12,3)} in`,"Combined length in inches."]];
-    bars=[{label:"Meters",value:meters,display:`${F(meters,4)} m`},{label:"Feet",value:totalFeet,display:`${F(totalFeet,4)} ft`},{label:"Yards",value:totalFeet/3,display:`${F(totalFeet/3,4)} yd`}];
-    rows=[["Exact factor","1 ft = 0.3048 m","International foot."],["Meters",F(meters,8),"Calculated metric length."],["Decimal feet",F(totalFeet,8),"Meters divided by 0.3048."],["Feet and inches",`${wholeFeet} ft ${F(inches,4)} in`,"Separated customary units."]];
+    const meters=Math.max(0,reverse?V('meters'):(Math.max(0,V('feet'))+Math.max(0,V('inches'))/12)*0.3048), totalFeet=meters/0.3048, wholeFeet=Math.floor(totalFeet), inches=(totalFeet-wholeFeet)*12;
+    cards=[["Meters",`${F(meters,6)} m`,"International System of Units."],["Centimeters",`${F(meters*100,3)} cm`,"Meters multiplied by 100."],["Decimal feet",`${F(totalFeet,6)} ft`,"Meters divided by 0.3048."],["Feet and inches",`${wholeFeet} ft ${F(inches,3)} in`,"US customary notation."]];
+    bars=[];
+    rows=[["Exact conversion factor","1 ft = 0.3048 m","International foot definition."],["Meters",`${F(meters,8)} m`,"Total feet multiplied by 0.3048."],["Centimeters",`${F(meters*100,6)} cm`,"Meters multiplied by 100."],["Decimal feet",`${F(totalFeet,8)} ft`,"Meters divided by 0.3048."],["Feet and inches",`${wholeFeet} ft ${F(inches,4)} in`,"Whole feet plus the remaining inches."],["Total inches",`${F(totalFeet*12,6)} in`,"Decimal feet multiplied by 12."],["Yards",`${F(totalFeet/3,8)} yd`,"Feet divided by 3."]];
   } else if (engine === "loan") {
     const P=V('amount'), rr=V('apr')/1200, n=Math.max(1,(V('years')*12)+(V('months_extra')||V('months'))), pay=rr?P*rr*Math.pow(1+rr,n)/(Math.pow(1+rr,n)-1):P/n, total=pay*n, interest=total-P;
     cards=[["Monthly payment",USD(pay),"Estimated recurring payment."],["Total paid",USD(total),"Principal plus interest."],["Total interest",USD(interest),"Cost of borrowing."],["Loan term",`${F(n,0)} months`,"Entered repayment period."]];
