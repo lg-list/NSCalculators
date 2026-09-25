@@ -630,6 +630,8 @@ def calculator_net_template(keyword, slug, cat):
     }
     if slug == "sales-tax-calculator":
         base.update({"engine": "sales_tax_advanced", "desc": "Add sales tax to a purchase, reverse tax from a tax-inclusive total, or calculate the tax rate from before-tax and after-tax prices.", "formula": "Sales tax = taxable amount x tax rate; tax-inclusive total = before-tax total + sales tax.", "inputs": []})
+    elif slug == "basic-calculator":
+        base.update({"engine": "basic_advanced", "desc": "Use a free online basic calculator for arithmetic, percentages, square roots, memory, and calculation history.", "formula": "Expressions follow the standard order of operations: parentheses, exponents, multiplication and division, then addition and subtraction.", "inputs": []})
     elif slug == "percent-calculator":
         base.update({"engine": "percent_advanced", "desc": "Solve six common percentage problems: percent of a number, percent of total, reverse percentage, percent change, percentage difference, and increase or decrease by a percent.", "formula": "Percentage calculations compare a part with a whole, or a change with its original value.", "inputs": []})
     elif slug == "fraction-calculator":
@@ -821,6 +823,8 @@ def seo_keywords(calc):
 
 
 def seo_title(calc):
+    if calc.get("slug") == "basic-calculator":
+        return "Basic Calculator with Memory & History"
     if calc.get("slug") == "ratio-calculator":
         return "Ratio Calculator: Simplify, Solve & Split Ratios"
     if calc.get("slug") == "bottleneck-calculator":
@@ -879,6 +883,8 @@ def seo_title(calc):
 def seo_description(calc):
     keyword = primary_keyword(calc)
     context = f" for {display_group(calculator_group(calc)).lower()}" if calc.get("seo_context_label") else ""
+    if calc.get("slug") == "basic-calculator":
+        return "Use a free basic calculator with arithmetic, percent, square root, memory keys, keyboard input, backspace, and a reusable calculation history."
     if calc.get("slug") == "ratio-calculator":
         return "Simplify two- or three-part ratios, solve a missing proportion value, scale an equivalent ratio, or divide a total into proportional shares."
     if calc.get("slug") in PRIORITY_LENGTH_CONVERSIONS:
@@ -2928,6 +2934,55 @@ def simple_page(site, path, title, desc, content):
     return page(site, f"{title} | NS Calculators", desc, path, body)
 
 
+def basic_calculator_page(site, calc, related):
+    buttons = [
+        ("MC", "memory-clear", "Clear memory", "memory"), ("MR", "memory-recall", "Recall memory", "memory"),
+        ("M+", "memory-add", "Add result to memory", "memory"), ("M-", "memory-subtract", "Subtract result from memory", "memory"),
+        ("AC", "clear", "Clear calculation", "utility"), ("Back", "backspace", "Delete the last character", "utility"),
+        ("(", "insert", "Open parenthesis", "operator", "("), (")", "insert", "Close parenthesis", "operator", ")"),
+        ("sqrt", "root", "Square root", "function"), ("x2", "square", "Square the current expression", "function"),
+        ("1/x", "reciprocal", "Reciprocal", "function"), ("%", "percent", "Percent", "function"),
+        ("7", "insert", "7", "number", "7"), ("8", "insert", "8", "number", "8"),
+        ("9", "insert", "9", "number", "9"), ("divide", "insert", "Divide", "operator", "/"),
+        ("4", "insert", "4", "number", "4"), ("5", "insert", "5", "number", "5"),
+        ("6", "insert", "6", "number", "6"), ("multiply", "insert", "Multiply", "operator", "*"),
+        ("1", "insert", "1", "number", "1"), ("2", "insert", "2", "number", "2"),
+        ("3", "insert", "3", "number", "3"), ("minus", "insert", "Subtract", "operator", "-"),
+        ("0", "insert", "0", "number", "0"), (".", "insert", "Decimal point", "number", "."),
+        ("Ans", "answer", "Insert previous answer", "function"), ("plus", "insert", "Add", "operator", "+"),
+        ("+/-", "negate", "Change sign", "utility"), ("=", "calculate", "Calculate result", "equals"),
+    ]
+    labels = {"sqrt": "&radic;", "x2": "x<sup>2</sup>", "divide": "&divide;", "multiply": "&times;", "minus": "&minus;", "plus": "+"}
+    keypad = "".join(
+        f'<button type="button" class="basic-key basic-key-{item[3]}" data-basic-action="{item[1]}"'
+        f'{f" data-basic-value=\"{h(item[4])}\"" if len(item) > 4 else ""} aria-label="{h(item[2])}" title="{h(item[2])}">{labels.get(item[0], item[0])}</button>'
+        for item in buttons
+    )
+    rel = "".join(card(c, compact=True) for c in related)
+    content = """
+<h2>How to use this basic calculator</h2><p>Type an expression with the on-screen keypad or your computer keyboard, then select the equals key or press Enter. The calculator handles addition, subtraction, multiplication, division, decimals, parentheses, percentages, square roots, squares, reciprocals, and negative numbers. Use Backspace to correct one character or AC to start over. Your previous answer remains available through the Ans key.</p>
+<h2>Order of operations</h2><p>Calculations follow the standard order of operations. Parentheses are evaluated first, followed by exponents, multiplication and division, then addition and subtraction. Operations at the same level are worked from left to right. This means <code>2 + 3 * 4</code> equals 14, while <code>(2 + 3) * 4</code> equals 20.</p>
+<div class="table-scroll"><table class="data-table"><thead><tr><th>Key</th><th>Operation</th><th>Example</th><th>Result</th></tr></thead><tbody><tr><td>+</td><td>Addition</td><td>18 + 7</td><td>25</td></tr><tr><td>&minus;</td><td>Subtraction</td><td>18 &minus; 7</td><td>11</td></tr><tr><td>&times;</td><td>Multiplication</td><td>18 &times; 7</td><td>126</td></tr><tr><td>&divide;</td><td>Division</td><td>18 &divide; 6</td><td>3</td></tr><tr><td>&radic;</td><td>Square root</td><td>&radic;81</td><td>9</td></tr><tr><td>x<sup>2</sup></td><td>Square</td><td>12<sup>2</sup></td><td>144</td></tr><tr><td>1/x</td><td>Reciprocal</td><td>1/8</td><td>0.125</td></tr></tbody></table></div>
+<h2>How the percent key works</h2><p>The percent key uses familiar everyday calculator behavior. A percentage entered after addition or subtraction is based on the value before the operator: <code>200 + 10%</code> returns 220, and <code>200 - 10%</code> returns 180. After multiplication or division, the percentage is converted to a decimal: <code>200 * 10%</code> returns 20. A percentage entered by itself is divided by 100, so 15% becomes 0.15.</p>
+<h2>Memory keys</h2><p>Memory is useful when several calculations share the same subtotal. M+ adds the displayed result to memory, while M- subtracts it. MR inserts the stored number into the expression, and MC resets memory to zero. The memory indicator above the display shows whether a value is stored. Clearing the current expression does not clear memory.</p>
+<h2>Keyboard shortcuts</h2><p>Number keys, parentheses, the decimal point, and the operators <code>+</code>, <code>-</code>, <code>*</code>, and <code>/</code> work directly. Press Enter to calculate, Backspace to remove the last character, and Escape to clear the current calculation. Keyboard support makes the tool practical for repeated totals and quick checks without moving between the keyboard and pointer.</p>
+<h2>Calculation history and privacy</h2><p>The history panel keeps the latest ten calculations during the current page session. Select a previous row to reuse its expression, or clear the list when it is no longer needed. Inputs and calculations run locally in your browser; this calculator does not require an account or send the arithmetic expression to a calculation server.</p>
+<h2>Accuracy and limitations</h2><p>Results are displayed with up to 14 significant digits. Repeating decimals and very large or very small values can be rounded for display because browser calculations use finite numeric precision. Division by zero, a square root of a negative real number, or an incomplete expression produces a clear error instead of a misleading numeric answer. For accounting, tax, engineering, or other regulated work, confirm rounding rules and requirements that apply to your use case.</p>
+<h2>Frequently asked questions</h2><h3>Can I use parentheses?</h3><p>Yes. Parentheses change the order of operations and can be nested in ordinary arithmetic expressions.</p><h3>Does AC erase calculator memory?</h3><p>No. AC clears the expression and displayed answer, while Ans still recalls the last completed calculation. Use MC when you want to erase the separate memory value.</p><h3>Why does 0.1 + 0.2 sometimes show rounding effects?</h3><p>Computers store many decimal fractions as binary approximations. The display rounds ordinary results to a practical number of significant digits, but extremely precise decimal work may require a dedicated arbitrary-precision tool.</p><h3>Is this a scientific calculator?</h3><p>No. This page is designed for everyday arithmetic. Use the <a href="/scientific-calculator/">scientific calculator</a> for trigonometry, logarithms, factorials, constants, and degree or radian modes.</p>
+"""
+    crumbs = [
+        ("Home", "/"), ("Math Calculators", "/math-calculators/"),
+        (display_group(calculator_group(calc)), f"/math-calculators/#{group_slug(calculator_group(calc))}"),
+        (calc["title"], f"/{calc['slug']}/"),
+    ]
+    body = f"""<main class="main"><div class="wrap"><div class="crumb"><a href="/">Home</a> / <a href="/math-calculators/">Math</a> / {h(calc['title'])}</div>
+<article class="article calculator-article basic-article"><span class="pill icon-pill">{category_icon(calc["cat"], "pill-icon")}Math calculator</span><div class="page-title-icon">{category_icon(calc["cat"], "title-icon")}<h1>{h(calc['title'])}</h1></div><p class="lead">{h(calc['desc'])}</p>
+<div class="basic-layout"><section class="calc basic-calculator" aria-labelledby="basic-tool-title"><div class="basic-toolbar"><h2 id="basic-tool-title">Calculator</h2><span id="basicMemory" class="basic-memory" aria-live="polite">Memory: empty</span></div><label class="basic-expression-label" for="basicExpression">Expression</label><input class="basic-expression" id="basicExpression" value="" inputmode="decimal" autocomplete="off" spellcheck="false" placeholder="0" aria-describedby="basicStatus"><div class="basic-output" aria-live="polite"><span>Answer</span><strong id="basicResult">0</strong><small id="basicStatus">Ready</small></div><div class="basic-keypad" aria-label="Basic calculator keypad">{keypad}</div></section>
+<aside class="basic-history" aria-labelledby="basic-history-title"><div class="basic-history-head"><div><h2 id="basic-history-title">History</h2><p>Latest 10 calculations</p></div><button type="button" data-basic-action="history-clear">Clear</button></div><ol id="basicHistory"><li class="basic-history-empty">Your calculations will appear here.</li></ol></aside></div>
+<div class="prose">{content}</div><h2>Related calculators</h2><div class="related">{rel}</div></article></div></main><script src="/assets/mathjs.min.js?v=20260925h" defer></script><script src="/assets/basic-calculator.js?v=20260925h" defer></script>"""
+    return page(site, seo_title(calc), seo_description(calc), f"/{calc['slug']}/", body, seo_keywords(calc), [breadcrumb_schema(site, crumbs), calculator_schema(site, calc)], indexable=is_indexable_calculator(calc))
+
+
 def scientific_page(site):
     description = "Use a free scientific calculator with DEG and RAD modes, trigonometry, logarithms, powers, roots, factorials, memory, Ans, and calculation history."
     buttons = [
@@ -3109,8 +3164,10 @@ body{background:var(--bg)}.site-header{border-bottom-color:#dbe7f4}.primary{back
 .project-fields{gap:8px!important}.project-fields .is-hidden{display:none!important}.project-dashboard .chart-grid{grid-template-columns:1fr}.project-dashboard .chart-card canvas{max-height:230px}.concrete-cost-fields{padding:0 12px 12px}.calculator-article:has(.project-fields) .calculator-layout.split-analysis{grid-template-columns:minmax(390px,460px) minmax(0,1fr)}
 @media(max-width:900px){.calculator-article:has(.project-fields) .calculator-layout.split-analysis{grid-template-columns:minmax(0,1fr)}}
 @media(max-width:560px){.project-fields{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px!important}.project-fields .field label{min-height:28px;display:flex;align-items:end;font-size:12px!important}.project-fields .field-wide{grid-column:1/-1}.project-fields .field input,.project-fields .field select{height:36px!important;padding:0 6px}.project-fields .input-unit input,.project-fields .input-unit span{height:36px!important}.project-fields .input-unit span{padding:0 6px;font-size:12px}.calculator-article:has(.project-fields) .calc{padding:10px}.calculator-article:has(.project-fields) .calc h2{margin-bottom:6px;font-size:17px}.calculator-article:has(.project-fields) .calc-actions{margin-top:8px}.calculator-article:has(.project-fields) .calc-actions .btn{min-height:36px;padding:7px 10px}.calculator-article:has(.project-fields) .result{padding:9px 10px;font-size:12px}.calculator-article:has(.project-fields) .result strong{font-size:23px}.project-dashboard .summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.concrete-cost-fields{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.basic-article{max-width:980px}.basic-layout{display:grid;grid-template-columns:minmax(320px,480px) minmax(260px,1fr);gap:14px;align-items:start;margin:12px 0 26px}.basic-calculator{margin:0!important;padding:14px!important}.basic-toolbar,.basic-history-head{display:flex;align-items:center;justify-content:space-between;gap:12px}.basic-calculator .basic-toolbar h2,.basic-history h2{margin:0;font-size:19px}.basic-memory{color:var(--brand);font-size:12px;font-weight:800}.basic-expression-label{display:block;margin:10px 0 4px;color:var(--ink);font-size:13px;font-weight:800}.basic-expression{width:100%;height:43px;border:1px solid #cfd7e4;border-radius:8px;background:#fff;padding:0 10px;color:var(--ink);font:650 17px/1.2 ui-monospace,SFMono-Regular,Consolas,monospace}.basic-expression:focus{outline:0;border-color:var(--brand);box-shadow:0 0 0 3px rgba(37,99,235,.12)}.basic-output{display:grid;grid-template-columns:auto minmax(0,1fr);gap:2px 10px;align-items:center;margin:7px 0 8px;padding:9px 11px;border-radius:8px;background:linear-gradient(135deg,#0f2d55,#1d4ed8);color:#eaf2ff}.basic-output span{grid-row:1/3;font-size:11px;font-weight:850;text-transform:uppercase}.basic-output strong{min-width:0;color:#fff;font:850 24px/1.08 ui-monospace,SFMono-Regular,Consolas,monospace;overflow-wrap:anywhere}.basic-output small{font-size:11px;line-height:1.2}.basic-keypad{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}.basic-key{min-width:0;height:40px;border:1px solid #ccd7e5;border-radius:7px;background:#fff;color:var(--ink);font:780 14px/1 system-ui,sans-serif;cursor:pointer}.basic-key:hover{border-color:#91acd0;background:#f4f8fd}.basic-key:focus-visible{outline:3px solid rgba(37,99,235,.22);outline-offset:1px}.basic-key-memory,.basic-key-function{background:#eef5ff;color:#1746a2}.basic-key-operator,.basic-key-utility{background:#f1f4f8}.basic-key-equals{grid-column:span 3;border-color:var(--brand);background:var(--brand);color:#fff}.basic-key-equals:hover{background:var(--brand-dark);color:#fff}.basic-history{min-height:240px;border:1px solid var(--line);border-radius:12px;background:#fff;padding:14px}.basic-history-head p{margin:3px 0 0;color:var(--muted);font-size:12px}.basic-history-head button{border:0;background:transparent;color:var(--brand);font-size:12px;font-weight:800;cursor:pointer}.basic-history ol{display:grid;gap:6px;margin:12px 0 0;padding:0;list-style:none}.basic-history li button{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;width:100%;border:0;border-radius:7px;background:#f6f9fc;padding:8px 9px;text-align:left;cursor:pointer}.basic-history li span{overflow:hidden;color:var(--muted);font:12px/1.3 ui-monospace,SFMono-Regular,Consolas,monospace;text-overflow:ellipsis;white-space:nowrap}.basic-history li strong{color:var(--ink);font:800 12px/1.3 ui-monospace,SFMono-Regular,Consolas,monospace}.basic-history-empty{padding:10px 2px;color:var(--muted);font-size:13px}.basic-article code{border-radius:4px;background:#eef3f8;padding:1px 4px;color:#173f73;font-size:.92em}.basic-article .table-scroll{margin:10px 0 18px}
 .scientific-article{max-width:980px}.scientific-page{max-width:760px;margin:12px 0 24px;padding:16px}.sci-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}.scientific-page .sci-toolbar h2{margin:0}.sci-angle-toggle{display:grid;grid-template-columns:repeat(2,1fr);padding:3px;border:1px solid var(--line);border-radius:8px;background:#edf2f7}.sci-angle-toggle button{min-width:58px;min-height:32px;border:0;border-radius:6px;background:transparent;color:var(--muted);font:800 12px/1 system-ui,sans-serif;cursor:pointer}.sci-angle-toggle button.is-active{background:#fff;color:var(--brand);box-shadow:0 2px 7px rgba(21,32,51,.12)}.sci-expression-label{display:block;margin-bottom:5px;color:var(--ink);font-size:13px;font-weight:800}.sci-expression{width:100%;height:48px;border:1px solid #cfd7e4;border-radius:9px;background:#fff;padding:0 12px;color:var(--ink);font:600 18px/1.2 ui-monospace,SFMono-Regular,Consolas,monospace}.sci-expression:focus{outline:0;border-color:var(--brand);box-shadow:0 0 0 4px rgba(37,99,235,.12)}.sci-output{display:grid;grid-template-columns:auto minmax(0,1fr);gap:2px 12px;align-items:center;margin:9px 0 10px;padding:10px 12px;border-radius:9px;background:#1d4ed8;color:#eaf2ff}.sci-output span{grid-row:1/3;font-size:12px;font-weight:800;text-transform:uppercase}.sci-output strong{min-width:0;color:#fff;font:800 25px/1.1 ui-monospace,SFMono-Regular,Consolas,monospace;overflow-wrap:anywhere}.sci-output small{font-size:11px;line-height:1.25}.sci-keypad{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px}.sci-key{min-width:0;height:42px;border:1px solid #cfd9e6;border-radius:7px;background:#fff;color:var(--ink);font:750 14px/1 system-ui,sans-serif;cursor:pointer}.sci-key:hover{border-color:#91acd0;background:#f4f8fd}.sci-key:focus-visible{outline:3px solid rgba(37,99,235,.24);outline-offset:1px}.sci-key-function,.sci-key-memory{background:#eef5ff;color:#1746a2}.sci-key-operator,.sci-key-utility{background:#f2f5f8}.sci-key-equals{border-color:var(--brand);background:var(--brand);color:#fff}.sci-key-equals:hover{background:var(--brand-dark);color:#fff}.sci-history{margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}.sci-history-head{display:flex;align-items:center;justify-content:space-between;gap:10px}.sci-history h3{margin:0;font-size:15px}.sci-history-clear{border:0;background:transparent;color:var(--brand);font:750 12px/1 system-ui,sans-serif;cursor:pointer}.sci-history ol{display:grid;gap:5px;margin:9px 0 0;padding:0;list-style:none}.sci-history li button{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;width:100%;border:0;border-radius:7px;background:#f6f9fc;padding:7px 9px;text-align:left;cursor:pointer}.sci-history li span{overflow:hidden;color:var(--muted);font:12px/1.25 ui-monospace,SFMono-Regular,Consolas,monospace;text-overflow:ellipsis;white-space:nowrap}.sci-history li strong{color:var(--ink);font:750 12px/1.25 ui-monospace,SFMono-Regular,Consolas,monospace}.sci-history-empty{padding:8px 9px;color:var(--muted);font-size:12px}.scientific-article code{border-radius:4px;background:#eef3f8;padding:1px 4px;color:#173f73;font-size:.92em}.scientific-article .table-scroll{margin:10px 0 18px}
-@media(max-width:560px){.scientific-page{margin-top:8px;padding:10px}.sci-toolbar{margin-bottom:8px}.sci-angle-toggle button{min-width:50px;min-height:29px}.sci-expression{height:42px;padding:0 9px;font-size:16px}.sci-output{margin:7px 0 8px;padding:8px 9px}.sci-output strong{font-size:21px}.sci-keypad{gap:4px}.sci-key{height:38px;border-radius:6px;font-size:12px}.sci-history{margin-top:10px;padding-top:9px}.sci-history ol{max-height:170px;overflow:auto}}
+@media(max-width:760px){.basic-layout{grid-template-columns:minmax(0,1fr)}.basic-history{min-height:0}.basic-history ol{max-height:190px;overflow:auto}}
+@media(max-width:560px){.basic-layout{gap:9px;margin-top:8px}.basic-calculator,.basic-history{padding:10px!important}.basic-expression{height:40px;font-size:16px}.basic-output{margin:6px 0 7px;padding:8px 9px}.basic-output strong{font-size:21px}.basic-keypad{gap:4px}.basic-key{height:37px;border-radius:6px;font-size:12px}.scientific-page{margin-top:8px;padding:10px}.sci-toolbar{margin-bottom:8px}.sci-angle-toggle button{min-width:50px;min-height:29px}.sci-expression{height:42px;padding:0 9px;font-size:16px}.sci-output{margin:7px 0 8px;padding:8px 9px}.sci-output strong{font-size:21px}.sci-keypad{gap:4px}.sci-key{height:38px;border-radius:6px;font-size:12px}.sci-history{margin-top:10px;padding-top:9px}.sci-history ol{max-height:170px;overflow:auto}}
 '''
 
 SEARCH_JS = r'''
@@ -4605,6 +4662,76 @@ function renderAge(birth, target, years, totalDays) {
 // End age dashboard rendering
 '''
 
+BASIC_CALCULATOR_JS = r'''
+(function(){
+  const input=document.getElementById('basicExpression'),output=document.getElementById('basicResult'),status=document.getElementById('basicStatus'),memoryLabel=document.getElementById('basicMemory'),historyList=document.getElementById('basicHistory');
+  if(!input||!output||!status||!memoryLabel||!historyList||!window.math)return;
+  let answer=0,memory=0,history=[],afterResult=false;
+  function format(value){
+    if(typeof value!=='number'||!Number.isFinite(value))throw new Error('The result is outside the supported numeric range.');
+    return math.format(value,{precision:14,lowerExp:-9,upperExp:15});
+  }
+  function normalize(raw){
+    if(!raw.trim())throw new Error('Enter a calculation.');
+    if(raw.length>180)throw new Error('Keep the expression under 180 characters.');
+    if(!/^[0-9A-Za-z+\-*/^().,%\s]+$/.test(raw)||/[;=\[\]{}'"_:?]/.test(raw))throw new Error('Use numbers and the calculator keys only.');
+    const identifiers=raw.match(/[A-Za-z]+/g)||[];
+    const unsupported=identifiers.find(name=>!['sqrt','ans','e'].includes(name.toLowerCase()));
+    if(unsupported)throw new Error(`${unsupported} is not supported by this basic calculator.`);
+    let expression=raw.replace(/\bAns\b/gi,'ans');
+    for(let pass=0;pass<4;pass++)expression=expression.replace(/(\d+(?:\.\d+)?(?:e[+\-]?\d+)?|\([^()]*\))%/gi,'($1/100)');
+    return expression;
+  }
+  function renderHistory(){
+    historyList.innerHTML=history.length?history.map((item,index)=>`<li><button type="button" data-basic-history="${index}"><span>${item.expression}</span><strong>${item.result}</strong></button></li>`).join(''):'<li class="basic-history-empty">Your calculations will appear here.</li>';
+  }
+  function updateMemory(message){
+    memoryLabel.textContent=memory===0?'Memory: empty':`M = ${format(memory)}`;
+    if(message)status.textContent=message;
+  }
+  function run(){
+    try{
+      const expression=input.value.trim(),value=math.evaluate(normalize(expression),new Map([['ans',answer]]));
+      if(typeof value!=='number')throw new Error('This expression does not have a real-number result.');
+      const result=format(value);output.textContent=result;status.textContent='Calculated';answer=value;afterResult=true;
+      history=[{expression,result},...history.filter(item=>item.expression!==expression)].slice(0,10);renderHistory();
+    }catch(error){output.textContent='Error';status.textContent=error&&error.message?error.message:'Check the expression.';afterResult=false}
+  }
+  function insert(value){
+    const isNumber=/^(?:\d*\.?\d+(?:e[+\-]?\d+)?)$/i.test(value);
+    if(afterResult&&isNumber){input.value='';afterResult=false}
+    else if(afterResult&&/^[+\-*/]$/.test(value)){input.value=format(answer);afterResult=false}
+    const start=input.selectionStart??input.value.length,end=input.selectionEnd??start;
+    input.value=input.value.slice(0,start)+value+input.value.slice(end);const caret=start+value.length;input.focus();input.setSelectionRange(caret,caret);status.textContent='Ready';
+  }
+  function wrap(prefix,suffix=')'){
+    const expression=input.value.trim()||(Number.isFinite(answer)?format(answer):'0');input.value=`${prefix}${expression}${suffix}`;afterResult=false;input.focus();input.setSelectionRange(input.value.length,input.value.length);
+  }
+  function applyPercent(){
+    const raw=input.value.trim();if(!raw){input.value='0';return}
+    const match=raw.match(/^(.*)([+\-*/])\s*(\d*\.?\d+(?:e[+\-]?\d+)?)$/i);
+    if(match&&match[1].trim()){
+      const base=match[1].trim(),operator=match[2],percent=match[3];
+      input.value=(operator==='+'||operator==='-')?`${base}${operator}(${base})*(${percent}/100)`: `${base}${operator}(${percent}/100)`;
+    }else input.value=`(${raw})/100`;
+    afterResult=false;input.focus();input.setSelectionRange(input.value.length,input.value.length);status.textContent='Percent applied';
+  }
+  document.addEventListener('click',event=>{
+    const historyButton=event.target.closest('[data-basic-history]');
+    if(historyButton){const item=history[Number(historyButton.dataset.basicHistory)];if(item){input.value=item.expression;afterResult=false;input.focus()}return}
+    const button=event.target.closest('[data-basic-action]');if(!button)return;
+    const action=button.dataset.basicAction,value=button.dataset.basicValue||'';
+    if(action==='insert')insert(value);else if(action==='calculate')run();else if(action==='clear'){input.value='';output.textContent='0';status.textContent='Ready';afterResult=false;input.focus()}
+    else if(action==='backspace'){const start=input.selectionStart??input.value.length,end=input.selectionEnd??start;if(start!==end)input.value=input.value.slice(0,start)+input.value.slice(end);else if(start>0)input.value=input.value.slice(0,start-1)+input.value.slice(end);const caret=Math.max(0,start-(start===end?1:0));afterResult=false;input.focus();input.setSelectionRange(caret,caret)}
+    else if(action==='root')wrap('sqrt(',')');else if(action==='square')wrap('(',')^2');else if(action==='reciprocal')wrap('1/(',')');else if(action==='negate')wrap('-(',')');else if(action==='percent')applyPercent();else if(action==='answer')insert(format(answer));
+    else if(action==='memory-clear'){memory=0;updateMemory('Memory cleared')}else if(action==='memory-recall')insert(format(memory));else if(action==='memory-add'){memory+=answer;updateMemory('Answer added to memory')}else if(action==='memory-subtract'){memory-=answer;updateMemory('Answer subtracted from memory')}else if(action==='history-clear'){history=[];renderHistory();status.textContent='History cleared'}
+  });
+  input.addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();run()}else if(event.key==='Escape'){event.preventDefault();input.value='';output.textContent='0';status.textContent='Ready';afterResult=false}});
+  updateMemory();
+})();
+'''
+
+
 SCIENTIFIC_JS = r'''
 (function(){
   const input=document.getElementById('sciExpression'),output=document.getElementById('sciResult'),status=document.getElementById('sciStatus'),historyList=document.getElementById('sciHistory');
@@ -4701,6 +4828,7 @@ def build():
     write(DIST / "assets" / "site.css", CSS.strip() + "\n")
     write(DIST / "assets" / "search.js", SEARCH_JS.strip() + "\n")
     write(DIST / "assets" / "home.js", HOME_JS.strip() + "\n")
+    write(DIST / "assets" / "basic-calculator.js", BASIC_CALCULATOR_JS.strip() + "\n")
     write(DIST / "assets" / "scientific.js", SCIENTIFIC_JS.strip() + "\n")
     shutil.copyfile(ROOT / "vendor" / "mathjs-15.2.0.min.js", DIST / "assets" / "mathjs.min.js")
     shutil.copyfile(ROOT / "vendor" / "mathjs-LICENSE.txt", DIST / "assets" / "mathjs-LICENSE.txt")
@@ -4744,7 +4872,8 @@ def build():
                     break
         else:
             rel = [c for c in by_cat[calc["cat"]] if c["slug"] != calc["slug"] and calculator_group(c) == calculator_group(calc) and is_indexable_calculator(c)][:6]
-        write(DIST / calc["slug"] / "index.html", calculator_page(site, calc, rel))
+        rendered = basic_calculator_page(site, calc, rel) if calc["slug"] == "basic-calculator" else calculator_page(site, calc, rel)
+        write(DIST / calc["slug"] / "index.html", rendered)
     for source_slug, target_slug in CALCULATOR_REDIRECTS.items():
         target_calc = next((c for c in calculators if c["slug"] == target_slug), None)
         redirect_title = target_calc["title"] if target_calc else smart_title(target_slug.replace("-", " "))
