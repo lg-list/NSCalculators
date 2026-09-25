@@ -1537,9 +1537,9 @@
       "cat": "Electrical",
       "group": "Computing & AI",
       "engine": "bottleneck",
-      "desc": "Estimate whether a PC build is more likely to be CPU-bound or GPU-bound for gaming, streaming, or general workloads.",
-      "formula": "Bottleneck index compares weighted CPU performance, GPU performance, target resolution, refresh rate, and workload demand.",
-      "example": "A mid-range CPU paired with a high-end GPU at 1080p high refresh can show a higher CPU bottleneck than the same build at 4K.",
+      "desc": "Check whether a PC is CPU-bound, GPU-bound, frame-capped, or balanced using measured utilization, frame times, or benchmark FPS ceilings.",
+      "formula": "Target frame time = 1,000 \u00f7 target FPS; the slower recurring CPU or GPU frame time sets the likely throughput ceiling.",
+      "example": "At 110 FPS, 78% GPU use, 96% busiest-thread use, 9.1 ms CPU time, and 7.0 ms GPU time, the measured scene is likely CPU-bound.",
       "inputs": [
         ["cpu_score", "CPU benchmark score", "number", 26000],
         ["gpu_score", "GPU benchmark score", "number", 32000],
