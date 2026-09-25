@@ -987,8 +987,10 @@ def input_html(field):
     return f'<div class="field"><label for="{h(fid)}">{h(label)}</label>{control}</div>'
 
 
-def compound_interest_input_html():
-    return """<div class="fields compound-fields">
+def compound_interest_input_html(include_scenarios=False):
+    scenario_fields = """<div class="field"><label for="contribution_growth">Annual contribution increase</label><div class="input-unit"><input id="contribution_growth" type="number" step="any" min="-99" value="0"><span>%</span></div></div><div class="field"><label for="rate_variance">Interest rate range (+/-)</label><div class="input-unit"><input id="rate_variance" type="number" step="any" min="0" value="2"><span>%</span></div></div>""" if include_scenarios else ""
+    options_label = "Contribution growth, tax, and scenarios" if include_scenarios else "Tax and inflation"
+    return f"""<div class="fields compound-fields">
 <div class="field"><label for="principal">Initial investment</label><div class="input-unit"><input id="principal" type="number" step="any" min="0" value="10000"><span>$</span></div></div>
 <div class="field"><label for="rate">Annual interest rate</label><div class="input-unit"><input id="rate" type="number" step="any" value="6"><span>%</span></div></div>
 <div class="field"><label for="years">Investment length</label><div class="input-unit"><input id="years" type="number" step="1" min="0" value="10"><span>years</span></div></div>
@@ -997,7 +999,7 @@ def compound_interest_input_html():
 <div class="field"><label for="annual_contribution">Annual contribution</label><div class="input-unit"><input id="annual_contribution" type="number" step="any" min="0" value="0"><span>$</span></div></div>
 <div class="field"><label for="compound_frequency">Compound frequency</label><select id="compound_frequency"><option value="365">Daily</option><option value="52">Weekly</option><option value="26">Biweekly</option><option value="24">Semimonthly</option><option value="12" selected>Monthly</option><option value="4">Quarterly</option><option value="2">Semi-annually</option><option value="1">Annually</option><option value="0">Continuously</option></select></div>
 <div class="field"><label for="contribution_timing">Contribution timing</label><select id="contribution_timing"><option value="end" selected>End of period</option><option value="beginning">Beginning of period</option></select></div>
-<details class="more-options field-wide"><summary>Tax and inflation</summary><div class="fields"><div class="field"><label for="interest_tax">Tax rate on interest</label><div class="input-unit"><input id="interest_tax" type="number" step="any" min="0" max="100" value="0"><span>%</span></div></div><div class="field"><label for="compound_inflation">Expected inflation rate</label><div class="input-unit"><input id="compound_inflation" type="number" step="any" min="-99" value="3"><span>%</span></div></div></div></details>
+<details class="more-options field-wide"><summary>{options_label}</summary><div class="fields">{scenario_fields}<div class="field"><label for="interest_tax">Tax rate on interest</label><div class="input-unit"><input id="interest_tax" type="number" step="any" min="0" max="100" value="0"><span>%</span></div></div><div class="field"><label for="compound_inflation">Expected inflation rate</label><div class="input-unit"><input id="compound_inflation" type="number" step="any" min="-99" value="3"><span>%</span></div></div></div></details>
 </div>"""
 
 
@@ -2022,10 +2024,10 @@ def high_value_calculator_copy(calc):
 <p class="formula">A = P(1 + r / n)^(nt)</p>
 <p>In the formula, P is the starting principal, r is the nominal annual rate as a decimal, n is the number of compounding periods per year, and t is time in years. Continuous compounding uses A = Pe^(rt). Recurring contributions are added separately at the selected beginning or end timing.</p>
 <h2>Worked example</h2><p>A $10,000 initial investment earning 6% annually, compounded monthly for 10 years with $200 deposited at the end of every month, grows to about $50,970 before taxes and fees. Total contributions are $34,000 and estimated interest is about $16,970.</p>
-<h2>Contributions and withdrawals</h2><p>Monthly additions are made every month. Annual additions are made once for each complete year. The <a href="https://www.investor.gov/financial-tools-calculators/calculators/compound-interest-calculator" rel="external noopener">SEC Investor.gov compound interest tool</a> likewise models an initial investment, recurring monthly contributions, time, rate, and compounding frequency. This calculator currently accepts nonnegative contributions; model a withdrawal by reducing the contribution amount or running separate before-and-after scenarios.</p>
+<h2>Contributions and annual increases</h2><p>Monthly additions are made every month. Annual additions are made once for each complete year. The optional annual contribution increase raises both amounts at the start of each new 12-month period, which can model a planned savings increase after a raise. The <a href="https://www.investor.gov/financial-tools-calculators/calculators/compound-interest-calculator" rel="external noopener">SEC Investor.gov compound interest tool</a> likewise models an initial investment, recurring monthly contributions, time, rate, and compounding frequency.</p>
 <h2>Compounding frequency and APY</h2><p>At the same nominal annual rate, more frequent compounding produces a higher effective annual yield. The <a href="https://www.consumerfinance.gov/ask-cfpb/how-does-compound-interest-work-en-1683/" rel="external noopener">Consumer Financial Protection Bureau</a> explains that increasing compounding frequency, earning a higher rate, and adding principal can accelerate savings growth. Contribution size and time often have a larger effect than small frequency differences.</p>
 <h2>Tax and inflation estimates</h2><p>The optional tax rate is applied to positive interest as it accrues, not to contributed principal. Actual tax timing, tax rates, account rules, losses, and deductions can differ. The inflation result discounts the ending balance into today's estimated purchasing power. The <a href="https://www.bls.gov/cpi/factsheets/purchasing-power-constant-dollars.htm" rel="external noopener">U.S. Bureau of Labor Statistics</a> explains that purchasing power falls as prices rise and that price-index ratios can convert nominal amounts to constant dollars.</p>
-<h2>How to use the results</h2><p>Use the schedule to see contributions, gross interest, estimated interest tax, and ending balance by year. A constant rate is a planning assumption, not a forecast. Investment returns can vary and this calculator does not include account fees or market volatility.</p>
+<h2>How to use the rate scenarios</h2><p>The lower, entered, and higher results change only the annual interest rate by the range selected in More Options. They keep the time, deposits, contribution growth, tax, inflation, and compounding assumptions the same. Use the range as a sensitivity check, not a best-case or worst-case forecast. Actual returns can vary and this calculator does not include account fees or market volatility.</p>
 <h2>Frequently asked questions</h2><h3>What is the difference between APR and APY?</h3><p>APR or a nominal annual rate does not itself include intra-year compounding. APY is the effective annual yield after the selected compounding frequency.</p><h3>Does contribution timing change the answer?</h3><p>Yes. A beginning-of-period contribution has more time to earn interest than an otherwise identical end-of-period contribution.</p><h3>What is the Rule of 72?</h3><p>Dividing 72 by an annual percentage rate gives a rough estimate of the years needed to double money. It is a shortcut, not an exact projection.</p>"""
     if calc.get("slug") == "truck-payload-calculator":
         return """
@@ -2408,6 +2410,7 @@ def analysis_extra_html(calc):
 <div class="chart-card compact-chart"><h3>Balance Composition</h3><canvas id="compoundPie" width="360" height="190" aria-label="Principal, contributions, and net interest chart"></canvas></div>
 <div class="chart-card compact-chart"><h3>Balance by Year</h3><canvas id="compoundLine" width="420" height="190" aria-label="Compound interest balance by year chart"></canvas></div>
 </div>
+<div class="table-card"><h3>Interest Rate Scenarios</h3><p class="table-note">A sensitivity range for planning, not a prediction of future returns.</p><div class="table-scroll"><table class="data-table" id="compoundScenarios"><thead><tr><th>Scenario</th><th>Annual rate</th><th>Ending balance</th><th>Net interest</th><th>Today's buying power</th></tr></thead><tbody></tbody></table></div></div>
 <div class="table-card"><h3>Growth Schedule</h3><div class="table-scroll"><table class="data-table" id="compoundSchedule"><thead><tr><th>Period</th><th>Contributions</th><th>Gross interest</th><th>Est. tax</th><th>Ending balance</th></tr></thead><tbody></tbody></table></div></div>
 </section>"""
     if calc.get("engine") == "cn_mortgage":
@@ -2492,7 +2495,7 @@ def calculator_page(site, calc, related):
         fields = compound_interest_input_html()
         page_engine = "interest_advanced"
     elif calc.get("slug") == "compound-interest-calculator":
-        fields = compound_interest_input_html()
+        fields = compound_interest_input_html(include_scenarios=True)
     elif calc.get("slug") == "salary-increase-calculator":
         fields = salary_increase_input_html()
         page_engine = "salary_advanced"
@@ -2887,26 +2890,27 @@ function annualCost(id, base){return document.getElementById(`${id}_unit`)?.valu
 function monthlyCost(id, base){return document.getElementById(`${id}_unit`)?.value==='percent'?base*V(id)/100/12:V(id)/12}
 function monthDate(id){const raw=document.getElementById(id)?.value||'';return /^\d{4}-\d{2}$/.test(raw)?new Date(`${raw}-01T00:00:00`):new Date(raw||Date.now())}
 function syncMortgageCosts(){const box=document.getElementById('include_costs'),panel=document.getElementById('mortgageCostFields');if(!box||!panel)return true;const on=box.checked;panel.hidden=!on;panel.classList.toggle('is-hidden',!on);panel.style.display=on?'':'none';return on}
-function compoundProjection(){
-  const principal=Math.max(0,V('principal')),annual=Math.max(-.99,V('rate')/100),years=Math.max(0,Math.floor(V('years'))),extraMonths=Math.max(0,Math.min(11,Math.floor(V('compound_months')))),frequency=Number(document.getElementById('compound_frequency')?.value??12),monthly=Math.max(0,V('monthly')),annualContribution=Math.max(0,V('annual_contribution')),taxRate=Math.max(0,Math.min(1,V('interest_tax')/100)),inflation=Math.max(-.99,V('compound_inflation')/100);
+function compoundProjection(options={}){
+  const principal=Math.max(0,V('principal')),enteredAnnual=Math.max(-.99,V('rate')/100),annual=Number.isFinite(options.annualOverride)?Math.max(-.99,options.annualOverride):enteredAnnual,years=Math.max(0,Math.floor(V('years'))),extraMonths=Math.max(0,Math.min(11,Math.floor(V('compound_months')))),frequency=Number(document.getElementById('compound_frequency')?.value??12),monthly=Math.max(0,V('monthly')),annualContribution=Math.max(0,V('annual_contribution')),contributionGrowth=Math.max(-.99,V('contribution_growth')/100),rateVariance=Math.max(0,V('rate_variance')/100),taxRate=Math.max(0,Math.min(1,V('interest_tax')/100)),inflation=Math.max(-.99,V('compound_inflation')/100);
   const timing=document.getElementById('contribution_timing')?.value||'end',totalMonths=years*12+extraMonths,monthlyRate=frequency===0?Math.exp(annual/12)-1:Math.pow(1+annual/frequency,frequency/12)-1,effectiveAnnual=frequency===0?Math.exp(annual)-1:Math.pow(1+annual/frequency,frequency)-1;
   let balance=principal,totalGrossInterest=0,totalTax=0,totalDeposits=0,periodInterest=0,periodTax=0,periodDeposits=0;const schedule=[];
   for(let month=1;month<=totalMonths;month++){
+    const contributionYear=Math.floor((month-1)/12),growthFactor=Math.pow(1+contributionGrowth,contributionYear),monthlyDeposit=monthly*growthFactor,annualDeposit=annualContribution*growthFactor;
     if(timing==='beginning'){
-      balance+=monthly;totalDeposits+=monthly;periodDeposits+=monthly;
-      if((month-1)%12===0){balance+=annualContribution;totalDeposits+=annualContribution;periodDeposits+=annualContribution}
+      balance+=monthlyDeposit;totalDeposits+=monthlyDeposit;periodDeposits+=monthlyDeposit;
+      if((month-1)%12===0){balance+=annualDeposit;totalDeposits+=annualDeposit;periodDeposits+=annualDeposit}
     }
     const grossInterest=balance*monthlyRate,interestTax=Math.max(0,grossInterest)*taxRate,netInterest=grossInterest-interestTax;
     balance+=netInterest;totalGrossInterest+=grossInterest;totalTax+=interestTax;periodInterest+=grossInterest;periodTax+=interestTax;
     if(timing!=='beginning'){
-      balance+=monthly;totalDeposits+=monthly;periodDeposits+=monthly;
-      if(month%12===0){balance+=annualContribution;totalDeposits+=annualContribution;periodDeposits+=annualContribution}
+      balance+=monthlyDeposit;totalDeposits+=monthlyDeposit;periodDeposits+=monthlyDeposit;
+      if(month%12===0){balance+=annualDeposit;totalDeposits+=annualDeposit;periodDeposits+=annualDeposit}
     }
     if(month%12===0||month===totalMonths){const wholeYears=Math.floor(month/12),remaining=month%12,period=remaining?(wholeYears?`${wholeYears} yr ${remaining} mo`:`${remaining} mo`):`${wholeYears} yr`;schedule.push({period,deposits:periodDeposits,grossInterest:periodInterest,tax:periodTax,balance});periodInterest=0;periodTax=0;periodDeposits=0}
   }
   if(!schedule.length)schedule.push({period:'Start',deposits:0,grossInterest:0,tax:0,balance});
   const totalInterest=totalGrossInterest-totalTax,contributed=principal+totalDeposits,buyingPower=balance/Math.pow(1+inflation,totalMonths/12),durationLabel=extraMonths?`${years} yr ${extraMonths} mo`:`${years} yr`;
-  return {principal,annual,years,extraMonths,totalMonths,frequency,monthly,annualContribution,taxRate,inflation,timing,balance,totalGrossInterest,totalTax,totalInterest,totalDeposits,contributed,buyingPower,schedule,effectiveAnnual,durationLabel};
+  return {principal,annual,years,extraMonths,totalMonths,frequency,monthly,annualContribution,contributionGrowth,rateVariance,taxRate,inflation,timing,balance,totalGrossInterest,totalTax,totalInterest,totalDeposits,contributed,buyingPower,schedule,effectiveAnnual,durationLabel};
 }
 function interestComparisonProjection(){
   const compound=compoundProjection();
@@ -3355,11 +3359,13 @@ function drawCompoundLine(canvas, schedule, durationLabel) {
 }
 
 function renderCompound(projection) {
-  const summary=document.getElementById('compoundSummary'), pie=document.getElementById('compoundPie'), line=document.getElementById('compoundLine'), table=document.querySelector('#compoundSchedule tbody');
-  if(!summary||!pie||!line||!table)return;
+  const summary=document.getElementById('compoundSummary'), pie=document.getElementById('compoundPie'), line=document.getElementById('compoundLine'), scenarios=document.querySelector('#compoundScenarios tbody'), table=document.querySelector('#compoundSchedule tbody');
+  if(!summary||!pie||!line||!scenarios||!table)return;
   summary.innerHTML=[["Ending balance",USD(projection.balance),"Projected account value."],["Total contributed",USD(projection.contributed),"Initial amount plus additions."],["Net interest",USD(projection.totalInterest),`${F(projection.effectiveAnnual*100,3)}% APY before estimated tax.`],["Today's buying power",USD(projection.buyingPower),`${F(projection.inflation*100,2)}% assumed inflation.`]].map(item=>`<div class="summary-card"><span>${item[0]}</span><strong>${item[1]}</strong><small>${item[2]}</small></div>`).join('');
   drawPie(pie,[projection.principal,projection.totalDeposits,Math.max(0,projection.totalInterest)],["Initial investment","Contributions","Net interest"]);
   drawCompoundLine(line,projection.schedule,projection.durationLabel);
+  const low=compoundProjection({annualOverride:projection.annual-projection.rateVariance}),high=compoundProjection({annualOverride:projection.annual+projection.rateVariance});
+  scenarios.innerHTML=[["Lower",low],["Entered",projection],["Higher",high]].map(([label,item])=>`<tr><td>${label}</td><td>${F(item.annual*100,2)}%</td><td>${USD(item.balance)}</td><td>${USD(item.totalInterest)}</td><td>${USD(item.buyingPower)}</td></tr>`).join('');
   table.innerHTML=projection.schedule.map(row=>`<tr><td>${row.period}</td><td>${USD(row.deposits)}</td><td>${USD(row.grossInterest)}</td><td>${USD(row.tax)}</td><td>${USD(row.balance)}</td></tr>`).join('');
 }
 

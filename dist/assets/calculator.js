@@ -9,26 +9,27 @@ function annualCost(id, base){return document.getElementById(`${id}_unit`)?.valu
 function monthlyCost(id, base){return document.getElementById(`${id}_unit`)?.value==='percent'?base*V(id)/100/12:V(id)/12}
 function monthDate(id){const raw=document.getElementById(id)?.value||'';return /^\d{4}-\d{2}$/.test(raw)?new Date(`${raw}-01T00:00:00`):new Date(raw||Date.now())}
 function syncMortgageCosts(){const box=document.getElementById('include_costs'),panel=document.getElementById('mortgageCostFields');if(!box||!panel)return true;const on=box.checked;panel.hidden=!on;panel.classList.toggle('is-hidden',!on);panel.style.display=on?'':'none';return on}
-function compoundProjection(){
-  const principal=Math.max(0,V('principal')),annual=Math.max(-.99,V('rate')/100),years=Math.max(0,Math.floor(V('years'))),extraMonths=Math.max(0,Math.min(11,Math.floor(V('compound_months')))),frequency=Number(document.getElementById('compound_frequency')?.value??12),monthly=Math.max(0,V('monthly')),annualContribution=Math.max(0,V('annual_contribution')),taxRate=Math.max(0,Math.min(1,V('interest_tax')/100)),inflation=Math.max(-.99,V('compound_inflation')/100);
+function compoundProjection(options={}){
+  const principal=Math.max(0,V('principal')),enteredAnnual=Math.max(-.99,V('rate')/100),annual=Number.isFinite(options.annualOverride)?Math.max(-.99,options.annualOverride):enteredAnnual,years=Math.max(0,Math.floor(V('years'))),extraMonths=Math.max(0,Math.min(11,Math.floor(V('compound_months')))),frequency=Number(document.getElementById('compound_frequency')?.value??12),monthly=Math.max(0,V('monthly')),annualContribution=Math.max(0,V('annual_contribution')),contributionGrowth=Math.max(-.99,V('contribution_growth')/100),rateVariance=Math.max(0,V('rate_variance')/100),taxRate=Math.max(0,Math.min(1,V('interest_tax')/100)),inflation=Math.max(-.99,V('compound_inflation')/100);
   const timing=document.getElementById('contribution_timing')?.value||'end',totalMonths=years*12+extraMonths,monthlyRate=frequency===0?Math.exp(annual/12)-1:Math.pow(1+annual/frequency,frequency/12)-1,effectiveAnnual=frequency===0?Math.exp(annual)-1:Math.pow(1+annual/frequency,frequency)-1;
   let balance=principal,totalGrossInterest=0,totalTax=0,totalDeposits=0,periodInterest=0,periodTax=0,periodDeposits=0;const schedule=[];
   for(let month=1;month<=totalMonths;month++){
+    const contributionYear=Math.floor((month-1)/12),growthFactor=Math.pow(1+contributionGrowth,contributionYear),monthlyDeposit=monthly*growthFactor,annualDeposit=annualContribution*growthFactor;
     if(timing==='beginning'){
-      balance+=monthly;totalDeposits+=monthly;periodDeposits+=monthly;
-      if((month-1)%12===0){balance+=annualContribution;totalDeposits+=annualContribution;periodDeposits+=annualContribution}
+      balance+=monthlyDeposit;totalDeposits+=monthlyDeposit;periodDeposits+=monthlyDeposit;
+      if((month-1)%12===0){balance+=annualDeposit;totalDeposits+=annualDeposit;periodDeposits+=annualDeposit}
     }
     const grossInterest=balance*monthlyRate,interestTax=Math.max(0,grossInterest)*taxRate,netInterest=grossInterest-interestTax;
     balance+=netInterest;totalGrossInterest+=grossInterest;totalTax+=interestTax;periodInterest+=grossInterest;periodTax+=interestTax;
     if(timing!=='beginning'){
-      balance+=monthly;totalDeposits+=monthly;periodDeposits+=monthly;
-      if(month%12===0){balance+=annualContribution;totalDeposits+=annualContribution;periodDeposits+=annualContribution}
+      balance+=monthlyDeposit;totalDeposits+=monthlyDeposit;periodDeposits+=monthlyDeposit;
+      if(month%12===0){balance+=annualDeposit;totalDeposits+=annualDeposit;periodDeposits+=annualDeposit}
     }
     if(month%12===0||month===totalMonths){const wholeYears=Math.floor(month/12),remaining=month%12,period=remaining?(wholeYears?`${wholeYears} yr ${remaining} mo`:`${remaining} mo`):`${wholeYears} yr`;schedule.push({period,deposits:periodDeposits,grossInterest:periodInterest,tax:periodTax,balance});periodInterest=0;periodTax=0;periodDeposits=0}
   }
   if(!schedule.length)schedule.push({period:'Start',deposits:0,grossInterest:0,tax:0,balance});
   const totalInterest=totalGrossInterest-totalTax,contributed=principal+totalDeposits,buyingPower=balance/Math.pow(1+inflation,totalMonths/12),durationLabel=extraMonths?`${years} yr ${extraMonths} mo`:`${years} yr`;
-  return {principal,annual,years,extraMonths,totalMonths,frequency,monthly,annualContribution,taxRate,inflation,timing,balance,totalGrossInterest,totalTax,totalInterest,totalDeposits,contributed,buyingPower,schedule,effectiveAnnual,durationLabel};
+  return {principal,annual,years,extraMonths,totalMonths,frequency,monthly,annualContribution,contributionGrowth,rateVariance,taxRate,inflation,timing,balance,totalGrossInterest,totalTax,totalInterest,totalDeposits,contributed,buyingPower,schedule,effectiveAnnual,durationLabel};
 }
 function interestComparisonProjection(){
   const compound=compoundProjection();
@@ -477,11 +478,13 @@ function drawCompoundLine(canvas, schedule, durationLabel) {
 }
 
 function renderCompound(projection) {
-  const summary=document.getElementById('compoundSummary'), pie=document.getElementById('compoundPie'), line=document.getElementById('compoundLine'), table=document.querySelector('#compoundSchedule tbody');
-  if(!summary||!pie||!line||!table)return;
+  const summary=document.getElementById('compoundSummary'), pie=document.getElementById('compoundPie'), line=document.getElementById('compoundLine'), scenarios=document.querySelector('#compoundScenarios tbody'), table=document.querySelector('#compoundSchedule tbody');
+  if(!summary||!pie||!line||!scenarios||!table)return;
   summary.innerHTML=[["Ending balance",USD(projection.balance),"Projected account value."],["Total contributed",USD(projection.contributed),"Initial amount plus additions."],["Net interest",USD(projection.totalInterest),`${F(projection.effectiveAnnual*100,3)}% APY before estimated tax.`],["Today's buying power",USD(projection.buyingPower),`${F(projection.inflation*100,2)}% assumed inflation.`]].map(item=>`<div class="summary-card"><span>${item[0]}</span><strong>${item[1]}</strong><small>${item[2]}</small></div>`).join('');
   drawPie(pie,[projection.principal,projection.totalDeposits,Math.max(0,projection.totalInterest)],["Initial investment","Contributions","Net interest"]);
   drawCompoundLine(line,projection.schedule,projection.durationLabel);
+  const low=compoundProjection({annualOverride:projection.annual-projection.rateVariance}),high=compoundProjection({annualOverride:projection.annual+projection.rateVariance});
+  scenarios.innerHTML=[["Lower",low],["Entered",projection],["Higher",high]].map(([label,item])=>`<tr><td>${label}</td><td>${F(item.annual*100,2)}%</td><td>${USD(item.balance)}</td><td>${USD(item.totalInterest)}</td><td>${USD(item.buyingPower)}</td></tr>`).join('');
   table.innerHTML=projection.schedule.map(row=>`<tr><td>${row.period}</td><td>${USD(row.deposits)}</td><td>${USD(row.grossInterest)}</td><td>${USD(row.tax)}</td><td>${USD(row.balance)}</td></tr>`).join('');
 }
 
