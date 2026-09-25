@@ -16,6 +16,18 @@ RMD_JOINT_LIFE_TABLE = ROOT / "src" / "data" / "rmd-joint-life-table.json"
 PUBLIC_BASE_PATH = os.environ.get("PUBLIC_BASE_PATH", "").strip().rstrip("/")
 PUBLIC_SITE_DOMAIN = os.environ.get("PUBLIC_SITE_DOMAIN", "").strip()
 ASSET_VERSION = "20260919a"
+PRIORITY_LENGTH_CONVERSIONS = {
+    "millimeters-to-feet-calculator",
+    "meters-to-feet-calculator",
+    "inches-to-centimeters-calculator",
+    "centimeters-to-feet-calculator",
+    "inches-to-meters-calculator",
+    "feet-to-centimeters-calculator",
+    "centimeters-to-inches-calculator",
+    "meters-to-inches-calculator",
+}
+LENGTH_UNIT_SYMBOLS = {"millimeters": "mm", "centimeters": "cm", "meters": "m", "inches": "in", "feet": "ft"}
+LENGTH_UNIT_METERS = {"millimeters": 0.001, "centimeters": 0.01, "meters": 1.0, "inches": 0.0254, "feet": 0.3048}
 CALCULATOR_REDIRECTS = {
     "concrete-calculator": "concrete-volume-calculator",
     "loan-payment-calculator": "loan-calculator",
@@ -861,6 +873,9 @@ def seo_title(calc):
 def seo_description(calc):
     keyword = primary_keyword(calc)
     context = f" for {display_group(calculator_group(calc)).lower()}" if calc.get("seo_context_label") else ""
+    if calc.get("slug") in PRIORITY_LENGTH_CONVERSIONS:
+        source, target, _ = conversion_parts(calc)
+        return f"Convert {source} to {target} or reverse the calculation. See exact factors, metric and US unit results, common values, formulas, and examples."
     if calc.get("slug") == "feet-to-meters-calculator":
         return "Convert feet or feet and inches to meters using the exact 0.3048 factor. Reverse meters to feet, compare common values, and see the formula."
     if calc.get("slug") == "percent-calculator":
@@ -985,6 +1000,30 @@ def input_html(field):
     else:
         control = f'<input id="{h(fid)}" type="{h(ftype)}" step="any" value="{h(default)}">'
     return f'<div class="field"><label for="{h(fid)}">{h(label)}</label>{control}</div>'
+
+
+def conversion_parts(calc):
+    source = target = ""
+    factor = 0.0
+    for field in calc.get("inputs", []):
+        if field[0] == "value":
+            source = str(field[1]).replace("Value in ", "")
+        elif field[0] == "target":
+            target = str(field[3])
+        elif field[0] == "factor":
+            factor = float(field[3])
+    return source, target, factor
+
+
+def priority_length_input_html(calc):
+    source, target, factor = conversion_parts(calc)
+    source_symbol = LENGTH_UNIT_SYMBOLS[source]
+    target_symbol = LENGTH_UNIT_SYMBOLS[target]
+    return f"""<div class="fields conversion-fields">
+<div class="field field-wide"><label for="length_direction">Conversion direction</label><select id="length_direction"><option value="forward" selected>{h(source.title())} to {h(target.title())}</option><option value="reverse">{h(target.title())} to {h(source.title())}</option></select></div>
+<div class="field field-wide"><label for="length_value">Value to convert</label><input id="length_value" type="number" step="any" value="1"></div>
+<input id="conversion_factor" type="hidden" value="{factor:.15g}"><input id="source_name" type="hidden" value="{h(source)}"><input id="target_name" type="hidden" value="{h(target)}"><input id="source_symbol" type="hidden" value="{h(source_symbol)}"><input id="target_symbol" type="hidden" value="{h(target_symbol)}"><input id="source_meter_factor" type="hidden" value="{LENGTH_UNIT_METERS[source]:.15g}"><input id="target_meter_factor" type="hidden" value="{LENGTH_UNIT_METERS[target]:.15g}">
+</div>"""
 
 
 def compound_interest_input_html(include_scenarios=False):
@@ -1757,6 +1796,30 @@ def subgroup_desc(cat, group, items):
     return f"{len(items):,} {cat.lower()} tools including {sample}."
 
 
+def priority_length_copy(calc):
+    if calc.get("slug") not in PRIORITY_LENGTH_CONVERSIONS:
+        return None
+    source, target, factor = conversion_parts(calc)
+    source_symbol = LENGTH_UNIT_SYMBOLS[source]
+    target_symbol = LENGTH_UNIT_SYMBOLS[target]
+    reverse_factor = 1 / factor
+    reverse_slug = f"{unit_slug(target)}-to-{unit_slug(source)}-calculator"
+    rows = "".join(
+        f"<tr><td>{value:g} {h(source_symbol)}</td><td>{value * factor:.10g} {h(target_symbol)}</td><td>{value * factor * LENGTH_UNIT_METERS[target]:.10g} m</td></tr>"
+        for value in (1, 3, 5, 10, 25, 50, 100)
+    )
+    return f"""
+<h2>How to convert {h(source)} to {h(target)}</h2><p>Multiply the number of {h(source)} by {factor:.12g}. The calculator keeps the full conversion factor during the calculation, then formats the displayed answer for readability. Use the direction menu to reverse the conversion without opening another page.</p>
+<p class="formula">{h(target)} = {h(source)} x {factor:.12g}</p>
+<h2>Worked conversion example</h2><p>For 10 {h(source_symbol)}, multiply 10 by {factor:.12g}. The result is {10 * factor:.10g} {h(target_symbol)}. In reverse, divide a {h(target)} value by {factor:.12g}, or multiply it by {reverse_factor:.12g}.</p>
+<h2>Common {h(source)} to {h(target)} conversions</h2><div class="table-scroll"><table class="data-table"><thead><tr><th>{h(source.title())}</th><th>{h(target.title())}</th><th>Meters</th></tr></thead><tbody>{rows}</tbody></table></div>
+<h2>Exact length standards</h2><p>These units share defined relationships: one inch is exactly 0.0254 meter, one international foot is exactly 0.3048 meter, one centimeter is exactly 0.01 meter, and one millimeter is exactly 0.001 meter. The <a href="https://www.nist.gov/pml/special-publication-811/nist-guide-si-appendix-b-conversion-factors" rel="external noopener">NIST Guide to SI conversion factors</a> documents the inch, foot, and meter relationships used here. Because the factors are defined, rounding comes from the displayed decimal precision rather than an uncertain measurement factor.</p>
+<h2>When this conversion is useful</h2><p>{h(source.title())} and {h(target)} commonly appear in product dimensions, construction plans, room measurements, manufacturing specifications, science work, and international forms. Convert every linear dimension before comparing values. For area or volume, do not apply a linear factor only once; square or cube the factor, or use a dedicated area or volume calculator.</p>
+<h2>Reverse {h(target)} to {h(source)}</h2><p>The reverse factor is {reverse_factor:.12g}. You can select the reverse direction above or use the dedicated <a href="/{h(reverse_slug)}/">{h(target)} to {h(source)} calculator</a>. Both directions use the same underlying definitions, so equivalent entries produce reciprocal results apart from display rounding.</p>
+<h2>Precision and rounding</h2><p>Keep extra decimal places during intermediate work and round only the final answer. A building estimate may need fewer decimals than machining or laboratory work. The calculator also reports meters, centimeters, millimeters, decimal feet, and inches so you can check the result against a familiar unit.</p>
+<h2>Frequently asked questions</h2><h3>Is the conversion factor exact?</h3><p>Yes. The result is derived from defined metric prefixes and the exact international inch and foot definitions.</p><h3>Can I enter negative or decimal values?</h3><p>Yes. Decimal and negative values are accepted, which is useful for coordinates, offsets, and differences. Physical lengths are normally nonnegative.</p><h3>Why can the last decimal differ from another calculator?</h3><p>Calculators may display different numbers of decimal places. Compare the unrounded factor and the precision requested by your source measurement.</p>"""
+
+
 def conversion_copy(calc):
     if calc.get("engine") != "linear_convert":
         return None
@@ -2235,6 +2298,13 @@ def default_calculator_copy(calc):
 
 
 def analysis_extra_html(calc):
+    if calc.get("slug") in PRIORITY_LENGTH_CONVERSIONS:
+        source, target, _ = conversion_parts(calc)
+        return f"""<section class="mortgage-dashboard generic-dashboard conversion-dashboard" aria-label="{h(source)} and {h(target)} conversion results">
+<div class="section-head stack"><h2>Conversion Results</h2><p>Compare the selected result with metric and US customary length units.</p></div>
+<div class="summary-grid" id="genericSummary"></div>
+<div class="table-card"><h3>Equivalent Measurements</h3><div class="table-scroll"><table class="data-table" id="genericTable"><thead><tr><th>Measurement</th><th>Value</th><th>Calculation note</th></tr></thead><tbody></tbody></table></div></div>
+</section>"""
     if calc.get("slug") == "feet-to-meters-calculator":
         return """<section class="mortgage-dashboard generic-dashboard conversion-dashboard" aria-label="Feet to meters conversion results">
 <div class="section-head stack"><h2>Conversion Results</h2><p>Compare meters, centimeters, decimal feet, and feet-and-inches notation.</p></div>
@@ -2467,7 +2537,10 @@ def calculator_page(site, calc, related):
     desc = seo_description(calc)
     group = calculator_group(calc)
     page_engine = calc.get("engine")
-    if calc.get("slug") == "finance-calculator":
+    if calc.get("slug") in PRIORITY_LENGTH_CONVERSIONS:
+        fields = priority_length_input_html(calc)
+        page_engine = "length_convert"
+    elif calc.get("slug") == "finance-calculator":
         fields = finance_tvm_input_html()
         page_engine = "finance_tvm"
     elif calc.get("slug") == "feet-to-meters-calculator":
@@ -2594,10 +2667,10 @@ def calculator_page(site, calc, related):
     else:
         fields = f"""<div class="fields">{''.join(input_html(f) for f in calc["inputs"])}</div>"""
     rel = "".join(card(c, compact=True) for c in related)
-    content = high_value_calculator_copy(calc) or conversion_copy(calc) or default_calculator_copy(calc)
+    content = priority_length_copy(calc) or high_value_calculator_copy(calc) or conversion_copy(calc) or default_calculator_copy(calc)
     extra = analysis_extra_html(calc)
     calculator_asset_versions = {"amortization-calculator": "20260919b", "retirement-calculator": "20260919c", "401k-calculator": "20260920a", "social-security-calculator": "20260920b", "rmd-calculator": "20260920c", "feet-to-meters-calculator": "20260925a", "compound-interest-calculator": "20260925b"}
-    calculator_asset_version = calculator_asset_versions.get(calc.get("slug"), ASSET_VERSION)
+    calculator_asset_version = "20260925c" if calc.get("slug") in PRIORITY_LENGTH_CONVERSIONS else calculator_asset_versions.get(calc.get("slug"), ASSET_VERSION)
     if calc.get("engine") == "loan_page":
         calc_html = f"""<section class="calc loan-page-calc"><h2>Calculator</h2>{fields}<div class="result" id="result">Enter your values and select Calculate.</div></section>"""
     else:
@@ -2890,6 +2963,11 @@ function annualCost(id, base){return document.getElementById(`${id}_unit`)?.valu
 function monthlyCost(id, base){return document.getElementById(`${id}_unit`)?.value==='percent'?base*V(id)/100/12:V(id)/12}
 function monthDate(id){const raw=document.getElementById(id)?.value||'';return /^\d{4}-\d{2}$/.test(raw)?new Date(`${raw}-01T00:00:00`):new Date(raw||Date.now())}
 function syncMortgageCosts(){const box=document.getElementById('include_costs'),panel=document.getElementById('mortgageCostFields');if(!box||!panel)return true;const on=box.checked;panel.hidden=!on;panel.classList.toggle('is-hidden',!on);panel.style.display=on?'':'none';return on}
+function priorityLengthProjection(){
+  const reverse=document.getElementById('length_direction')?.value==='reverse',value=V('length_value'),factor=V('conversion_factor'),source=document.getElementById('source_name')?.value||'source units',target=document.getElementById('target_name')?.value||'target units',sourceSymbol=document.getElementById('source_symbol')?.value||source,targetSymbol=document.getElementById('target_symbol')?.value||target,sourceMeters=V('source_meter_factor'),targetMeters=V('target_meter_factor');
+  const from=reverse?target:source,to=reverse?source:target,fromSymbol=reverse?targetSymbol:sourceSymbol,toSymbol=reverse?sourceSymbol:targetSymbol,activeFactor=reverse?1/factor:factor,result=value*activeFactor,meters=value*(reverse?targetMeters:sourceMeters),feet=meters/0.3048,inches=meters/0.0254;
+  return{reverse,value,factor,activeFactor,result,source,target,sourceSymbol,targetSymbol,from,to,fromSymbol,toSymbol,meters,feet,inches,centimeters:meters*100,millimeters:meters*1000};
+}
 function compoundProjection(options={}){
   const principal=Math.max(0,V('principal')),enteredAnnual=Math.max(-.99,V('rate')/100),annual=Number.isFinite(options.annualOverride)?Math.max(-.99,options.annualOverride):enteredAnnual,years=Math.max(0,Math.floor(V('years'))),extraMonths=Math.max(0,Math.min(11,Math.floor(V('compound_months')))),frequency=Number(document.getElementById('compound_frequency')?.value??12),monthly=Math.max(0,V('monthly')),annualContribution=Math.max(0,V('annual_contribution')),contributionGrowth=Math.max(-.99,V('contribution_growth')/100),rateVariance=Math.max(0,V('rate_variance')/100),taxRate=Math.max(0,Math.min(1,V('interest_tax')/100)),inflation=Math.max(-.99,V('compound_inflation')/100);
   const timing=document.getElementById('contribution_timing')?.value||'end',totalMonths=years*12+extraMonths,monthlyRate=frequency===0?Math.exp(annual/12)-1:Math.pow(1+annual/frequency,frequency/12)-1,effectiveAnnual=frequency===0?Math.exp(annual)-1:Math.pow(1+annual/frequency,frequency)-1;
@@ -3277,6 +3355,7 @@ function calc(e){
   case'amps_watts':{let r=V('amps')*V('volts');show(`<strong>${F(r,2)} W</strong>`);break}
   case'watts_amps':{let r=V('volts')?V('watts')/V('volts'):0;show(`<strong>${F(r,2)} A</strong>`);break}
   case'linear_convert':{let r=V('value')*V('factor'),target=document.getElementById('target')?.value||'target units';show(`<strong>${F(r,8)} ${target}</strong><br>Converted with the factor shown in the formula.`);break}
+  case'length_convert':{const p=priorityLengthProjection();show(`<strong>${F(p.result,10)} ${p.toSymbol}</strong><br>${F(p.value,10)} ${p.fromSymbol} x ${F(p.activeFactor,12)}; ${F(p.meters,10)} meters.`);break}
   case'feet_meters':{let reverse=syncFeetMeterInputs();if(reverse){let meters=Math.max(0,V('meters')),totalFeet=meters/0.3048,feet=Math.floor(totalFeet),inches=(totalFeet-feet)*12;show(`<strong>${F(totalFeet,6)} feet</strong><br>${feet} ft ${F(inches,3)} in; ${F(meters,6)} meters; ${F(meters*100,3)} centimeters.`)}else{let feet=Math.max(0,V('feet')),inches=Math.max(0,V('inches')),totalFeet=feet+inches/12,meters=totalFeet*0.3048;show(`<strong>${F(meters,6)} meters</strong><br>${F(meters*100,3)} centimeters; ${F(totalFeet,6)} decimal feet; ${F(totalFeet*12,3)} total inches.`)}break}
   case'cn_mortgage':{let price=V('price'),down=unitValue('down',price),P=Math.max(0,price-down),rr=V('apr')/1200,n=Math.max(1,V('years')*12);let pi=rr?P*rr*Math.pow(1+rr,n)/(Math.pow(1+rr,n)-1):P/n;let include=syncMortgageCosts(),tax=include?annualCost('tax',price)/12:0,ins=include?monthlyCost('insurance',price):0,pmi=include?monthlyCost('pmi',P):0,hoa=include?monthlyCost('hoa',price):0,other=include?monthlyCost('other',price):0,inc=include?V('increase'):0,extraM=V('extra_monthly'),extraY=V('extra_yearly'),extraO=V('extra_once'),extra=tax+ins+pmi+hoa+other;let start=monthDate('start');show(`<strong>${USD(pi)} / month</strong><br>Total monthly payment with selected taxes and costs: ${USD(pi+extra+extraM)}.`);renderMortgage(P,rr,n,pi,tax,ins,pmi,hoa,other,inc,extraM,extraY,extraO,start);break}
   case'cn_simple_interest':{let P=V('principal'),i=P*V('rate')/100*V('years');show(`<strong>${USD(P+i)}</strong><br>Simple interest: ${USD(i)}.`);break}
@@ -3409,6 +3488,11 @@ function renderGenericFromEngine(engine) {
     const p=financeProjection(),schedule=document.querySelector('#financeSchedule tbody'),labels={fv:'Future value',pmt:'Periodic payment',iy:'Annual interest rate',n:'Number of periods',pv:'Present value'};
     if(!p.valid){cards=[["Result","Check inputs",p.message],["Solved variable",labels[p.target],"Selected target."],["Periodic rate","Unavailable","No valid solution."],["Schedule","Unavailable","Correct the inputs first."]];bars=[{label:"Result",value:0,display:"Unavailable"}];rows=[["Validation","Unable to calculate",p.message]];if(schedule)schedule.innerHTML=''}
     else{const solved=p.target==='iy'?`${F(p.iy,8)}%`:p.target==='n'?F(p.n,8):USD(p[p.target]);cards=[[labels[p.target],solved,"Calculated TVM variable."],["Periodic rate",`${F(p.rate*100,6)}%`,`${F(p.py,0)} payment periods per year.`],["Effective annual rate",`${F(p.effectiveAnnual,6)}%`,`Derived from the payment-period rate.`],["Ending balance",USD(p.balance),`Should offset FV under the sign convention.`]];bars=[{label:"Present value",value:p.pv,display:USD(p.pv)},{label:"Total payments",value:p.totalPayments,display:USD(p.totalPayments)},{label:"Future value",value:p.fv,display:USD(p.fv)},{label:"Total interest",value:p.totalInterest,display:USD(p.totalInterest)}];rows=[["Solved variable",labels[p.target],solved],["Number of periods (N)",F(p.n,8),`${F(p.py,0)} payments per year.`],["Nominal annual rate (I/Y)",`${F(p.iy,8)}%`,`${F(p.cy,0)} compounding periods per year.`],["Present value (PV)",USD(p.pv),"Starting cash flow."],["Periodic payment (PMT)",USD(p.pmt),p.due?"Paid at the beginning of each period.":"Paid at the end of each period."],["Future value (FV)",USD(p.fv),"Opposite-side terminal cash flow."],["Effective periodic rate",`${F(p.rate*100,8)}%`,"Rate applied per payment period."],["Effective annual rate",`${F(p.effectiveAnnual,8)}%`,"Compounded payment-period rate."],["Sum of periodic payments",USD(p.totalPayments),"PMT multiplied by N."],["Total interest",USD(p.totalInterest),"Implied interest across all periods."],["Equation residual",USD(p.residual),"Rounding check; should be close to zero."]];if(p.scheduleCapped)rows.push(["Schedule display","First 600 periods","The result still uses the full entered period count."]);if(schedule)schedule.innerHTML=p.schedule.map(item=>`<tr><td>${item.period}</td><td>${USD(item.opening)}</td><td>${USD(item.payment)}</td><td>${USD(item.interest)}</td><td>${USD(item.ending)}</td></tr>`).join('')}
+  } else if (engine === "length_convert") {
+    const p=priorityLengthProjection();
+    cards=[[`${p.to.charAt(0).toUpperCase()+p.to.slice(1)}`,`${F(p.result,10)} ${p.toSymbol}`,`${F(p.value,10)} ${p.fromSymbol} converted.`],["Meters",`${F(p.meters,10)} m`,"SI base unit for length."],["Decimal feet",`${F(p.feet,10)} ft`,"International feet."],["Inches",`${F(p.inches,10)} in`,"International inches."]];
+    bars=[];
+    rows=[["Entered measurement",`${F(p.value,12)} ${p.fromSymbol}`,p.from],["Converted result",`${F(p.result,12)} ${p.toSymbol}`,p.to],["Active conversion factor",F(p.activeFactor,12),`Multiply ${p.fromSymbol} by this factor.`],["Meters",`${F(p.meters,12)} m`,"Base SI length."],["Centimeters",`${F(p.centimeters,12)} cm`,"Meters x 100."],["Millimeters",`${F(p.millimeters,12)} mm`,"Meters x 1,000."],["Decimal feet",`${F(p.feet,12)} ft`,"Meters divided by 0.3048."],["Inches",`${F(p.inches,12)} in`,"Meters divided by 0.0254."]];
   } else if (engine === "feet_meters") {
     const reverse=document.getElementById('conversion_direction')?.value==='meters_to_feet';
     const meters=Math.max(0,reverse?V('meters'):(Math.max(0,V('feet'))+Math.max(0,V('inches'))/12)*0.3048), totalFeet=meters/0.3048, wholeFeet=Math.floor(totalFeet), inches=(totalFeet-wholeFeet)*12;
