@@ -780,9 +780,9 @@
       "title": "Horsepower Calculator",
       "cat": "Automotive",
       "engine": "horsepower",
-      "desc": "Calculate horsepower from torque and RPM.",
-      "formula": "Horsepower = torque (lb-ft) \u00d7 RPM \u00f7 5252.",
-      "example": "300 lb-ft at 4,000 RPM is about 228.5 horsepower.",
+      "desc": "Calculate horsepower, torque, or RPM and compare mechanical hp, kilowatts, PS, lb-ft, and N-m.",
+      "formula": "Horsepower = torque (lb-ft) \u00d7 RPM \u00f7 5252.113.",
+      "example": "300 lb-ft at 4,000 RPM is about 228.48 mechanical horsepower.",
       "inputs": [
         [
           "torque",
@@ -804,9 +804,9 @@
       "title": "Power-to-Weight Ratio Calculator",
       "cat": "Automotive",
       "engine": "power_weight",
-      "desc": "Calculate horsepower per pound and pounds per horsepower.",
-      "formula": "HP/lb = horsepower \u00f7 weight; lb/HP = weight \u00f7 horsepower.",
-      "example": "300 hp in a 3,600 lb car equals 0.0833 hp/lb or 12 lb per hp.",
+      "desc": "Calculate hp/lb, lb/hp, hp per ton, and W/kg with power, weight, load, and target-ratio conversions.",
+      "formula": "HP/lb = horsepower \u00f7 loaded weight; lb/HP = loaded weight \u00f7 horsepower.",
+      "example": "300 hp in a 3,600 lb car equals 0.08333 hp/lb or 12 lb per hp.",
       "inputs": [
         [
           "hp",
