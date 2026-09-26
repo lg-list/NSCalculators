@@ -811,6 +811,11 @@ def primary_keyword(calc):
 
 def is_indexable_calculator(calc):
     searches = int((calc.get("keyword_data") or {}).get("monthly_searches") or 0)
+    # Generic calculator.net placeholders reuse one compound-growth model for
+    # unrelated intents. Keep them available to users, but do not ask search
+    # engines to index them until each page has a purpose-built calculator.
+    if calc.get("engine") == "cn_generic":
+        return False
     return searches > 0 or not calc.get("generated") or calc.get("source") == "calculator.net keyword model"
 
 
