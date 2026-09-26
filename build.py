@@ -850,6 +850,8 @@ def seo_keywords(calc):
 
 
 def seo_title(calc):
+    if calc.get("slug") == "stones-to-pounds-calculator":
+        return "Stones to Pounds Calculator: Stone & lb Converter"
     if calc.get("slug") == "average-return-calculator":
         return "Average Return Calculator: Cash Flow & Annualized"
     if calc.get("slug") == "basic-calculator":
@@ -914,6 +916,8 @@ def seo_title(calc):
 def seo_description(calc):
     keyword = primary_keyword(calc)
     context = f" for {display_group(calculator_group(calc)).lower()}" if calc.get("seo_context_label") else ""
+    if calc.get("slug") == "stones-to-pounds-calculator":
+        return "Convert stones and pounds to total pounds, or pounds back to stone and lb. Includes kilograms, ounces, formulas, examples, and a stone-to-lb chart."
     if calc.get("slug") == "average-return-calculator":
         return "Calculate average annual return from dated deposits and withdrawals, or combine multiple holding-period returns into cumulative and annualized results."
     if calc.get("slug") == "basic-calculator":
@@ -1265,6 +1269,20 @@ def towing_capacity_input_html():
 <div class="field"><label for="people">Driver and passengers</label><div class="input-unit"><input id="people" type="number" step="any" min="0" value="400"><span>lb</span></div></div>
 <div class="field"><label for="cargo">Vehicle cargo</label><div class="input-unit"><input id="cargo" type="number" step="any" min="0" value="200"><span>lb</span></div></div>
 <div class="field"><label for="tongue_pct">Estimated tongue weight</label><div class="input-unit"><input id="tongue_pct" type="number" step="any" min="1" value="12"><span>%</span></div></div>
+</div>"""
+
+
+def stones_pounds_input_html():
+    return """<div class="stones-pounds-fields">
+<div class="field field-wide"><label for="stone_mode">Conversion direction</label><select id="stone_mode"><option value="to_pounds" selected>Stones and pounds to total pounds</option><option value="to_stones">Total pounds to stones and pounds</option></select></div>
+<div class="fields stone-entry" data-stone-mode="to_pounds">
+<div class="field"><label for="stone_whole">Stones</label><div class="input-unit"><input id="stone_whole" type="number" step="1" min="0" value="11"><span>st</span></div></div>
+<div class="field"><label for="stone_extra_lb">Additional pounds</label><div class="input-unit"><input id="stone_extra_lb" type="number" step="any" min="0" value="10"><span>lb</span></div></div>
+</div>
+<div class="fields stone-entry is-hidden" data-stone-mode="to_stones">
+<div class="field field-wide"><label for="stone_total_lb">Total pounds</label><div class="input-unit"><input id="stone_total_lb" type="number" step="any" min="0" value="164"><span>lb</span></div></div>
+</div>
+<p class="field-note">1 stone = exactly 14 pounds. Additional pounds can be decimal values.</p>
 </div>"""
 
 
@@ -2030,6 +2048,22 @@ def conversion_copy(calc):
 
 
 def high_value_calculator_copy(calc):
+    if calc.get("slug") == "stones-to-pounds-calculator":
+        chart_rows = "".join(
+            f"<tr><td>{stone} st</td><td>{stone * 14} lb</td><td>{stone * 14 * 0.45359237:.2f} kg</td></tr>"
+            for stone in range(1, 21)
+        )
+        return f"""
+<h2>Convert stone and pounds in either direction</h2><p>This calculator handles the two forms people usually need. Choose <strong>Stones and pounds to total pounds</strong> for a mixed British weight such as 11 st 10 lb. Choose <strong>Total pounds to stones and pounds</strong> to turn a US-style pound value into stone notation. Every result also includes kilograms and ounces so you can compare the same weight across common systems.</p>
+<h2>Stones to pounds formula</h2><p>One British stone equals exactly 14 avoirdupois pounds. Multiply the number of stones by 14, then add any extra pounds.</p><p class="formula">total pounds = (stones x 14) + additional pounds</p><p>For example, 11 stone 10 pounds is (11 x 14) + 10 = <strong>164 pounds</strong>. A stone-only value works the same way: 8 stone is 8 x 14 = 112 pounds.</p>
+<h2>Pounds to stones and pounds formula</h2><p>Divide total pounds by 14. The whole-number quotient is the number of stones, and the remainder is the additional pounds.</p><p class="formula">whole stones = floor(total pounds / 14)<br>remaining pounds = total pounds - (whole stones x 14)</p><p>For 150 pounds, 14 fits into 150 ten whole times and leaves 10. Therefore, <strong>150 lb = 10 st 10 lb</strong>. If the pound value includes decimals, the remainder keeps those decimals instead of rounding them away.</p>
+<h2>Stone to pounds chart</h2><p>The table lists common whole-stone values in pounds and kilograms. Use the calculator for mixed values or greater precision.</p><div class="table-scroll"><table class="data-table"><thead><tr><th>Stone</th><th>Pounds</th><th>Kilograms</th></tr></thead><tbody>{chart_rows}</tbody></table></div>
+<h2>How kilograms are calculated</h2><p>After finding total pounds, the calculator multiplies by 0.45359237 to obtain kilograms. Therefore one stone is 6.35029318 kilograms. The displayed value is rounded for readability, while calculations keep the full conversion factor.</p><p class="formula">kilograms = total pounds x 0.45359237</p>
+<h2>What does stone mean as a weight?</h2><p>The stone is a British unit of mass still familiar in the United Kingdom and Ireland, especially for body weight. It is not the same as a literal rock and should not be confused with a US short ton or UK long ton. The <a href="https://nvlpubs.nist.gov/nistpubs/Legacy/hb/nbshandbook37.pdf" rel="external noopener">National Bureau of Standards conversion table</a> records one British stone as 14 avoirdupois pounds; that is the relationship used on this page.</p>
+<h2>How to read stone and pound notation</h2><p>The abbreviation <strong>st</strong> means stone and <strong>lb</strong> means pounds. A value written as 12 st 4 lb means twelve complete stones plus four pounds, not 12.4 stones. In decimal stone, 12.4 st equals 12 stones plus 0.4 x 14, or 5.6 pounds. This calculator uses separate boxes for mixed notation so the distinction remains clear.</p>
+<h2>Common conversion examples</h2><div class="table-scroll"><table class="data-table"><thead><tr><th>Entered weight</th><th>Total pounds</th><th>Stone notation</th></tr></thead><tbody><tr><td>9 st 7 lb</td><td>133 lb</td><td>9 st 7 lb</td></tr><tr><td>11 st</td><td>154 lb</td><td>11 st 0 lb</td></tr><tr><td>11 st 10 lb</td><td>164 lb</td><td>11 st 10 lb</td></tr><tr><td>196 lb</td><td>196 lb</td><td>14 st 0 lb</td></tr><tr><td>225 lb</td><td>225 lb</td><td>16 st 1 lb</td></tr></tbody></table></div>
+<h2>Rounding and measurement accuracy</h2><p>Use the number of decimal places justified by the scale or source measurement. Converting an approximate bathroom-scale reading to many decimal places does not make it more accurate. For everyday body weight, one decimal pound or one decimal kilogram is usually enough. Medical dosing, clinical decisions, shipping declarations, and regulated trade may require approved equipment and specific rounding rules.</p>
+<h2>Frequently asked questions</h2><h3>How many pounds are in one stone?</h3><p>There are exactly 14 pounds in one British stone.</p><h3>What is 11 stone 10 pounds in pounds?</h3><p>It is 164 pounds because 11 x 14 = 154, then 154 + 10 = 164.</p><h3>How do I convert pounds to stone?</h3><p>Divide pounds by 14 for decimal stone. For mixed stone-and-pound notation, keep the whole-number quotient as stones and express the remainder as pounds.</p><h3>Can the extra pounds be more than 13?</h3><p>Yes. The total remains mathematically correct, and the result normalizes it. For example, 10 st 18 lb becomes 11 st 4 lb because 14 of the extra pounds make another stone.</p><h3>Are stone and pounds used in the United States?</h3><p>US weight is normally stated only in pounds. Stone notation remains more common in British and Irish contexts, so this converter is useful when reading or sharing values across those conventions.</p>"""
     if calc.get("slug") == "average-return-calculator":
         return """
 <h2>Average return calculator with two methods</h2><p>This calculator measures investment performance in two distinct situations. Use dated cash-flow mode when an account had deposits or withdrawals between its starting and ending values. Use holding-period mode when you already know several separate investment returns and want their combined cumulative and annualized result. Keeping these methods separate avoids treating investor contributions as investment gains.</p>
@@ -2581,6 +2615,13 @@ def default_calculator_copy(calc):
 
 
 def analysis_extra_html(calc):
+    if calc.get("slug") == "stones-to-pounds-calculator":
+        return """<section class="mortgage-dashboard generic-dashboard stones-pounds-dashboard" aria-label="Stone and pounds conversion results">
+<div class="section-head stack"><h2>Conversion Results</h2><p>Review total pounds, normalized stone notation, kilograms, ounces, and the exact calculation.</p></div>
+<div class="summary-grid" id="genericSummary"></div>
+<div class="chart-grid"><div class="chart-card compact-chart"><h3>Pound Composition</h3><canvas id="genericChart" width="620" height="220" aria-label="Stone and additional pounds composition" data-chart-type="bars"></canvas></div></div>
+<div class="table-card"><h3>Equivalent Weights</h3><div class="table-scroll"><table class="data-table" id="genericTable"><thead><tr><th>Measurement</th><th>Value</th><th>Calculation note</th></tr></thead><tbody></tbody></table></div></div>
+</section>"""
     if calc.get("slug") == "average-return-calculator":
         return """<section class="mortgage-dashboard generic-dashboard average-return-dashboard" aria-label="Average return results">
 <div class="section-head stack"><h2>Return Results</h2><p>Review the annualized result, cumulative performance, cash-flow effect, and calculation details.</p></div>
@@ -2873,11 +2914,21 @@ def subgroup_page(site, cat, group, items):
 
 
 def calculator_page(site, calc, related):
+    if calc.get("slug") == "stones-to-pounds-calculator":
+        calc = {
+            **calc,
+            "desc": "Convert stones and pounds to total pounds, or convert pounds back to normalized stone-and-pound notation with kilograms and ounces.",
+            "formula": "total pounds = (stones x 14) + additional pounds.",
+            "example": "11 stone 10 pounds equals 164 pounds.",
+        }
     title = seo_title(calc)
     desc = seo_description(calc)
     group = calculator_group(calc)
     page_engine = calc.get("engine")
-    if calc.get("slug") == "ratio-calculator":
+    if calc.get("slug") == "stones-to-pounds-calculator":
+        fields = stones_pounds_input_html()
+        page_engine = "stones_pounds_advanced"
+    elif calc.get("slug") == "ratio-calculator":
         fields = ratio_input_html()
         page_engine = "ratio_advanced"
     elif calc.get("slug") == "average-return-calculator":
@@ -3034,7 +3085,7 @@ def calculator_page(site, calc, related):
     content = priority_length_copy(calc) or high_value_calculator_copy(calc) or conversion_copy(calc) or default_calculator_copy(calc)
     extra = analysis_extra_html(calc)
     calculator_asset_versions = {"amortization-calculator": "20260919b", "retirement-calculator": "20260919c", "401k-calculator": "20260920a", "social-security-calculator": "20260920b", "rmd-calculator": "20260920c", "feet-to-meters-calculator": "20260925a", "compound-interest-calculator": "20260925b"}
-    calculator_asset_version = "20260925c" if calc.get("slug") in PRIORITY_LENGTH_CONVERSIONS else "20260925d" if calc.get("slug") in ("car-depreciation-calculator", "car-resale-value-calculator") else "20260925e" if calc.get("slug") in ("horsepower-calculator", "power-to-weight-ratio-calculator") else "20260925f" if calc.get("slug") == "bottleneck-calculator" else "20260925g" if calc.get("slug") == "ratio-calculator" else "20260925i" if calc.get("slug") == "debt-payoff-calculator" else "20260925j" if calc.get("slug") == "average-return-calculator" else calculator_asset_versions.get(calc.get("slug"), ASSET_VERSION)
+    calculator_asset_version = "20260926a" if calc.get("slug") == "stones-to-pounds-calculator" else "20260925c" if calc.get("slug") in PRIORITY_LENGTH_CONVERSIONS else "20260925d" if calc.get("slug") in ("car-depreciation-calculator", "car-resale-value-calculator") else "20260925e" if calc.get("slug") in ("horsepower-calculator", "power-to-weight-ratio-calculator") else "20260925f" if calc.get("slug") == "bottleneck-calculator" else "20260925g" if calc.get("slug") == "ratio-calculator" else "20260925i" if calc.get("slug") == "debt-payoff-calculator" else "20260925j" if calc.get("slug") == "average-return-calculator" else calculator_asset_versions.get(calc.get("slug"), ASSET_VERSION)
     if calc.get("engine") == "loan_page":
         calc_html = f"""<section class="calc loan-page-calc"><h2>Calculator</h2>{fields}<div class="result" id="result">Enter your values and select Calculate.</div></section>"""
     else:
@@ -3299,6 +3350,9 @@ body{background:var(--bg)}.site-header{border-bottom-color:#dbe7f4}.primary{back
 .scientific-article{max-width:980px}.scientific-page{max-width:760px;margin:12px 0 24px;padding:16px}.sci-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}.scientific-page .sci-toolbar h2{margin:0}.sci-angle-toggle{display:grid;grid-template-columns:repeat(2,1fr);padding:3px;border:1px solid var(--line);border-radius:8px;background:#edf2f7}.sci-angle-toggle button{min-width:58px;min-height:32px;border:0;border-radius:6px;background:transparent;color:var(--muted);font:800 12px/1 system-ui,sans-serif;cursor:pointer}.sci-angle-toggle button.is-active{background:#fff;color:var(--brand);box-shadow:0 2px 7px rgba(21,32,51,.12)}.sci-expression-label{display:block;margin-bottom:5px;color:var(--ink);font-size:13px;font-weight:800}.sci-expression{width:100%;height:48px;border:1px solid #cfd7e4;border-radius:9px;background:#fff;padding:0 12px;color:var(--ink);font:600 18px/1.2 ui-monospace,SFMono-Regular,Consolas,monospace}.sci-expression:focus{outline:0;border-color:var(--brand);box-shadow:0 0 0 4px rgba(37,99,235,.12)}.sci-output{display:grid;grid-template-columns:auto minmax(0,1fr);gap:2px 12px;align-items:center;margin:9px 0 10px;padding:10px 12px;border-radius:9px;background:#1d4ed8;color:#eaf2ff}.sci-output span{grid-row:1/3;font-size:12px;font-weight:800;text-transform:uppercase}.sci-output strong{min-width:0;color:#fff;font:800 25px/1.1 ui-monospace,SFMono-Regular,Consolas,monospace;overflow-wrap:anywhere}.sci-output small{font-size:11px;line-height:1.25}.sci-keypad{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px}.sci-key{min-width:0;height:42px;border:1px solid #cfd9e6;border-radius:7px;background:#fff;color:var(--ink);font:750 14px/1 system-ui,sans-serif;cursor:pointer}.sci-key:hover{border-color:#91acd0;background:#f4f8fd}.sci-key:focus-visible{outline:3px solid rgba(37,99,235,.24);outline-offset:1px}.sci-key-function,.sci-key-memory{background:#eef5ff;color:#1746a2}.sci-key-operator,.sci-key-utility{background:#f2f5f8}.sci-key-equals{border-color:var(--brand);background:var(--brand);color:#fff}.sci-key-equals:hover{background:var(--brand-dark);color:#fff}.sci-history{margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}.sci-history-head{display:flex;align-items:center;justify-content:space-between;gap:10px}.sci-history h3{margin:0;font-size:15px}.sci-history-clear{border:0;background:transparent;color:var(--brand);font:750 12px/1 system-ui,sans-serif;cursor:pointer}.sci-history ol{display:grid;gap:5px;margin:9px 0 0;padding:0;list-style:none}.sci-history li button{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;width:100%;border:0;border-radius:7px;background:#f6f9fc;padding:7px 9px;text-align:left;cursor:pointer}.sci-history li span{overflow:hidden;color:var(--muted);font:12px/1.25 ui-monospace,SFMono-Regular,Consolas,monospace;text-overflow:ellipsis;white-space:nowrap}.sci-history li strong{color:var(--ink);font:750 12px/1.25 ui-monospace,SFMono-Regular,Consolas,monospace}.sci-history-empty{padding:8px 9px;color:var(--muted);font-size:12px}.scientific-article code{border-radius:4px;background:#eef3f8;padding:1px 4px;color:#173f73;font-size:.92em}.scientific-article .table-scroll{margin:10px 0 18px}
 @media(max-width:760px){.basic-layout{grid-template-columns:minmax(0,1fr)}.basic-history{min-height:0}.basic-history ol{max-height:190px;overflow:auto}}
 @media(max-width:560px){.basic-layout{gap:9px;margin-top:8px}.basic-calculator,.basic-history{padding:10px!important}.basic-expression{height:40px;font-size:16px}.basic-output{margin:6px 0 7px;padding:8px 9px}.basic-output strong{font-size:21px}.basic-keypad{gap:4px}.basic-key{height:37px;border-radius:6px;font-size:12px}.scientific-page{margin-top:8px;padding:10px}.sci-toolbar{margin-bottom:8px}.sci-angle-toggle button{min-width:50px;min-height:29px}.sci-expression{height:42px;padding:0 9px;font-size:16px}.sci-output{margin:7px 0 8px;padding:8px 9px}.sci-output strong{font-size:21px}.sci-keypad{gap:4px}.sci-key{height:38px;border-radius:6px;font-size:12px}.sci-history{margin-top:10px;padding-top:9px}.sci-history ol{max-height:170px;overflow:auto}}
+.stones-pounds-fields{display:grid;gap:9px}.stones-pounds-fields>.field-wide{grid-column:1/-1}.stone-entry{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px!important}.stones-pounds-fields .is-hidden{display:none!important}.stones-pounds-fields .field-note{margin:0;padding:8px 9px;border-radius:7px;background:#f1f6fb;color:var(--muted);font-size:12px;line-height:1.4}.stones-pounds-dashboard .chart-grid{grid-template-columns:1fr}.stones-pounds-dashboard .compact-chart canvas{max-height:220px}.calculator-article:has(.stones-pounds-fields) .calculator-layout.split-analysis{grid-template-columns:minmax(350px,420px) minmax(0,1fr)}
+@media(max-width:900px){.calculator-article:has(.stones-pounds-fields) .calculator-layout.split-analysis{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:560px){.calculator-article:has(.stones-pounds-fields) .calc{padding:10px}.stone-entry{gap:6px!important}.stones-pounds-dashboard .summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.calculator-article:has(.stones-pounds-fields) .result strong{font-size:22px}}
 '''
 
 SEARCH_JS = r'''
@@ -3745,7 +3799,9 @@ function electricalLoadProjection(){const continuous=Math.max(0,V('el_continuous
 function wattsAmpsProjection(){const watts=Math.max(0,V('wa_watts')),voltage=Math.max(.001,V('wa_voltage')),phase=document.getElementById('wa_phase')?.value||'single',pf=phase==='dc'?1:Math.max(.01,Math.min(1,V('wa_pf'))),multiplier=phase==='three'?Math.sqrt(3):1,amps=watts/(voltage*pf*multiplier),va=watts/pf,vars=Math.sqrt(Math.max(0,va*va-watts*watts)),continuous=document.getElementById('wa_continuous')?.value==='yes',planningAmps=amps*(continuous?1.25:1);return{watts,voltage,phase,pf,multiplier,amps,va,vars,continuous,planningAmps}}
 function ampsWattsProjection(){const amps=Math.max(0,V('aw_amps')),voltage=Math.max(.001,V('aw_voltage')),phase=document.getElementById('aw_phase')?.value||'single',pf=phase==='dc'?1:Math.max(.01,Math.min(1,V('aw_pf'))),multiplier=phase==='three'?Math.sqrt(3):1,va=amps*voltage*multiplier,watts=va*pf,vars=Math.sqrt(Math.max(0,va*va-watts*watts));return{amps,voltage,phase,pf,multiplier,va,watts,vars}}
 function syncFeetMeterInputs(){const reverse=document.getElementById('conversion_direction')?.value==='meters_to_feet';document.querySelectorAll('[data-feet-input]').forEach(el=>el.classList.toggle('is-hidden',reverse));document.querySelectorAll('[data-meter-input]').forEach(el=>el.classList.toggle('is-hidden',!reverse));return reverse}
-function clearCalcForm(){const form=document.querySelector('.calc');if(!form)return;form.querySelectorAll('input').forEach(input=>{if(input.type==='checkbox')input.checked=false;else input.value=''});form.querySelectorAll('textarea').forEach(textarea=>{textarea.value=''});form.querySelectorAll('select').forEach(select=>{select.selectedIndex=0});form.querySelectorAll('details').forEach(item=>{item.open=false});syncMortgageCosts();syncConcreteFields();syncRoofFields();syncAreaFields();syncPayDeductionFields();syncSalesTaxFields();syncPercentFields();syncFractionFields();syncRatioFields();syncBmiFields();syncFinanceTarget();syncPaymentMode();syncRetirementMode();syncK401Mode();syncSocialSecurityMode();syncAverageReturnFields();show('<strong>0</strong><br>Enter values to calculate a new result.');const engine=currentEngine();if(engine==='cn_mortgage')renderMortgage(0,0,1,0,0,0,0,0,0,0,0,0,0,new Date());if(engine==='loan_page')renderLoanPage();if(engine==='ratio_advanced'||engine==='average_return_advanced')renderGenericFromEngine(engine)}
+function syncStonesPoundsFields(){const mode=document.getElementById('stone_mode')?.value||'to_pounds';document.querySelectorAll('[data-stone-mode]').forEach(el=>el.classList.toggle('is-hidden',el.dataset.stoneMode!==mode));return mode}
+function stonesPoundsProjection(){const mode=syncStonesPoundsFields();let enteredStones=0,enteredExtra=0,totalPounds=0;if(mode==='to_stones'){totalPounds=Math.max(0,V('stone_total_lb'))}else{enteredStones=Math.max(0,Math.floor(V('stone_whole')));enteredExtra=Math.max(0,V('stone_extra_lb'));totalPounds=enteredStones*14+enteredExtra}const wholeStones=Math.floor(totalPounds/14+1e-12),remainder=Math.max(0,totalPounds-wholeStones*14),decimalStones=totalPounds/14,kilograms=totalPounds*0.45359237,ounces=totalPounds*16,stonePounds=wholeStones*14;return{mode,enteredStones,enteredExtra,totalPounds,wholeStones,remainder,decimalStones,kilograms,ounces,stonePounds}}
+function clearCalcForm(){const form=document.querySelector('.calc');if(!form)return;form.querySelectorAll('input').forEach(input=>{if(input.type==='checkbox')input.checked=false;else input.value=''});form.querySelectorAll('textarea').forEach(textarea=>{textarea.value=''});form.querySelectorAll('select').forEach(select=>{select.selectedIndex=0});form.querySelectorAll('details').forEach(item=>{item.open=false});syncMortgageCosts();syncConcreteFields();syncRoofFields();syncAreaFields();syncPayDeductionFields();syncSalesTaxFields();syncPercentFields();syncFractionFields();syncRatioFields();syncBmiFields();syncFinanceTarget();syncPaymentMode();syncRetirementMode();syncK401Mode();syncSocialSecurityMode();syncAverageReturnFields();syncStonesPoundsFields();show('<strong>0</strong><br>Enter values to calculate a new result.');const engine=currentEngine();if(engine==='cn_mortgage')renderMortgage(0,0,1,0,0,0,0,0,0,0,0,0,0,new Date());if(engine==='loan_page')renderLoanPage();if(engine==='ratio_advanced'||engine==='average_return_advanced'||engine==='stones_pounds_advanced')renderGenericFromEngine(engine)}
 function calc(e){
  switch(e){
   case'trade_value':{let price=V('price'),age=V('age'),miles=V('miles'),cond=V('condition');let ageF=Math.pow(.84,age),expected=Math.max(1,age)*12000,mileageF=Math.max(.72,Math.min(1.12,1-(miles-expected)*0.000003));let r=price*ageF*mileageF*cond;show(`<strong>${USD(Math.max(0,r))}</strong><br>Illustrative estimate, not a dealer quote or appraisal.`);break}
@@ -3757,6 +3813,7 @@ function calc(e){
   case'trailer_payload':{let r=V('gvwr')-V('empty');show(`<strong>${F(r,0)} lb</strong><br>Theoretical payload before other limits.`);break}
   case'tongue_pct':{let r=V('trailer')?V('tongue')/V('trailer')*100:0;show(`<strong>${F(r,2)}%</strong>`);break}
   case'towing':{let loaded=V('curb')+V('people')+V('cargo'),remainingPayload=Math.max(0,V('gvwr')-loaded),pct=Math.max(.01,V('tongue_pct')/100),limits=[['Vehicle tow rating',V('rating')],['GCWR headroom',Math.max(0,V('gcwr')-loaded)],['Hitch rating',V('hitch_rating')],['Payload for tongue weight',remainingPayload/pct]],hit=limits.reduce((a,b)=>b[1]<a[1]?b:a);show(`<strong>${F(hit[1],0)} lb trailer</strong><br>Planning limit: ${hit[0]}; ${F(remainingPayload,0)} lb vehicle payload remains before tongue weight.`);break}
+  case'stones_pounds_advanced':{const p=stonesPoundsProjection();show(`<strong>${F(p.totalPounds,4)} pounds</strong><br>${F(p.wholeStones,0)} st ${F(p.remainder,4)} lb; ${F(p.kilograms,4)} kg; ${F(p.ounces,2)} oz.`);break}
   case'average_return_advanced':{const p=averageReturnProjection();if(!p.valid)show(`<strong>Unable to calculate</strong><br>${p.message}`);else if(p.mode==='periods')show(`<strong>${p.annualized>=0?'+':''}${F(p.annualized,2)}% annualized return</strong><br>${p.cumulative>=0?'+':''}${F(p.cumulative,2)}% cumulative return over ${F(p.totalYears,2)} years; ${F(p.arithmetic,2)}% arithmetic average per entered period.`);else show(`<strong>${p.annualized>=0?'+':''}${F(p.annualized,2)}% money-weighted annual return</strong><br>${p.gain>=0?USD(p.gain)+' net gain':USD(Math.abs(p.gain))+' net loss'}; ${F(p.years,2)} years; ${p.simpleReturn>=0?'+':''}${F(p.simpleReturn,2)}% simple cash-flow-adjusted return.`);break}
   case'debt_payoff_advanced':{const p=debtPayoffProjection();if(!p.valid)show(`<strong>Unable to build a payoff plan</strong><br>${p.message}`);else{const label=p.strategy==='snowball'?'Debt snowball':'Debt avalanche',saved=p.baseline.valid?Math.max(0,p.baseline.interest-p.selected.interest):0;show(`<strong>${p.selected.payoffLabel} debt-free estimate</strong><br>${label}: ${F(p.selected.months,0)} months, ${USD(p.selected.interest)} interest, and ${USD(saved)} less interest than the no-extra-payment plan.`)}break}
   case'fuel_cost':{let r=V('distance')/Math.max(.01,V('mpg'))*V('fuelprice');show(`<strong>${USD(r)}</strong><br>Estimated fuel cost.`);break}
@@ -3940,7 +3997,12 @@ function renderGeneric(cards, bars, rows) {
 function renderGenericFromEngine(engine) {
   if (!document.getElementById("genericSummary")) return;
   let cards=[], bars=[], rows=[];
-  if (engine === "average_return_advanced") {
+  if (engine === "stones_pounds_advanced") {
+    const p=stonesPoundsProjection(),notation=`${F(p.wholeStones,0)} st ${F(p.remainder,4)} lb`;
+    cards=[["Total pounds",`${F(p.totalPounds,4)} lb`,p.mode==='to_stones'?"Entered pound weight.":"Stones x 14 plus additional pounds."],["Stone notation",notation,"Normalized so remaining pounds are below 14."],["Kilograms",`${F(p.kilograms,4)} kg`,"Pounds x 0.45359237."],["Ounces",`${F(p.ounces,2)} oz`,"Pounds x 16."]];
+    bars=[{label:"Whole stones in pounds",value:p.stonePounds,display:`${F(p.stonePounds,2)} lb`},{label:"Remaining pounds",value:p.remainder,display:`${F(p.remainder,4)} lb`}];
+    rows=[["Exact stone relationship","1 st = 14 lb","British stone to avoirdupois pounds."],["Total pounds",`${F(p.totalPounds,8)} lb`,p.mode==='to_stones'?"Entered directly.":`(${F(p.enteredStones,0)} x 14) + ${F(p.enteredExtra,8)}`],["Stone and pounds",notation,"Whole quotient plus pound remainder."],["Decimal stone",`${F(p.decimalStones,8)} st`,"Pounds divided by 14."],["Kilograms",`${F(p.kilograms,8)} kg`,"Pounds x 0.45359237."],["Ounces",`${F(p.ounces,4)} oz`,"Pounds x 16."]];
+  } else if (engine === "average_return_advanced") {
     const p=averageReturnProjection();
     if(!p.valid){cards=[["Result","Check inputs",p.message],["Annualized return","Unavailable","Correct the entered values."],["Cumulative result","Unavailable","No return calculated."],["Calculation mode",p.mode==='periods'?"Holding periods":"Dated cash flows","Selected method."]];bars=[{label:"Result",value:0,display:"Unavailable"}];rows=[["Validation","Unable to calculate",p.message]]}
     else if(p.mode==='periods'){cards=[["Annualized return",`${p.annualized>=0?'+':''}${F(p.annualized,2)}%`,"Geometric return per year."],["Cumulative return",`${p.cumulative>=0?'+':''}${F(p.cumulative,2)}%`,"Compounded across every period."],["Arithmetic average",`${p.arithmetic>=0?'+':''}${F(p.arithmetic,2)}%`,"Mean of entered period returns."],["Total holding time",`${F(p.totalYears,2)} years`,`${F(p.periods.length,0)} active periods.`]];bars=p.points.map(item=>({label:item.label,value:item.value,display:F(item.value,2)}));let valueIndex=100;rows=p.periods.map(item=>{valueIndex*=1+item.rate/100;return[`Period ${item.index}`,`${item.rate>=0?'+':''}${F(item.rate,2)}% over ${F(item.years,2)} yr`,`Value index: ${F(valueIndex,2)}`]});rows.push(["Combined result",`${p.cumulative>=0?'+':''}${F(p.cumulative,2)}% cumulative`,`${p.annualized>=0?'+':''}${F(p.annualized,2)}% annualized`])}
