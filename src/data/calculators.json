@@ -1422,9 +1422,9 @@
       "title": "Wire Size Calculator",
       "cat": "Electrical",
       "engine": "wire_size",
-      "desc": "Estimate copper or aluminum wire size from reference ampacity, continuous load, circuit length, voltage, phase, and voltage-drop target.",
-      "formula": "Recommended size is the larger conductor required by the reference ampacity and voltage-drop checks.",
-      "example": "A 24 A continuous load produces 30 A of planning current before voltage drop and installation conditions are checked.",
+      "desc": "Calculate a reference copper or aluminum AWG wire size from amps, one-way distance, voltage, phase, continuous load, ampacity, and voltage drop.",
+      "formula": "Recommended wire size is the first listed AWG that passes both reference ampacity and entered voltage-drop checks.",
+      "example": "A 24 A continuous load produces 30 A of planning current; the calculator then checks both ampacity and voltage drop.",
       "inputs": [
         [
           "amps",
