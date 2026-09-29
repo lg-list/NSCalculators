@@ -1458,9 +1458,9 @@
       "title": "Amps to Watts Calculator",
       "cat": "Electrical",
       "engine": "amps_watts",
-      "desc": "Convert amps to watts, kilowatts, VA, kVA, and VAR for DC, single-phase AC, or balanced three-phase AC.",
-      "formula": "DC: W = A x V; single phase: W = A x V x PF; three phase: W = sqrt(3) x A x V line-to-line x PF.",
-      "example": "10 A at 120 V and power factor 1 equals 1,200 W; three-phase calculations also use sqrt(3).",
+      "desc": "Convert amps or milliamps to watts, kilowatts, VA, kVA, and VAR for DC, single-phase AC, or balanced three-phase AC.",
+      "formula": "DC: W = A x V; single phase: W = A x V x PF; three-phase line-to-line: W = sqrt(3) x A x V x PF; line-to-neutral: W = 3 x A x V x PF.",
+      "example": "15 A at 120 V and power factor 1 equals 1,800 W; balanced three-phase power also depends on the entered voltage type.",
       "inputs": [
         [
           "amps",
@@ -1482,9 +1482,9 @@
       "title": "Watts to Amps Calculator",
       "cat": "Electrical",
       "engine": "watts_amps",
-      "desc": "Convert watts to amps for DC, single-phase AC, or balanced three-phase AC with power factor and continuous-load planning.",
-      "formula": "DC: A = W / V; single phase: A = W / (V x PF); three phase: A = W / (sqrt(3) x V line-to-line x PF).",
-      "example": "1,200 W at 120 V and power factor 1 equals 10 A.",
+      "desc": "Convert watts, kilowatts, or megawatts to amps for DC, single-phase AC, or balanced three-phase AC with power factor.",
+      "formula": "DC: A = W / V; single phase: A = W / (V x PF); three-phase line-to-line: A = W / (sqrt(3) x V x PF); line-to-neutral: A = W / (3 x V x PF).",
+      "example": "1,500 W at 120 V and power factor 1 equals 12.5 A; balanced three-phase current also depends on the entered voltage type.",
       "inputs": [
         [
           "watts",
