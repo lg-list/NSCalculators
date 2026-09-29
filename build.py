@@ -30,9 +30,12 @@ PRIORITY_LENGTH_CONVERSIONS = {
 LENGTH_UNIT_SYMBOLS = {"millimeters": "mm", "centimeters": "cm", "meters": "m", "inches": "in", "feet": "ft"}
 LENGTH_UNIT_METERS = {"millimeters": 0.001, "centimeters": 0.01, "meters": 1.0, "inches": 0.0254, "feet": 0.3048}
 CALCULATOR_REDIRECTS = {
+    "car-towing-capacity-calculator": "towing-capacity-calculator",
     "concrete-calculator": "concrete-volume-calculator",
+    "gvwr-calculator": "payload-capacity-calculator",
     "loan-payment-calculator": "loan-calculator",
     "financial-calculator": "finance-calculator",
+    "vehicle-payload-calculator": "payload-capacity-calculator",
 }
 
 CATEGORY_ORDER = [
