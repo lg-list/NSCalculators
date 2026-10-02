@@ -1,12 +1,14 @@
 from collections import Counter, defaultdict
 from datetime import date
 from html import escape
+from html.parser import HTMLParser
 from pathlib import Path
 import json
 import math
 import os
 import re
 import shutil
+from urllib.parse import unquote, urljoin, urlparse
 
 ROOT = Path(__file__).parent
 SRC = ROOT / "src" / "data" / "calculators.json"
@@ -267,6 +269,54 @@ def normalized_calc(calc):
 
 def site_url(site, path):
     return site["domain"].rstrip("/") + path
+
+
+class InternalLinkParser(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.hrefs = []
+
+    def handle_starttag(self, tag, attrs):
+        for name, value in attrs:
+            if name == "href" and value:
+                self.hrefs.append(value)
+
+
+def validate_internal_links(site):
+    site_host = (urlparse(site["domain"]).hostname or "").lower()
+    local_hosts = {site_host, f"www.{site_host}"} if site_host else set()
+    base_path = PUBLIC_BASE_PATH.strip("/")
+    checked = 0
+    missing = []
+
+    for html_path in DIST.rglob("*.html"):
+        relative_path = html_path.relative_to(DIST).as_posix()
+        page_path = "/" + relative_path.removesuffix("index.html")
+        document_url = site_url(site, f"/{base_path}" if base_path else "") + page_path
+        parser = InternalLinkParser()
+        parser.feed(html_path.read_text(encoding="utf-8"))
+
+        for href in parser.hrefs:
+            parsed = urlparse(urljoin(document_url, href.strip()))
+            if parsed.scheme not in ("http", "https") or (parsed.hostname or "").lower() not in local_hosts:
+                continue
+            path = unquote(parsed.path or "/")
+            if base_path and (path == f"/{base_path}" or path.startswith(f"/{base_path}/")):
+                path = path[len(base_path) + 1:] or "/"
+            target = DIST / path.lstrip("/")
+            candidates = [target]
+            if path.endswith("/") or not path.rsplit("/", 1)[-1].count("."):
+                candidates.append(target / "index.html")
+                if not path.endswith("/"):
+                    candidates.append(Path(f"{target}.html"))
+            checked += 1
+            if not any(candidate.is_file() for candidate in candidates):
+                missing.append((relative_path, href))
+
+    if missing:
+        examples = "; ".join(f"{page}: {href}" for page, href in missing[:20])
+        raise ValueError(f"Found {len(missing)} broken internal links: {examples}")
+    print(f"Validated {checked} internal links across generated HTML pages.")
 
 
 def apply_base_path(html):
@@ -6435,6 +6485,7 @@ def build():
     sitemap.extend(f"  <url><loc>{h(site_url(site, u))}</loc></url>" for u in urls)
     sitemap.append("</urlset>")
     write(DIST / "sitemap.xml", "\n".join(sitemap) + "\n")
+    validate_internal_links(site)
 
     keyword_map = [
         {
