@@ -431,6 +431,8 @@ def page(site, title, desc, path, body, keywords=None, extra_schema=None, page_t
     robots_meta = "" if indexable else '<meta name="robots" content="noindex,follow">'
     schema_html = "\n".join(json_ld(item) for item in [schema] + extra_schema)
     style_version = "20261002a" if path == "/mortgage-calculator/" else "20261001a" if path == "/wheel-offset-calculator/" else "20260929d" if path == "/geodesic-dome-calculator/" else "20260929c" if path == "/years-to-minutes-calculator/" else "20260929b" if path in ("/watts-to-amps-calculator/", "/amps-to-watts-calculator/") else "20260929a" if path == "/wire-size-calculator/" else "20260928c" if path == "/tire-size-calculator/" else "20260928a" if path == "/volume-calculator/" else "20260927d" if path == "/cd-calculator/" else "20260927c" if path == "/roman-numeral-converter/" else "20260927b" if path == "/commission-calculator/" else "20260927a" if path == "/house-affordability-calculator/" else "20260926a" if path in ("/area-calculator/", "/conversion-calculator/") else ASSET_VERSION
+    if path == "/debt-payoff-calculator/":
+        style_version = "20261002b"
     html = f"""<!doctype html><html lang="{h(site['language'])}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{h(title)}</title><meta name="description" content="{h(desc)}">{robots_meta}<meta name="theme-color" content="#2563eb">
 <meta property="og:type" content="website"><meta property="og:site_name" content="NS Calculators"><meta property="og:locale" content="en_US"><meta property="og:title" content="{h(title)}"><meta property="og:description" content="{h(desc)}"><meta property="og:url" content="{h(site_url(site, path))}">
@@ -1681,17 +1683,21 @@ def debt_payoff_input_html():
         (3, "Auto loan", 14250, 6.49, 285),
         (4, "Other debt", 0, 0, 0),
     ]
-    rows = "".join(f"""<fieldset class="debt-row"><legend>Debt {index}</legend>
+    rows = "".join(f"""<details class="debt-row">
+<summary><span class="debt-summary-title"></span><span class="debt-summary-meta"></span></summary>
+<div class="debt-fields">
 <div class="field debt-name"><label for="debt_{index}_name">Name</label><input id="debt_{index}_name" type="text" maxlength="32" value="{h(name)}"></div>
 <div class="field"><label for="debt_{index}_balance">Current balance</label><div class="input-unit"><input id="debt_{index}_balance" type="number" step="0.01" min="0" value="{balance}"><span>$</span></div></div>
 <div class="field"><label for="debt_{index}_apr">APR</label><div class="input-unit"><input id="debt_{index}_apr" type="number" step="0.01" min="0" max="100" value="{apr}"><span>%</span></div></div>
 <div class="field"><label for="debt_{index}_minimum">Minimum payment</label><div class="input-unit"><input id="debt_{index}_minimum" type="number" step="0.01" min="0" value="{minimum}"><span>$</span></div></div>
-</fieldset>""" for index, name, balance, apr, minimum in debts)
+</div></details>""" for index, name, balance, apr, minimum in debts)
+    summary_script = """<script>(()=>{const mobile=window.matchMedia('(max-width:560px)').matches,formatMoney=new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0});document.querySelectorAll('.debt-row').forEach((row,index)=>{const title=row.querySelector('.debt-summary-title'),meta=row.querySelector('.debt-summary-meta'),name=document.getElementById('debt_'+(index+1)+'_name'),balance=document.getElementById('debt_'+(index+1)+'_balance'),apr=document.getElementById('debt_'+(index+1)+'_apr'),minimum=document.getElementById('debt_'+(index+1)+'_minimum');const update=()=>{const label=name.value.trim()||'Debt '+(index+1),amount=Number(balance.value)||0,rate=Number(apr.value)||0,payment=Number(minimum.value)||0;title.textContent='Debt '+(index+1)+': '+label;meta.textContent=amount>0?formatMoney.format(amount)+' · '+rate.toLocaleString('en-US',{maximumFractionDigits:2})+'% APR · '+formatMoney.format(payment)+'/mo min':'No balance entered'};[name,balance,apr,minimum].forEach(input=>input.addEventListener('input',update));update();row.open=!mobile})})();</script>"""
     return f"""<div class="debt-payoff-fields">
 <div class="fields debt-settings"><div class="field"><label for="debt_strategy">Detailed payoff plan</label><select id="debt_strategy"><option value="avalanche" selected>Debt avalanche: highest APR first</option><option value="snowball">Debt snowball: lowest balance first</option></select></div>
 <div class="field"><label for="debt_extra">Extra monthly payment</label><div class="input-unit"><input id="debt_extra" type="number" step="0.01" min="0" value="100"><span>$</span></div></div>
 <div class="field"><label for="debt_start">First payment month</label><input id="debt_start" type="month" value="2026-10"></div></div>
-<div class="debt-list" aria-label="Debts to repay">{rows}</div></div>"""
+<div class="debt-list" aria-label="Debts to repay">{rows}</div></div>
+{summary_script}"""
 
 
 def average_return_input_html():
@@ -4233,6 +4239,8 @@ def calculator_page(site, calc, related):
     extra = analysis_extra_html(calc)
     calculator_asset_versions = {"amortization-calculator": "20260919b", "retirement-calculator": "20260919c", "401k-calculator": "20260920a", "social-security-calculator": "20260920b", "rmd-calculator": "20260920c", "feet-to-meters-calculator": "20260925a", "compound-interest-calculator": "20260925b"}
     calculator_asset_version = "20260929f" if calc.get("slug") == "f150-bed-dimensions" else "20260929e" if calc.get("slug") == "payload-capacity-calculator" else "20260929d" if calc.get("slug") == "geodesic-dome-calculator" else "20260929c" if calc.get("slug") == "years-to-minutes-calculator" else "20260929b" if calc.get("slug") in ("watts-to-amps-calculator", "amps-to-watts-calculator") else "20260929a" if calc.get("slug") == "wire-size-calculator" else "20260928c" if calc.get("slug") == "tire-size-calculator" else "20260928a" if calc.get("slug") == "volume-calculator" else "20260927d" if calc.get("slug") == "cd-calculator" else "20260927c" if calc.get("slug") == "roman-numeral-converter" else "20260927b" if calc.get("slug") == "commission-calculator" else "20260927a" if calc.get("slug") == "house-affordability-calculator" else "20260926h" if calc.get("slug") == "area-calculator" else "20260926g" if calc.get("slug") == "conversion-calculator" else "20260926f" if calc.get("slug") == "depreciation-calculator" else "20260926e" if calc.get("slug") == "triangle-calculator" else "20260926d" if calc.get("slug") == "liters-to-cu-inches-calculator" else "20260926c" if calc.get("slug") == "weeks-to-months-calculator" else "20260926b" if calc.get("slug") == "sq-feet-to-acres-calculator" else "20260926a" if calc.get("slug") == "stones-to-pounds-calculator" else "20260925c" if calc.get("slug") in PRIORITY_LENGTH_CONVERSIONS else "20260925d" if calc.get("slug") in ("car-depreciation-calculator", "car-resale-value-calculator") else "20260925e" if calc.get("slug") in ("horsepower-calculator", "power-to-weight-ratio-calculator") else "20260925f" if calc.get("slug") == "bottleneck-calculator" else "20260925g" if calc.get("slug") == "ratio-calculator" else "20260925i" if calc.get("slug") == "debt-payoff-calculator" else "20260925j" if calc.get("slug") == "average-return-calculator" else calculator_asset_versions.get(calc.get("slug"), ASSET_VERSION)
+    if calc.get("slug") == "debt-payoff-calculator":
+        calculator_asset_version = "20261002a"
     if calc.get("engine") == "loan_page":
         calc_html = f"""<section class="calc loan-page-calc"><h2>Calculator</h2>{fields}<div class="result" id="result">Enter your values and select Calculate.</div></section>"""
     else:
@@ -4529,6 +4537,8 @@ body{background:var(--bg)}.site-header{border-bottom-color:#dbe7f4}.primary{back
 @media(max-width:900px){.calculator-article:has(.stones-pounds-fields) .calculator-layout.split-analysis{grid-template-columns:minmax(0,1fr)}}
  @media(max-width:560px){.calculator-article:has(.stones-pounds-fields) .calc{padding:10px}.stone-entry{gap:6px!important}.stones-pounds-dashboard .summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.calculator-article:has(.stones-pounds-fields) .result strong{font-size:22px}}
 @media(max-width:560px){.calculator-article:has(#mortgageSummary) .calculator-layout.split-analysis{margin-top:6px}.calculator-article:has(#mortgageSummary) .lead{margin-bottom:2px}.calculator-article:has(#mortgageSummary) .calc{padding:8px;margin-top:2px}.calculator-article:has(#mortgageSummary) .calc h2{font-size:18px;line-height:22px;margin-bottom:2px}.calculator-article:has(#mortgageSummary) .mortgage-fields{gap:5px!important}.calculator-article:has(#mortgageSummary) .mortgage-fields .field label{line-height:18px!important;margin-bottom:2px!important}.calculator-article:has(#mortgageSummary) .mortgage-fields .field input:not([type=checkbox]),.calculator-article:has(#mortgageSummary) .mortgage-fields .field select{height:38px!important}.calculator-article:has(#mortgageSummary) .more-options{margin-top:6px}.calculator-article:has(#mortgageSummary) .calc-actions{margin-top:4px!important}.calculator-article:has(#mortgageSummary) .result{margin-top:2px}}
+.debt-row{display:block;padding:0;overflow:hidden}.debt-row summary{position:relative;display:flex;justify-content:space-between;align-items:center;gap:10px;min-height:42px;padding:8px 10px;cursor:pointer;list-style:none}.debt-row summary::-webkit-details-marker{display:none}.debt-row summary:after{content:"+";flex:none;color:var(--brand);font-size:20px;font-weight:700}.debt-row[open] summary:after{content:"−"}.debt-summary-title{font-size:13px;font-weight:800;color:var(--ink)}.debt-summary-meta{color:var(--muted);font-size:12px;text-align:right}.debt-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;padding:0 9px 9px}.debt-fields .debt-name{grid-column:1/-1}
+@media(max-width:560px){.debt-row summary{align-items:flex-start;flex-direction:column;gap:2px;min-height:48px;padding:7px 9px}.debt-row summary:after{position:absolute;right:10px;top:10px;margin:0}.debt-summary-title{padding-right:18px}.debt-summary-meta{text-align:left;font-size:11px}.debt-fields{gap:5px;padding:0 7px 7px}.debt-fields .field label{font-size:11px!important}}
 '''
 
 SEARCH_JS = r'''
