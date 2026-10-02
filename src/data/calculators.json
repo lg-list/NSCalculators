@@ -708,9 +708,9 @@
       "title": "Wheel Offset Calculator",
       "cat": "Automotive",
       "engine": "offset",
-      "desc": "Estimate wheel offset from wheel width and backspacing.",
-      "formula": "Offset (mm) \u2248 (backspacing \u2212 nominal wheel centerline) \u00d7 25.4.",
-      "example": "A wider backspacing measurement generally moves the mounting face outward relative to wheel centerline.",
+      "desc": "Compare current and new wheel fitment, including offset, poke, inner clearance, tire width, spacers, track change, and backspacing.",
+      "formula": "Outer movement = new half-width \u2212 effective offset \u2212 current half-width + current offset.",
+      "example": "Compare an 8-inch ET45 wheel with a 9-inch ET35 wheel to estimate rim and tire movement before checking the vehicle.",
       "inputs": [
         [
           "width",
