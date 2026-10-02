@@ -931,6 +931,18 @@ def base_and_supplemental(data):
             calc["group"] = "Payload & Towing"
             calc["engine"] = "f150_bed_advanced"
             calc["desc"] = "Compare Ford F-150 5.5-foot, 6.5-foot, and 8-foot bed dimensions, cargo volume, unit conversions, cab availability, and cargo fit."
+        if calc["slug"] == "army-body-fat-calculator":
+            calc.update({
+                "title": "Army Body Composition Calculator",
+                "seo_keyword": "army body fat calculator",
+                "cat": "Health",
+                "group": "Body Metrics",
+                "engine": "army_wht_ratio",
+                "desc": "Calculate Army waist-to-height ratio (WHtR) from waist circumference at the navel and height in inches, then compare it with the current 0.55 screening benchmark.",
+                "formula": "Waist-to-height ratio = waist circumference at the navel (in) / height (in). The current Army benchmark is below 0.55.",
+                "example": "A 38-inch waist divided by a 70-inch height gives a WHtR of 0.543, below the 0.55 numeric benchmark.",
+                "inputs": [["waist", "Waist at navel (in)", "number", 38], ["height", "Height (in)", "number", 70]],
+            })
     title_counts = Counter(slugify_text(calc["title"]) for calc in calculators)
     for calc in calculators:
         if title_counts[slugify_text(calc["title"])] > 1 and not calc.get("seo_keyword"):
@@ -953,6 +965,15 @@ def is_indexable_calculator(calc):
 
 
 def seo_keywords(calc):
+    if calc.get("slug") == "army-body-fat-calculator":
+        return [
+            "army body fat calculator",
+            "army body composition calculator",
+            "army waist to height ratio calculator",
+            "military body fat calculator",
+            "military bmi calculator",
+            "waist to height ratio calculator",
+        ]
     if calc.get("slug") == "wheel-offset-calculator":
         return [
             "wheel offset calculator",
@@ -1013,6 +1034,8 @@ def seo_keywords(calc):
 
 
 def seo_title(calc):
+    if calc.get("slug") == "army-body-fat-calculator":
+        return "Army Body Fat Calculator: Current WHtR Standard"
     if calc.get("slug") == "wheel-offset-calculator":
         return "Wheel Offset Calculator: Fitment, Poke & Backspacing"
     if calc.get("slug") == "car-resale-value-calculator":
@@ -1129,6 +1152,8 @@ def seo_title(calc):
 def seo_description(calc):
     keyword = primary_keyword(calc)
     context = f" for {display_group(calculator_group(calc)).lower()}" if calc.get("seo_context_label") else ""
+    if calc.get("slug") == "army-body-fat-calculator":
+        return "Calculate Army waist-to-height ratio (WHtR) from waist at the navel and height. Compare with the current 0.55 benchmark; this is not an official assessment."
     if calc.get("slug") == "f150-bed-dimensions":
         return "Compare F-150 bed dimensions for 5.5-ft, 6.5-ft, and 8-ft boxes. See inside length, wheelhouse width, height, volume, cab options, and cargo fit."
     if calc.get("slug") == "payload-capacity-calculator":
@@ -1673,6 +1698,14 @@ def stones_pounds_input_html():
 <div class="field field-wide"><label for="stone_total_lb">Total pounds</label><div class="input-unit"><input id="stone_total_lb" type="number" step="any" min="0" value="164"><span>lb</span></div></div>
 </div>
 <p class="field-note">1 stone = exactly 14 pounds. Additional pounds can be decimal values.</p>
+</div>"""
+
+
+def army_wht_ratio_input_html():
+    return """<div class="fields army-wht-fields">
+<div class="field"><label for="waist">Waist at navel (in)</label><input id="waist" type="number" step="0.1" min="0" value="38" inputmode="decimal"></div>
+<div class="field"><label for="height">Height (in)</label><input id="height" type="number" step="0.1" min="0" value="70" inputmode="decimal"></div>
+<p class="field-note field-wide">Enter waist and height in inches. Army waist measurement is taken at the navel.</p>
 </div>"""
 
 
@@ -2591,6 +2624,14 @@ def conversion_copy(calc):
 
 
 def high_value_calculator_copy(calc):
+    if calc.get("slug") == "army-body-fat-calculator":
+        return """
+<h2>Current Army body composition screening</h2><p>Although many people still search for an <strong>Army body fat calculator</strong> or military BMI calculator, the Army's July 2026 public guidance says its current body-composition assessment uses waist-to-height ratio (WHtR), replacing the previous height-and-weight tables, circumference-based tape test, and supplemental body-fat assessments. This page calculates that ratio; it does not estimate body-fat percentage.</p>
+<h2>Formula and example</h2><p class="formula">WHtR = waist circumference at the navel (inches) / height (inches)</p><p>For a 38-inch waist and 70-inch height, 38 / 70 = 0.543 when rounded to three decimals. The Army's published numeric benchmark is below 0.55. A result at or above 0.55 reaches the confirmation-test threshold described in the Army's public update.</p>
+<h2>How to measure</h2><p>Use the waist circumference measured at the navel (belly button) and height in inches so both inputs use the same unit. This calculator only performs the ratio arithmetic from values you enter; it cannot verify measurement technique or determine an official personnel outcome.</p>
+<h2>WHtR is not BMI or body-fat percentage</h2><p>BMI uses weight and height. Body-fat percentage estimates the share of body mass that is fat. WHtR divides waist circumference by height. They are different measurements, so an old BMI-based estimate should not be treated as an Army body-composition result.</p>
+<h2>Official Army sources</h2><p>See the <a href="https://www.army.mil/article/293753" rel="external noopener">U.S. Army's July 7, 2026 body-composition policy update</a> and the <a href="https://www.armyresilience.army.mil/Army-Body-Composition-Program/" rel="external noopener">Army Body Composition Program resources</a>. Policy and procedures may change; Soldiers should follow current unit instructions and official Army guidance.</p>
+<h2>Frequently asked questions</h2><h3>What does this Army body-fat calculator calculate?</h3><p>It calculates waist-to-height ratio, the current Army body-composition screening measure described in the July 2026 update. It does not calculate body-fat percentage.</p><h3>What is the Army WHtR benchmark?</h3><p>The Army's published benchmark is a ratio below 0.55. The public update says results of 0.55 or higher receive a confirmation test; this tool is not an official assessment.</p><h3>Does the current Army standard use BMI?</h3><p>The Army's July 2026 update says WHtR replaces the previous height-and-weight tables and body-fat assessment methods. BMI is a separate calculation and is not calculated here.</p><h3>Can I use centimeters?</h3><p>Convert both measurements to the same unit before dividing. The Army's published implementation describes recording waist and height in inches, so this calculator accepts inches.</p>"""
     if calc.get("slug") == "f150-bed-dimensions":
         return """
 <h2>Ford F-150 bed dimensions at a glance</h2><p>The F-150 is commonly offered with nominal 5.5-foot, 6.5-foot, and 8-foot Styleside boxes, but those names are rounded categories rather than exact inside measurements. Ford's published technical specifications list inside floor lengths of <strong>67.1 inches</strong>, <strong>78.9 inches</strong>, and <strong>97.6 inches</strong>. All three reference boxes are 50.6 inches wide between the wheelhouses and 21.4 inches high.</p><div class="table-scroll"><table class="data-table"><thead><tr><th>Nominal bed</th><th>Inside floor length</th><th>Width between wheelhouses</th><th>Inside height</th><th>Cargo volume</th></tr></thead><tbody><tr><td>5.5 ft</td><td>67.1 in</td><td>50.6 in</td><td>21.4 in</td><td>52.8 cu ft</td></tr><tr><td>6.5 ft</td><td>78.9 in</td><td>50.6 in</td><td>21.4 in</td><td>62.3 cu ft</td></tr><tr><td>8 ft</td><td>97.6 in</td><td>50.6 in</td><td>21.4 in</td><td>77.4 cu ft</td></tr></tbody></table></div>
@@ -4030,7 +4071,10 @@ def calculator_page(site, calc, related):
     desc = seo_description(calc)
     group = calculator_group(calc)
     page_engine = calc.get("engine")
-    if calc.get("slug") == "f150-bed-dimensions":
+    if calc.get("slug") == "army-body-fat-calculator":
+        fields = army_wht_ratio_input_html()
+        page_engine = "army_wht_ratio"
+    elif calc.get("slug") == "f150-bed-dimensions":
         fields = f150_bed_input_html()
         page_engine = "f150_bed_advanced"
     elif calc.get("slug") == "payload-capacity-calculator":
@@ -4241,6 +4285,8 @@ def calculator_page(site, calc, related):
     calculator_asset_version = "20260929f" if calc.get("slug") == "f150-bed-dimensions" else "20260929e" if calc.get("slug") == "payload-capacity-calculator" else "20260929d" if calc.get("slug") == "geodesic-dome-calculator" else "20260929c" if calc.get("slug") == "years-to-minutes-calculator" else "20260929b" if calc.get("slug") in ("watts-to-amps-calculator", "amps-to-watts-calculator") else "20260929a" if calc.get("slug") == "wire-size-calculator" else "20260928c" if calc.get("slug") == "tire-size-calculator" else "20260928a" if calc.get("slug") == "volume-calculator" else "20260927d" if calc.get("slug") == "cd-calculator" else "20260927c" if calc.get("slug") == "roman-numeral-converter" else "20260927b" if calc.get("slug") == "commission-calculator" else "20260927a" if calc.get("slug") == "house-affordability-calculator" else "20260926h" if calc.get("slug") == "area-calculator" else "20260926g" if calc.get("slug") == "conversion-calculator" else "20260926f" if calc.get("slug") == "depreciation-calculator" else "20260926e" if calc.get("slug") == "triangle-calculator" else "20260926d" if calc.get("slug") == "liters-to-cu-inches-calculator" else "20260926c" if calc.get("slug") == "weeks-to-months-calculator" else "20260926b" if calc.get("slug") == "sq-feet-to-acres-calculator" else "20260926a" if calc.get("slug") == "stones-to-pounds-calculator" else "20260925c" if calc.get("slug") in PRIORITY_LENGTH_CONVERSIONS else "20260925d" if calc.get("slug") in ("car-depreciation-calculator", "car-resale-value-calculator") else "20260925e" if calc.get("slug") in ("horsepower-calculator", "power-to-weight-ratio-calculator") else "20260925f" if calc.get("slug") == "bottleneck-calculator" else "20260925g" if calc.get("slug") == "ratio-calculator" else "20260925i" if calc.get("slug") == "debt-payoff-calculator" else "20260925j" if calc.get("slug") == "average-return-calculator" else calculator_asset_versions.get(calc.get("slug"), ASSET_VERSION)
     if calc.get("slug") == "debt-payoff-calculator":
         calculator_asset_version = "20261002a"
+    if calc.get("slug") == "army-body-fat-calculator":
+        calculator_asset_version = "20261002b"
     if calc.get("engine") == "loan_page":
         calc_html = f"""<section class="calc loan-page-calc"><h2>Calculator</h2>{fields}<div class="result" id="result">Enter your values and select Calculate.</div></section>"""
     else:
@@ -5080,6 +5126,7 @@ function squareFeetAcresProjection(){const mode=syncSquareFeetAcresFields();let 
 function syncStonesPoundsFields(){const mode=document.getElementById('stone_mode')?.value||'to_pounds';document.querySelectorAll('[data-stone-mode]').forEach(el=>el.classList.toggle('is-hidden',el.dataset.stoneMode!==mode));return mode}
 function stonesPoundsProjection(){const mode=syncStonesPoundsFields();let enteredStones=0,enteredExtra=0,totalPounds=0;if(mode==='to_stones'){totalPounds=Math.max(0,V('stone_total_lb'))}else{enteredStones=Math.max(0,Math.floor(V('stone_whole')));enteredExtra=Math.max(0,V('stone_extra_lb'));totalPounds=enteredStones*14+enteredExtra}const wholeStones=Math.floor(totalPounds/14+1e-12),remainder=Math.max(0,totalPounds-wholeStones*14),decimalStones=totalPounds/14,kilograms=totalPounds*0.45359237,ounces=totalPounds*16,stonePounds=wholeStones*14;return{mode,enteredStones,enteredExtra,totalPounds,wholeStones,remainder,decimalStones,kilograms,ounces,stonePounds}}
 function clearCalcForm(){const form=document.querySelector('.calc');if(!form)return;form.querySelectorAll('input').forEach(input=>{if(input.type==='checkbox')input.checked=false;else input.value=''});form.querySelectorAll('textarea').forEach(textarea=>{textarea.value=''});form.querySelectorAll('select').forEach(select=>{select.selectedIndex=0});form.querySelectorAll('details').forEach(item=>{item.open=false});syncMortgageCosts();syncConcreteFields();syncRoofFields();syncAreaFields();syncPayDeductionFields();syncSalesTaxFields();syncPercentFields();syncFractionFields();syncRatioFields();syncBmiFields();syncMpgFields();syncCarResaleFields();syncFinanceTarget();syncPaymentMode();syncRetirementMode();syncK401Mode();syncSocialSecurityMode();syncAverageReturnFields();syncDepreciationFields();syncTriangleFields();syncGeometryAreaFields();syncUnitConverterFields(true);syncLitersCubicInchesFields();syncWeeksMonthsFields();syncF150BedFields();syncPayloadCapacityFields();syncDomeGeometryFields();syncYearsMinutesFields();syncSquareFeetAcresFields();syncStonesPoundsFields();syncRomanFields();syncCommissionFields();syncVolumeFields();syncTireFields();show('<strong>0</strong><br>Enter values to calculate a new result.');const engine=currentEngine();if(engine==='cn_mortgage')renderMortgage(0,0,1,0,0,0,0,0,0,0,0,0,0,new Date());if(engine==='loan_page')renderLoanPage();if(engine==='mpg_advanced'||engine==='fuel_cost_advanced'||engine==='trade_in_estimate'||engine==='f150_bed_advanced'||engine==='payload_capacity_advanced'||engine==='volume_advanced'||engine==='cd_advanced'||engine==='roman_advanced'||engine==='commission_advanced'||engine==='house_affordability_advanced'||engine==='ratio_advanced'||engine==='average_return_advanced'||engine==='depreciation_advanced'||engine==='triangle_advanced'||engine==='area_advanced'||engine==='stones_pounds_advanced'||engine==='square_feet_acres_advanced'||engine==='dome_geometry_advanced'||engine==='years_minutes_advanced'||engine==='weeks_months_advanced'||engine==='liters_cubic_inches_advanced'||engine==='unit_converter_advanced'||engine==='car_resale_advanced')renderGenericFromEngine(engine)}
+function armyWhtRatioProjection(){const waist=V('waist'),height=V('height');if(!(waist>0&&height>0))return{valid:false,message:'Enter waist and height values greater than zero.'};return{valid:true,waist,height,ratio:waist/height}}
 function calc(e){
  switch(e){
   case'trade_value':{let price=V('price'),age=V('age'),miles=V('miles'),cond=V('condition');let ageF=Math.pow(.84,age),expected=Math.max(1,age)*12000,mileageF=Math.max(.72,Math.min(1.12,1-(miles-expected)*0.000003));let r=price*ageF*mileageF*cond;show(`<strong>${USD(Math.max(0,r))}</strong><br>Illustrative estimate, not a dealer quote or appraisal.`);break}
@@ -5193,6 +5240,7 @@ function calc(e){
   case'bmi_advanced':{const p=bmiProjection();if(!p.valid)show(`<strong>Check the inputs</strong><br>${p.message}`);else show(`<strong>${F(p.bmi,1)} BMI</strong><br>${p.category}; adult healthy-weight reference ${p.metric?`${F(p.lowKg,1)}-${F(p.highKg,1)} kg`:`${F(p.lowLb,1)}-${F(p.highLb,1)} lb`}.`);break}
   case'cn_bmi':{let h=V('feet')*12+V('inches'),bmi=h?703*V('weight')/(h*h):0;let band=bmi<18.5?'underweight':bmi<25?'healthy range':bmi<30?'overweight range':'obesity range';show(`<strong>${F(bmi,1)} BMI</strong><br>This falls in the ${band} by adult BMI screening ranges.`);break}
   case'cn_calorie':{let h=(V('feet')*12+V('inches'))*2.54,kg=V('weight')*0.453592,age=V('age'),sex=document.getElementById('sex')?.value||'male';let bmr=10*kg+6.25*h-5*age+(sex==='male'?5:-161),tdee=bmr*V('activity');show(`<strong>${F(tdee,0)} calories/day</strong><br>BMR: ${F(bmr,0)}. Protein planning range: ${F(kg*1.6,0)}-${F(kg*2.2,0)} g/day.`);break}
+  case'army_wht_ratio':{const p=armyWhtRatioProjection();if(!p.valid)show(`<strong>Check measurements</strong><br>${p.message}`);else{const status=p.ratio<0.55?'Below the 0.55 numeric benchmark':'At or above 0.55; official confirmation threshold';show(`<strong>WHtR: ${p.ratio.toFixed(3)}</strong><br>${status}. This calculator is not an official assessment.`)}break}
   case'cn_body_metric':{let h=V('feet')*12+V('inches'),bmi=h?703*V('weight')/(h*h):0,low=18.5*h*h/703,high=24.9*h*h/703;show(`<strong>${F(bmi,1)} BMI</strong><br>Adult BMI reference weight range at this height: ${F(low,0)}-${F(high,0)} lb.`);break}
   case'cn_due_date':{let d=new Date(document.getElementById('date')?.value||''),days=V('days');if(isNaN(d)){show('Enter a valid date.');break}let out=new Date(d.getTime()+days*86400000);show(`<strong>${out.toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'})}</strong><br>Calculated by adding ${F(days,0)} days to the start date.`);break}
   case'cn_pace':{let sec=V('hours')*3600+V('minutes')*60+V('seconds'),dist=V('distance');let pace=dist?sec/dist:0;show(`<strong>${Math.floor(pace/60)}:${String(Math.round(pace%60)).padStart(2,'0')} per mile</strong><br>Average speed: ${F(dist/(sec/3600),2)} mph.`);break}
@@ -5222,6 +5270,7 @@ function calc(e){
 function currentEngine(){return document.querySelector('[data-engine]')?.dataset.engine||''}
 document.addEventListener('click',e=>{const btn=e.target.closest('[data-engine]');if(btn)calc(btn.dataset.engine)});
 document.addEventListener('click',e=>{if(e.target.closest('[data-clear]'))clearCalcForm()});
+document.addEventListener('click',e=>{if(e.target.closest('[data-clear]')&&currentEngine()==='army_wht_ratio')renderGenericFromEngine('army_wht_ratio')});
 document.addEventListener('click',e=>{if(e.target.closest('[data-unit-swap]'))swapUnitConverter()});
 document.addEventListener('input',e=>{if(e.target.closest('.calc')){const engine=currentEngine();if(engine)calc(engine)}});
 document.addEventListener('change',e=>{if(e.target.closest('.calc')){const engine=currentEngine();if(engine)calc(engine)}});
@@ -5292,7 +5341,11 @@ function renderGeneric(cards, bars, rows) {
 function renderGenericFromEngine(engine) {
   if (!document.getElementById("genericSummary")) return;
   let cards=[], bars=[], rows=[];
-  if (engine === "f150_bed_advanced") {
+  if (engine === "army_wht_ratio") {
+    const p=armyWhtRatioProjection();
+    if(!p.valid){cards=[["Result","Check measurements",p.message],["Waist-to-height ratio","Unavailable","Enter valid measurements."],["Current benchmark","< 0.55","Army public guidance, July 2026."],["Assessment status","Not determined","Use official Army procedures."]];bars=[];rows=[["Validation","Unable to calculate",p.message]]}
+    else{const meets=p.ratio<0.55;cards=[["Waist-to-height ratio",p.ratio.toFixed(3),"Waist at navel divided by height."],["Army numeric benchmark","< 0.550",meets?"Entered ratio is below the published threshold.":"At or above 0.55; official confirmation threshold."],["Waist at navel",`${F(p.waist,1)} in`,"User-entered circumference."],["Height",`${F(p.height,1)} in`,"User-entered height."]];bars=[{label:"Entered WHtR",value:p.ratio,display:p.ratio.toFixed(3)},{label:"0.55 benchmark",value:.55,display:"0.550"}];rows=[["Formula","Waist at navel / height","Both measurements entered in inches."],["Waist circumference",`${F(p.waist,2)} in`,"Measure at the navel for the Army screening comparison."],["Height",`${F(p.height,2)} in`,"Same unit as waist."],["Calculated WHtR",F(p.ratio,6),"Waist divided by height; shown to three decimals above."],["Published numeric benchmark","Below 0.55",p.ratio<.55?"Below the numeric threshold.":"At or above 0.55; the Army public update describes a confirmation test."],["Official determination","Not provided","This calculator does not verify measurements or personnel eligibility."]]}
+  } else if (engine === "f150_bed_advanced") {
     const p=f150BedProjection(),decimals=p.unit==='in'?1:2,dimension=value=>`${F(p.fromIn(value),decimals)} ${p.unit}`,fitLabel=!p.hasCargo?'Not checked':p.fits?'Fits':'Does not fit',fitNote=!p.hasCargo?'Enter both cargo dimensions.':p.fits?`${p.orientation}; ${dimension(p.lengthClearance)} length and ${dimension(p.widthClearance)} width clearance.`:'Exceeds the closed floor-length or wheelhouse-width rectangle.';
     cards=[["Inside floor length",dimension(p.bed.length),p.bed.label+"."],["Between wheelhouses",dimension(p.width),"Minimum published floor width."],["Cargo box volume",`${F(p.bed.volume,1)} cu ft`,"Ford-published cargo volume."],["Cargo fit",fitLabel,fitNote]];
     bars=p.allBeds.map(item=>({label:item.label,value:p.fromIn(item.length),display:dimension(item.length)}));
