@@ -2583,9 +2583,16 @@ def home_new(site, calculators):
     for calc in calculators:
         by_cat[calc["cat"]].append(calc)
     featured = sorted(calculators, key=keyword_score, reverse=True)[:24]
+    home_featured = featured[:12]
+    area_calculator = next(
+        (c for c in calculators if c["slug"] == "area-calculator" and is_indexable_calculator(c)),
+        None,
+    )
+    if area_calculator and area_calculator not in home_featured:
+        home_featured = [area_calculator] + home_featured[:-1]
     popular_links = "".join(
         f"""<a href="/{h(c['slug'])}/"><span>{h(c['title'])}</span></a>"""
-        for c in featured[:12]
+        for c in home_featured
     )
     category_cards = "".join(
         f"""<a class="home-category" data-home-category="{h(cat.lower())}" href="/{slugify_cat(cat)}/">{category_icon(cat, "home-category-icon")}<strong>{h(cat)}</strong><small>{h(category_desc(cat))}</small></a>"""
