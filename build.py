@@ -1090,7 +1090,7 @@ def seo_title(calc):
     if calc.get("slug") == "mpg-calculator":
         return "MPG Calculator: Gas Mileage, L/100 km & Fuel Cost"
     if calc.get("slug") == "car-trade-in-value-calculator":
-        return "Car Trade-In Value Calculator: Equity & Offer Comparison"
+        return "Car Trade-In Calculator: Value, Equity & Offers"
     if calc.get("slug") == "f150-bed-dimensions":
         return "Ford F-150 Bed Dimensions: 5.5, 6.5 & 8 ft"
     if calc.get("slug") == "payload-capacity-calculator":
