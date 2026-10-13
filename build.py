@@ -1071,6 +1071,8 @@ def seo_title(calc):
         return "Area Calculator: 9 Shapes, Formulas & Units"
     if calc.get("slug") == "used-car-value-calculator":
         return "Used Car Value Calculator: Retail, Private-Party & Trade-In"
+    if calc.get("slug") == "cu-feet-to-cu-meters-calculator":
+        return "Cubic Feet to Cubic Meters Calculator"
     if calc.get("slug") == "sample-size-calculator":
         return "Sample Size Calculator: Confidence & Margin of Error"
     if calc.get("slug") == "payback-period-calculator":
