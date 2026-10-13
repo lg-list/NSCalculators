@@ -1070,7 +1070,7 @@ def seo_title(calc):
     if calc.get("slug") == "area-calculator":
         return "Area Calculator: 8 Shapes, Formulas & Units"
     if calc.get("slug") == "used-car-value-calculator":
-        return "Used Car Value Calculator: Retail, Private-Party & Trade-In"
+        return "Used Car Value Calculator: Car Price Estimate"
     if calc.get("slug") == "cu-feet-to-cu-meters-calculator":
         return "Cubic Feet to Cubic Meters Calculator"
     if calc.get("slug") == "sample-size-calculator":
@@ -1311,7 +1311,7 @@ def seo_description(calc):
     if calc.get("slug") == "car-trade-in-value-calculator":
         return "Estimate a car trade-in value range, compare dealer offers, calculate positive or negative equity, and see the effect on sales tax and financing."
     if calc.get("slug") == "used-car-value-calculator":
-        return "Estimate used-car retail, private-party, and trade-in ranges from a local comparable price, mileage, condition, options, and market adjustments."
+        return "Estimate a used car's price from local comparables, mileage, condition, and options. Compare retail, private-party, and trade-in ranges. No VIN lookup or live market data."
     if calc.get("slug") == "tire-size-calculator":
         return "Compare two tire sizes for diameter, sidewall, circumference, revolutions per mile, speedometer error, and ground-clearance change."
     if calc.get("slug") == "wheel-offset-calculator":
