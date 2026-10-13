@@ -56,6 +56,7 @@ NON_INDEXABLE_UNTIL_PURPOSE_BUILT = {
     "time-card-calculator",
     "time-duration-calculator",
     "time-zone-calculator",
+    "weight-watchers-points-calculator",
 }
 
 CATEGORY_ORDER = [
@@ -4071,6 +4072,19 @@ def subgroup_page(site, cat, group, items):
 
 
 def calculator_page(site, calc, related):
+    if calc.get("slug") == "weight-watchers-points-calculator":
+        title = "WeightWatchers Points Calculator | NS Calculators"
+        desc = "Learn why an unofficial calculator cannot reliably reproduce your personalized WeightWatchers Points budget, and where to check your current plan."
+        body = f"""<main class="main"><div class="wrap"><div class="crumb"><a href="/">Home</a> / <a href="/health-calculators/">Health</a> / WeightWatchers Points</div>
+<article class="article calculator-article"><span class="pill">Health information</span><h1>WeightWatchers Points Calculator</h1>
+<p class="lead">We do not calculate or estimate official WeightWatchers Points. Points budgets and food values are personalized and can depend on the current program and your account.</p>
+<div class="prose"><h2>Check your current Points in WeightWatchers</h2>
+<p>Use the official WeightWatchers app or website to view your personalized budget and track foods. Program details can change, so an unofficial formula or a value copied from an older plan may not match your current account.</p>
+<p><a href="https://www.weightwatchers.com/us/how-it-works" rel="nofollow">Read how the WeightWatchers program works</a>. NS Calculators is independent and is not affiliated with or endorsed by WeightWatchers.</p>
+<h2>Need a different nutrition estimate?</h2><p>A calorie estimate is not a Points conversion and should not be treated as one. You can use our <a href="/calorie-calculator/">calorie calculator</a> for an estimate based on the inputs and assumptions shown there.</p>
+<p>This page is general information, not nutrition or medical advice. Follow guidance from your healthcare professional for individual dietary needs.</p></div></article></div></main>"""
+        crumbs = [("Home", "/"), ("Health Calculators", "/health-calculators/"), ("WeightWatchers Points", "/weight-watchers-points-calculator/")]
+        return page(site, title, desc, "/weight-watchers-points-calculator/", body, ["WeightWatchers Points"], [breadcrumb_schema(site, crumbs)], indexable=False)
     if calc.get("slug") == "payback-period-calculator":
         calc = {
             **calc,
