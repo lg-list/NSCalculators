@@ -1069,6 +1069,8 @@ def seo_keywords(calc):
 def seo_title(calc):
     if calc.get("slug") == "area-calculator":
         return "Area Calculator: 9 Shapes, Formulas & Units"
+    if calc.get("slug") == "used-car-value-calculator":
+        return "Used Car Value Calculator: Retail, Private-Party & Trade-In"
     if calc.get("slug") == "sample-size-calculator":
         return "Sample Size Calculator: Confidence & Margin of Error"
     if calc.get("slug") == "payback-period-calculator":
