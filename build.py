@@ -1311,7 +1311,7 @@ def seo_description(calc):
     if calc.get("slug") == "car-trade-in-value-calculator":
         return "Estimate a car trade-in value range, compare dealer offers, calculate positive or negative equity, and see the effect on sales tax and financing."
     if calc.get("slug") == "used-car-value-calculator":
-        return "Estimate a used car's price from local comparables, mileage, condition, and options. Compare retail, private-party, and trade-in ranges. No VIN lookup or live market data."
+        return "Estimate a used car's value from local comparables, mileage, condition and options. Compare retail, private-party and trade-in ranges. No live VIN data."
     if calc.get("slug") == "tire-size-calculator":
         return "Compare two tire sizes for diameter, sidewall, circumference, revolutions per mile, speedometer error, and ground-clearance change."
     if calc.get("slug") == "wheel-offset-calculator":
