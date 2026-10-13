@@ -1194,7 +1194,7 @@ def seo_description(calc):
     keyword = primary_keyword(calc)
     context = f" for {display_group(calculator_group(calc)).lower()}" if calc.get("seo_context_label") else ""
     if calc.get("slug") == "area-calculator":
-        return "Find the area of 9 common shapes, including circles, triangles, sectors, and trapezoids. Convert square feet, square meters, acres, and more."
+        return "Calculate area for 9 shapes with formulas and supporting measurements. Convert results to square feet, square meters, acres, hectares, and more."
     if calc.get("slug") == "sample-size-calculator":
         return "Estimate survey sample size from confidence level, margin of error, expected proportion, and optional population size. Includes finite population correction."
     if calc.get("slug") == "payback-period-calculator":
