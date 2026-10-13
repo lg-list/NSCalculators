@@ -466,6 +466,7 @@ function clearCalcForm(){const form=document.querySelector('.calc');if(!form)ret
 function armyWhtRatioProjection(){const waist=V('waist'),height=V('height');if(!(waist>0&&height>0))return{valid:false,message:'Enter waist and height values greater than zero.'};return{valid:true,waist,height,ratio:waist/height}}
 function calc(e){
  switch(e){
+  case'payback_advanced':{const p=paybackProjection(),simple=p.simple===null?'no recovery within the selected period':`${F(p.simple,2)} years`,discounted=p.discounted===null?'no recovery within the selected period':`${F(p.discounted,2)} years`;show(`<strong>Simple payback: ${simple}</strong><br>Discounted payback: ${discounted}; net present value: ${USD(p.npv)} over ${p.horizon} years.`);break}
   case'marriage_tax_advanced':{const p=marriageTaxProjection();show(`<strong>${p.difference>0?`${USD(p.difference)} higher estimated joint tax`:p.difference<0?`${USD(Math.abs(p.difference))} lower estimated joint tax`:'No estimated tax difference'}</strong><br>Joint estimate: ${USD(p.jointTax)}; combined Single estimates: ${USD(p.separate)} (${p.year}).`);break}
   case'trade_value':{let price=V('price'),age=V('age'),miles=V('miles'),cond=V('condition');let ageF=Math.pow(.84,age),expected=Math.max(1,age)*12000,mileageF=Math.max(.72,Math.min(1.12,1-(miles-expected)*0.000003));let r=price*ageF*mileageF*cond;show(`<strong>${USD(Math.max(0,r))}</strong><br>Illustrative estimate, not a dealer quote or appraisal.`);break}
   case'f150_bed_advanced':{const p=f150BedProjection(),dimension=value=>`${F(p.fromIn(value),p.unit==='in'?1:2)} ${p.unit}`;if(!p.valid)show('<strong>Check cargo dimensions</strong><br>Enter cargo length and width of zero or greater.');else show(`<strong>${p.bed.label}: ${dimension(p.bed.length)} inside length</strong><br>${dimension(p.width)} between wheelhouses; ${F(p.bed.volume,1)} cu ft; ${p.hasCargo?`cargo ${p.fits?'fits':'does not fit'} the closed floor rectangle`:'enter cargo dimensions for a fit check'}.`);break}
@@ -609,6 +610,7 @@ function currentEngine(){return document.querySelector('[data-engine]')?.dataset
 document.addEventListener('click',e=>{const btn=e.target.closest('[data-engine]');if(btn)calc(btn.dataset.engine)});
 document.addEventListener('click',e=>{if(e.target.closest('[data-clear]'))clearCalcForm()});
 document.addEventListener('click',e=>{if(e.target.closest('[data-clear]')&&currentEngine()==='army_wht_ratio')renderGenericFromEngine('army_wht_ratio')});
+document.addEventListener('click',e=>{if(e.target.closest('[data-clear]')&&currentEngine()==='payback_advanced')renderGenericFromEngine('payback_advanced')});
 document.addEventListener('click',e=>{if(e.target.closest('[data-unit-swap]'))swapUnitConverter()});
 document.addEventListener('input',e=>{if(e.target.closest('.calc')){const engine=currentEngine();if(engine)calc(engine)}});
 document.addEventListener('change',e=>{if(e.target.closest('.calc')){const engine=currentEngine();if(engine)calc(engine)}});
@@ -684,10 +686,30 @@ function marriageTaxProjection(){
   return{year,income1,income2,totalIncome:income1+income2,tax1,tax2,jointTax,separate,difference:jointTax-separate,deductionSingle:data.deductionSingle,deductionJoint:data.deductionJoint,effectiveJoint:(income1+income2)?jointTax/(income1+income2)*100:0,effectiveSeparate:(income1+income2)?separate/(income1+income2)*100:0};
 }
 
+function syncPaybackFields(){const mode=document.getElementById('pb_mode')?.value||'fixed';document.querySelectorAll('[data-payback-mode]').forEach(el=>el.classList.toggle('is-hidden',el.dataset.paybackMode!==mode));return mode}
+function paybackProjection(){
+  const mode=syncPaybackFields(),investment=Math.max(0,V('pb_investment')),rate=Math.max(0,V('pb_discount_rate')/100),horizon=Math.max(1,Math.min(20,Math.floor(V('pb_horizon')||1)));
+  let simple=investment===0?0:null,discounted=investment===0?0:null,simpleBalance=-investment,discountedBalance=-investment,totalCashFlow=0;const schedule=[];
+  for(let year=1;year<=horizon;year++){
+    const flow=mode==='fixed'?V('pb_fixed_flow'):V(`pb_cf_${year}`),presentValue=flow/Math.pow(1+rate,year),beforeSimple=simpleBalance,beforeDiscounted=discountedBalance;
+    simpleBalance+=flow;discountedBalance+=presentValue;totalCashFlow+=flow;
+    if(simple===null&&simpleBalance>=0&&flow>0)simple=year-1+Math.max(0,-beforeSimple)/flow;
+    if(discounted===null&&discountedBalance>=0&&presentValue>0)discounted=year-1+Math.max(0,-beforeDiscounted)/presentValue;
+    schedule.push({year,flow,presentValue,simpleBalance,discountedBalance});
+  }
+  return{mode,investment,rate,horizon,simple,discounted,simpleBalance,discountedBalance,npv:discountedBalance,totalCashFlow,schedule};
+}
+
 function renderGenericFromEngine(engine) {
   if (!document.getElementById("genericSummary")) return;
   let cards=[], bars=[], rows=[];
-  if (engine === "marriage_tax_advanced") {
+  if (engine === "payback_advanced") {
+    const p=paybackProjection(),simple=p.simple===null?"Not recovered":`${F(p.simple,2)} years`,discounted=p.discounted===null?"Not recovered":`${F(p.discounted,2)} years`,flowsLabel=p.mode==='fixed'?"Constant annual cash flow":"Entered yearly cash flows";
+    cards=[["Simple payback",simple,"Undiscounted cumulative cash flow."],["Discounted payback",discounted,`${F(p.rate*100,2)}% annual discount rate.`],["Net present value",USD(p.npv),`Discounted over ${p.horizon} years.`],["Total cash flow",USD(p.totalCashFlow),flowsLabel+" over the selected horizon."]];
+    bars=[{label:"Initial investment",value:p.investment,display:USD(p.investment)},{label:"Cash flows received",value:p.totalCashFlow,display:USD(p.totalCashFlow)},{label:"Net present value",value:p.npv,display:USD(p.npv)}];
+    rows=[["Cash-flow model",flowsLabel,"Annual cash flows are modeled at year-end."],["Initial investment",USD(p.investment),"Time-zero cash outflow."],["Discount rate",`${F(p.rate*100,3)}%`,"Applied to each annual flow by its year."],["Analysis horizon",`${p.horizon} years`,"Cash flows after this horizon are not included."],["Simple payback",simple,"Based on undiscounted cumulative cash flow."],["Discounted payback",discounted,"Based on cumulative present value."],["Net present value",USD(p.npv),"Initial outflow plus present values over the horizon."],["Cash flow after horizon",USD(p.simpleBalance),"Undiscounted ending balance."]];
+    const schedule=document.querySelector('#paybackSchedule');if(schedule)schedule.innerHTML=p.schedule.map(row=>`<tr><td>${row.year}</td><td>${USD(row.flow)}</td><td>${USD(row.presentValue)}</td><td>${USD(row.simpleBalance)}</td><td>${USD(row.discountedBalance)}</td></tr>`).join('');
+  } else if (engine === "marriage_tax_advanced") {
     const p=marriageTaxProjection(),direction=p.difference>0?"higher joint estimate":p.difference<0?"lower joint estimate":"no estimated difference";
     cards=[["Joint filing estimate",USD(p.jointTax),`${p.year} federal regular income tax; $${F(p.deductionJoint,0)} standard deduction.`],["Two Single estimates",USD(p.separate),`${USD(p.tax1)} and ${USD(p.tax2)}.`],["Estimated change",`${p.difference>0?'+':''}${USD(p.difference)}`,direction+" than the two-Single comparison."],["Effective rate comparison",`${F(p.effectiveSeparate,2)}% → ${F(p.effectiveJoint,2)}%`,"Estimated tax divided by combined ordinary income."]];
     bars=[{label:"Spouse 1 (Single)",value:p.tax1,display:USD(p.tax1)},{label:"Spouse 2 (Single)",value:p.tax2,display:USD(p.tax2)},{label:"Married filing jointly",value:p.jointTax,display:USD(p.jointTax)}];

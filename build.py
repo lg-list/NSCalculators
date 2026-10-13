@@ -44,6 +44,19 @@ CALCULATOR_REDIRECTS = {
     "wheel-backspacing-calculator": "wheel-offset-calculator",
     "vehicle-payload-calculator": "payload-capacity-calculator",
 }
+NON_INDEXABLE_UNTIL_PURPOSE_BUILT = {
+    "anorexic-bmi-calculator",
+    "conception-calculator",
+    "estate-tax-calculator",
+    "ovulation-calculator",
+    "period-calculator",
+    "pregnancy-conception-calculator",
+    "pregnancy-weight-gain-calculator",
+    "tax-calculator",
+    "time-card-calculator",
+    "time-duration-calculator",
+    "time-zone-calculator",
+}
 
 CATEGORY_ORDER = [
     "Automotive",
@@ -658,6 +671,8 @@ def calculator_net_group(keyword, cat):
     text = keyword.lower()
     if slugify_text(keyword) == "marriage-calculator":
         return "Taxes & Pay"
+    if slugify_text(keyword) == "payback-period-calculator":
+        return "Investment"
     if cat == "Financial":
         if any(word in text for word in ["mortgage", "house", "home equity", "heloc", "rent vs buy", "down payment"]):
             return "Mortgages"
@@ -718,7 +733,9 @@ def calculator_net_template(keyword, slug, cat):
         "example": f"Enter sample values to generate an illustrative {keyword.lower()} result.",
         "inputs": [["amount", "Amount", "number", 1000], ["rate", "Rate (%)", "number", 5], ["years", "Years", "number", 10]],
     }
-    if slug == "marriage-calculator":
+    if slug == "payback-period-calculator":
+        base.update({"engine": "payback_advanced", "desc": "Estimate simple and discounted investment payback from fixed or irregular annual cash flows, with NPV and a year-by-year schedule.", "formula": "Simple payback is the point when cumulative cash flow recovers the initial investment; discounted payback discounts each year's cash flow before accumulation.", "inputs": []})
+    elif slug == "marriage-calculator":
         base.update({"engine": "marriage_tax_advanced", "desc": "Compare estimated 2025 or 2026 US federal income tax for two individual filers with a married-filing-jointly estimate.", "formula": "Estimated regular federal income tax = progressive tax on ordinary taxable income after the applicable standard deduction.", "inputs": []})
     elif slug == "sales-tax-calculator":
         base.update({"engine": "sales_tax_advanced", "desc": "Add sales tax to a purchase, reverse tax from a tax-inclusive total, or calculate the tax rate from before-tax and after-tax prices.", "formula": "Sales tax = taxable amount x tax rate; tax-inclusive total = before-tax total + sales tax.", "inputs": []})
@@ -963,6 +980,8 @@ def primary_keyword(calc):
 
 def is_indexable_calculator(calc):
     searches = int((calc.get("keyword_data") or {}).get("monthly_searches") or 0)
+    if calc.get("slug") in NON_INDEXABLE_UNTIL_PURPOSE_BUILT:
+        return False
     # Generic calculator.net placeholders reuse one compound-growth model for
     # unrelated intents. Keep them available to users, but do not ask search
     # engines to index them until each page has a purpose-built calculator.
@@ -972,6 +991,8 @@ def is_indexable_calculator(calc):
 
 
 def seo_keywords(calc):
+    if calc.get("slug") == "payback-period-calculator":
+        return ["payback period calculator", "discounted payback period calculator", "investment payback calculator", "NPV payback calculator", "cash flow payback period"]
     if calc.get("slug") == "marriage-calculator":
         return ["marriage tax calculator", "married filing jointly vs single calculator", "marriage tax penalty calculator", "marriage tax bonus calculator", "2026 married filing jointly tax estimate"]
     if calc.get("slug") == "army-body-fat-calculator":
@@ -1043,6 +1064,8 @@ def seo_keywords(calc):
 
 
 def seo_title(calc):
+    if calc.get("slug") == "payback-period-calculator":
+        return "Payback Period Calculator: Discounted & Cash Flow"
     if calc.get("slug") == "marriage-calculator":
         return "Marriage Tax Calculator: Joint vs Single Estimate"
     if calc.get("slug") == "army-body-fat-calculator":
@@ -1163,6 +1186,8 @@ def seo_title(calc):
 def seo_description(calc):
     keyword = primary_keyword(calc)
     context = f" for {display_group(calculator_group(calc)).lower()}" if calc.get("seo_context_label") else ""
+    if calc.get("slug") == "payback-period-calculator":
+        return "Calculate simple and discounted payback periods from fixed or annual cash flows. Compare NPV, break-even year, and an investment schedule."
     if calc.get("slug") == "marriage-calculator":
         return "Compare estimated 2025 or 2026 US federal income tax for two single filers with a married-filing-jointly estimate using IRS tax brackets."
     if calc.get("slug") == "army-body-fat-calculator":
@@ -1559,6 +1584,34 @@ def marriage_tax_copy(calc):
 <h2>What the estimate excludes</h2><p>This is a simplified comparison of regular federal income tax on ordinary income, not a tax return or tax advice. It uses the standard deduction and does not model tax credits, itemized deductions, qualified dividends or capital gains, AMT, additional Medicare tax, self-employment tax, state or local taxes, dependents, or filing-status exceptions such as Head of Household. Your actual filing outcome can differ. Review the <a href="/take-home-pay-calculator/">take-home pay calculator</a> for a separate paycheck estimate and consult IRS instructions or a qualified tax professional for a full estimate.</p>
 <h2>Why marriage can change a tax bill</h2><p>Federal brackets and deductions for joint filers are not always exactly twice the single amounts at every income level. When spouses have similar incomes, some income may cross a bracket threshold after combining; when incomes differ substantially, joint brackets can sometimes reduce the combined regular tax. Credits, deductions, and other tax provisions can change that comparison.</p>
 <h2>Frequently asked questions</h2><h3>Does this determine whether we should file jointly?</h3><p>No. It compares a limited federal income-tax estimate. Filing decisions can affect credits, deductions, liability, and state taxes beyond this model.</p><h3>Which year should I choose?</h3><p>Select the year the income was earned, not the year you submit the return. For example, 2026 income is generally reported on a return filed in 2027.</p>"""
+
+
+def payback_input_html():
+    irregular = "".join(
+        f'<div class="field" data-payback-mode="irregular"><label for="pb_cf_{year}">Year {year} cash flow</label><div class="input-unit"><input id="pb_cf_{year}" type="number" step="any" value="{3000 if year == 1 else 0}"><span>$</span></div></div>'
+        for year in range(1, 21)
+    )
+    return f"""<div class="fields payback-fields">
+<div class="field field-wide"><label for="pb_mode">Cash-flow model</label><select id="pb_mode"><option value="fixed" selected>Same cash flow each year</option><option value="irregular">Enter each year's cash flow</option></select></div>
+<div class="field"><label for="pb_investment">Initial investment</label><div class="input-unit"><input id="pb_investment" type="number" step="any" min="0" value="10000"><span>$</span></div></div>
+<div class="field" data-payback-mode="fixed"><label for="pb_fixed_flow">Annual cash flow</label><div class="input-unit"><input id="pb_fixed_flow" type="number" step="any" value="3000"><span>$/yr</span></div></div>
+<div class="field"><label for="pb_discount_rate">Discount rate</label><div class="input-unit"><input id="pb_discount_rate" type="number" step="any" min="0" value="8"><span>%/yr</span></div></div>
+<div class="field"><label for="pb_horizon">Analysis period</label><div class="input-unit"><input id="pb_horizon" type="number" step="1" min="1" max="20" value="20"><span>years</span></div></div>
+<details class="more-options field-wide" data-payback-mode="irregular"><summary>Annual cash-flow entries</summary><div class="fields">{irregular}</div></details>
+<p class="field-note field-wide">Enter net cash flows after operating costs. The discounted estimate assumes each annual flow arrives at year-end.</p>
+</div>"""
+
+
+def payback_copy(calc):
+    if calc.get("slug") != "payback-period-calculator":
+        return None
+    return """
+<h2>How to use the payback period calculator</h2><p>Enter an initial investment, choose a constant annual cash flow or enter separate cash flows by year, set a discount rate, and choose the analysis horizon. Cash flows may be negative in years with additional costs. The calculator reports simple payback, discounted payback, net present value (NPV), and the annual balances.</p>
+<h2>Simple and discounted payback formulas</h2><p class="formula">Simple payback = first point cumulative cash flow equals initial investment.<br>Discounted cash flow in year t = cash flow<sub>t</sub> / (1 + discount rate)<sup>t</sup>.<br>NPV = -initial investment + sum of discounted cash flows.</p>
+<p>For a constant positive cash flow, simple payback is initial investment divided by annual cash flow. For irregular flows, the calculator accumulates each year's inflow and outflow, interpolating within the recovery year. Discounted payback applies the selected annual rate before it accumulates flows.</p>
+<h2>Worked example</h2><p>A $10,000 investment that returns $3,000 per year has a simple payback of about 3.33 years before discounting. Entering a positive discount rate generally lengthens the discounted payback because future dollars are assigned a lower present value.</p>
+<h2>How to interpret NPV and payback</h2><p>A positive NPV means the modeled cash flows exceed the initial outlay after discounting at the entered rate and over the selected horizon. Payback ignores cash flows after recovery; discounted payback accounts for the time value of money but still does not measure risk, financing, taxes, or the full return on capital. Compare these results with other investment measures rather than using payback alone.</p>
+<h2>Frequently asked questions</h2><h3>What does no payback within the horizon mean?</h3><p>The entered cash flows did not recover the initial investment within the selected analysis period.</p><h3>Can cash flow vary each year?</h3><p>Yes. Select the irregular model and enter annual net flows. Unused year fields are treated as zero.</p><h3>When are cash flows assumed to occur?</h3><p>Discounted annual flows are modeled at each year-end. The calculator does not model monthly timing, taxes, depreciation, inflation, or financing costs.</p>"""
 
 
 def truck_payload_input_html():
@@ -3517,6 +3570,14 @@ def default_calculator_copy(calc):
 
 
 def analysis_extra_html(calc):
+    if calc.get("slug") == "payback-period-calculator":
+        return """<section class="mortgage-dashboard generic-dashboard payback-dashboard" aria-label="Investment payback analysis">
+<div class="section-head stack"><h2>Payback and Cash-Flow Results</h2><p>Compare simple recovery, discounted recovery, NPV, and annual cash-flow balances.</p></div>
+<div class="summary-grid" id="genericSummary"></div>
+<div class="chart-grid"><div class="chart-card compact-chart"><h3>Investment and Cash-Flow Summary</h3><canvas id="genericChart" width="620" height="220" aria-label="Initial investment, cash received, and net present value" data-chart-type="bars"></canvas></div></div>
+<div class="table-card"><h3>Calculation Details</h3><div class="table-scroll"><table class="data-table" id="genericTable"><thead><tr><th>Metric</th><th>Value</th><th>Method</th></tr></thead><tbody></tbody></table></div></div>
+<div class="table-card"><h3>Annual Cash-Flow Schedule</h3><div class="table-scroll"><table class="data-table"><thead><tr><th>Year</th><th>Cash flow</th><th>Present value</th><th>Simple balance</th><th>Discounted balance</th></tr></thead><tbody id="paybackSchedule"></tbody></table></div></div>
+</section>"""
     if calc.get("slug") == "f150-bed-dimensions":
         return """<section class="mortgage-dashboard generic-dashboard f150-bed-dashboard" aria-label="F-150 bed dimension results">
 <div class="section-head stack"><h2>F-150 Bed Size Results</h2><p>Compare the selected box dimensions, cargo fit, and all three published bed sizes.</p></div>
@@ -3968,6 +4029,13 @@ def subgroup_page(site, cat, group, items):
 
 
 def calculator_page(site, calc, related):
+    if calc.get("slug") == "payback-period-calculator":
+        calc = {
+            **calc,
+            "desc": "Compare simple and discounted payback periods from fixed or irregular yearly cash flows, with net present value and an annual schedule.",
+            "formula": "NPV = -initial investment + sum of each annual cash flow divided by (1 + discount rate) raised to its year.",
+            "example": "$10,000 invested with $3,000 in annual net cash flow has a simple payback of about 3.33 years before discounting.",
+        }
     if calc.get("slug") == "f150-bed-dimensions":
         calc = {
             **calc,
@@ -4105,7 +4173,10 @@ def calculator_page(site, calc, related):
     desc = seo_description(calc)
     group = calculator_group(calc)
     page_engine = calc.get("engine")
-    if calc.get("slug") == "marriage-calculator":
+    if calc.get("slug") == "payback-period-calculator":
+        fields = payback_input_html()
+        page_engine = "payback_advanced"
+    elif calc.get("slug") == "marriage-calculator":
         fields = marriage_tax_input_html()
         page_engine = "marriage_tax_advanced"
     elif calc.get("slug") == "army-body-fat-calculator":
@@ -4316,7 +4387,7 @@ def calculator_page(site, calc, related):
     else:
         fields = f"""<div class="fields">{''.join(input_html(f) for f in calc["inputs"])}</div>"""
     rel = "".join(card(c, compact=True) for c in related)
-    content = marriage_tax_copy(calc) or priority_length_copy(calc) or high_value_calculator_copy(calc) or conversion_copy(calc) or default_calculator_copy(calc)
+    content = payback_copy(calc) or marriage_tax_copy(calc) or priority_length_copy(calc) or high_value_calculator_copy(calc) or conversion_copy(calc) or default_calculator_copy(calc)
     extra = analysis_extra_html(calc)
     calculator_asset_versions = {"amortization-calculator": "20260919b", "retirement-calculator": "20260919c", "401k-calculator": "20260920a", "social-security-calculator": "20260920b", "rmd-calculator": "20260920c", "feet-to-meters-calculator": "20260925a", "compound-interest-calculator": "20260925b"}
     calculator_asset_version = "20260929f" if calc.get("slug") == "f150-bed-dimensions" else "20260929e" if calc.get("slug") == "payload-capacity-calculator" else "20260929d" if calc.get("slug") == "geodesic-dome-calculator" else "20260929c" if calc.get("slug") == "years-to-minutes-calculator" else "20260929b" if calc.get("slug") in ("watts-to-amps-calculator", "amps-to-watts-calculator") else "20260929a" if calc.get("slug") == "wire-size-calculator" else "20260928c" if calc.get("slug") == "tire-size-calculator" else "20260928a" if calc.get("slug") == "volume-calculator" else "20260927d" if calc.get("slug") == "cd-calculator" else "20260927c" if calc.get("slug") == "roman-numeral-converter" else "20260927b" if calc.get("slug") == "commission-calculator" else "20260927a" if calc.get("slug") == "house-affordability-calculator" else "20260926h" if calc.get("slug") == "area-calculator" else "20260926g" if calc.get("slug") == "conversion-calculator" else "20260926f" if calc.get("slug") == "depreciation-calculator" else "20260926e" if calc.get("slug") == "triangle-calculator" else "20260926d" if calc.get("slug") == "liters-to-cu-inches-calculator" else "20260926c" if calc.get("slug") == "weeks-to-months-calculator" else "20260926b" if calc.get("slug") == "sq-feet-to-acres-calculator" else "20260926a" if calc.get("slug") == "stones-to-pounds-calculator" else "20260925c" if calc.get("slug") in PRIORITY_LENGTH_CONVERSIONS else "20260925d" if calc.get("slug") in ("car-depreciation-calculator", "car-resale-value-calculator") else "20260925e" if calc.get("slug") in ("horsepower-calculator", "power-to-weight-ratio-calculator") else "20260925f" if calc.get("slug") == "bottleneck-calculator" else "20260925g" if calc.get("slug") == "ratio-calculator" else "20260925i" if calc.get("slug") == "debt-payoff-calculator" else "20260925j" if calc.get("slug") == "average-return-calculator" else calculator_asset_versions.get(calc.get("slug"), ASSET_VERSION)
@@ -4326,6 +4397,8 @@ def calculator_page(site, calc, related):
         calculator_asset_version = "20261002b"
     if calc.get("slug") == "marriage-calculator":
         calculator_asset_version = "20261013a"
+    if calc.get("slug") == "payback-period-calculator":
+        calculator_asset_version = "20261013b"
     if calc.get("engine") == "loan_page":
         calc_html = f"""<section class="calc loan-page-calc"><h2>Calculator</h2>{fields}<div class="result" id="result">Enter your values and select Calculate.</div></section>"""
     else:
@@ -5168,6 +5241,7 @@ function clearCalcForm(){const form=document.querySelector('.calc');if(!form)ret
 function armyWhtRatioProjection(){const waist=V('waist'),height=V('height');if(!(waist>0&&height>0))return{valid:false,message:'Enter waist and height values greater than zero.'};return{valid:true,waist,height,ratio:waist/height}}
 function calc(e){
  switch(e){
+  case'payback_advanced':{const p=paybackProjection(),simple=p.simple===null?'no recovery within the selected period':`${F(p.simple,2)} years`,discounted=p.discounted===null?'no recovery within the selected period':`${F(p.discounted,2)} years`;show(`<strong>Simple payback: ${simple}</strong><br>Discounted payback: ${discounted}; net present value: ${USD(p.npv)} over ${p.horizon} years.`);break}
   case'marriage_tax_advanced':{const p=marriageTaxProjection();show(`<strong>${p.difference>0?`${USD(p.difference)} higher estimated joint tax`:p.difference<0?`${USD(Math.abs(p.difference))} lower estimated joint tax`:'No estimated tax difference'}</strong><br>Joint estimate: ${USD(p.jointTax)}; combined Single estimates: ${USD(p.separate)} (${p.year}).`);break}
   case'trade_value':{let price=V('price'),age=V('age'),miles=V('miles'),cond=V('condition');let ageF=Math.pow(.84,age),expected=Math.max(1,age)*12000,mileageF=Math.max(.72,Math.min(1.12,1-(miles-expected)*0.000003));let r=price*ageF*mileageF*cond;show(`<strong>${USD(Math.max(0,r))}</strong><br>Illustrative estimate, not a dealer quote or appraisal.`);break}
   case'f150_bed_advanced':{const p=f150BedProjection(),dimension=value=>`${F(p.fromIn(value),p.unit==='in'?1:2)} ${p.unit}`;if(!p.valid)show('<strong>Check cargo dimensions</strong><br>Enter cargo length and width of zero or greater.');else show(`<strong>${p.bed.label}: ${dimension(p.bed.length)} inside length</strong><br>${dimension(p.width)} between wheelhouses; ${F(p.bed.volume,1)} cu ft; ${p.hasCargo?`cargo ${p.fits?'fits':'does not fit'} the closed floor rectangle`:'enter cargo dimensions for a fit check'}.`);break}
@@ -5311,6 +5385,7 @@ function currentEngine(){return document.querySelector('[data-engine]')?.dataset
 document.addEventListener('click',e=>{const btn=e.target.closest('[data-engine]');if(btn)calc(btn.dataset.engine)});
 document.addEventListener('click',e=>{if(e.target.closest('[data-clear]'))clearCalcForm()});
 document.addEventListener('click',e=>{if(e.target.closest('[data-clear]')&&currentEngine()==='army_wht_ratio')renderGenericFromEngine('army_wht_ratio')});
+document.addEventListener('click',e=>{if(e.target.closest('[data-clear]')&&currentEngine()==='payback_advanced')renderGenericFromEngine('payback_advanced')});
 document.addEventListener('click',e=>{if(e.target.closest('[data-unit-swap]'))swapUnitConverter()});
 document.addEventListener('input',e=>{if(e.target.closest('.calc')){const engine=currentEngine();if(engine)calc(engine)}});
 document.addEventListener('change',e=>{if(e.target.closest('.calc')){const engine=currentEngine();if(engine)calc(engine)}});
@@ -5386,10 +5461,30 @@ function marriageTaxProjection(){
   return{year,income1,income2,totalIncome:income1+income2,tax1,tax2,jointTax,separate,difference:jointTax-separate,deductionSingle:data.deductionSingle,deductionJoint:data.deductionJoint,effectiveJoint:(income1+income2)?jointTax/(income1+income2)*100:0,effectiveSeparate:(income1+income2)?separate/(income1+income2)*100:0};
 }
 
+function syncPaybackFields(){const mode=document.getElementById('pb_mode')?.value||'fixed';document.querySelectorAll('[data-payback-mode]').forEach(el=>el.classList.toggle('is-hidden',el.dataset.paybackMode!==mode));return mode}
+function paybackProjection(){
+  const mode=syncPaybackFields(),investment=Math.max(0,V('pb_investment')),rate=Math.max(0,V('pb_discount_rate')/100),horizon=Math.max(1,Math.min(20,Math.floor(V('pb_horizon')||1)));
+  let simple=investment===0?0:null,discounted=investment===0?0:null,simpleBalance=-investment,discountedBalance=-investment,totalCashFlow=0;const schedule=[];
+  for(let year=1;year<=horizon;year++){
+    const flow=mode==='fixed'?V('pb_fixed_flow'):V(`pb_cf_${year}`),presentValue=flow/Math.pow(1+rate,year),beforeSimple=simpleBalance,beforeDiscounted=discountedBalance;
+    simpleBalance+=flow;discountedBalance+=presentValue;totalCashFlow+=flow;
+    if(simple===null&&simpleBalance>=0&&flow>0)simple=year-1+Math.max(0,-beforeSimple)/flow;
+    if(discounted===null&&discountedBalance>=0&&presentValue>0)discounted=year-1+Math.max(0,-beforeDiscounted)/presentValue;
+    schedule.push({year,flow,presentValue,simpleBalance,discountedBalance});
+  }
+  return{mode,investment,rate,horizon,simple,discounted,simpleBalance,discountedBalance,npv:discountedBalance,totalCashFlow,schedule};
+}
+
 function renderGenericFromEngine(engine) {
   if (!document.getElementById("genericSummary")) return;
   let cards=[], bars=[], rows=[];
-  if (engine === "marriage_tax_advanced") {
+  if (engine === "payback_advanced") {
+    const p=paybackProjection(),simple=p.simple===null?"Not recovered":`${F(p.simple,2)} years`,discounted=p.discounted===null?"Not recovered":`${F(p.discounted,2)} years`,flowsLabel=p.mode==='fixed'?"Constant annual cash flow":"Entered yearly cash flows";
+    cards=[["Simple payback",simple,"Undiscounted cumulative cash flow."],["Discounted payback",discounted,`${F(p.rate*100,2)}% annual discount rate.`],["Net present value",USD(p.npv),`Discounted over ${p.horizon} years.`],["Total cash flow",USD(p.totalCashFlow),flowsLabel+" over the selected horizon."]];
+    bars=[{label:"Initial investment",value:p.investment,display:USD(p.investment)},{label:"Cash flows received",value:p.totalCashFlow,display:USD(p.totalCashFlow)},{label:"Net present value",value:p.npv,display:USD(p.npv)}];
+    rows=[["Cash-flow model",flowsLabel,"Annual cash flows are modeled at year-end."],["Initial investment",USD(p.investment),"Time-zero cash outflow."],["Discount rate",`${F(p.rate*100,3)}%`,"Applied to each annual flow by its year."],["Analysis horizon",`${p.horizon} years`,"Cash flows after this horizon are not included."],["Simple payback",simple,"Based on undiscounted cumulative cash flow."],["Discounted payback",discounted,"Based on cumulative present value."],["Net present value",USD(p.npv),"Initial outflow plus present values over the horizon."],["Cash flow after horizon",USD(p.simpleBalance),"Undiscounted ending balance."]];
+    const schedule=document.querySelector('#paybackSchedule');if(schedule)schedule.innerHTML=p.schedule.map(row=>`<tr><td>${row.year}</td><td>${USD(row.flow)}</td><td>${USD(row.presentValue)}</td><td>${USD(row.simpleBalance)}</td><td>${USD(row.discountedBalance)}</td></tr>`).join('');
+  } else if (engine === "marriage_tax_advanced") {
     const p=marriageTaxProjection(),direction=p.difference>0?"higher joint estimate":p.difference<0?"lower joint estimate":"no estimated difference";
     cards=[["Joint filing estimate",USD(p.jointTax),`${p.year} federal regular income tax; $${F(p.deductionJoint,0)} standard deduction.`],["Two Single estimates",USD(p.separate),`${USD(p.tax1)} and ${USD(p.tax2)}.`],["Estimated change",`${p.difference>0?'+':''}${USD(p.difference)}`,direction+" than the two-Single comparison."],["Effective rate comparison",`${F(p.effectiveSeparate,2)}% → ${F(p.effectiveJoint,2)}%`,"Estimated tax divided by combined ordinary income."]];
     bars=[{label:"Spouse 1 (Single)",value:p.tax1,display:USD(p.tax1)},{label:"Spouse 2 (Single)",value:p.tax2,display:USD(p.tax2)},{label:"Married filing jointly",value:p.jointTax,display:USD(p.jointTax)}];
