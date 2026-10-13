@@ -2640,6 +2640,7 @@ def home_new(site, calculators):
 <section class="home-hero"><div class="wrap hero-stack">
 <div class="hero-copy"><h1>Free Online Calculators</h1><p>Calculate mortgage payments, loans, compound interest, BMI, auto costs, and unit conversions with clear formulas, examples, and no signup.</p></div>
 <div class="search-panel wide-search" aria-label="Calculator search"><label for="siteSearch">Search calculators</label><div class="search-wrap"><input id="siteSearch" class="search" placeholder="Search calculators..." aria-label="Search calculators"><div id="searchResults" class="search-results"></div></div></div>
+<nav class="home-quick-links" aria-label="Popular calculators"><span>Popular:</span><a href="/compound-interest-calculator/">Compound Interest</a><a href="/feet-to-meters-calculator/">Feet to Meters</a><a href="/area-calculator/">Area</a><a href="/mortgage-calculator/">Mortgage</a></nav>
 </div></section>
 <section class="home-block"><div class="wrap"><h2>Calculator Categories</h2><div class="category-filter"><input id="categoryFilter" type="search" placeholder="Filter categories..." aria-label="Filter categories"></div><div class="home-category-grid">{category_cards}</div></div></section>
 <section class="home-block browse-all"><div class="wrap browse-panel"><div><h2>Browse All Calculators</h2><p>Start with a main category, then choose the calculator that matches your task from its grouped directory.</p></div><a class="btn primary" href="/conversion-calculators/">Browse all calculators</a></div></section>
@@ -4764,6 +4765,7 @@ body{background:var(--bg)}.site-header{border-bottom-color:#dbe7f4}.primary{back
 .debt-row{display:block;padding:0;overflow:hidden}.debt-row summary{position:relative;display:flex;justify-content:space-between;align-items:center;gap:10px;min-height:42px;padding:8px 10px;cursor:pointer;list-style:none}.debt-row summary::-webkit-details-marker{display:none}.debt-row summary:after{content:"+";flex:none;color:var(--brand);font-size:20px;font-weight:700}.debt-row[open] summary:after{content:"−"}.debt-summary-title{font-size:13px;font-weight:800;color:var(--ink)}.debt-summary-meta{color:var(--muted);font-size:12px;text-align:right}.debt-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;padding:0 9px 9px}.debt-fields .debt-name{grid-column:1/-1}
 @media(max-width:560px){.debt-row summary{align-items:flex-start;flex-direction:column;gap:2px;min-height:48px;padding:7px 9px}.debt-row summary:after{position:absolute;right:10px;top:10px;margin:0}.debt-summary-title{padding-right:18px}.debt-summary-meta{text-align:left;font-size:11px}.debt-fields{gap:5px;padding:0 7px 7px}.debt-fields .field label{font-size:11px!important}}
 '''
+CSS += '.home-quick-links{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 16px;color:var(--muted);font-size:14px}.home-quick-links a{color:var(--brand);font-weight:700;text-decoration:none}.home-quick-links a:hover{text-decoration:underline}'
 
 SEARCH_JS = r'''
 (function(){
