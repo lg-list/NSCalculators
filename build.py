@@ -1068,7 +1068,7 @@ def seo_keywords(calc):
 
 def seo_title(calc):
     if calc.get("slug") == "area-calculator":
-        return "Area Calculator: Rectangle, Circle, Triangle & 5 More"
+        return "Area Calculator: 8 Shapes, Formulas & Units"
     if calc.get("slug") == "used-car-value-calculator":
         return "Used Car Value Calculator: Retail, Private-Party & Trade-In"
     if calc.get("slug") == "cu-feet-to-cu-meters-calculator":
@@ -1118,7 +1118,7 @@ def seo_title(calc):
     if calc.get("slug") == "house-affordability-calculator":
         return "House Affordability Calculator: How Much Home Can I Afford?"
     if calc.get("slug") == "area-calculator":
-        return "Area Calculator: Rectangle, Circle, Triangle & 5 More"
+        return "Area Calculator: 8 Shapes, Formulas & Units"
     if calc.get("slug") == "conversion-calculator":
         return "Conversion Calculator: Length, Weight, Volume & More"
     if calc.get("slug") == "depreciation-calculator":
