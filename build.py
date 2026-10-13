@@ -625,6 +625,8 @@ CN_KEYWORDS = ROOT / "exports" / "calculator-net-keywords.json"
 
 def calculator_net_category(keyword, source_category):
     text = keyword.lower()
+    if slugify_text(keyword) == "marriage-calculator":
+        return "Financial"
     if source_category == "Financial":
         return "Financial"
     if source_category == "Fitness & Health":
@@ -654,6 +656,8 @@ def calculator_net_category(keyword, source_category):
 
 def calculator_net_group(keyword, cat):
     text = keyword.lower()
+    if slugify_text(keyword) == "marriage-calculator":
+        return "Taxes & Pay"
     if cat == "Financial":
         if any(word in text for word in ["mortgage", "house", "home equity", "heloc", "rent vs buy", "down payment"]):
             return "Mortgages"
@@ -714,7 +718,9 @@ def calculator_net_template(keyword, slug, cat):
         "example": f"Enter sample values to generate an illustrative {keyword.lower()} result.",
         "inputs": [["amount", "Amount", "number", 1000], ["rate", "Rate (%)", "number", 5], ["years", "Years", "number", 10]],
     }
-    if slug == "sales-tax-calculator":
+    if slug == "marriage-calculator":
+        base.update({"engine": "marriage_tax_advanced", "desc": "Compare estimated 2025 or 2026 US federal income tax for two individual filers with a married-filing-jointly estimate.", "formula": "Estimated regular federal income tax = progressive tax on ordinary taxable income after the applicable standard deduction.", "inputs": []})
+    elif slug == "sales-tax-calculator":
         base.update({"engine": "sales_tax_advanced", "desc": "Add sales tax to a purchase, reverse tax from a tax-inclusive total, or calculate the tax rate from before-tax and after-tax prices.", "formula": "Sales tax = taxable amount x tax rate; tax-inclusive total = before-tax total + sales tax.", "inputs": []})
     elif slug == "basic-calculator":
         base.update({"engine": "basic_advanced", "desc": "Use a free online basic calculator for arithmetic, percentages, square roots, memory, and calculation history.", "formula": "Expressions follow the standard order of operations: parentheses, exponents, multiplication and division, then addition and subtraction.", "inputs": []})
@@ -823,7 +829,7 @@ def calculator_net_calculators():
         tpl = calculator_net_template(keyword, slug, cat)
         imported.append({
             "slug": slug,
-            "title": keyword,
+            "title": "Marriage Tax Calculator" if slug == "marriage-calculator" else keyword,
             "cat": cat,
             "group": group,
             "engine": tpl["engine"],
@@ -834,6 +840,7 @@ def calculator_net_calculators():
             "keyword_data": {},
             "generated": True,
             "source": "calculator.net keyword model",
+            **({"seo_keyword": "marriage tax calculator"} if slug == "marriage-calculator" else {}),
         })
     return imported
 
@@ -965,6 +972,8 @@ def is_indexable_calculator(calc):
 
 
 def seo_keywords(calc):
+    if calc.get("slug") == "marriage-calculator":
+        return ["marriage tax calculator", "married filing jointly vs single calculator", "marriage tax penalty calculator", "marriage tax bonus calculator", "2026 married filing jointly tax estimate"]
     if calc.get("slug") == "army-body-fat-calculator":
         return [
             "army body fat calculator",
@@ -1034,6 +1043,8 @@ def seo_keywords(calc):
 
 
 def seo_title(calc):
+    if calc.get("slug") == "marriage-calculator":
+        return "Marriage Tax Calculator: Joint vs Single Estimate"
     if calc.get("slug") == "army-body-fat-calculator":
         return "Army Body Fat Calculator: Current WHtR Standard"
     if calc.get("slug") == "wheel-offset-calculator":
@@ -1152,6 +1163,8 @@ def seo_title(calc):
 def seo_description(calc):
     keyword = primary_keyword(calc)
     context = f" for {display_group(calculator_group(calc)).lower()}" if calc.get("seo_context_label") else ""
+    if calc.get("slug") == "marriage-calculator":
+        return "Compare estimated 2025 or 2026 US federal income tax for two single filers with a married-filing-jointly estimate using IRS tax brackets."
     if calc.get("slug") == "army-body-fat-calculator":
         return "Calculate Army waist-to-height ratio (WHtR) from waist at the navel and height. Compare with the current 0.55 benchmark; this is not an official assessment."
     if calc.get("slug") == "f150-bed-dimensions":
@@ -1525,6 +1538,27 @@ def feet_to_meters_input_html():
 <div class="field" data-feet-input><label for="inches">Additional inches</label><div class="input-unit"><input id="inches" type="number" step="any" min="0" value="10"><span>in</span></div></div>
 <div class="field field-wide is-hidden" data-meter-input><label for="meters">Meters</label><div class="input-unit"><input id="meters" type="number" step="any" min="0" value="1.778"><span>m</span></div></div>
 </div><p class="field-note">Results update as you type. Inches above 12 are automatically included in the total length.</p>"""
+
+
+def marriage_tax_input_html():
+    return """<div class="fields marriage-tax-fields">
+<div class="field field-wide"><label for="marriage_tax_year">Tax year</label><select id="marriage_tax_year"><option value="2026" selected>2026 (filed in 2027)</option><option value="2025">2025 (filed in 2026)</option></select></div>
+<div class="field"><label for="marriage_income1">Spouse 1 ordinary income</label><div class="input-unit"><input id="marriage_income1" type="number" step="any" min="0" value="75000"><span>$</span></div></div>
+<div class="field"><label for="marriage_income2">Spouse 2 ordinary income</label><div class="input-unit"><input id="marriage_income2" type="number" step="any" min="0" value="50000"><span>$</span></div></div>
+<p class="field-note field-wide">Uses the standard deduction and ordinary income only. Other taxes, credits, and deductions are excluded.</p>
+</div>"""
+
+
+def marriage_tax_copy(calc):
+    if calc.get("slug") != "marriage-calculator":
+        return None
+    return """
+<h2>How this marriage tax calculator works</h2><p>Enter each spouse's ordinary income and choose the tax year. The estimate calculates regular federal income tax for each person filing as Single, adds those amounts, then compares that total with a married-filing-jointly estimate on combined income. A positive difference means the joint estimate is higher; a negative difference means it is lower.</p>
+<h2>2025 and 2026 federal tax brackets</h2><p>The calculation applies progressive marginal rates to estimated taxable income after the IRS standard deduction: $15,750 per Single filer and $31,500 jointly for 2025; $16,100 per Single filer and $32,200 jointly for 2026. Higher marginal rates apply only to income within each bracket, not to all income.</p>
+<p>Bracket and deduction amounts are based on the <a href="https://www.irs.gov/newsroom/irs-releases-tax-inflation-adjustments-for-tax-year-2026-including-amendments-from-the-one-big-beautiful-bill" rel="external noopener">IRS 2026 tax-year adjustments</a> and <a href="https://www.irs.gov/irb/2025-45_IRB" rel="external noopener">IRS Revenue Procedure 2025-32, including the updated 2025 standard deduction and tax tables</a>.</p>
+<h2>What the estimate excludes</h2><p>This is a simplified comparison of regular federal income tax on ordinary income, not a tax return or tax advice. It uses the standard deduction and does not model tax credits, itemized deductions, qualified dividends or capital gains, AMT, additional Medicare tax, self-employment tax, state or local taxes, dependents, or filing-status exceptions such as Head of Household. Your actual filing outcome can differ. Review the <a href="/take-home-pay-calculator/">take-home pay calculator</a> for a separate paycheck estimate and consult IRS instructions or a qualified tax professional for a full estimate.</p>
+<h2>Why marriage can change a tax bill</h2><p>Federal brackets and deductions for joint filers are not always exactly twice the single amounts at every income level. When spouses have similar incomes, some income may cross a bracket threshold after combining; when incomes differ substantially, joint brackets can sometimes reduce the combined regular tax. Credits, deductions, and other tax provisions can change that comparison.</p>
+<h2>Frequently asked questions</h2><h3>Does this determine whether we should file jointly?</h3><p>No. It compares a limited federal income-tax estimate. Filing decisions can affect credits, deductions, liability, and state taxes beyond this model.</p><h3>Which year should I choose?</h3><p>Select the year the income was earned, not the year you submit the return. For example, 2026 income is generally reported on a return filed in 2027.</p>"""
 
 
 def truck_payload_input_html():
@@ -4071,7 +4105,10 @@ def calculator_page(site, calc, related):
     desc = seo_description(calc)
     group = calculator_group(calc)
     page_engine = calc.get("engine")
-    if calc.get("slug") == "army-body-fat-calculator":
+    if calc.get("slug") == "marriage-calculator":
+        fields = marriage_tax_input_html()
+        page_engine = "marriage_tax_advanced"
+    elif calc.get("slug") == "army-body-fat-calculator":
         fields = army_wht_ratio_input_html()
         page_engine = "army_wht_ratio"
     elif calc.get("slug") == "f150-bed-dimensions":
@@ -4279,7 +4316,7 @@ def calculator_page(site, calc, related):
     else:
         fields = f"""<div class="fields">{''.join(input_html(f) for f in calc["inputs"])}</div>"""
     rel = "".join(card(c, compact=True) for c in related)
-    content = priority_length_copy(calc) or high_value_calculator_copy(calc) or conversion_copy(calc) or default_calculator_copy(calc)
+    content = marriage_tax_copy(calc) or priority_length_copy(calc) or high_value_calculator_copy(calc) or conversion_copy(calc) or default_calculator_copy(calc)
     extra = analysis_extra_html(calc)
     calculator_asset_versions = {"amortization-calculator": "20260919b", "retirement-calculator": "20260919c", "401k-calculator": "20260920a", "social-security-calculator": "20260920b", "rmd-calculator": "20260920c", "feet-to-meters-calculator": "20260925a", "compound-interest-calculator": "20260925b"}
     calculator_asset_version = "20260929f" if calc.get("slug") == "f150-bed-dimensions" else "20260929e" if calc.get("slug") == "payload-capacity-calculator" else "20260929d" if calc.get("slug") == "geodesic-dome-calculator" else "20260929c" if calc.get("slug") == "years-to-minutes-calculator" else "20260929b" if calc.get("slug") in ("watts-to-amps-calculator", "amps-to-watts-calculator") else "20260929a" if calc.get("slug") == "wire-size-calculator" else "20260928c" if calc.get("slug") == "tire-size-calculator" else "20260928a" if calc.get("slug") == "volume-calculator" else "20260927d" if calc.get("slug") == "cd-calculator" else "20260927c" if calc.get("slug") == "roman-numeral-converter" else "20260927b" if calc.get("slug") == "commission-calculator" else "20260927a" if calc.get("slug") == "house-affordability-calculator" else "20260926h" if calc.get("slug") == "area-calculator" else "20260926g" if calc.get("slug") == "conversion-calculator" else "20260926f" if calc.get("slug") == "depreciation-calculator" else "20260926e" if calc.get("slug") == "triangle-calculator" else "20260926d" if calc.get("slug") == "liters-to-cu-inches-calculator" else "20260926c" if calc.get("slug") == "weeks-to-months-calculator" else "20260926b" if calc.get("slug") == "sq-feet-to-acres-calculator" else "20260926a" if calc.get("slug") == "stones-to-pounds-calculator" else "20260925c" if calc.get("slug") in PRIORITY_LENGTH_CONVERSIONS else "20260925d" if calc.get("slug") in ("car-depreciation-calculator", "car-resale-value-calculator") else "20260925e" if calc.get("slug") in ("horsepower-calculator", "power-to-weight-ratio-calculator") else "20260925f" if calc.get("slug") == "bottleneck-calculator" else "20260925g" if calc.get("slug") == "ratio-calculator" else "20260925i" if calc.get("slug") == "debt-payoff-calculator" else "20260925j" if calc.get("slug") == "average-return-calculator" else calculator_asset_versions.get(calc.get("slug"), ASSET_VERSION)
@@ -4287,6 +4324,8 @@ def calculator_page(site, calc, related):
         calculator_asset_version = "20261002a"
     if calc.get("slug") == "army-body-fat-calculator":
         calculator_asset_version = "20261002b"
+    if calc.get("slug") == "marriage-calculator":
+        calculator_asset_version = "20261013a"
     if calc.get("engine") == "loan_page":
         calc_html = f"""<section class="calc loan-page-calc"><h2>Calculator</h2>{fields}<div class="result" id="result">Enter your values and select Calculate.</div></section>"""
     else:
@@ -5129,6 +5168,7 @@ function clearCalcForm(){const form=document.querySelector('.calc');if(!form)ret
 function armyWhtRatioProjection(){const waist=V('waist'),height=V('height');if(!(waist>0&&height>0))return{valid:false,message:'Enter waist and height values greater than zero.'};return{valid:true,waist,height,ratio:waist/height}}
 function calc(e){
  switch(e){
+  case'marriage_tax_advanced':{const p=marriageTaxProjection();show(`<strong>${p.difference>0?`${USD(p.difference)} higher estimated joint tax`:p.difference<0?`${USD(Math.abs(p.difference))} lower estimated joint tax`:'No estimated tax difference'}</strong><br>Joint estimate: ${USD(p.jointTax)}; combined Single estimates: ${USD(p.separate)} (${p.year}).`);break}
   case'trade_value':{let price=V('price'),age=V('age'),miles=V('miles'),cond=V('condition');let ageF=Math.pow(.84,age),expected=Math.max(1,age)*12000,mileageF=Math.max(.72,Math.min(1.12,1-(miles-expected)*0.000003));let r=price*ageF*mileageF*cond;show(`<strong>${USD(Math.max(0,r))}</strong><br>Illustrative estimate, not a dealer quote or appraisal.`);break}
   case'f150_bed_advanced':{const p=f150BedProjection(),dimension=value=>`${F(p.fromIn(value),p.unit==='in'?1:2)} ${p.unit}`;if(!p.valid)show('<strong>Check cargo dimensions</strong><br>Enter cargo length and width of zero or greater.');else show(`<strong>${p.bed.label}: ${dimension(p.bed.length)} inside length</strong><br>${dimension(p.width)} between wheelhouses; ${F(p.bed.volume,1)} cu ft; ${p.hasCargo?`cargo ${p.fits?'fits':'does not fit'} the closed floor rectangle`:'enter cargo dimensions for a fit check'}.`);break}
   case'f150_bed':{let bed=String(document.getElementById('bed').value);let d={'5.5':['67.1 in','50.6 in','~52.8 cu ft'],'6.5':['78.9 in','50.6 in','~62.3 cu ft'],'8':['97.6 in','50.6 in','~77.4 cu ft']}[bed];show(`<strong>${bed} ft bed</strong><br>Approx. inside length: ${d[0]}; width between wheelhouses: ${d[1]}; cargo volume: ${d[2]}. Verify exact model year/configuration.`);break}
@@ -5338,10 +5378,23 @@ function renderGeneric(cards, bars, rows) {
   table.innerHTML = rows.map(row => `<tr><td>${row[0]}</td><td>${row[1]}</td><td>${row[2]}</td></tr>`).join("");
 }
 
+function marriageTaxProjection(){
+  const year=Number(document.getElementById('marriage_tax_year')?.value||2026),income1=Math.max(0,V('marriage_income1')),income2=Math.max(0,V('marriage_income2'));
+  const data=year===2025?{deductionSingle:15750,deductionJoint:31500,single:[[11925,.10],[48475,.12],[103350,.22],[197300,.24],[250525,.32],[626350,.35],[Infinity,.37]],joint:[[23850,.10],[96950,.12],[206700,.22],[394600,.24],[501050,.32],[751600,.35],[Infinity,.37]]}:{deductionSingle:16100,deductionJoint:32200,single:[[12400,.10],[50400,.12],[105700,.22],[201775,.24],[256225,.32],[640600,.35],[Infinity,.37]],joint:[[24800,.10],[100800,.12],[211400,.22],[403550,.24],[512450,.32],[768700,.35],[Infinity,.37]]};
+  const tax=(income,brackets)=>{let previous=0,total=0;for(const [limit,rate] of brackets){const taxable=Math.max(0,Math.min(income,limit)-previous);total+=taxable*rate;if(income<=limit)break;previous=limit}return total};
+  const tax1=tax(Math.max(0,income1-data.deductionSingle),data.single),tax2=tax(Math.max(0,income2-data.deductionSingle),data.single),jointTax=tax(Math.max(0,income1+income2-data.deductionJoint),data.joint),separate=tax1+tax2;
+  return{year,income1,income2,totalIncome:income1+income2,tax1,tax2,jointTax,separate,difference:jointTax-separate,deductionSingle:data.deductionSingle,deductionJoint:data.deductionJoint,effectiveJoint:(income1+income2)?jointTax/(income1+income2)*100:0,effectiveSeparate:(income1+income2)?separate/(income1+income2)*100:0};
+}
+
 function renderGenericFromEngine(engine) {
   if (!document.getElementById("genericSummary")) return;
   let cards=[], bars=[], rows=[];
-  if (engine === "army_wht_ratio") {
+  if (engine === "marriage_tax_advanced") {
+    const p=marriageTaxProjection(),direction=p.difference>0?"higher joint estimate":p.difference<0?"lower joint estimate":"no estimated difference";
+    cards=[["Joint filing estimate",USD(p.jointTax),`${p.year} federal regular income tax; $${F(p.deductionJoint,0)} standard deduction.`],["Two Single estimates",USD(p.separate),`${USD(p.tax1)} and ${USD(p.tax2)}.`],["Estimated change",`${p.difference>0?'+':''}${USD(p.difference)}`,direction+" than the two-Single comparison."],["Effective rate comparison",`${F(p.effectiveSeparate,2)}% → ${F(p.effectiveJoint,2)}%`,"Estimated tax divided by combined ordinary income."]];
+    bars=[{label:"Spouse 1 (Single)",value:p.tax1,display:USD(p.tax1)},{label:"Spouse 2 (Single)",value:p.tax2,display:USD(p.tax2)},{label:"Married filing jointly",value:p.jointTax,display:USD(p.jointTax)}];
+    rows=[["Tax year",F(p.year,0),"Rates and standard deduction for the selected tax year."],["Spouse 1 ordinary income",USD(p.income1),"Modeled as one Single return."],["Spouse 2 ordinary income",USD(p.income2),"Modeled as one Single return."],["Combined ordinary income",USD(p.totalIncome),"Same total income in both scenarios."],["Single standard deduction",USD(p.deductionSingle),"Applied once to each Single estimate."],["Joint standard deduction",USD(p.deductionJoint),"Applied once to combined income."],["Spouse 1 estimated tax",USD(p.tax1),"Progressive regular federal tax after Single standard deduction."],["Spouse 2 estimated tax",USD(p.tax2),"Progressive regular federal tax after Single standard deduction."],["Two-Single total",USD(p.separate),"Sum of the individual estimates."],["Married-filing-jointly estimate",USD(p.jointTax),"Progressive regular federal tax after joint standard deduction."],["Joint minus separate",`${p.difference>0?'+':''}${USD(p.difference)}`,"Positive is higher under joint filing; negative is lower."]];
+  } else if (engine === "army_wht_ratio") {
     const p=armyWhtRatioProjection();
     if(!p.valid){cards=[["Result","Check measurements",p.message],["Waist-to-height ratio","Unavailable","Enter valid measurements."],["Current benchmark","< 0.55","Army public guidance, July 2026."],["Assessment status","Not determined","Use official Army procedures."]];bars=[];rows=[["Validation","Unable to calculate",p.message]]}
     else{const meets=p.ratio<0.55;cards=[["Waist-to-height ratio",p.ratio.toFixed(3),"Waist at navel divided by height."],["Army numeric benchmark","< 0.550",meets?"Entered ratio is below the published threshold.":"At or above 0.55; official confirmation threshold."],["Waist at navel",`${F(p.waist,1)} in`,"User-entered circumference."],["Height",`${F(p.height,1)} in`,"User-entered height."]];bars=[{label:"Entered WHtR",value:p.ratio,display:p.ratio.toFixed(3)},{label:"0.55 benchmark",value:.55,display:"0.550"}];rows=[["Formula","Waist at navel / height","Both measurements entered in inches."],["Waist circumference",`${F(p.waist,2)} in`,"Measure at the navel for the Army screening comparison."],["Height",`${F(p.height,2)} in`,"Same unit as waist."],["Calculated WHtR",F(p.ratio,6),"Waist divided by height; shown to three decimals above."],["Published numeric benchmark","Below 0.55",p.ratio<.55?"Below the numeric threshold.":"At or above 0.55; the Army public update describes a confirmation test."],["Official determination","Not provided","This calculator does not verify measurements or personnel eligibility."]]}
