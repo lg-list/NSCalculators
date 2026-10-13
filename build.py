@@ -1064,6 +1064,8 @@ def seo_keywords(calc):
 
 
 def seo_title(calc):
+    if calc.get("slug") == "area-calculator":
+        return "Area Calculator: 9 Shapes, Formulas & Units"
     if calc.get("slug") == "payback-period-calculator":
         return "Payback Period Calculator: Discounted & Cash Flow"
     if calc.get("slug") == "marriage-calculator":
@@ -1186,6 +1188,8 @@ def seo_title(calc):
 def seo_description(calc):
     keyword = primary_keyword(calc)
     context = f" for {display_group(calculator_group(calc)).lower()}" if calc.get("seo_context_label") else ""
+    if calc.get("slug") == "area-calculator":
+        return "Find the area of 9 common shapes, including circles, triangles, sectors, and trapezoids. Convert square feet, square meters, acres, and more."
     if calc.get("slug") == "payback-period-calculator":
         return "Calculate simple and discounted payback periods from fixed or annual cash flows. Compare NPV, break-even year, and an investment schedule."
     if calc.get("slug") == "marriage-calculator":
