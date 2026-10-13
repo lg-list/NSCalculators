@@ -798,6 +798,8 @@ def calculator_net_template(keyword, slug, cat):
         base.update({"engine": "cn_tax_salary", "desc": "Estimate tax, after-tax pay, and monthly take-home pay.", "formula": "Take-home pay = income - estimated tax.", "inputs": [["income", "Annual income ($)", "number", 75000], ["taxrate", "Effective tax rate (%)", "number", 22], ["deductions", "Annual deductions ($)", "number", 0]]})
     elif "bmi" in text:
         base.update({"engine": "cn_bmi", "desc": "Calculate body mass index from height and weight.", "formula": "BMI = 703 x weight(lb) / height(in)^2.", "inputs": [["weight", "Weight (lb)", "number", 175], ["feet", "Height feet", "number", 5], ["inches", "Height inches", "number", 10]]})
+    elif slug == "calories-burned-calculator":
+        base.update({"engine": "activity_calorie", "desc": "Estimate calories burned during common activities from body weight and exercise duration.", "formula": "Gross kcal = MET x 3.5 x body weight (kg) x minutes / 200; active kcal subtracts the 1-MET resting baseline.", "inputs": []})
     elif any(word in text for word in ["calorie", "bmr", "tdee", "macro", "protein", "carbohydrate"]):
         base.update({"engine": "cn_calorie", "desc": "Estimate daily calories using age, sex, height, weight, and activity level.", "formula": "Mifflin-St Jeor BMR adjusted by activity factor.", "inputs": [["weight", "Weight (lb)", "number", 175], ["feet", "Height feet", "number", 5], ["inches", "Height inches", "number", 10], ["age", "Age", "number", 35], ["sex", "Sex", "select", [["male", "Male"], ["female", "Female"]]], ["activity", "Activity", "select", [["1.2", "Sedentary"], ["1.375", "Light"], ["1.55", "Moderate"], ["1.725", "Active"]]] ]})
     elif "body fat" in text or "ideal weight" in text or "healthy weight" in text:
@@ -1067,6 +1069,8 @@ def seo_keywords(calc):
 
 
 def seo_title(calc):
+    if calc.get("slug") == "calories-burned-calculator":
+        return "Calories Burned Calculator: Exercise & Activity"
     if calc.get("slug") == "area-calculator":
         return "Area Calculator: 8 Shapes, Formulas & Units"
     if calc.get("slug") == "used-car-value-calculator":
@@ -1197,6 +1201,8 @@ def seo_title(calc):
 def seo_description(calc):
     keyword = primary_keyword(calc)
     context = f" for {display_group(calculator_group(calc)).lower()}" if calc.get("seo_context_label") else ""
+    if calc.get("slug") == "calories-burned-calculator":
+        return "Estimate calories burned walking, running, cycling, lifting, and more. Enter your weight and workout time to compare total and active calories."
     if calc.get("slug") == "area-calculator":
         return "Calculate area for 8 shapes in 9 modes, including two triangle methods. Convert results to square feet, acres, square meters, or hectares."
     if calc.get("slug") == "sample-size-calculator":
@@ -2551,6 +2557,22 @@ def house_affordability_input_html():
 <p class="field-note">Monthly debts should include recurring minimum payments, not groceries, utilities, taxes withheld from pay, or ordinary living expenses.</p>"""
 
 
+def activity_calorie_input_html():
+    return """<div class="fields activity-calorie-fields">
+<div class="field field-wide"><label for="activity_type">Activity</label><select id="activity_type">
+<optgroup label="Walking"><option value="3.0">Walking, 2.5 mph (3.0 MET)</option><option value="3.8">Walking, moderate 2.8-3.4 mph (3.8 MET)</option><option value="4.8" selected>Brisk walking, 3.5-3.9 mph (4.8 MET)</option><option value="5.5">Walking, 4.0-4.4 mph (5.5 MET)</option><option value="3.8">Hiking, slow pace (3.8 MET)</option><option value="5.3">Hiking, moderate pace (5.3 MET)</option><option value="6.0">Hiking, cross-country (6.0 MET)</option></optgroup>
+<optgroup label="Running"><option value="6.5">Running, 4.0-4.2 mph (6.5 MET)</option><option value="7.8">Running, 4.3-4.8 mph (7.8 MET)</option><option value="8.5">Running, 5.0-5.2 mph (8.5 MET)</option><option value="9.0">Running, 5.5-5.8 mph (9.0 MET)</option><option value="9.3">Running, 6.0-6.3 mph (9.3 MET)</option><option value="10.5">Running, 6.7 mph (10.5 MET)</option><option value="12.0">Running, 8 mph (12.0 MET)</option></optgroup>
+<optgroup label="Cycling and cardio"><option value="4.0">Cycling, under 10 mph (4.0 MET)</option><option value="6.8">Cycling, 10-11.9 mph (6.8 MET)</option><option value="8.0">Cycling, 12-13.9 mph (8.0 MET)</option><option value="10.0">Cycling, 14-15.9 mph (10.0 MET)</option><option value="5.0">Elliptical, moderate (5.0 MET)</option><option value="9.0">Elliptical, vigorous (9.0 MET)</option><option value="5.0">Rowing machine, moderate (5.0 MET)</option><option value="7.3">Rowing machine, vigorous (7.3 MET)</option><option value="9.3">Stair treadmill (9.3 MET)</option><option value="11.0">Jump rope, general (11.0 MET)</option></optgroup>
+<optgroup label="Strength and classes"><option value="3.5">Weight training, multiple exercises (3.5 MET)</option><option value="6.0">Weightlifting, vigorous (6.0 MET)</option><option value="7.0">HIIT, moderate (7.0 MET)</option><option value="11.0">HIIT, vigorous (11.0 MET)</option><option value="3.8">Calisthenics, moderate (3.8 MET)</option><option value="7.5">Calisthenics, vigorous (7.5 MET)</option><option value="2.3">Hatha yoga (2.3 MET)</option><option value="4.0">Power yoga (4.0 MET)</option><option value="2.8">Pilates (2.8 MET)</option><option value="4.8">Aerobic dance, low impact (4.8 MET)</option><option value="8.0">Aerobic dance, high impact (8.0 MET)</option></optgroup>
+<optgroup label="Sports"><option value="7.0">Soccer, casual (7.0 MET)</option><option value="9.5">Soccer, competitive (9.5 MET)</option><option value="6.0">Basketball, non-game (6.0 MET)</option><option value="8.0">Basketball game (8.0 MET)</option><option value="6.8">Tennis, moderate (6.8 MET)</option><option value="8.0">Tennis, competitive singles (8.0 MET)</option><option value="6.0">Tennis, doubles (6.0 MET)</option><option value="5.8">Swimming freestyle, slow (5.8 MET)</option><option value="9.8">Swimming freestyle, fast (9.8 MET)</option><option value="10.3">Swimming breaststroke (10.3 MET)</option></optgroup>
+</select></div>
+<div class="field"><label for="activity_weight">Body weight</label><input id="activity_weight" type="number" step="any" min="1" value="175" inputmode="decimal"></div>
+<div class="field"><label for="activity_weight_unit">Weight unit</label><select id="activity_weight_unit"><option value="lb" selected>Pounds (lb)</option><option value="kg">Kilograms (kg)</option></select></div>
+<div class="field"><label for="activity_hours">Hours</label><input id="activity_hours" type="number" step="1" min="0" max="24" value="0" inputmode="numeric"></div>
+<div class="field"><label for="activity_minutes">Minutes</label><input id="activity_minutes" type="number" step="1" min="0" max="59" value="30" inputmode="numeric"></div>
+</div>"""
+
+
 def mortgage_input_html():
     def unit_field(fid, label, default, options, unit_default):
         opts = "".join(
@@ -2743,6 +2765,13 @@ def conversion_copy(calc):
 
 
 def high_value_calculator_copy(calc):
+    if calc.get("slug") == "calories-burned-calculator":
+        return """
+<h2>Estimate calories burned during exercise</h2><p>Choose an activity, enter your body weight, and set the workout duration. This calculator estimates <strong>total calories</strong> during the activity and <strong>active calories</strong> above a standardized resting baseline. It covers common walking, running, cycling, gym, sports, and household activities.</p>
+<h2>Formula and meaning of the result</h2><p class="formula">Gross kcal = MET x 3.5 x weight (kg) x duration (minutes) / 200</p><p class="formula">Active kcal = (MET - 1) x 3.5 x weight (kg) x duration (minutes) / 200</p><p>MET is a standardized activity-intensity value. The total estimate includes the energy assigned to 1 MET during the exercise period; the active estimate subtracts that resting baseline. For example, a 175 lb (79.4 kg) person brisk-walking for 30 minutes at 4.8 METs is estimated at about <strong>200 total kcal</strong> and <strong>158 active kcal</strong>.</p>
+<h2>Activity values and limitations</h2><p>Activity intensity values are selected from the <a href="https://pacompendium.com/adult-compendium/" rel="external noopener">2024 Adult Compendium of Physical Activities</a>. A Compendium value represents a standardized activity category, not a direct measurement of your workout. Actual energy use varies with pace, terrain, technique, fitness, body composition, and individual physiology. Wearables and laboratory measurements may produce different estimates.</p><p>This is an educational estimate, not medical advice or a precise measure of exercise energy expenditure. Do not use it alone to set a nutrition or treatment plan.</p>
+<h2>Need daily maintenance calories?</h2><p>This page estimates one exercise session. For an estimate of daily energy needs based on age, height, weight, and overall activity, use our <a href="/tdee-calculator/">TDEE calculator</a>.</p>
+<h2>Frequently asked questions</h2><h3>What is the difference between total and active calories?</h3><p>Total calories include the standardized 1-MET resting baseline during the session. Active calories subtract that baseline, so the active estimate is lower.</p><h3>Why can my fitness watch show a different number?</h3><p>Devices may use heart rate, motion sensors, personal profile data, and proprietary models. This calculator uses a population-level MET value and entered weight and duration, so the two estimates are not expected to match exactly.</p><h3>Does this estimate include afterburn?</h3><p>No. It estimates energy during the entered activity only and does not add post-exercise energy expenditure.</p>"""
     if calc.get("slug") == "sample-size-calculator":
         return """
 <h2>What this sample size calculator estimates</h2><p>This tool estimates the number of <strong>completed responses</strong> needed to estimate one population proportion, such as the share of customers who choose an option. It uses a normal-approximation confidence interval and assumes a simple random, representative sample. It is not a power analysis for comparing groups or testing a hypothesis.</p>
@@ -3612,6 +3641,13 @@ def default_calculator_copy(calc):
 
 
 def analysis_extra_html(calc):
+    if calc.get("slug") == "calories-burned-calculator":
+        return """<section class="mortgage-dashboard generic-dashboard activity-calorie-dashboard" aria-label="Calories burned analysis results">
+<div class="section-head stack"><h2>Workout Energy Estimate</h2><p>Compare total session energy with estimated active calories above the resting baseline.</p></div>
+<div class="summary-grid" id="genericSummary"></div>
+<div class="chart-grid"><div class="chart-card compact-chart"><h3>Estimated Energy</h3><canvas id="genericChart" width="620" height="220" aria-label="Estimated total and active calories burned" data-chart-type="bars"></canvas></div></div>
+<div class="table-card"><h3>Calculation Details</h3><div class="table-scroll"><table class="data-table" id="genericTable"><thead><tr><th>Measurement</th><th>Estimate</th><th>Method</th></tr></thead><tbody></tbody></table></div></div>
+</section>"""
     if calc.get("slug") == "sample-size-calculator":
         return """<section class="mortgage-dashboard generic-dashboard sample-size-dashboard" aria-label="Sample size analysis results">
 <div class="section-head stack"><h2>Sample Size Results</h2><p>Review the required completed responses, the large-population estimate, and any finite-population adjustment.</p></div>
@@ -4091,6 +4127,13 @@ def calculator_page(site, calc, related):
 <p>This page is general information, not nutrition or medical advice. Follow guidance from your healthcare professional for individual dietary needs.</p></div></article></div></main>"""
         crumbs = [("Home", "/"), ("Health Calculators", "/health-calculators/"), ("WeightWatchers Points", "/weight-watchers-points-calculator/")]
         return page(site, title, desc, "/weight-watchers-points-calculator/", body, ["WeightWatchers Points"], [breadcrumb_schema(site, crumbs)], indexable=False)
+    if calc.get("slug") == "calories-burned-calculator":
+        calc = {
+            **calc,
+            "desc": "Estimate calories burned for walking, running, cycling, strength training, sports, and more using body weight, activity intensity, and workout duration.",
+            "formula": "Gross kcal = MET x 3.5 x body weight (kg) x duration (minutes) / 200; active kcal subtracts 1 MET for the resting baseline.",
+            "example": "At 175 lb, a 30-minute brisk walk (4.8 MET) is about 200 total calories and 158 active calories by the standardized estimate.",
+        }
     if calc.get("slug") == "payback-period-calculator":
         calc = {
             **calc,
@@ -4235,7 +4278,10 @@ def calculator_page(site, calc, related):
     desc = seo_description(calc)
     group = calculator_group(calc)
     page_engine = calc.get("engine")
-    if calc.get("slug") == "payback-period-calculator":
+    if calc.get("slug") == "calories-burned-calculator":
+        fields = activity_calorie_input_html()
+        page_engine = "activity_calorie"
+    elif calc.get("slug") == "payback-period-calculator":
         fields = payback_input_html()
         page_engine = "payback_advanced"
     elif calc.get("slug") == "marriage-calculator":
@@ -4456,6 +4502,8 @@ def calculator_page(site, calc, related):
     extra = analysis_extra_html(calc)
     calculator_asset_versions = {"amortization-calculator": "20260919b", "retirement-calculator": "20260919c", "401k-calculator": "20260920a", "social-security-calculator": "20260920b", "rmd-calculator": "20260920c", "feet-to-meters-calculator": "20260925a", "compound-interest-calculator": "20260925b"}
     calculator_asset_version = "20260929f" if calc.get("slug") == "f150-bed-dimensions" else "20260929e" if calc.get("slug") == "payload-capacity-calculator" else "20260929d" if calc.get("slug") == "geodesic-dome-calculator" else "20260929c" if calc.get("slug") == "years-to-minutes-calculator" else "20260929b" if calc.get("slug") in ("watts-to-amps-calculator", "amps-to-watts-calculator") else "20260929a" if calc.get("slug") == "wire-size-calculator" else "20260928c" if calc.get("slug") == "tire-size-calculator" else "20260928a" if calc.get("slug") == "volume-calculator" else "20260927d" if calc.get("slug") == "cd-calculator" else "20260927c" if calc.get("slug") == "roman-numeral-converter" else "20260927b" if calc.get("slug") == "commission-calculator" else "20260927a" if calc.get("slug") == "house-affordability-calculator" else "20260926h" if calc.get("slug") == "area-calculator" else "20260926g" if calc.get("slug") == "conversion-calculator" else "20260926f" if calc.get("slug") == "depreciation-calculator" else "20260926e" if calc.get("slug") == "triangle-calculator" else "20260926d" if calc.get("slug") == "liters-to-cu-inches-calculator" else "20260926c" if calc.get("slug") == "weeks-to-months-calculator" else "20260926b" if calc.get("slug") == "sq-feet-to-acres-calculator" else "20260926a" if calc.get("slug") == "stones-to-pounds-calculator" else "20260925c" if calc.get("slug") in PRIORITY_LENGTH_CONVERSIONS else "20260925d" if calc.get("slug") in ("car-depreciation-calculator", "car-resale-value-calculator") else "20260925e" if calc.get("slug") in ("horsepower-calculator", "power-to-weight-ratio-calculator") else "20260925f" if calc.get("slug") == "bottleneck-calculator" else "20260925g" if calc.get("slug") == "ratio-calculator" else "20260925i" if calc.get("slug") == "debt-payoff-calculator" else "20260925j" if calc.get("slug") == "average-return-calculator" else calculator_asset_versions.get(calc.get("slug"), ASSET_VERSION)
+    if calc.get("slug") == "calories-burned-calculator":
+        calculator_asset_version = "20261014a"
     if calc.get("slug") == "debt-payoff-calculator":
         calculator_asset_version = "20261002a"
     if calc.get("slug") == "army-body-fat-calculator":
@@ -5305,7 +5353,7 @@ function syncSquareFeetAcresFields(){const mode=document.getElementById('acre_mo
 function squareFeetAcresProjection(){const mode=syncSquareFeetAcresFields();let squareFeet=0,length=0,width=0;if(mode==='acres_to_sqft')squareFeet=Math.max(0,V('acre_value'))*43560;else if(mode==='dimensions'){length=Math.max(0,V('acre_length'));width=Math.max(0,V('acre_width'));squareFeet=length*width}else squareFeet=Math.max(0,V('acre_sqft'));const acres=squareFeet/43560,squareYards=squareFeet/9,squareMeters=squareFeet*0.09290304,hectares=squareMeters/10000,squareMiles=squareFeet/27878400,sideFeet=Math.sqrt(squareFeet);return{mode,squareFeet,acres,squareYards,squareMeters,hectares,squareMiles,sideFeet,length,width}}
 function syncStonesPoundsFields(){const mode=document.getElementById('stone_mode')?.value||'to_pounds';document.querySelectorAll('[data-stone-mode]').forEach(el=>el.classList.toggle('is-hidden',el.dataset.stoneMode!==mode));return mode}
 function stonesPoundsProjection(){const mode=syncStonesPoundsFields();let enteredStones=0,enteredExtra=0,totalPounds=0;if(mode==='to_stones'){totalPounds=Math.max(0,V('stone_total_lb'))}else{enteredStones=Math.max(0,Math.floor(V('stone_whole')));enteredExtra=Math.max(0,V('stone_extra_lb'));totalPounds=enteredStones*14+enteredExtra}const wholeStones=Math.floor(totalPounds/14+1e-12),remainder=Math.max(0,totalPounds-wholeStones*14),decimalStones=totalPounds/14,kilograms=totalPounds*0.45359237,ounces=totalPounds*16,stonePounds=wholeStones*14;return{mode,enteredStones,enteredExtra,totalPounds,wholeStones,remainder,decimalStones,kilograms,ounces,stonePounds}}
-function clearCalcForm(){const form=document.querySelector('.calc');if(!form)return;form.querySelectorAll('input').forEach(input=>{if(input.type==='checkbox')input.checked=false;else input.value=''});form.querySelectorAll('textarea').forEach(textarea=>{textarea.value=''});form.querySelectorAll('select').forEach(select=>{select.selectedIndex=0});form.querySelectorAll('details').forEach(item=>{item.open=false});syncMortgageCosts();syncConcreteFields();syncRoofFields();syncAreaFields();syncPayDeductionFields();syncSalesTaxFields();syncPercentFields();syncFractionFields();syncRatioFields();syncBmiFields();syncMpgFields();syncCarResaleFields();syncFinanceTarget();syncPaymentMode();syncRetirementMode();syncK401Mode();syncSocialSecurityMode();syncAverageReturnFields();syncDepreciationFields();syncTriangleFields();syncGeometryAreaFields();syncUnitConverterFields(true);syncLitersCubicInchesFields();syncWeeksMonthsFields();syncF150BedFields();syncPayloadCapacityFields();syncDomeGeometryFields();syncYearsMinutesFields();syncSquareFeetAcresFields();syncStonesPoundsFields();syncRomanFields();syncCommissionFields();syncVolumeFields();syncTireFields();show('<strong>0</strong><br>Enter values to calculate a new result.');const engine=currentEngine();if(engine==='cn_mortgage')renderMortgage(0,0,1,0,0,0,0,0,0,0,0,0,0,new Date());if(engine==='loan_page')renderLoanPage();if(engine==='mpg_advanced'||engine==='fuel_cost_advanced'||engine==='trade_in_estimate'||engine==='f150_bed_advanced'||engine==='payload_capacity_advanced'||engine==='volume_advanced'||engine==='cd_advanced'||engine==='roman_advanced'||engine==='commission_advanced'||engine==='house_affordability_advanced'||engine==='ratio_advanced'||engine==='average_return_advanced'||engine==='depreciation_advanced'||engine==='triangle_advanced'||engine==='area_advanced'||engine==='stones_pounds_advanced'||engine==='square_feet_acres_advanced'||engine==='dome_geometry_advanced'||engine==='years_minutes_advanced'||engine==='weeks_months_advanced'||engine==='liters_cubic_inches_advanced'||engine==='unit_converter_advanced'||engine==='car_resale_advanced')renderGenericFromEngine(engine)}
+function clearCalcForm(){const form=document.querySelector('.calc');if(!form)return;form.querySelectorAll('input').forEach(input=>{if(input.type==='checkbox')input.checked=false;else input.value=''});form.querySelectorAll('textarea').forEach(textarea=>{textarea.value=''});form.querySelectorAll('select').forEach(select=>{select.selectedIndex=0});form.querySelectorAll('details').forEach(item=>{item.open=false});syncMortgageCosts();syncConcreteFields();syncRoofFields();syncAreaFields();syncPayDeductionFields();syncSalesTaxFields();syncPercentFields();syncFractionFields();syncRatioFields();syncBmiFields();syncMpgFields();syncCarResaleFields();syncFinanceTarget();syncPaymentMode();syncRetirementMode();syncK401Mode();syncSocialSecurityMode();syncAverageReturnFields();syncDepreciationFields();syncTriangleFields();syncGeometryAreaFields();syncUnitConverterFields(true);syncLitersCubicInchesFields();syncWeeksMonthsFields();syncF150BedFields();syncPayloadCapacityFields();syncDomeGeometryFields();syncYearsMinutesFields();syncSquareFeetAcresFields();syncStonesPoundsFields();syncRomanFields();syncCommissionFields();syncVolumeFields();syncTireFields();show('<strong>0</strong><br>Enter values to calculate a new result.');const engine=currentEngine();if(engine==='cn_mortgage')renderMortgage(0,0,1,0,0,0,0,0,0,0,0,0,0,new Date());if(engine==='loan_page')renderLoanPage();if(engine==='activity_calorie'||engine==='mpg_advanced'||engine==='fuel_cost_advanced'||engine==='trade_in_estimate'||engine==='f150_bed_advanced'||engine==='payload_capacity_advanced'||engine==='volume_advanced'||engine==='cd_advanced'||engine==='roman_advanced'||engine==='commission_advanced'||engine==='house_affordability_advanced'||engine==='ratio_advanced'||engine==='average_return_advanced'||engine==='depreciation_advanced'||engine==='triangle_advanced'||engine==='area_advanced'||engine==='stones_pounds_advanced'||engine==='square_feet_acres_advanced'||engine==='dome_geometry_advanced'||engine==='years_minutes_advanced'||engine==='weeks_months_advanced'||engine==='liters_cubic_inches_advanced'||engine==='unit_converter_advanced'||engine==='car_resale_advanced')renderGenericFromEngine(engine)}
 function armyWhtRatioProjection(){const waist=V('waist'),height=V('height');if(!(waist>0&&height>0))return{valid:false,message:'Enter waist and height values greater than zero.'};return{valid:true,waist,height,ratio:waist/height}}
 function calc(e){
  switch(e){
@@ -5421,6 +5469,7 @@ function calc(e){
   case'cn_tax_salary':{let taxable=Math.max(0,V('income')-V('deductions')),tax=taxable*V('taxrate')/100,net=V('income')-tax;show(`<strong>${USD(net)} take-home</strong><br>Estimated tax: ${USD(tax)}; monthly take-home: ${USD(net/12)}.`);break}
   case'bmi_advanced':{const p=bmiProjection();if(!p.valid)show(`<strong>Check the inputs</strong><br>${p.message}`);else show(`<strong>${F(p.bmi,1)} BMI</strong><br>${p.category}; adult healthy-weight reference ${p.metric?`${F(p.lowKg,1)}-${F(p.highKg,1)} kg`:`${F(p.lowLb,1)}-${F(p.highLb,1)} lb`}.`);break}
   case'cn_bmi':{let h=V('feet')*12+V('inches'),bmi=h?703*V('weight')/(h*h):0;let band=bmi<18.5?'underweight':bmi<25?'healthy range':bmi<30?'overweight range':'obesity range';show(`<strong>${F(bmi,1)} BMI</strong><br>This falls in the ${band} by adult BMI screening ranges.`);break}
+  case'activity_calorie':{const weight=V('activity_weight'),unit=document.getElementById('activity_weight_unit')?.value||'lb',kg=unit==='kg'?weight:weight*0.45359237,minutes=V('activity_hours')*60+V('activity_minutes'),met=Number(document.getElementById('activity_type')?.value||0);if(weight<=0||minutes<=0||minutes>1440||!met){show('<strong>Check the inputs</strong><br>Enter a positive body weight and a workout duration from 1 minute to 24 hours.')}else{const gross=met*3.5*kg*minutes/200,active=Math.max(0,(met-1)*3.5*kg*minutes/200);show(`<strong>${F(active,0)} active calories</strong><br>About ${F(gross,0)} total calories for ${F(minutes,0)} minutes. Activity intensity: ${F(met,1)} MET. Estimates vary by person.`)}break}
   case'cn_calorie':{let h=(V('feet')*12+V('inches'))*2.54,kg=V('weight')*0.453592,age=V('age'),sex=document.getElementById('sex')?.value||'male';let bmr=10*kg+6.25*h-5*age+(sex==='male'?5:-161),tdee=bmr*V('activity');show(`<strong>${F(tdee,0)} calories/day</strong><br>BMR: ${F(bmr,0)}. Protein planning range: ${F(kg*1.6,0)}-${F(kg*2.2,0)} g/day.`);break}
   case'army_wht_ratio':{const p=armyWhtRatioProjection();if(!p.valid)show(`<strong>Check measurements</strong><br>${p.message}`);else{const status=p.ratio<0.55?'Below the 0.55 numeric benchmark':'At or above 0.55; official confirmation threshold';show(`<strong>WHtR: ${p.ratio.toFixed(3)}</strong><br>${status}. This calculator is not an official assessment.`)}break}
   case'cn_body_metric':{let h=V('feet')*12+V('inches'),bmi=h?703*V('weight')/(h*h):0,low=18.5*h*h/703,high=24.9*h*h/703;show(`<strong>${F(bmi,1)} BMI</strong><br>Adult BMI reference weight range at this height: ${F(low,0)}-${F(high,0)} lb.`);break}
@@ -5700,6 +5749,12 @@ function renderGenericFromEngine(engine) {
     cards=[["BMI",F(bmi,1),"Adult screening estimate."],["Weight",`${F(V('weight'),1)} lb`,"Entered body weight."],["Healthy range",`${F(low,0)}-${F(high,0)} lb`,"BMI 18.5 to 24.9 range."],["Height",`${F(h,0)} in`,"Total height in inches."]];
     bars=[{label:"BMI",value:bmi,display:F(bmi,1)},{label:"Current weight",value:V('weight'),display:`${F(V('weight'),0)} lb`},{label:"Range low",value:low,display:`${F(low,0)} lb`},{label:"Range high",value:high,display:`${F(high,0)} lb`}];
     rows=[["BMI formula",`703 x weight / height^2`,"US customary formula."],["Current BMI",F(bmi,1),"Screening value."],["Lower reference",`${F(low,0)} lb`,"BMI 18.5."],["Upper reference",`${F(high,0)} lb`,"BMI 24.9."]];
+  } else if (engine === "activity_calorie") {
+    const weight=V('activity_weight'),unit=document.getElementById('activity_weight_unit')?.value||'lb',kg=unit==='kg'?weight:weight*0.45359237,minutes=V('activity_hours')*60+V('activity_minutes'),met=Number(document.getElementById('activity_type')?.value||0),valid=weight>0&&minutes>0&&minutes<=1440&&met>0;
+    const gross=valid?met*3.5*kg*minutes/200:0,active=valid?Math.max(0,(met-1)*3.5*kg*minutes/200):0,activity=document.getElementById('activity_type')?.selectedOptions[0]?.textContent||'Selected activity';
+    cards=[["Active calories",valid?F(active,0):"Check inputs","Estimated energy above the 1-MET resting baseline."],["Total calories",valid?F(gross,0):"Unavailable","Estimated total energy during the session."],["Workout duration",valid?`${F(minutes,0)} min`:"Unavailable","Entered exercise time."],["Activity intensity",valid?`${F(met,1)} MET`:"Unavailable","Standardized Compendium activity value."]];
+    bars=[{label:"Active calories",value:active,display:valid?F(active,0):"Unavailable"},{label:"Total calories",value:gross,display:valid?F(gross,0):"Unavailable"}];
+    rows=[["Activity",activity,"Selected standardized activity category."],["Body weight",unit==='kg'?`${F(weight,1)} kg`:`${F(weight,1)} lb`,`${F(kg,2)} kg used in the formula.`],["Duration",valid?`${F(minutes,0)} minutes`:"Check inputs","Hours x 60 + minutes; must be 1 to 1,440."],["MET value",valid?F(met,1):"Unavailable","2024 Adult Compendium activity intensity."],["Gross estimate",valid?`${F(gross,1)} kcal`:"Unavailable","MET x 3.5 x kg x minutes / 200."],["Active estimate",valid?`${F(active,1)} kcal`:"Unavailable","(MET - 1) x 3.5 x kg x minutes / 200."],["Limitations","Population estimate","Does not measure individual physiology or add post-exercise energy."]];
   } else if (engine === "cn_calorie") {
     const h=(V('feet')*12+V('inches'))*2.54, kg=V('weight')*0.453592, age=V('age'), sex=document.getElementById('sex')?.value||'male', bmr=10*kg+6.25*h-5*age+(sex==='male'?5:-161), tdee=bmr*V('activity');
     cards=[["Daily calories",F(tdee,0),"Estimated maintenance calories."],["BMR",F(bmr,0),"Estimated resting burn."],["Protein range",`${F(kg*1.6,0)}-${F(kg*2.2,0)} g`,"Common athletic planning range."],["Activity factor",F(V('activity'),3),"Selected multiplier."]];
