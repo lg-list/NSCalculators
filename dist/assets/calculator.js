@@ -585,6 +585,7 @@ function calc(e){
   case'cn_pace':{let sec=V('hours')*3600+V('minutes')*60+V('seconds'),dist=V('distance');let pace=dist?sec/dist:0;show(`<strong>${Math.floor(pace/60)}:${String(Math.round(pace%60)).padStart(2,'0')} per mile</strong><br>Average speed: ${F(dist/(sec/3600),2)} mph.`);break}
   case'cn_percent':{let pct=V('whole')?V('part')/V('whole')*100:0,change=V('old')?(V('new')-V('old'))/V('old')*100:0;show(`<strong>${F(pct,2)}%</strong><br>Percent change from old to new value: ${F(change,2)}%.`);break}
   case'cn_triangle':{let a=V('a'),b=V('b'),c=Math.sqrt(a*a+b*b),area=a*b/2;show(`<strong>${F(c,4)} hypotenuse</strong><br>Area: ${F(area,4)}; perimeter: ${F(a+b+c,4)}.`);break}
+  case'sample_size_advanced':{const p=sampleSizeProjection();if(!p.valid)show(`<strong>Check the inputs</strong><br>${p.message}`);else show(`<strong>${F(p.required,0)} completed responses</strong><br>${p.adjusted?`Finite-population estimate from ${F(p.population,0)} people.`:'Large-population estimate; no population correction.'} Uncorrected estimate: ${F(p.uncorrected,0)}.`);break}
   case'stats_advanced':{const p=statsProjection();if(!p.valid)show(`<strong>Check the data</strong><br>${p.message}`);else show(`<strong>${F(p.sd,6)} ${p.type} standard deviation</strong><br>Variance: ${F(p.variance,6)}; mean: ${F(p.mean,6)}; count: ${p.n}.`);break}
   case'cn_stats':{let vals=(document.getElementById('values')?.value||'').split(/[,\s]+/).map(Number).filter(Number.isFinite);if(!vals.length){show('Enter at least one number.');break}let mean=vals.reduce((x,y)=>x+y,0)/vals.length,sorted=[...vals].sort((x,y)=>x-y),mid=Math.floor(sorted.length/2),median=sorted.length%2?sorted[mid]:(sorted[mid-1]+sorted[mid])/2,sd=Math.sqrt(vals.reduce((s,x)=>s+(x-mean)**2,0)/Math.max(1,vals.length-1));show(`<strong>${F(mean,4)} mean</strong><br>Median: ${F(median,4)}; sample standard deviation: ${F(sd,4)}; count: ${vals.length}.`);break}
   case'cn_random':{let min=Math.ceil(V('min')),max=Math.floor(V('max'));if(max<min){let t=min;min=max;max=t}let val=Math.floor(Math.random()*(max-min+1))+min;show(`<strong>${val}</strong><br>Random integer from ${min} to ${max}.`);break}
@@ -678,6 +679,16 @@ function renderGeneric(cards, bars, rows) {
   table.innerHTML = rows.map(row => `<tr><td>${row[0]}</td><td>${row[1]}</td><td>${row[2]}</td></tr>`).join("");
 }
 
+function sampleSizeProjection() {
+  const populationRaw=Number(document.getElementById('sample_population')?.value),margin=Number(document.getElementById('sample_margin')?.value),proportion=Number(document.getElementById('sample_proportion')?.value),z=Number(document.getElementById('sample_confidence')?.value);
+  if(!Number.isFinite(populationRaw)||populationRaw<0||!Number.isInteger(populationRaw))return{valid:false,message:'Enter a whole population size of 0 or more.'};
+  if(!Number.isFinite(margin)||margin<0.1||margin>50)return{valid:false,message:'Enter a margin of error from 0.1% through 50%.'};
+  if(!Number.isFinite(proportion)||proportion<0.1||proportion>99.9)return{valid:false,message:'Enter an expected proportion from 0.1% through 99.9%.'};
+  if(![1.645,1.96,2.576].includes(z))return{valid:false,message:'Choose a 90%, 95%, or 99% confidence level.'};
+  const p=proportion/100,E=margin/100,n0=z*z*p*(1-p)/(E*E),adjusted=populationRaw>0?populationRaw*n0/(populationRaw+n0-1):n0;
+  return{valid:true,population:populationRaw,margin,proportion,z,n0,required:Math.ceil(adjusted),uncorrected:Math.ceil(n0),adjusted:populationRaw>0};
+}
+
 function marriageTaxProjection(){
   const year=Number(document.getElementById('marriage_tax_year')?.value||2026),income1=Math.max(0,V('marriage_income1')),income2=Math.max(0,V('marriage_income2'));
   const data=year===2025?{deductionSingle:15750,deductionJoint:31500,single:[[11925,.10],[48475,.12],[103350,.22],[197300,.24],[250525,.32],[626350,.35],[Infinity,.37]],joint:[[23850,.10],[96950,.12],[206700,.22],[394600,.24],[501050,.32],[751600,.35],[Infinity,.37]]}:{deductionSingle:16100,deductionJoint:32200,single:[[12400,.10],[50400,.12],[105700,.22],[201775,.24],[256225,.32],[640600,.35],[Infinity,.37]],joint:[[24800,.10],[100800,.12],[211400,.22],[403550,.24],[512450,.32],[768700,.35],[Infinity,.37]]};
@@ -703,7 +714,11 @@ function paybackProjection(){
 function renderGenericFromEngine(engine) {
   if (!document.getElementById("genericSummary")) return;
   let cards=[], bars=[], rows=[];
-  if (engine === "payback_advanced") {
+  if(engine==="sample_size_advanced"){
+    const p=sampleSizeProjection();
+    if(!p.valid){cards=[["Required sample","Check inputs",p.message],["Large-population estimate","Unavailable","Correct the inputs first."],["Population adjustment","Unavailable","Correct the inputs first."],["Confidence level","Unavailable","Correct the inputs first."]];bars=[];rows=[["Validation","Unable to calculate",p.message]]}
+    else{cards=[["Completed responses",F(p.required,0),"Minimum target after rounding up."],["Large-population estimate",F(p.uncorrected,0),"Before finite population correction."],["Finite population",p.population?F(p.population,0):"Not applied",p.adjusted?"Correction applied for sampling without replacement.":"Unknown or very large population; no correction."],["Confidence and margin",`${F(p.z===1.645?90:p.z===1.96?95:99,0)}% / ${F(p.margin,2)}%`,`${F(p.proportion,1)}% expected proportion.`]];bars=[{label:"Large population",value:p.uncorrected,display:F(p.uncorrected,0)},{label:"Required sample",value:p.required,display:F(p.required,0)}];rows=[["Confidence level",`${F(p.z===1.645?90:p.z===1.96?95:99,0)}%`,`${F(p.z,3)} normal critical value.`],["Margin of error",`${F(p.margin,2)}%`,"Entered percentage points."],["Expected proportion",`${F(p.proportion,2)}%`,"p is converted to a decimal in the formula."],["Large-population estimate",F(p.n0,3),"z² × p × (1 − p) / E²."],["Population size",p.population?F(p.population,0):"Not entered",p.population?"Finite population correction applied.":"No finite-population correction."],["Required completed responses",F(p.required,0),"Adjusted estimate rounded up to a whole response."]];}
+  } else if (engine === "payback_advanced") {
     const p=paybackProjection(),simple=p.simple===null?"Not recovered":`${F(p.simple,2)} years`,discounted=p.discounted===null?"Not recovered":`${F(p.discounted,2)} years`,flowsLabel=p.mode==='fixed'?"Constant annual cash flow":"Entered yearly cash flows";
     cards=[["Simple payback",simple,"Undiscounted cumulative cash flow."],["Discounted payback",discounted,`${F(p.rate*100,2)}% annual discount rate.`],["Net present value",USD(p.npv),`Discounted over ${p.horizon} years.`],["Total cash flow",USD(p.totalCashFlow),flowsLabel+" over the selected horizon."]];
     bars=[{label:"Initial investment",value:p.investment,display:USD(p.investment)},{label:"Cash flows received",value:p.totalCashFlow,display:USD(p.totalCashFlow)},{label:"Net present value",value:p.npv,display:USD(p.npv)}];

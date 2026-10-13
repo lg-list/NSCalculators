@@ -733,7 +733,9 @@ def calculator_net_template(keyword, slug, cat):
         "example": f"Enter sample values to generate an illustrative {keyword.lower()} result.",
         "inputs": [["amount", "Amount", "number", 1000], ["rate", "Rate (%)", "number", 5], ["years", "Years", "number", 10]],
     }
-    if slug == "payback-period-calculator":
+    if slug == "sample-size-calculator":
+        base.update({"engine": "sample_size_advanced", "desc": "Estimate the number of completed responses needed to measure a population proportion at a selected confidence level and margin of error, with an optional finite-population correction.", "formula": "n0 = z² p(1 - p) / E²; for a known finite population N, n = n0 / (1 + (n0 - 1) / N). Round up to the next whole response.", "example": "At 95% confidence, a 5% margin of error, and a conservative 50% expected proportion, an unknown or very large population requires 385 completed responses.", "inputs": []})
+    elif slug == "payback-period-calculator":
         base.update({"engine": "payback_advanced", "desc": "Estimate simple and discounted investment payback from fixed or irregular annual cash flows, with NPV and a year-by-year schedule.", "formula": "Simple payback is the point when cumulative cash flow recovers the initial investment; discounted payback discounts each year's cash flow before accumulation.", "inputs": []})
     elif slug == "marriage-calculator":
         base.update({"engine": "marriage_tax_advanced", "desc": "Compare estimated 2025 or 2026 US federal income tax for two individual filers with a married-filing-jointly estimate.", "formula": "Estimated regular federal income tax = progressive tax on ordinary taxable income after the applicable standard deduction.", "inputs": []})
@@ -1066,6 +1068,8 @@ def seo_keywords(calc):
 def seo_title(calc):
     if calc.get("slug") == "area-calculator":
         return "Area Calculator: 9 Shapes, Formulas & Units"
+    if calc.get("slug") == "sample-size-calculator":
+        return "Sample Size Calculator: Confidence & Margin of Error"
     if calc.get("slug") == "payback-period-calculator":
         return "Payback Period Calculator: Discounted & Cash Flow"
     if calc.get("slug") == "marriage-calculator":
@@ -1190,6 +1194,8 @@ def seo_description(calc):
     context = f" for {display_group(calculator_group(calc)).lower()}" if calc.get("seo_context_label") else ""
     if calc.get("slug") == "area-calculator":
         return "Find the area of 9 common shapes, including circles, triangles, sectors, and trapezoids. Convert square feet, square meters, acres, and more."
+    if calc.get("slug") == "sample-size-calculator":
+        return "Estimate survey sample size from confidence level, margin of error, expected proportion, and optional population size. Includes finite population correction."
     if calc.get("slug") == "payback-period-calculator":
         return "Calculate simple and discounted payback periods from fixed or annual cash flows. Compare NPV, break-even year, and an investment schedule."
     if calc.get("slug") == "marriage-calculator":
@@ -1518,6 +1524,15 @@ def standard_deviation_input_html():
 <div class="field field-wide"><label for="stats_values">Data values</label><textarea id="stats_values" rows="4" spellcheck="false">10, 12, 23, 23, 16, 23, 21, 16</textarea><small>Separate numbers with commas, spaces, semicolons, or new lines.</small></div>
 <div class="field"><label for="stats_type">Data represents</label><select id="stats_type"><option value="population" selected>Entire population</option><option value="sample">Sample of a population</option></select></div>
 <div class="field"><label for="stats_confidence">Confidence level</label><select id="stats_confidence"><option value="1.645">90% normal approximation</option><option value="1.96" selected>95% normal approximation</option><option value="2.576">99% normal approximation</option></select></div>
+</div>"""
+
+
+def sample_size_input_html():
+    return """<div class="fields sample-size-fields">
+<div class="field"><label for="sample_confidence">Confidence level</label><select id="sample_confidence"><option value="1.645">90%</option><option value="1.96" selected>95%</option><option value="2.576">99%</option></select></div>
+<div class="field"><label for="sample_margin">Margin of error</label><div class="input-unit"><input id="sample_margin" type="number" min="0.1" max="50" step="any" value="5"><span>%</span></div></div>
+<div class="field"><label for="sample_proportion">Expected proportion</label><div class="input-unit"><input id="sample_proportion" type="number" min="0.1" max="99.9" step="any" value="50"><span>%</span></div><small>Use 50% when you do not have a prior estimate.</small></div>
+<div class="field"><label for="sample_population">Population size</label><input id="sample_population" type="number" min="0" step="1" value="0"><small>Enter 0 if the population is unknown or very large.</small></div>
 </div>"""
 
 
@@ -2722,6 +2737,15 @@ def conversion_copy(calc):
 
 
 def high_value_calculator_copy(calc):
+    if calc.get("slug") == "sample-size-calculator":
+        return """
+<h2>What this sample size calculator estimates</h2><p>This tool estimates the number of <strong>completed responses</strong> needed to estimate one population proportion, such as the share of customers who choose an option. It uses a normal-approximation confidence interval and assumes a simple random, representative sample. It is not a power analysis for comparing groups or testing a hypothesis.</p>
+<h2>How to use the inputs</h2><p>Choose a confidence level, set the maximum margin of error in percentage points, and enter a prior estimate for the proportion. If no estimate is available, 50% is a conservative choice that produces the largest sample size for a fixed confidence level and margin of error. Enter the total population when it is known and sampling without replacement; leave it at 0 for an unknown or very large population.</p>
+<h2>Formula and finite population correction</h2><p class="formula">Large-population sample: n₀ = z² × p × (1 − p) / E²</p><p class="formula">Finite population: n = n₀ / [1 + (n₀ − 1) / N]</p><p>Here, z is the normal critical value for the selected confidence level, p is the expected proportion as a decimal, E is the margin of error as a decimal, and N is the population size. The calculator rounds the result up because a fraction of a completed response is not possible. For the finite-population estimate, it applies the correction for sampling without replacement. NIST explains the proportion-based sample size inputs and finite-population correction in its <a href="https://www.itl.nist.gov/div898/handbook/prc/section2/old.prc272.htm" rel="external noopener">Engineering Statistics Handbook</a>.</p>
+<h2>Worked example</h2><p>For 95% confidence, a 5-percentage-point margin of error, and an unknown proportion set to 50%, z = 1.96 and p = 0.50. The large-population estimate is 384.16, so plan for at least <strong>385 completed responses</strong>. If the population is 1,000 and the sample is drawn without replacement, the finite-population correction reduces the estimate to 278.</p>
+<h2>Completed responses are not invitations</h2><p>The result is the number of usable, completed responses. If you expect an 80% response rate, divide the target by 0.80: 385 completed responses would require about 482 invitations. This adjustment is a separate planning step and does not fix nonresponse bias.</p>
+<h2>Important limitations</h2><p>This estimate does not account for clustered or stratified sampling, unequal weights, design effects, subgroup reporting, nonresponse bias, or a target for estimating a population mean. Complex surveys and clinical or experimental studies may need different methods and assumptions. CDC's <a href="https://www.cdc.gov/epiinfo/user-guide/statcalc/samplesize.html" rel="external noopener">Epi Info population survey guidance</a> also describes its own survey inputs and assumptions. For research decisions, have the study design and sample-size method reviewed by a qualified statistician.</p>
+<h2>Frequently asked questions</h2><h3>Why is 50% the default expected proportion?</h3><p>When the true proportion is unknown, 50% maximizes p × (1 − p), giving the most conservative sample size for this proportion-based formula.</p><h3>What does a 5% margin of error mean?</h3><p>It means the estimate is planned to be within about 5 percentage points of the population proportion at the selected confidence level, under the stated sampling assumptions.</p><h3>Does higher confidence require more responses?</h3><p>Yes. A higher confidence level uses a larger z value, which increases the required sample size when other inputs stay fixed.</p><h3>Should I enter the total population?</h3><p>Enter a finite population size when you know the number of eligible people or items and will sample without replacement. Otherwise, use 0 and the calculator will use the large-population estimate.</p>"""
     if calc.get("slug") == "army-body-fat-calculator":
         return """
 <h2>Current Army body composition screening</h2><p>Although many people still search for an <strong>Army body fat calculator</strong> or military BMI calculator, the Army's July 2026 public guidance says its current body-composition assessment uses waist-to-height ratio (WHtR), replacing the previous height-and-weight tables, circumference-based tape test, and supplemental body-fat assessments. This page calculates that ratio; it does not estimate body-fat percentage.</p>
@@ -3581,6 +3605,13 @@ def default_calculator_copy(calc):
 
 
 def analysis_extra_html(calc):
+    if calc.get("slug") == "sample-size-calculator":
+        return """<section class="mortgage-dashboard generic-dashboard sample-size-dashboard" aria-label="Sample size analysis results">
+<div class="section-head stack"><h2>Sample Size Results</h2><p>Review the required completed responses, the large-population estimate, and any finite-population adjustment.</p></div>
+<div class="summary-grid" id="genericSummary"></div>
+<div class="chart-grid"><div class="chart-card compact-chart"><h3>Sample Size Comparison</h3><canvas id="genericChart" width="620" height="220" aria-label="Large population and adjusted sample size comparison" data-chart-type="bars"></canvas></div></div>
+<div class="table-card"><h3>Calculation Details</h3><div class="table-scroll"><table class="data-table" id="genericTable"><thead><tr><th>Measure</th><th>Value</th><th>Method</th></tr></thead><tbody></tbody></table></div></div>
+</section>"""
     if calc.get("slug") == "payback-period-calculator":
         return """<section class="mortgage-dashboard generic-dashboard payback-dashboard" aria-label="Investment payback analysis">
 <div class="section-head stack"><h2>Payback and Cash-Flow Results</h2><p>Compare simple recovery, discounted recovery, NPV, and annual cash-flow balances.</p></div>
@@ -4217,6 +4248,9 @@ def calculator_page(site, calc, related):
     elif calc.get("slug") == "house-affordability-calculator":
         fields = house_affordability_input_html()
         page_engine = "house_affordability_advanced"
+    elif calc.get("slug") == "sample-size-calculator":
+        fields = sample_size_input_html()
+        page_engine = "sample_size_advanced"
     elif calc.get("slug") == "area-calculator":
         fields = area_calculator_input_html()
         page_engine = "area_advanced"
@@ -4410,6 +4444,8 @@ def calculator_page(site, calc, related):
         calculator_asset_version = "20261013a"
     if calc.get("slug") == "payback-period-calculator":
         calculator_asset_version = "20261013b"
+    if calc.get("slug") == "sample-size-calculator":
+        calculator_asset_version = "20261014a"
     if calc.get("engine") == "loan_page":
         calc_html = f"""<section class="calc loan-page-calc"><h2>Calculator</h2>{fields}<div class="result" id="result">Enter your values and select Calculate.</div></section>"""
     else:
@@ -5371,6 +5407,7 @@ function calc(e){
   case'cn_pace':{let sec=V('hours')*3600+V('minutes')*60+V('seconds'),dist=V('distance');let pace=dist?sec/dist:0;show(`<strong>${Math.floor(pace/60)}:${String(Math.round(pace%60)).padStart(2,'0')} per mile</strong><br>Average speed: ${F(dist/(sec/3600),2)} mph.`);break}
   case'cn_percent':{let pct=V('whole')?V('part')/V('whole')*100:0,change=V('old')?(V('new')-V('old'))/V('old')*100:0;show(`<strong>${F(pct,2)}%</strong><br>Percent change from old to new value: ${F(change,2)}%.`);break}
   case'cn_triangle':{let a=V('a'),b=V('b'),c=Math.sqrt(a*a+b*b),area=a*b/2;show(`<strong>${F(c,4)} hypotenuse</strong><br>Area: ${F(area,4)}; perimeter: ${F(a+b+c,4)}.`);break}
+  case'sample_size_advanced':{const p=sampleSizeProjection();if(!p.valid)show(`<strong>Check the inputs</strong><br>${p.message}`);else show(`<strong>${F(p.required,0)} completed responses</strong><br>${p.adjusted?`Finite-population estimate from ${F(p.population,0)} people.`:'Large-population estimate; no population correction.'} Uncorrected estimate: ${F(p.uncorrected,0)}.`);break}
   case'stats_advanced':{const p=statsProjection();if(!p.valid)show(`<strong>Check the data</strong><br>${p.message}`);else show(`<strong>${F(p.sd,6)} ${p.type} standard deviation</strong><br>Variance: ${F(p.variance,6)}; mean: ${F(p.mean,6)}; count: ${p.n}.`);break}
   case'cn_stats':{let vals=(document.getElementById('values')?.value||'').split(/[,\s]+/).map(Number).filter(Number.isFinite);if(!vals.length){show('Enter at least one number.');break}let mean=vals.reduce((x,y)=>x+y,0)/vals.length,sorted=[...vals].sort((x,y)=>x-y),mid=Math.floor(sorted.length/2),median=sorted.length%2?sorted[mid]:(sorted[mid-1]+sorted[mid])/2,sd=Math.sqrt(vals.reduce((s,x)=>s+(x-mean)**2,0)/Math.max(1,vals.length-1));show(`<strong>${F(mean,4)} mean</strong><br>Median: ${F(median,4)}; sample standard deviation: ${F(sd,4)}; count: ${vals.length}.`);break}
   case'cn_random':{let min=Math.ceil(V('min')),max=Math.floor(V('max'));if(max<min){let t=min;min=max;max=t}let val=Math.floor(Math.random()*(max-min+1))+min;show(`<strong>${val}</strong><br>Random integer from ${min} to ${max}.`);break}
@@ -5464,6 +5501,16 @@ function renderGeneric(cards, bars, rows) {
   table.innerHTML = rows.map(row => `<tr><td>${row[0]}</td><td>${row[1]}</td><td>${row[2]}</td></tr>`).join("");
 }
 
+function sampleSizeProjection() {
+  const populationRaw=Number(document.getElementById('sample_population')?.value),margin=Number(document.getElementById('sample_margin')?.value),proportion=Number(document.getElementById('sample_proportion')?.value),z=Number(document.getElementById('sample_confidence')?.value);
+  if(!Number.isFinite(populationRaw)||populationRaw<0||!Number.isInteger(populationRaw))return{valid:false,message:'Enter a whole population size of 0 or more.'};
+  if(!Number.isFinite(margin)||margin<0.1||margin>50)return{valid:false,message:'Enter a margin of error from 0.1% through 50%.'};
+  if(!Number.isFinite(proportion)||proportion<0.1||proportion>99.9)return{valid:false,message:'Enter an expected proportion from 0.1% through 99.9%.'};
+  if(![1.645,1.96,2.576].includes(z))return{valid:false,message:'Choose a 90%, 95%, or 99% confidence level.'};
+  const p=proportion/100,E=margin/100,n0=z*z*p*(1-p)/(E*E),adjusted=populationRaw>0?populationRaw*n0/(populationRaw+n0-1):n0;
+  return{valid:true,population:populationRaw,margin,proportion,z,n0,required:Math.ceil(adjusted),uncorrected:Math.ceil(n0),adjusted:populationRaw>0};
+}
+
 function marriageTaxProjection(){
   const year=Number(document.getElementById('marriage_tax_year')?.value||2026),income1=Math.max(0,V('marriage_income1')),income2=Math.max(0,V('marriage_income2'));
   const data=year===2025?{deductionSingle:15750,deductionJoint:31500,single:[[11925,.10],[48475,.12],[103350,.22],[197300,.24],[250525,.32],[626350,.35],[Infinity,.37]],joint:[[23850,.10],[96950,.12],[206700,.22],[394600,.24],[501050,.32],[751600,.35],[Infinity,.37]]}:{deductionSingle:16100,deductionJoint:32200,single:[[12400,.10],[50400,.12],[105700,.22],[201775,.24],[256225,.32],[640600,.35],[Infinity,.37]],joint:[[24800,.10],[100800,.12],[211400,.22],[403550,.24],[512450,.32],[768700,.35],[Infinity,.37]]};
@@ -5489,7 +5536,11 @@ function paybackProjection(){
 function renderGenericFromEngine(engine) {
   if (!document.getElementById("genericSummary")) return;
   let cards=[], bars=[], rows=[];
-  if (engine === "payback_advanced") {
+  if(engine==="sample_size_advanced"){
+    const p=sampleSizeProjection();
+    if(!p.valid){cards=[["Required sample","Check inputs",p.message],["Large-population estimate","Unavailable","Correct the inputs first."],["Population adjustment","Unavailable","Correct the inputs first."],["Confidence level","Unavailable","Correct the inputs first."]];bars=[];rows=[["Validation","Unable to calculate",p.message]]}
+    else{cards=[["Completed responses",F(p.required,0),"Minimum target after rounding up."],["Large-population estimate",F(p.uncorrected,0),"Before finite population correction."],["Finite population",p.population?F(p.population,0):"Not applied",p.adjusted?"Correction applied for sampling without replacement.":"Unknown or very large population; no correction."],["Confidence and margin",`${F(p.z===1.645?90:p.z===1.96?95:99,0)}% / ${F(p.margin,2)}%`,`${F(p.proportion,1)}% expected proportion.`]];bars=[{label:"Large population",value:p.uncorrected,display:F(p.uncorrected,0)},{label:"Required sample",value:p.required,display:F(p.required,0)}];rows=[["Confidence level",`${F(p.z===1.645?90:p.z===1.96?95:99,0)}%`,`${F(p.z,3)} normal critical value.`],["Margin of error",`${F(p.margin,2)}%`,"Entered percentage points."],["Expected proportion",`${F(p.proportion,2)}%`,"p is converted to a decimal in the formula."],["Large-population estimate",F(p.n0,3),"z² × p × (1 − p) / E²."],["Population size",p.population?F(p.population,0):"Not entered",p.population?"Finite population correction applied.":"No finite-population correction."],["Required completed responses",F(p.required,0),"Adjusted estimate rounded up to a whole response."]];}
+  } else if (engine === "payback_advanced") {
     const p=paybackProjection(),simple=p.simple===null?"Not recovered":`${F(p.simple,2)} years`,discounted=p.discounted===null?"Not recovered":`${F(p.discounted,2)} years`,flowsLabel=p.mode==='fixed'?"Constant annual cash flow":"Entered yearly cash flows";
     cards=[["Simple payback",simple,"Undiscounted cumulative cash flow."],["Discounted payback",discounted,`${F(p.rate*100,2)}% annual discount rate.`],["Net present value",USD(p.npv),`Discounted over ${p.horizon} years.`],["Total cash flow",USD(p.totalCashFlow),flowsLabel+" over the selected horizon."]];
     bars=[{label:"Initial investment",value:p.investment,display:USD(p.investment)},{label:"Cash flows received",value:p.totalCashFlow,display:USD(p.totalCashFlow)},{label:"Net present value",value:p.npv,display:USD(p.npv)}];
