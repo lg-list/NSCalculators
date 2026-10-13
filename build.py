@@ -1068,7 +1068,7 @@ def seo_keywords(calc):
 
 def seo_title(calc):
     if calc.get("slug") == "area-calculator":
-        return "Area Calculator: 9 Shapes, Formulas & Units"
+        return "Area Calculator: Rectangle, Circle, Triangle & 5 More"
     if calc.get("slug") == "used-car-value-calculator":
         return "Used Car Value Calculator: Retail, Private-Party & Trade-In"
     if calc.get("slug") == "cu-feet-to-cu-meters-calculator":
@@ -1118,7 +1118,7 @@ def seo_title(calc):
     if calc.get("slug") == "house-affordability-calculator":
         return "House Affordability Calculator: How Much Home Can I Afford?"
     if calc.get("slug") == "area-calculator":
-        return "Area Calculator: Rectangle, Triangle, Circle & More"
+        return "Area Calculator: Rectangle, Circle, Triangle & 5 More"
     if calc.get("slug") == "conversion-calculator":
         return "Conversion Calculator: Length, Weight, Volume & More"
     if calc.get("slug") == "depreciation-calculator":
@@ -1198,7 +1198,7 @@ def seo_description(calc):
     keyword = primary_keyword(calc)
     context = f" for {display_group(calculator_group(calc)).lower()}" if calc.get("seo_context_label") else ""
     if calc.get("slug") == "area-calculator":
-        return "Calculate area for 9 shapes with formulas and supporting measurements. Convert results to square feet, square meters, acres, hectares, and more."
+        return "Calculate area for 8 shapes in 9 modes, including two triangle methods. Convert results to square feet, acres, square meters, or hectares."
     if calc.get("slug") == "sample-size-calculator":
         return "Estimate survey sample size from confidence level, margin of error, expected proportion, and optional population size. Includes finite population correction."
     if calc.get("slug") == "payback-period-calculator":
@@ -4170,7 +4170,7 @@ def calculator_page(site, calc, related):
     if calc.get("slug") == "area-calculator":
         calc = {
             **calc,
-            "desc": "Calculate area for nine common 2D shapes, convert square units, and review formulas and supporting measurements.",
+            "desc": "Calculate area for eight common 2D shapes in nine input modes, convert square units, and review formulas and supporting measurements.",
             "formula": "Area depends on shape; for a rectangle, area = length x width.",
             "example": "A 20 ft by 12 ft rectangle has an area of 240 square feet.",
         }
