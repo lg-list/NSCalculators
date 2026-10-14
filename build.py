@@ -19,7 +19,7 @@ RMD_JOINT_LIFE_TABLE = ROOT / "src" / "data" / "rmd-joint-life-table.json"
 PUBLIC_BASE_PATH = os.environ.get("PUBLIC_BASE_PATH", "").strip().rstrip("/")
 PUBLIC_SITE_DOMAIN = os.environ.get("PUBLIC_SITE_DOMAIN", "").strip()
 GA4_MEASUREMENT_ID = os.environ.get("GA4_MEASUREMENT_ID", "G-19CY1VWHFM").strip()
-ASSET_VERSION = "20260919a"
+ASSET_VERSION = "20261014a"
 PRIORITY_LENGTH_CONVERSIONS = {
     "millimeters-to-feet-calculator",
     "meters-to-feet-calculator",
