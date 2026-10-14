@@ -5516,8 +5516,10 @@ function calc(e){
  }
  renderGenericFromEngine(e);
 }
+function trackGA4Event(name,params){if(typeof window.gtag==='function')window.gtag('event',name,params)}
 function currentEngine(){return document.querySelector('[data-engine]')?.dataset.engine||''}
-document.addEventListener('click',e=>{const btn=e.target.closest('[data-engine]');if(btn)calc(btn.dataset.engine)});
+document.addEventListener('click',e=>{const btn=e.target.closest('[data-engine]');if(btn){const engine=btn.dataset.engine;calc(engine);trackGA4Event('calculator_submit',{calculator_engine:engine,calculator_path:location.pathname})}});
+document.addEventListener('click',e=>{const link=e.target.closest('a[href]');if(!link)return;try{const destination=new URL(link.href,location.href);if(/^https?:$/.test(destination.protocol)&&destination.hostname!==location.hostname)trackGA4Event('outbound_reference_click',{destination_host:destination.hostname,source_path:location.pathname})}catch{}});
 document.addEventListener('click',e=>{if(e.target.closest('[data-clear]'))clearCalcForm()});
 document.addEventListener('click',e=>{if(e.target.closest('[data-clear]')&&currentEngine()==='army_wht_ratio')renderGenericFromEngine('army_wht_ratio')});
 document.addEventListener('click',e=>{if(e.target.closest('[data-clear]')&&currentEngine()==='payback_advanced')renderGenericFromEngine('payback_advanced')});

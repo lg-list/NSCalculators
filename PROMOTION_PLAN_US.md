@@ -42,7 +42,7 @@ Grow qualified US organic traffic by concentrating authority, content improvemen
 
 - Deploy the revised titles and meta descriptions for Area, Used Car Value, Future Resale Value, and Trade-In Value.
 - Confirm the generated sitemap is live and monitor Search Console for title rewrites, impressions, average position, and CTR.
-- Connect GA4 and track `calculator_submit`, `result_view`, `copy_result`, `share`, and outbound reference clicks.
+- GA4 is installed. Track `calculator_submit` and `outbound_reference_click` as implemented events; add `result_view`, `copy_result`, or `share` only if those distinct user actions are implemented and can be measured reliably.
 
 ### Week 2 — Authority pages and internal links
 
@@ -83,7 +83,7 @@ Track weekly by page and query:
 - US impressions, clicks, CTR, and average position
 - Indexed pages and sitemap errors
 - Organic landing sessions and engaged sessions
-- Calculator starts, completed calculations, copied/shared results
+- Explicit calculator submissions and outbound reference clicks (GA4); result-copy/share events are not available because the site has no copy/share actions.
 - Referring domains and links earned to priority pages
 
 Initial 30-day targets after deployment:
