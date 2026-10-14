@@ -1223,7 +1223,7 @@ def seo_description(calc):
     if calc.get("slug") == "calories-burned-calculator":
         return "Estimate calories burned walking, running, cycling, lifting, and more. Enter your weight and workout time to compare total and active calories."
     if calc.get("slug") == "area-calculator":
-        return "Calculate area for 8 shapes, including rectangles, circles, triangles and trapezoids. Enter dimensions for formulas, perimeter, and conversions to sq ft, sq m and more."
+        return "Calculate area for 8 shapes, including rectangles, circles and triangles. Enter dimensions for perimeter, formulas and conversions to sq ft, sq m or acres."
     if calc.get("slug") == "square-footage-calculator":
         return "Calculate square feet for room floors, circles, triangles, or four walls. Subtract doors and windows, add material overage, and estimate cost per square foot."
     if calc.get("slug") == "sample-size-calculator":
@@ -1261,7 +1261,7 @@ def seo_description(calc):
     if calc.get("slug") == "house-affordability-calculator":
         return "Estimate how much house you can afford using income, monthly debts, down payment, mortgage rate, taxes, insurance, HOA, PMI, and adjustable DTI limits."
     if calc.get("slug") == "area-calculator":
-        return "Calculate area for 8 shapes, including rectangles, circles, triangles and trapezoids. Enter dimensions for formulas, perimeter, and conversions to sq ft, sq m and more."
+        return "Calculate area for 8 shapes, including rectangles, circles and triangles. Enter dimensions for perimeter, formulas and conversions to sq ft, sq m or acres."
     if calc.get("slug") == "conversion-calculator":
         return "Convert length, weight, temperature, volume, area, speed, pressure, energy, time, and data units with formulas, reference factors, and reverse conversion."
     if calc.get("slug") == "depreciation-calculator":
