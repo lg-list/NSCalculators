@@ -1197,7 +1197,7 @@ def seo_title(calc):
     if calc.get("slug") == "payment-calculator":
         return "Payment Calculator: Monthly Payment or Loan Term"
     if calc.get("slug") == "compound-interest-calculator":
-        return "Compound Interest Calculator | NS Calculators"
+        return "Compound Interest Calculator with Monthly Contributions"
     if calc.get("slug") == "take-home-pay-calculator":
         return "Take Home Pay Calculator 2026 | NS Calculators"
     if calc.get("slug") == "sales-tax-calculator":
@@ -1316,7 +1316,7 @@ def seo_description(calc):
     if calc.get("slug") == "rmd-calculator":
         return "Calculate your 2026 required minimum distribution from an IRA or retirement account using current IRS life-expectancy tables, with a future RMD schedule."
     if calc.get("slug") == "compound-interest-calculator":
-        return "Calculate compound interest with monthly and annual contributions, tax, inflation, years and months, detailed growth charts, and an annual schedule."
+        return "Project compound growth with monthly or annual deposits, nine compounding frequencies, deposit timing, taxes, inflation, charts, and a year-by-year schedule."
     if calc.get("slug") == "truck-payload-calculator":
         return "Calculate truck payload capacity and remaining payload from GVWR, curb weight, passengers, cargo, and trailer tongue weight."
     if calc.get("slug") == "towing-capacity-calculator":
