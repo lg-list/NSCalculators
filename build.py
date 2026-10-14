@@ -1089,7 +1089,7 @@ def seo_title(calc):
     if calc.get("slug") == "calories-burned-calculator":
         return "Calories Burned Calculator: Exercise & Activity"
     if calc.get("slug") == "area-calculator":
-        return "Area Calculator: Rectangle, Circle, Triangle & More"
+        return "Area Calculator: 8 Shapes, Formulas & Units"
     if calc.get("slug") == "used-car-value-calculator":
         return "Used Car Value Calculator: Free Price Estimate"
     if calc.get("slug") == "cu-feet-to-cu-meters-calculator":
@@ -1139,7 +1139,7 @@ def seo_title(calc):
     if calc.get("slug") == "house-affordability-calculator":
         return "House Affordability Calculator: How Much Home Can I Afford?"
     if calc.get("slug") == "area-calculator":
-        return "Area Calculator: Rectangle, Circle, Triangle & More"
+        return "Area Calculator: 8 Shapes, Formulas & Units"
     if calc.get("slug") == "conversion-calculator":
         return "Conversion Calculator: Length, Weight, Volume & More"
     if calc.get("slug") == "depreciation-calculator":
@@ -1221,7 +1221,7 @@ def seo_description(calc):
     if calc.get("slug") == "calories-burned-calculator":
         return "Estimate calories burned walking, running, cycling, lifting, and more. Enter your weight and workout time to compare total and active calories."
     if calc.get("slug") == "area-calculator":
-        return "Free area calculator for rectangles, circles, triangles, squares, trapezoids and more. Get square feet, square meters, perimeter, formulas and conversions."
+        return "Calculate area for 8 shapes, including rectangles, circles, triangles and trapezoids. Enter dimensions for formulas, perimeter, and conversions to sq ft, sq m and more."
     if calc.get("slug") == "sample-size-calculator":
         return "Estimate survey sample size from confidence level, margin of error, expected proportion, and optional population size. Includes finite population correction."
     if calc.get("slug") == "payback-period-calculator":
@@ -1257,7 +1257,7 @@ def seo_description(calc):
     if calc.get("slug") == "house-affordability-calculator":
         return "Estimate how much house you can afford using income, monthly debts, down payment, mortgage rate, taxes, insurance, HOA, PMI, and adjustable DTI limits."
     if calc.get("slug") == "area-calculator":
-        return "Free area calculator for rectangles, circles, triangles, squares, trapezoids and more. Get square feet, square meters, perimeter, formulas and conversions."
+        return "Calculate area for 8 shapes, including rectangles, circles, triangles and trapezoids. Enter dimensions for formulas, perimeter, and conversions to sq ft, sq m and more."
     if calc.get("slug") == "conversion-calculator":
         return "Convert length, weight, temperature, volume, area, speed, pressure, energy, time, and data units with formulas, reference factors, and reverse conversion."
     if calc.get("slug") == "depreciation-calculator":

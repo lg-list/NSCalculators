@@ -99,3 +99,7 @@ Initial 30-day targets after deployment:
 - One 1200×630 social preview image per priority page.
 - A one-paragraph tool description and three short post variants per page.
 - A compact outreach sheet with prospect URL, contact route, relevant resource, pitch angle, status, and response.
+
+## Search Snippet Test Log
+
+- 2026-10-14: Updated the Area Calculator title to state its eight supported shapes, formulas, and unit conversions, and rewrote the description to emphasize entering dimensions and getting area/perimeter outputs. Baseline from US Search Console, 2026-09-14 through 2026-10-11: `area calculator` had 593 impressions, 0 clicks, and average position 8.62 for this URL. The page audit found 1,308 words, 31 internal links, a self-canonical, indexable status, and no on-page issues; URL Inspection returned `PASS` / `Submitted and indexed`. Recheck after a full 28-day post-change window; Google may choose a different title or snippet.
