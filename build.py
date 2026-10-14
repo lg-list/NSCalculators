@@ -18,6 +18,7 @@ SEO_STRATEGY = ROOT / "exports" / "seo-keyword-strategy-2026-09-05.json"
 RMD_JOINT_LIFE_TABLE = ROOT / "src" / "data" / "rmd-joint-life-table.json"
 PUBLIC_BASE_PATH = os.environ.get("PUBLIC_BASE_PATH", "").strip().rstrip("/")
 PUBLIC_SITE_DOMAIN = os.environ.get("PUBLIC_SITE_DOMAIN", "").strip()
+GA4_MEASUREMENT_ID = os.environ.get("GA4_MEASUREMENT_ID", "G-19CY1VWHFM").strip()
 ASSET_VERSION = "20260919a"
 PRIORITY_LENGTH_CONVERSIONS = {
     "millimeters-to-feet-calculator",
@@ -429,6 +430,21 @@ def json_ld(payload):
     return '<script type="application/ld+json">' + json.dumps(payload, ensure_ascii=False, separators=(",", ":")) + "</script>"
 
 
+def google_tag():
+    if not GA4_MEASUREMENT_ID:
+        return ""
+    measurement_id = h(GA4_MEASUREMENT_ID)
+    measurement_id_json = json.dumps(GA4_MEASUREMENT_ID)
+    return f"""<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id={measurement_id}"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){{dataLayer.push(arguments);}}
+gtag('js', new Date());
+gtag('config', {measurement_id_json});
+</script>"""
+
+
 def page(site, title, desc, path, body, keywords=None, extra_schema=None, page_type="WebPage", indexable=True):
     keywords = keywords or []
     extra_schema = extra_schema or []
@@ -452,6 +468,7 @@ def page(site, title, desc, path, body, keywords=None, extra_schema=None, page_t
 <meta property="og:type" content="website"><meta property="og:site_name" content="NS Calculators"><meta property="og:locale" content="en_US"><meta property="og:title" content="{h(title)}"><meta property="og:description" content="{h(desc)}"><meta property="og:url" content="{h(site_url(site, path))}">
 <meta name="twitter:card" content="summary"><meta name="twitter:title" content="{h(title)}"><meta name="twitter:description" content="{h(desc)}">
 <link rel="canonical" href="{h(site_url(site, path))}"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="/apple-touch-icon.svg"><link rel="stylesheet" href="/assets/site.css?v={style_version}">
+{google_tag()}
 {schema_html}<script>window.NORTHSTAR_BASE_PATH={json.dumps(PUBLIC_BASE_PATH)};</script></head><body>{nav()}{body}{footer(indexable)}</body></html>"""
     return apply_base_path(html)
 
@@ -1072,9 +1089,9 @@ def seo_title(calc):
     if calc.get("slug") == "calories-burned-calculator":
         return "Calories Burned Calculator: Exercise & Activity"
     if calc.get("slug") == "area-calculator":
-        return "Area Calculator: 8 Shapes, Formulas & Units"
+        return "Area Calculator: Rectangle, Circle, Triangle & More"
     if calc.get("slug") == "used-car-value-calculator":
-        return "Used Car Value Calculator: Car Price Estimate"
+        return "Used Car Value Calculator: Free Price Estimate"
     if calc.get("slug") == "cu-feet-to-cu-meters-calculator":
         return "Cubic Feet to Cubic Meters Calculator"
     if calc.get("slug") == "sample-size-calculator":
@@ -1088,13 +1105,13 @@ def seo_title(calc):
     if calc.get("slug") == "wheel-offset-calculator":
         return "Wheel Offset Calculator: Fitment, Poke & Backspacing"
     if calc.get("slug") == "car-resale-value-calculator":
-        return "Car Resale Value Calculator: Future Value & Equity"
+        return "Future Car Resale Value Calculator & Equity Estimate"
     if calc.get("slug") == "trip-fuel-cost-calculator":
         return "Fuel Cost Calculator: Trip Gas Cost & Split"
     if calc.get("slug") == "mpg-calculator":
         return "MPG Calculator: Gas Mileage, L/100 km & Fuel Cost"
     if calc.get("slug") == "car-trade-in-value-calculator":
-        return "Car Trade-In Calculator: Value, Equity & Offers"
+        return "Car Trade-In Value Calculator: Offers & Equity"
     if calc.get("slug") == "f150-bed-dimensions":
         return "Ford F-150 Bed Dimensions: 5.5, 6.5 & 8 ft"
     if calc.get("slug") == "payload-capacity-calculator":
@@ -1122,7 +1139,7 @@ def seo_title(calc):
     if calc.get("slug") == "house-affordability-calculator":
         return "House Affordability Calculator: How Much Home Can I Afford?"
     if calc.get("slug") == "area-calculator":
-        return "Area Calculator: 8 Shapes, Formulas & Units"
+        return "Area Calculator: Rectangle, Circle, Triangle & More"
     if calc.get("slug") == "conversion-calculator":
         return "Conversion Calculator: Length, Weight, Volume & More"
     if calc.get("slug") == "depreciation-calculator":
@@ -1204,7 +1221,7 @@ def seo_description(calc):
     if calc.get("slug") == "calories-burned-calculator":
         return "Estimate calories burned walking, running, cycling, lifting, and more. Enter your weight and workout time to compare total and active calories."
     if calc.get("slug") == "area-calculator":
-        return "Calculate area for 8 shapes in 9 modes, including two triangle methods. Convert results to square feet, acres, square meters, or hectares."
+        return "Free area calculator for rectangles, circles, triangles, squares, trapezoids and more. Get square feet, square meters, perimeter, formulas and conversions."
     if calc.get("slug") == "sample-size-calculator":
         return "Estimate survey sample size from confidence level, margin of error, expected proportion, and optional population size. Includes finite population correction."
     if calc.get("slug") == "payback-period-calculator":
@@ -1240,7 +1257,7 @@ def seo_description(calc):
     if calc.get("slug") == "house-affordability-calculator":
         return "Estimate how much house you can afford using income, monthly debts, down payment, mortgage rate, taxes, insurance, HOA, PMI, and adjustable DTI limits."
     if calc.get("slug") == "area-calculator":
-        return "Calculate area for rectangles, squares, triangles, circles, ellipses, parallelograms, trapezoids, and sectors. Convert square units and see formulas."
+        return "Free area calculator for rectangles, circles, triangles, squares, trapezoids and more. Get square feet, square meters, perimeter, formulas and conversions."
     if calc.get("slug") == "conversion-calculator":
         return "Convert length, weight, temperature, volume, area, speed, pressure, energy, time, and data units with formulas, reference factors, and reverse conversion."
     if calc.get("slug") == "depreciation-calculator":
@@ -1307,7 +1324,7 @@ def seo_description(calc):
     if calc.get("slug") == "car-depreciation-calculator":
         return "Estimate car value loss with constant or two-stage depreciation, a yearly schedule, retained value, depreciation per year, and cost per mile."
     if calc.get("slug") == "car-resale-value-calculator":
-        return "Estimate future car resale value, annual depreciation, projected mileage, selling costs, loan payoff, equity, and net sale proceeds."
+        return "Project a car's future private-sale value, depreciation, mileage, selling costs, loan payoff, equity and estimated net proceeds."
     if calc.get("slug") == "horsepower-calculator":
         return "Calculate horsepower, torque, or RPM in either direction. Convert lb-ft to N-m and compare mechanical horsepower, kilowatts, and metric PS."
     if calc.get("slug") == "power-to-weight-ratio-calculator":
@@ -1315,9 +1332,9 @@ def seo_description(calc):
     if calc.get("slug") == "bottleneck-calculator":
         return "Check whether a PC is CPU-bound, GPU-bound, frame-capped, or balanced using measured FPS, utilization, frame times, or benchmark FPS ceilings."
     if calc.get("slug") == "car-trade-in-value-calculator":
-        return "Estimate a car trade-in value range, compare dealer offers, calculate positive or negative equity, and see the effect on sales tax and financing."
+        return "Estimate a car trade-in value range, compare dealer offers, calculate positive or negative equity, and model sales-tax and financing effects."
     if calc.get("slug") == "used-car-value-calculator":
-        return "Estimate a used car's value from local comparables, mileage, condition and options. Compare retail, private-party and trade-in ranges. No live VIN data."
+        return "Get a free used-car price estimate from local comparables, mileage, condition and options. Compare retail, private-party and trade-in ranges."
     if calc.get("slug") == "tire-size-calculator":
         return "Compare two tire sizes for diameter, sidewall, circumference, revolutions per mile, speedometer error, and ground-clearance change."
     if calc.get("slug") == "wheel-offset-calculator":
