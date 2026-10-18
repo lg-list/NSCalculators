@@ -2715,8 +2715,12 @@ def category_page(site, cat, items, indexable=True):
         for group in ordered_groups
         if groups.get(group)
     )
+    editorial_sections = ""
+    if cat == "Automotive":
+        jump_links += '<a href="#vehicle-value-guide">Guides</a>'
+        editorial_sections = """<section class="category-section" id="vehicle-value-guide"><div class="category-section-head"><h2>Vehicle Value Guide</h2><span class="category-count">1 guide</span></div><div class="calculator-link-grid"><a href="/guides/used-car-value-vs-trade-in/">Used Car Value vs. Trade-In Value</a></div></section>"""
     body = f"""<main class="main category-main"><div class="wrap"><div class="crumb"><a href="/">Home</a> / {h(cat)} Calculators</div>
-<section class="article wide category-directory"><div class="page-title-icon">{category_icon(cat, "title-icon")}<h1>{h(cat)} Calculators</h1></div><p class="lead">{h(category_desc(cat))}</p><nav class="category-jump-nav" aria-label="{h(cat)} calculator groups">{jump_links}</nav><div class="category-tools">{sections}</div></section></div></main>"""
+<section class="article wide category-directory"><div class="page-title-icon">{category_icon(cat, "title-icon")}<h1>{h(cat)} Calculators</h1></div><p class="lead">{h(category_desc(cat))}</p><nav class="category-jump-nav" aria-label="{h(cat)} calculator groups">{jump_links}</nav><div class="category-tools">{sections}{editorial_sections}</div></section></div></main>"""
     keywords = [f"{cat.lower()} calculators", f"free {cat.lower()} calculators", "online calculator", "calculator tools"]
     crumbs = [("Home", "/"), (f"{cat} Calculators", f"/{slugify_cat(cat)}/")]
     return page(site, title, desc, f"/{slugify_cat(cat)}/", body, keywords, [breadcrumb_schema(site, crumbs)], "CollectionPage", indexable=indexable)
