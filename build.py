@@ -1326,7 +1326,7 @@ def seo_description(calc):
     if calc.get("slug") == "mpg-calculator":
         return "Calculate real gas mileage from odometer readings or trip distance, convert MPG and L/100 km, and estimate fuel cost per mile and per year."
     if calc.get("slug") == "trip-fuel-cost-calculator":
-        return "Estimate one-way or round-trip fuel cost, gallons or liters needed, cost per mile, and each traveler's share in US or metric units."
+        return "Estimate trip fuel cost from distance, MPG, and gas price. See gallons needed, round-trip cost, cost per mile, and each traveler's share."
     if calc.get("slug") == "car-depreciation-calculator":
         return "Estimate car value loss with constant or two-stage depreciation, a yearly schedule, retained value, depreciation per year, and cost per mile."
     if calc.get("slug") == "car-resale-value-calculator":
