@@ -108,50 +108,62 @@
       "title": "Used Car Value Calculator",
       "cat": "Automotive",
       "engine": "trade_value",
-      "desc": "Estimate an illustrative used-car value using age, mileage and condition adjustments.",
-      "formula": "Estimated value = benchmark value \u00d7 age factor \u00d7 mileage factor \u00d7 condition factor.",
-      "example": "Use a realistic benchmark price and current mileage to compare how age and condition affect an estimated value.",
+      "desc": "Build a planning estimate from a local retail comparable, vehicle condition, mileage, options/history, and regional adjustments. Compare retail, private-party, and trade-in ranges; no VIN or live-market feed is used.",
+      "formula": "Adjusted retail = benchmark \u00d7 condition factor \u00d7 regional factor + mileage adjustment + options/history adjustment.",
+      "example": "A $22,000 local retail comparable with a 5% condition adjustment and a $500 mileage deduction gives an adjusted retail estimate of $20,400.",
       "inputs": [
         [
-          "price",
-          "Benchmark value ($)",
+          "retail_benchmark",
+          "Local comparable retail price ($)",
           "number",
-          30000
+          22000
         ],
         [
-          "age",
-          "Age (years)",
-          "number",
-          4
-        ],
-        [
-          "miles",
-          "Mileage",
-          "number",
-          48000
-        ],
-        [
-          "condition",
-          "Condition",
+          "condition_adjustment",
+          "Vehicle condition adjustment (%)",
           "select",
           [
             [
-              "0.82",
+              "-12",
               "Fair"
             ],
             [
-              "0.92",
+              "-5",
               "Good"
             ],
             [
-              "1.00",
+              "0",
               "Very good"
             ],
             [
-              "1.06",
+              "3",
               "Excellent"
             ]
           ]
+        ],
+        [
+          "mileage_adjustment",
+          "Mileage adjustment ($)",
+          "number",
+          -500
+        ],
+        [
+          "options_adjustment",
+          "Options and history adjustment ($)",
+          "number",
+          0
+        ],
+        [
+          "regional_adjustment",
+          "Local market adjustment (%)",
+          "number",
+          0
+        ],
+        [
+          "dealer_spread",
+          "Retail-to-trade spread (%)",
+          "number",
+          12
         ]
       ],
       "keyword_data": {}
