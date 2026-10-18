@@ -13,6 +13,7 @@ Grow qualified US organic traffic by concentrating authority, content improvemen
 - Other near-page-one queries include `fuel cost calculator` (14 impressions, position 8.5), `car price estimate` (22 impressions, position 11), `used car value` (29 impressions, position 25.7), and `ratio calculator` (21 impressions, position 22.6).
 - The latest settled Search Console data predates the October 18 Area title/description update, the new irregular-room guide, and the October 19 multi-section area feature. Do not judge or repeat those changes until a post-deployment data window is available.
 - The audited priority pages are indexable, return HTTP 200, use self-referencing canonicals, have one H1, and include structured data. The main constraint is relevance, differentiation, and authority rather than a basic crawl failure.
+- 2026-10-19 keyword-map audit: `seo-priority-keywords.csv` contains 371 URL rows for 174 unique terms. Every term has exactly one indexable URL; the other 197 rows are noindex contextual variants. Use `exports/seo-priority-keywords-indexable.csv` for prioritization and keep the all-targets export as the source; the normalized map is reproducible with `scripts/build_indexable_keyword_targets.py`.
 
 ## Priority Pages
 
