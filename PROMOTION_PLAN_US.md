@@ -1,6 +1,6 @@
 # NS Calculators — US Growth Plan
 
-Updated: October 14, 2026
+Updated: October 19, 2026
 
 ## Goal
 
@@ -8,9 +8,10 @@ Grow qualified US organic traffic by concentrating authority, content improvemen
 
 ## Current Search Baseline
 
-- US Google Search visibility (last 28 settled days): 3,596 impressions, 3 clicks, 0.08% CTR, average position 44.4.
-- Strongest immediate opportunity: `area calculator` — 756 impressions, average position 7.8, 0 clicks.
-- Other near-term opportunities: `car price estimate`, `fuel cost calculator`, `car trade in calculator`, `used car value`, and `car value finder`.
+- US Google Search visibility (September 18-October 15, settled through October 16): 4,187 impressions, 4 clicks, 0.10% CTR, average position 44.65.
+- Strongest observed opportunity: `area calculator` — 593 US impressions, 0 clicks, average position 8.62 on `/area-calculator/`.
+- Other near-page-one queries include `fuel cost calculator` (14 impressions, position 8.5), `car price estimate` (22 impressions, position 11), `used car value` (29 impressions, position 25.7), and `ratio calculator` (21 impressions, position 22.6).
+- The latest settled Search Console data predates the October 18 Area title/description update, the new irregular-room guide, and the October 19 multi-section area feature. Do not judge or repeat those changes until a post-deployment data window is available.
 - The audited priority pages are indexable, return HTTP 200, use self-referencing canonicals, have one H1, and include structured data. The main constraint is relevance, differentiation, and authority rather than a basic crawl failure.
 
 ## Priority Pages
@@ -113,3 +114,6 @@ Initial 30-day targets after deployment:
 - The submitted sitemap contains 300 URLs and was fetched with 0 warnings and 0 errors. The sitemap summary reports 0 indexed, but a sitemap-URL-to-Search-Console-performance join found 148 of those URLs with impressions in the same date window, and URL Inspection confirms key pages as indexed. Treat the sitemap indexed count as inconsistent with observed search visibility; use URL Inspection and URL performance for individual decisions. Do not respond by broadening the sitemap to low-quality pages.
 - 2026-10-14: A fresh US query/page/device pull for that same settled window confirms `area calculator` at 593 impressions, 0 clicks, position 8.62; almost all were desktop (599 page-device impressions versus 2 mobile, reflecting the separate page/device aggregation). Trade-in queries were mostly on the intended Car Trade-In Value Calculator, but `trade in value calculator` had 50 impressions at position 84.3 and `car trade in value calculator` had 17 at position 87.5. `used car value` had 26 impressions at position 20.0. Live audits of Area, Car Trade-In Value, and Used Car Value returned HTTP 200, self-canonicals, indexable pages, structured data, and no reported issues. A cross-query cannibalization scan found small-volume overlap between trade-in and resale pages, but their tools answer distinct current-offer/equity versus future-private-sale questions; do not consolidate on this evidence. Focus next on measuring post-deployment Area snippet performance and improving trade-in relevance/authority only when stronger query evidence or a concrete content gap supports a change.
 - 2026-10-14: Extended the live on-page audit to the 10 highest-impression pages: all 10 are indexable, self-canonical, return HTTP 200, and have no schema issues; one low-severity slow-response warning (4,198 ms) appeared on the Car Trade-In page. Direct repeated requests from this environment varied widely (about 0.97–6.57 s TTFB), while response headers show Cloudflare in front of GitHub Pages and a short GitHub edge processing time. Treat this as a regional/CDN-path signal, not a confirmed application regression; verify from a US region and with field data before making infrastructure changes. CrUX field metrics remain unavailable because no API key is configured in GSC Wizard; do not change account settings without authorization. GA4 is connected to GSC Wizard, but the authenticated account has no GA4 property linked to this site (`no_property`), so session and calculator-event performance cannot yet be joined to Search Console data.
+- 2026-10-19: Latest US Search Console query/page data is still settled only through 2026-10-16. The Area Calculator leads with 593 impressions for `area calculator` at position 8.62 and no clicks; other queries near positions 3-30 have materially lower volume (`fuel cost calculator`: 14 impressions at 8.5; `car price estimate`: 22 at 11; `used car value`: 29 at 25.7; `ratio calculator`: 21 at 22.6). Treat the October 18-19 page changes as unmeasured until later settled data includes them.
+- 2026-10-19: Published `/guides/calculate-square-footage-irregular-room/` and linked it from the Area, Square Footage, Flooring, and Tile calculators. Added a multi-section area accumulator to the Area Calculator, converting each section to square meters before summing and allowing the output unit to change. Added visible breadcrumbs and `BreadcrumbList` schema to both editorial guides. Local build, interaction tests, mobile/desktop overflow checks, and live deployment checks passed.
+- 2026-10-19: The live sitemap returns HTTP 200 and contains 302 URLs, including the new guide. Search Console still reports the prior 301-URL submission, last downloaded 2026-10-18 15:31 UTC before the guide deployment. Do not re-submit the sitemap or request inspection until the owner confirms the external Search Console action. The indexing tracker last checked 2026-10-18 reports 8 of 9 tracked URLs indexed; the existing used-car guide is still "URL is unknown to Google," and the new guide is not in the tracker.
