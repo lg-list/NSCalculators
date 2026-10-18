@@ -1940,8 +1940,8 @@ def trade_in_value_input_html():
 <div class="field"><label for="dealer_spread">Market-to-trade deduction</label><div class="input-unit"><input id="dealer_spread" type="number" step="any" min="0" max="50" value="10"><span>%</span></div></div>
 <div class="field field-wide"><label for="reconditioning">Expected repair and cleanup cost</label><div class="input-unit"><input id="reconditioning" type="number" step="any" min="0" value="600"><span>$</span></div></div>
 <details class="more-options field-wide"><summary>Offers, payoff and replacement purchase</summary><div class="fields">
-<div class="field"><label for="trade_offer_1">Dealer or buyer offer 1</label><div class="input-unit"><input id="trade_offer_1" type="number" step="any" min="0" value="18000"><span>$</span></div></div>
-<div class="field"><label for="trade_offer_2">Dealer or buyer offer 2</label><div class="input-unit"><input id="trade_offer_2" type="number" step="any" min="0" value="19000"><span>$</span></div></div>
+<div class="field"><label for="trade_offer_1">Dealer or buyer offer 1</label><div class="input-unit"><input id="trade_offer_1" type="number" step="any" min="0" value=""><span>$</span></div></div>
+<div class="field"><label for="trade_offer_2">Dealer or buyer offer 2</label><div class="input-unit"><input id="trade_offer_2" type="number" step="any" min="0" value=""><span>$</span></div></div>
 <div class="field"><label for="trade_offer_3">Dealer or buyer offer 3</label><div class="input-unit"><input id="trade_offer_3" type="number" step="any" min="0" value="0"><span>$</span></div></div>
 <div class="field"><label for="payoff">Current lender payoff amount</label><div class="input-unit"><input id="payoff" type="number" step="any" min="0" value="12000"><span>$</span></div></div>
 <div class="field"><label for="replacement_price">Replacement vehicle price</label><div class="input-unit"><input id="replacement_price" type="number" step="any" min="0" value="35000"><span>$</span></div></div>
