@@ -1089,7 +1089,7 @@ def seo_title(calc):
     if calc.get("slug") == "calories-burned-calculator":
         return "Calories Burned Calculator: Exercise & Activity"
     if calc.get("slug") == "area-calculator":
-        return "Area Calculator: 8 Shapes, Formulas & Units"
+        return "Area Calculator: Square Feet, 8 Shapes & Formulas"
     if calc.get("slug") == "square-footage-calculator":
         return "Square Footage Calculator: Rooms, Walls & Materials"
     if calc.get("slug") == "used-car-value-calculator":
@@ -1141,7 +1141,7 @@ def seo_title(calc):
     if calc.get("slug") == "house-affordability-calculator":
         return "House Affordability Calculator: How Much Home Can I Afford?"
     if calc.get("slug") == "area-calculator":
-        return "Area Calculator: 8 Shapes, Formulas & Units"
+        return "Area Calculator: Square Feet, 8 Shapes & Formulas"
     if calc.get("slug") == "conversion-calculator":
         return "Conversion Calculator: Length, Weight, Volume & More"
     if calc.get("slug") == "depreciation-calculator":
@@ -1223,7 +1223,7 @@ def seo_description(calc):
     if calc.get("slug") == "calories-burned-calculator":
         return "Estimate calories burned walking, running, cycling, lifting, and more. Enter your weight and workout time to compare total and active calories."
     if calc.get("slug") == "area-calculator":
-        return "Calculate area for 8 shapes, including rectangles, circles and triangles. Enter dimensions for perimeter, formulas and conversions to sq ft, sq m or acres."
+        return "Calculate area for 8 shapes in feet, inches, yards, or metric units. Convert results to square feet, square meters, acres, or hectares, with perimeter when defined."
     if calc.get("slug") == "square-footage-calculator":
         return "Calculate square feet for room floors, circles, triangles, or four walls. Subtract doors and windows, add material overage, and estimate cost per square foot."
     if calc.get("slug") == "sample-size-calculator":
@@ -1261,7 +1261,7 @@ def seo_description(calc):
     if calc.get("slug") == "house-affordability-calculator":
         return "Estimate how much house you can afford using income, monthly debts, down payment, mortgage rate, taxes, insurance, HOA, PMI, and adjustable DTI limits."
     if calc.get("slug") == "area-calculator":
-        return "Calculate area for 8 shapes, including rectangles, circles and triangles. Enter dimensions for perimeter, formulas and conversions to sq ft, sq m or acres."
+        return "Calculate area for 8 shapes in feet, inches, yards, or metric units. Convert results to square feet, square meters, acres, or hectares, with perimeter when defined."
     if calc.get("slug") == "conversion-calculator":
         return "Convert length, weight, temperature, volume, area, speed, pressure, energy, time, and data units with formulas, reference factors, and reverse conversion."
     if calc.get("slug") == "depreciation-calculator":
@@ -4243,7 +4243,7 @@ def calculator_page(site, calc, related):
     if calc.get("slug") == "area-calculator":
         calc = {
             **calc,
-            "desc": "Calculate area for eight common 2D shapes in nine input modes, convert square units, and review formulas and supporting measurements.",
+            "desc": "Find square footage for a room or calculate area for eight common 2D shapes. Choose feet, inches, yards, or metric units, then review formulas, perimeter when defined, and conversions to square feet, square meters, acres, or hectares.",
             "formula": "Area depends on shape; for a rectangle, area = length x width.",
             "example": "A 20 ft by 12 ft rectangle has an area of 240 square feet.",
         }
