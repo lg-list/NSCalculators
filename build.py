@@ -4579,8 +4579,13 @@ def calculator_page(site, calc, related):
 
 
 def simple_page(site, path, title, desc, content):
-    body = f"""<main class="main"><div class="wrap"><article class="article"><h1>{h(title)}</h1><p class="lead">{h(desc)}</p><div class="prose">{content}</div></article></div></main>"""
-    return page(site, f"{title} | NS Calculators", desc, path, body)
+    extra_schema = []
+    breadcrumb = ""
+    if path.startswith("/guides/"):
+        breadcrumb = f'<nav class="crumb" aria-label="Breadcrumb"><a href="/">Home</a> / {h(title)}</nav>'
+        extra_schema.append(breadcrumb_schema(site, [("Home", "/"), (title, path)]))
+    body = f"""<main class="main"><div class="wrap">{breadcrumb}<article class="article"><h1>{h(title)}</h1><p class="lead">{h(desc)}</p><div class="prose">{content}</div></article></div></main>"""
+    return page(site, f"{title} | NS Calculators", desc, path, body, extra_schema=extra_schema)
 
 
 def basic_calculator_page(site, calc, related):
