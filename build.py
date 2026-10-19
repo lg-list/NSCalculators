@@ -20,6 +20,7 @@ PUBLIC_BASE_PATH = os.environ.get("PUBLIC_BASE_PATH", "").strip().rstrip("/")
 PUBLIC_SITE_DOMAIN = os.environ.get("PUBLIC_SITE_DOMAIN", "").strip()
 GA4_MEASUREMENT_ID = os.environ.get("GA4_MEASUREMENT_ID", "G-19CY1VWHFM").strip()
 ASSET_VERSION = "20261014a"
+SEARCH_ASSET_VERSION = "20261019b"
 PRIORITY_LENGTH_CONVERSIONS = {
     "millimeters-to-feet-calculator",
     "meters-to-feet-calculator",
@@ -1002,14 +1003,23 @@ def primary_keyword(calc):
     return calc.get("seo_keyword") or str(calc["title"]).lower()
 
 
+def has_purpose_built_calculation(calc):
+    return calc.get("slug") not in NON_INDEXABLE_UNTIL_PURPOSE_BUILT and calc.get("engine") != "cn_generic"
+
+
+def calculator_search_index(calculators):
+    entries = [
+        {"title": c["title"], "slug": c["slug"], "desc": c["desc"], "cat": c["cat"], "keyword": primary_keyword(c)}
+        for c in calculators if has_purpose_built_calculation(c) and c["slug"] != "scientific-calculator"
+    ]
+    # This route has a dedicated renderer rather than the imported generic engine.
+    entries.append({"title": "Scientific Calculator", "slug": "scientific-calculator", "desc": "Evaluate expressions with fractions, powers, roots, logarithms, and trigonometry.", "cat": "Math", "keyword": "scientific calculator"})
+    return entries
+
+
 def is_indexable_calculator(calc):
     searches = int((calc.get("keyword_data") or {}).get("monthly_searches") or 0)
-    if calc.get("slug") in NON_INDEXABLE_UNTIL_PURPOSE_BUILT:
-        return False
-    # Generic calculator.net placeholders reuse one compound-growth model for
-    # unrelated intents. Keep them available to users, but do not ask search
-    # engines to index them until each page has a purpose-built calculator.
-    if calc.get("engine") == "cn_generic":
+    if not has_purpose_built_calculation(calc):
         return False
     return searches > 0 or not calc.get("generated") or calc.get("source") == "calculator.net keyword model"
 
@@ -2651,7 +2661,7 @@ def home_new(site, calculators):
     by_cat = defaultdict(list)
     for calc in calculators:
         by_cat[calc["cat"]].append(calc)
-    featured = sorted(calculators, key=keyword_score, reverse=True)[:24]
+    featured = sorted((c for c in calculators if has_purpose_built_calculation(c)), key=keyword_score, reverse=True)[:24]
     home_featured = featured[:12]
     area_calculator = next(
         (c for c in calculators if c["slug"] == "area-calculator" and is_indexable_calculator(c)),
@@ -2697,7 +2707,7 @@ def home_new(site, calculators):
 <section class="home-block popular-block"><div class="wrap"><h2>Most Popular Calculators</h2><div class="popular-list">{popular_links}</div></div></section>
 <section class="home-block faq-section"><div class="wrap"><h2>Common Questions</h2><div class="faq-list">{faq_list}</div></div></section>
 <section class="ad-band"><div class="wrap"><div class="ad-slot">Advertisement</div></div></section>
-</main><script src="/assets/search.js?v={ASSET_VERSION}"></script><script src="/assets/scientific.js?v={ASSET_VERSION}"></script><script src="/assets/home.js?v={ASSET_VERSION}"></script>"""
+</main><script src="/assets/search.js?v={SEARCH_ASSET_VERSION}"></script><script src="/assets/scientific.js?v={ASSET_VERSION}"></script><script src="/assets/home.js?v={ASSET_VERSION}"></script>"""
     return page(site, "Free Online Calculators | Mortgage, Loan & Unit Converters", "Free US-focused calculators for mortgage, loan, auto loan, compound interest, BMI, and unit conversions with instant answers, charts, and formulas.", "/", body, ["free online calculators", "mortgage calculator", "loan calculator", "auto loan calculator", "compound interest calculator", "unit converter"], [website_schema(site), organization_schema(site)])
 
 
@@ -4167,6 +4177,13 @@ def calculator_page(site, calc, related):
 <p>This page is general information, not nutrition or medical advice. Follow guidance from your healthcare professional for individual dietary needs.</p></div></article></div></main>"""
         crumbs = [("Home", "/"), ("Health Calculators", "/health-calculators/"), ("WeightWatchers Points", "/weight-watchers-points-calculator/")]
         return page(site, title, desc, "/weight-watchers-points-calculator/", body, ["WeightWatchers Points"], [breadcrumb_schema(site, crumbs)], indexable=False)
+    if not has_purpose_built_calculation(calc):
+        title = f"{calc['title']} | NS Calculators"
+        desc = f"{calc['title']} is currently unavailable. Browse related calculators for another tool."
+        crumbs = [("Home", "/"), (f"{calc['cat']} Calculators", f"/{slugify_cat(calc['cat'])}/"), (calc["title"], f"/{calc['slug']}/")]
+        links = "".join(card(c, c["cat"]) for c in related if has_purpose_built_calculation(c))
+        body = f"""<main class="main"><div class="wrap"><div class="crumb"><a href="/">Home</a> / <a href="/{slugify_cat(calc['cat'])}/">{h(calc['cat'])}</a></div><article class="article calculator-article"><h1>{h(calc['title'])}</h1><p class="lead">This calculator is currently unavailable.</p><h2>Related calculators</h2><div class="related">{links}</div></article></div></main>"""
+        return page(site, title, desc, f"/{calc['slug']}/", body, [], [breadcrumb_schema(site, crumbs)], indexable=False)
     if calc.get("slug") == "calories-burned-calculator":
         calc = {
             **calc,
@@ -4928,7 +4945,7 @@ SEARCH_JS = r'''
   function loadItems() {
     if (items.length) return Promise.resolve(items);
     if (!loading) {
-      loading = fetch(basePath + "/assets/search-index.json")
+      loading = fetch(basePath + "/assets/search-index.json", { cache: "no-cache" })
         .then(response => response.ok ? response.json() : [])
         .then(data => { items = Array.isArray(data) ? data : []; return items; })
         .catch(() => []);
@@ -4945,8 +4962,8 @@ SEARCH_JS = r'''
     await loadItems();
     if (q.value.toLowerCase().trim() !== s) return;
     const r = items.filter(x => (x.title + " " + x.desc + " " + x.cat + " " + (x.keyword || "")).toLowerCase().includes(s)).slice(0, 8);
-    box.innerHTML = r.map(x => `<a href="${basePath}/${x.slug}/"><strong>${x.title}</strong><small>${x.cat}: ${x.desc}</small></a>`).join("");
-    box.style.display = r.length ? "block" : "none";
+    box.innerHTML = r.length ? r.map(x => `<a href="${basePath}/${x.slug}/"><strong>${x.title}</strong><small>${x.cat}: ${x.desc}</small></a>`).join("") : '<p role="status" style="margin:0;padding:12px 14px">No calculators found.</p>';
+    box.style.display = "block";
   });
 })();
 '''
@@ -6884,10 +6901,7 @@ def build():
     shutil.copyfile(ROOT / "vendor" / "mathjs-NOTICE.txt", DIST / "assets" / "mathjs-NOTICE.txt")
     calculator_js = CALC_JS.replace("__RMD_JOINT_TABLE__", json.dumps(rmd_joint_table, separators=(",", ":")))
     write(DIST / "assets" / "calculator.js", calculator_js.strip() + "\n")
-    search_index = [
-        {"title": c["title"], "slug": c["slug"], "desc": c["desc"], "cat": c["cat"], "keyword": primary_keyword(c)}
-        for c in calculators
-    ]
+    search_index = calculator_search_index(calculators)
     write(DIST / "assets" / "search-index.json", json.dumps(search_index, ensure_ascii=False, separators=(",", ":")) + "\n")
     write(DIST / "favicon.svg", LOGO_SVG.strip() + "\n")
     write(DIST / "apple-touch-icon.svg", LOGO_SVG.strip() + "\n")
