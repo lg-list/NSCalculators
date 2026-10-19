@@ -56,7 +56,6 @@ NON_INDEXABLE_UNTIL_PURPOSE_BUILT = {
     "pregnancy-weight-gain-calculator",
     "tax-calculator",
     "time-card-calculator",
-    "time-duration-calculator",
     "time-zone-calculator",
     "weight-watchers-points-calculator",
 }
@@ -466,6 +465,8 @@ def page(site, title, desc, path, body, keywords=None, extra_schema=None, page_t
         style_version = "20261002b"
     if path == "/area-calculator/":
         style_version = "20261019a"
+    if path == "/time-duration-calculator/":
+        style_version = "20261019c"
     html = f"""<!doctype html><html lang="{h(site['language'])}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{h(title)}</title><meta name="description" content="{h(desc)}">{robots_meta}<meta name="theme-color" content="#2563eb">
 <meta property="og:type" content="website"><meta property="og:site_name" content="NS Calculators"><meta property="og:locale" content="en_US"><meta property="og:title" content="{h(title)}"><meta property="og:description" content="{h(desc)}"><meta property="og:url" content="{h(site_url(site, path))}">
@@ -911,6 +912,16 @@ def base_and_supplemental(data):
             calc["title"] = smart_title(calc["title"])
         else:
             calc["keyword_data"] = {}
+        if calc["slug"] == "time-duration-calculator":
+            calc.update({
+                "cat": "Time & Date",
+                "group": "Time",
+                "engine": "time_duration",
+                "desc": "Find the days, hours, minutes, and seconds between two times or dates, with overnight handling and decimal totals.",
+                "formula": "Duration = end date/time - start date/time. In time-only mode, an earlier end time is treated as the next day.",
+                "example": "8:30:00 AM to 5:30:00 PM is 9 hours, 540 minutes, or 32,400 seconds.",
+                "inputs": [],
+            })
         if calc["slug"] == "concrete-volume-calculator":
             calc["title"] = "Concrete Calculator"
             calc["seo_keyword"] = "concrete calculator"
@@ -1025,6 +1036,8 @@ def is_indexable_calculator(calc):
 
 
 def seo_keywords(calc):
+    if calc.get("slug") == "time-duration-calculator":
+        return ["time duration calculator", "time difference calculator", "time between two dates", "elapsed time calculator", "hours minutes seconds between times"]
     if calc.get("slug") == "payback-period-calculator":
         return ["payback period calculator", "discounted payback period calculator", "investment payback calculator", "NPV payback calculator", "cash flow payback period"]
     if calc.get("slug") == "marriage-calculator":
@@ -1098,6 +1111,8 @@ def seo_keywords(calc):
 
 
 def seo_title(calc):
+    if calc.get("slug") == "time-duration-calculator":
+        return "Time Duration Calculator: Hours, Minutes & Seconds"
     if calc.get("slug") == "calories-burned-calculator":
         return "Calories Burned Calculator: Exercise & Activity"
     if calc.get("slug") == "area-calculator":
@@ -1230,6 +1245,8 @@ def seo_title(calc):
 
 
 def seo_description(calc):
+    if calc.get("slug") == "time-duration-calculator":
+        return "Calculate elapsed time between two times or dates, including overnight intervals. Get days, hours, minutes, seconds, and decimal totals."
     keyword = primary_keyword(calc)
     context = f" for {display_group(calculator_group(calc)).lower()}" if calc.get("seo_context_label") else ""
     if calc.get("slug") == "calories-burned-calculator":
@@ -1715,6 +1732,18 @@ def f150_bed_input_html():
 <div class="field"><label for="f150_item_length">Cargo item length</label><div class="input-unit"><input id="f150_item_length" type="number" step="any" min="0" value="96"><span data-f150-unit>in</span></div></div>
 <div class="field"><label for="f150_item_width">Cargo item width</label><div class="input-unit"><input id="f150_item_width" type="number" step="any" min="0" value="48"><span data-f150-unit>in</span></div></div>
 <p class="field-note field-wide">Published box dimensions are nominal reference values. Cargo fit checks a flat rectangle against floor length and the 50.6-inch minimum width between wheelhouses; it does not model height, wheel-well shape, tie-downs, liners, or an open tailgate.</p>
+</div>"""
+
+
+def time_duration_input_html():
+    today = date.today().isoformat()
+    return f"""<div class="duration-fields">
+<fieldset class="duration-modes"><legend>Calculate between</legend><label><input type="radio" name="duration_mode" value="clock" checked>Two times</label><label><input type="radio" name="duration_mode" value="dates">Two dates and times</label></fieldset>
+<div class="duration-row"><div class="field" data-duration-date hidden><label for="duration_start_date">Start date</label><input id="duration_start_date" type="date" min="0001-01-01" max="9999-12-31" value="{today}"></div><div class="field"><label for="duration_start_time">Start time</label><div class="duration-time-control"><input id="duration_start_time" type="time" step="1" value="08:30:00"><button type="button" class="duration-now" data-duration-now="start">Now</button></div></div></div>
+<button type="button" class="duration-swap" data-duration-swap aria-label="Swap start and end" title="Swap start and end">&#8645;</button>
+<div class="duration-row"><div class="field" data-duration-date hidden><label for="duration_end_date">End date</label><input id="duration_end_date" type="date" min="0001-01-01" max="9999-12-31" value="{today}"></div><div class="field"><label for="duration_end_time">End time</label><div class="duration-time-control"><input id="duration_end_time" type="time" step="1" value="17:30:00"><button type="button" class="duration-now" data-duration-now="end">Now</button></div></div></div>
+<p class="field-note" id="duration-clock-note">An earlier end time means the next day. Identical times mean zero; choose dates for 24 hours or more.</p>
+<p class="field-note">Both entries use the same clock. Time-zone and daylight-saving changes are not applied.</p>
 </div>"""
 
 
@@ -2806,6 +2835,16 @@ def conversion_copy(calc):
 
 
 def high_value_calculator_copy(calc):
+    if calc.get("slug") == "time-duration-calculator":
+        return """
+<h2>Calculate the time between two times</h2><p>Enter a start and end time, including seconds when needed. The result shows the interval as days, hours, minutes, and seconds, then gives equivalent totals in hours, minutes, and seconds. The browser may display an AM/PM control or a 24-hour clock according to your locale; both represent the same calculation.</p>
+<p class="formula">seconds after midnight = hours x 3,600 + minutes x 60 + seconds</p><p class="formula">duration = end seconds - start seconds; add 86,400 when the end time is earlier and no dates are entered</p>
+<h2>Overnight intervals and identical times</h2><p>In Two times mode, an end time earlier than the start is treated as the following day. For example, 10:00 PM to 6:00 AM is 8 hours, or 28,800 seconds. The result identifies this next-day assumption so it is visible rather than silently changing your inputs.</p><p>The same start and end time represents zero elapsed time in this mode. To calculate a full 24-hour day or an interval spanning several days, choose Two dates and times and enter the actual dates. The calculator does not assume an extra day when both clock values are identical.</p>
+<h2>Time between two dates</h2><p>Date mode combines each calendar date with its time of day and subtracts the start from the end. It uses the Gregorian calendar, including leap years and different month lengths. An end date and time before the start produces an input message; use the swap control if you entered the two endpoints in reverse order.</p><p>For example, January 1 at 8:30 AM through January 2 at 5:30 PM is 1 day and 9 hours. That is 33 total hours, 1,980 total minutes, or 118,800 seconds. February 28 through March 1 spans two days in a leap year and one day in a non-leap year when the times of day match.</p>
+<h2>Decimal hours are different from hours and minutes</h2><p>Divide total seconds by 3,600 to convert a duration to decimal hours. A duration of 1 hour and 30 minutes is 1.5 hours, not 1.30 hours. Likewise, 1 hour, 0 minutes, and 20 seconds equals 3,620 seconds, about 60.333333 minutes, or 1.005556 hours. Displayed decimal totals are rounded, while the component result preserves the entered whole seconds.</p><p class="formula">total hours = total seconds / 3,600; total minutes = total seconds / 60</p>
+<h2>Clock time, time zones, and daylight saving</h2><p>This tool measures the difference on one shared clock. It treats each calendar day as 24 hours and does not apply geographic time zones, daylight-saving transitions, or leap seconds. A real trip across time zones or a shift spanning a daylight-saving change can have a different physical elapsed time. For those situations, first convert both endpoints to the same UTC timeline using a time-zone-aware service.</p>
+<h2>Choose the right related tool</h2><p>Use the <a href="/date-calculator/">date calculator</a> for a difference in whole calendar days, the <a href="/age-calculator/">age calculator</a> for age in calendar years, months, and days, or the <a href="/hours-calculator/">hours calculator</a> to add entered hours and minutes and apply an hourly rate. A duration is not automatically a paid-work total: unpaid breaks, rounding policies, overtime, and payroll rules are not applied here.</p>
+<h2>Frequently asked questions</h2><h3>Is 12 AM midnight or noon?</h3><p>12 AM is midnight and 12 PM is noon in a 12-hour display. In a 24-hour display, use 00:00 for midnight and 12:00 for noon.</p><h3>Can I include seconds?</h3><p>Yes. Both time inputs accept seconds from 00 through 59. The calculation does not round to a whole minute.</p><h3>Does date mode include the entire end day?</h3><p>No. It stops at the exact end time you enter. Midnight on the next day is the end of a full day that began at midnight.</p><h3>What does Now use?</h3><p>Now fills that endpoint with the date and time reported by your device. In time-only mode, its date is retained for use if you switch to date mode.</p>"""
     if calc.get("slug") == "calories-burned-calculator":
         return """
 <h2>Estimate calories burned during exercise</h2><p>Choose an activity, enter your body weight, and set the workout duration. This calculator estimates <strong>total calories</strong> during the activity and <strong>active calories</strong> above a standardized resting baseline. It covers common walking, running, cycling, gym classes, and sports.</p>
@@ -3691,6 +3730,8 @@ def default_calculator_copy(calc):
 
 
 def analysis_extra_html(calc):
+    if calc.get("slug") == "time-duration-calculator":
+        return """<section class="mortgage-dashboard generic-dashboard duration-dashboard" aria-label="Time duration results"><div class="section-head stack"><h2>Duration Results</h2></div><div class="summary-grid" id="genericSummary"></div><div class="table-card"><h3>Duration Details</h3><div class="table-scroll"><table class="data-table" id="genericTable"><thead><tr><th>Metric</th><th>Value</th><th>Note</th></tr></thead><tbody></tbody></table></div></div></section>"""
     if calc.get("slug") == "calories-burned-calculator":
         return """<section class="mortgage-dashboard generic-dashboard activity-calorie-dashboard" aria-label="Calories burned analysis results">
 <div class="section-head stack"><h2>Workout Energy Estimate</h2><p>Compare total session energy with estimated active calories above the resting baseline.</p></div>
@@ -4371,6 +4412,9 @@ def calculator_page(site, calc, related):
     elif calc.get("slug") == "house-affordability-calculator":
         fields = house_affordability_input_html()
         page_engine = "house_affordability_advanced"
+    elif calc.get("slug") == "time-duration-calculator":
+        fields = time_duration_input_html()
+        page_engine = "time_duration"
     elif calc.get("slug") == "sample-size-calculator":
         fields = sample_size_input_html()
         page_engine = "sample_size_advanced"
@@ -4579,6 +4623,8 @@ def calculator_page(site, calc, related):
         calculator_asset_version = "20261013b"
     if calc.get("slug") == "sample-size-calculator":
         calculator_asset_version = "20261014a"
+    if calc.get("slug") == "time-duration-calculator":
+        calculator_asset_version = "20261019c"
     if calc.get("engine") == "loan_page":
         calc_html = f"""<section class="calc loan-page-calc"><h2>Calculator</h2>{fields}<div class="result" id="result">Enter your values and select Calculate.</div></section>"""
     else:
@@ -4934,6 +4980,10 @@ body{background:var(--bg)}.site-header{border-bottom-color:#dbe7f4}.primary{back
 '''
 CSS += '.home-quick-links{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 16px;color:var(--muted);font-size:14px}.home-quick-links a{color:var(--brand);font-weight:700;text-decoration:none}.home-quick-links a:hover{text-decoration:underline}'
 
+CSS += r'''
+.duration-modes{display:flex;flex-wrap:wrap;gap:4px;margin:0 0 14px;padding:5px;border:1px solid var(--line);border-radius:6px}.duration-modes legend{padding:0 5px;font-size:14px;font-weight:700}.duration-modes label{position:relative;flex:1;min-width:120px;text-align:center;padding:7px 8px;border-radius:4px;font-size:14px;cursor:pointer}.duration-modes input{position:absolute;opacity:0;width:1px!important;height:1px!important}.duration-modes label:has(input:checked){background:var(--brand);color:#fff}.duration-modes label:has(input:focus-visible){outline:2px solid var(--ink);outline-offset:2px}.duration-row{display:grid;grid-template-columns:minmax(0,1fr);gap:10px}.duration-with-dates .duration-row{grid-template-columns:minmax(0,1fr) minmax(0,1.2fr)}.duration-fields [hidden]{display:none!important}.duration-time-control{display:flex;gap:5px;align-items:center}.duration-time-control input{flex:1;min-width:0}.duration-now,.duration-swap{border:1px solid var(--line);border-radius:4px;background:#fff;color:var(--brand);cursor:pointer}.duration-now{padding:0 7px;height:40px;font-size:14px}.duration-swap{display:block;width:34px;height:30px;margin:7px 0 7px auto;font-size:20px;line-height:1}.duration-now:hover,.duration-swap:hover{background:var(--soft)}.duration-fields .field-note{font-size:13px;line-height:1.4;margin:10px 0 0}.duration-dashboard .summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.duration-dashboard .summary-card strong{font-size:22px;overflow-wrap:anywhere}@media(max-width:560px){.duration-with-dates .duration-row{grid-template-columns:minmax(0,1fr)}.duration-row{gap:8px}.duration-fields .field label{min-height:0}.duration-dashboard .summary-card strong{font-size:20px}}
+'''
+
 SEARCH_JS = r'''
 (function(){
   let items = window.NORTHSTAR_ITEMS || [];
@@ -5019,6 +5069,19 @@ function unitValue(id, base){return document.getElementById(`${id}_unit`)?.value
 function annualCost(id, base){return document.getElementById(`${id}_unit`)?.value==='percent'?base*V(id)/100:V(id)}
 function monthlyCost(id, base){return document.getElementById(`${id}_unit`)?.value==='percent'?base*V(id)/100/12:V(id)/12}
 function monthDate(id){const raw=document.getElementById(id)?.value||'';return /^\d{4}-\d{2}$/.test(raw)?new Date(`${raw}-01T00:00:00`):new Date(raw||Date.now())}
+function timeDurationDifference(startTime,endTime,startDate=null,endDate=null){
+  const parseTime=value=>{const m=/^([01]\d|2[0-3]):([0-5]\d)(?::([0-5]\d))?$/.exec(value||'');return m?Number(m[1])*3600+Number(m[2])*60+Number(m[3]||0):null},startSeconds=parseTime(startTime),endSeconds=parseTime(endTime),dated=startDate!==null||endDate!==null;
+  if(startSeconds===null||endSeconds===null)return{valid:false,message:'Enter valid start and end times, including seconds if needed.'};
+  let totalSeconds=endSeconds-startSeconds,overnight=false;
+  if(dated){const parseDate=value=>{if(!/^\d{4}-\d{2}-\d{2}$/.test(value||'')||Number(value.slice(0,4))<1)return null;const ms=Date.parse(value+'T00:00:00Z');return Number.isFinite(ms)&&new Date(ms).toISOString().slice(0,10)===value?ms:null},startDay=parseDate(startDate),endDay=parseDate(endDate);if(startDay===null||endDay===null)return{valid:false,message:'Enter valid start and end dates from year 0001 through 9999.'};totalSeconds+=(endDay-startDay)/1000;if(totalSeconds<0)return{valid:false,message:'The end date and time must be at or after the start. Swap the endpoints to reverse them.'}}
+  else if(totalSeconds<0){totalSeconds+=86400;overnight=true}
+  const days=Math.floor(totalSeconds/86400),hours=Math.floor(totalSeconds%86400/3600),minutes=Math.floor(totalSeconds%3600/60),seconds=totalSeconds%60;
+  return{valid:true,totalSeconds,days,hours,minutes,seconds,totalHours:totalSeconds/3600,totalMinutes:totalSeconds/60,overnight,dated};
+}
+function formatTimeDuration(p){return`${p.days?`${F(p.days,0)}d `:''}${p.hours}h ${p.minutes}m ${p.seconds}s`}
+function syncTimeDurationMode(){const mode=document.querySelector('input[name="duration_mode"]:checked')?.value||'clock',root=document.querySelector('.duration-fields');if(root){root.classList.toggle('duration-with-dates',mode==='dates');root.querySelectorAll('[data-duration-date]').forEach(el=>{el.hidden=mode!=='dates'});const note=document.getElementById('duration-clock-note');if(note)note.hidden=mode==='dates'}return mode}
+function timeDurationProjection(){const mode=syncTimeDurationMode(),startTime=document.getElementById('duration_start_time')?.value||'',endTime=document.getElementById('duration_end_time')?.value||'',startDate=mode==='dates'?document.getElementById('duration_start_date')?.value||'':null,endDate=mode==='dates'?document.getElementById('duration_end_date')?.value||'':null;return{...timeDurationDifference(startTime,endTime,startDate,endDate),mode,startLabel:mode==='dates'?`${startDate} ${startTime}`:startTime,endLabel:mode==='dates'?`${endDate} ${endTime}`:endTime}}
+function clearTimeDurationForm(){document.querySelectorAll('.duration-fields input[type="time"],.duration-fields input[type="date"]').forEach(input=>{input.value=''});calc('time_duration')}
 function towingProjection(){
   const loaded=V('curb')+V('people')+V('cargo'),remainingPayload=V('gvwr')-loaded,gcwrHeadroom=V('gcwr')-loaded,pct=Math.max(.01,V('tongue_pct')/100),rawTongueRating=document.getElementById('hitch_tongue_rating')?.value?.trim(),tongueRating=rawTongueRating===''?null:Number(rawTongueRating),limits=[{label:'Vehicle tow rating',value:Math.max(0,V('rating'))},{label:'GCWR headroom',value:Math.max(0,gcwrHeadroom)},{label:'Hitch trailer rating',value:Math.max(0,V('hitch_rating'))},{label:'Payload for tongue weight',value:Math.max(0,remainingPayload)/pct}];
   if(tongueRating!==null&&Number.isFinite(tongueRating))limits.push({label:'Hitch tongue-load limit',value:Math.max(0,tongueRating)/pct});
@@ -5610,6 +5673,7 @@ function calc(e){
   case'cn_random':{let min=Math.ceil(V('min')),max=Math.floor(V('max'));if(max<min){let t=min;min=max;max=t}let val=Math.floor(Math.random()*(max-min+1))+min;show(`<strong>${val}</strong><br>Random integer from ${min} to ${max}.`);break}
   case'cn_age':{let b=new Date(document.getElementById('birth')?.value||''),t=new Date(document.getElementById('target')?.value||'');if(isNaN(b)||isNaN(t)){show('Enter valid dates.');break}let years=t.getFullYear()-b.getFullYear();let before=t.getMonth()<b.getMonth()||(t.getMonth()===b.getMonth()&&t.getDate()<b.getDate());if(before)years--;let days=Math.floor((t-b)/86400000);show(`<strong>${years} years old</strong><br>Total days: ${F(days,0)}.`);renderAge(b,t,years,days);break}
   case'cn_date':{let s=new Date(document.getElementById('start')?.value||''),e2=new Date(document.getElementById('end')?.value||'');if(isNaN(s)||isNaN(e2)){show('Enter valid dates.');break}let days=Math.round((e2-s)/86400000);show(`<strong>${F(days,0)} days</strong><br>End date weekday: ${e2.toLocaleDateString('en-US',{weekday:'long'})}.`);break}
+  case'time_duration':{const p=timeDurationProjection();if(!p.valid)show(`<strong>Check the times</strong><br>${H(p.message)}`);else show(`<strong>${formatTimeDuration(p)}</strong><br>${F(p.totalHours,6)} total hours; ${F(p.totalSeconds,0)} seconds.${p.overnight?'<br>End time is treated as the next day.':''}`);break}
   case'cn_hours':{let total=V('hours')+V('minutes')/60;show(`<strong>${F(total,2)} hours</strong><br>Estimated pay at the entered rate: ${USD(total*V('rate'))}.`);break}
   case'cn_grade':{let pct=V('possible')?V('earned')/V('possible')*100:0,letter=pct>=90?'A':pct>=80?'B':pct>=70?'C':pct>=60?'D':'F';show(`<strong>${F(pct,2)}%</strong><br>Approximate letter grade: ${letter}; weighted points: ${F(pct*V('credits')/100,2)}.`);break}
   case'cn_subnet':{let p=Math.max(0,Math.min(32,V('prefix'))),addresses=Math.pow(2,32-p),usable=p>=31?addresses:Math.max(0,addresses-2);show(`<strong>${F(addresses,0)} addresses</strong><br>Approximate usable IPv4 hosts: ${F(usable,0)}.`);break}
@@ -5632,7 +5696,8 @@ document.addEventListener('click',e=>{const btn=e.target.closest('[data-engine]'
  document.addEventListener('click',e=>{const add=e.target.closest('#geo_add_section');if(add){const p=geometryAreaProjection();if(!p.valid){show(`<strong>Section not added</strong><br>${H(p.message)}`);return}geometryAreaSections.push({shape:p.shapeLabel,squareMeters:p.squareMeters});renderGeometryAreaTotal();calc('area_advanced');trackGA4Event('calculator_submit',{calculator_engine:'area_advanced',calculator_path:location.pathname,interaction_type:'add_room_section',shape:p.shape});return}const remove=e.target.closest('[data-geo-remove]');if(remove){geometryAreaSections.splice(Number(remove.dataset.geoRemove),1);renderGeometryAreaTotal();calc('area_advanced');return}if(e.target.closest('#geo_clear_sections')||e.target.closest('[data-clear]')&&currentEngine()==='area_advanced'){geometryAreaSections.length=0;renderGeometryAreaTotal()}});
  document.addEventListener('change',e=>{if(e.target.closest('.geometry-area-fields')){calc('area_advanced');renderGeometryAreaTotal()}});
 document.addEventListener('click',e=>{const link=e.target.closest('a[href]');if(!link)return;try{const destination=new URL(link.href,location.href);if(/^https?:$/.test(destination.protocol)&&destination.hostname!==location.hostname)trackGA4Event('outbound_reference_click',{destination_host:destination.hostname,source_path:location.pathname})}catch{}});
-document.addEventListener('click',e=>{if(e.target.closest('[data-clear]'))clearCalcForm()});
+document.addEventListener('click',e=>{if(e.target.closest('[data-clear]')){if(currentEngine()==='time_duration')clearTimeDurationForm();else clearCalcForm()}});
+document.addEventListener('click',e=>{const now=e.target.closest('[data-duration-now]'),swap=e.target.closest('[data-duration-swap]');if(now){const endpoint=now.dataset.durationNow,d=new Date(),pad=n=>String(n).padStart(2,'0');document.getElementById(`duration_${endpoint}_time`).value=`${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;document.getElementById(`duration_${endpoint}_date`).value=`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;calc('time_duration')}else if(swap){for(const part of ['date','time']){const start=document.getElementById(`duration_start_${part}`),end=document.getElementById(`duration_end_${part}`),value=start.value;start.value=end.value;end.value=value}calc('time_duration')}});
 document.addEventListener('click',e=>{if(e.target.closest('[data-clear]')&&currentEngine()==='army_wht_ratio')renderGenericFromEngine('army_wht_ratio')});
 document.addEventListener('click',e=>{if(e.target.closest('[data-clear]')&&currentEngine()==='payback_advanced')renderGenericFromEngine('payback_advanced')});
 document.addEventListener('click',e=>{if(e.target.closest('[data-unit-swap]'))swapUnitConverter()});
@@ -6060,6 +6125,10 @@ function renderGenericFromEngine(engine) {
     cards=[["Range size",F(count,0),"Possible integer results."],["Minimum",F(min,0),"Lower bound."],["Maximum",F(max,0),"Upper bound."],["Chance each",`${F(100/count,2)}%`,"Uniform random estimate."]];
     bars=[{label:"Minimum",value:min,display:F(min,0)},{label:"Maximum",value:max,display:F(max,0)},{label:"Range size",value:count,display:F(count,0)}];
     rows=[["Minimum",F(min,0),"Included bound."],["Maximum",F(max,0),"Included bound."],["Possible results",F(count,0),"Inclusive integer count."],["Per-result chance",`${F(100/count,2)}%`,"If uniformly random."]];
+  } else if (engine === "time_duration") {
+    const p=timeDurationProjection();bars=[];
+    if(!p.valid){cards=[["Duration","Check inputs",p.message],["Total hours","Unavailable","Enter both endpoints."],["Total minutes","Unavailable","Enter both endpoints."],["Total seconds","Unavailable","Enter both endpoints."]];rows=[["Validation","Unable to calculate",H(p.message)]]}
+    else{cards=[["Duration",formatTimeDuration(p),p.overnight?"End time is on the next day.":"Days, hours, minutes, and seconds."],["Total hours",F(p.totalHours,6),"Total seconds divided by 3,600."],["Total minutes",F(p.totalMinutes,6),"Total seconds divided by 60."],["Total seconds",F(p.totalSeconds,0),"Whole-second precision."]];rows=[["Start",H(p.startLabel),"Entered date/time or time of day."],["End",H(p.endLabel),p.overnight?"The next day is assumed.":"Entered endpoint."],["Calculation mode",p.dated?"Dates and times":"Times only",p.dated?"Gregorian calendar; 24 hours per day.":"An earlier end time crosses midnight."],["Component duration",formatTimeDuration(p),"Unrounded whole-second components."],["Decimal hours",F(p.totalHours,6),"Rounded for display only."],["Decimal minutes",F(p.totalMinutes,6),"Rounded for display only."],["Seconds",F(p.totalSeconds,0),"Full interval in seconds."],["Clock basis","Same clock","Time-zone, DST, and leap-second changes are excluded."]]}
   } else if (engine === "cn_hours") {
     const total=V('hours')+V('minutes')/60, pay=total*V('rate');
     cards=[["Total hours",F(total,2),"Hours plus minutes."],["Estimated pay",USD(pay),"Hours times rate."],["Minutes",F(total*60,0),"Total minutes."],["Hourly rate",USD(V('rate')),"Entered rate."]];

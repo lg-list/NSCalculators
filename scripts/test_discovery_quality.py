@@ -57,6 +57,16 @@ class DiscoveryQualityTests(unittest.TestCase):
                 self.assertNotIn('data-engine=', html)
                 self.assertNotIn('"SoftwareApplication"', html)
 
+    def test_time_duration_release_is_discoverable(self):
+        calc = next(c for c in self.calculators if c["slug"] == "time-duration-calculator")
+        self.assertTrue(build.is_indexable_calculator(calc))
+        self.assertIn(calc["slug"], self.search_slugs)
+        html = build.calculator_page(self.data["site"], calc, [])
+        self.assertIn('data-engine="time_duration"', html)
+        self.assertIn('id="duration_start_time"', html)
+        self.assertIn('id="duration_end_date"', html)
+        self.assertNotIn('content="noindex,follow"', html)
+
 
 if __name__ == "__main__":
     unittest.main()

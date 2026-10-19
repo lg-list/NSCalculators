@@ -35,6 +35,9 @@ jobs:
           PUBLIC_BASE_PATH: ""
         run: python build.py
 
+      - name: Check elapsed-time calculations
+        run: node scripts/test_time_duration.cjs dist/assets/calculator.js
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
