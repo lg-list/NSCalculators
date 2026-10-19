@@ -20,7 +20,7 @@ PUBLIC_BASE_PATH = os.environ.get("PUBLIC_BASE_PATH", "").strip().rstrip("/")
 PUBLIC_SITE_DOMAIN = os.environ.get("PUBLIC_SITE_DOMAIN", "").strip()
 GA4_MEASUREMENT_ID = os.environ.get("GA4_MEASUREMENT_ID", "G-19CY1VWHFM").strip()
 ASSET_VERSION = "20261014a"
-SEARCH_ASSET_VERSION = "20261019b"
+SEARCH_ASSET_VERSION = "20261019d"
 PRIORITY_LENGTH_CONVERSIONS = {
     "millimeters-to-feet-calculator",
     "meters-to-feet-calculator",
@@ -1018,11 +1018,38 @@ def has_purpose_built_calculation(calc):
     return calc.get("slug") not in NON_INDEXABLE_UNTIL_PURPOSE_BUILT and calc.get("engine") != "cn_generic"
 
 
+def conversion_search_signature(calc):
+    if calc.get("engine") != "linear_convert":
+        return None
+    fields = {field[0]: field for field in calc.get("inputs", [])}
+    if not all(key in fields for key in ("value", "factor", "target")):
+        return None
+    return (calc["title"].casefold(), fields["value"][1], fields["factor"][3], fields["target"][3])
+
+
 def calculator_search_index(calculators):
-    entries = [
-        {"title": c["title"], "slug": c["slug"], "desc": c["desc"], "cat": c["cat"], "keyword": primary_keyword(c)}
-        for c in calculators if has_purpose_built_calculation(c) and c["slug"] != "scientific-calculator"
-    ]
+    groups = defaultdict(list)
+    for calc in calculators:
+        if not has_purpose_built_calculation(calc) or calc["slug"] == "scientific-calculator":
+            continue
+        signature = conversion_search_signature(calc)
+        groups[("conversion", signature) if signature else ("route", calc["slug"])].append(calc)
+    entries = []
+    for group in groups.values():
+        # Keep every indexable route visible if a future dataset introduces a
+        # second primary page; canonical consolidation is a separate decision.
+        if len(group) > 1 and sum(is_indexable_calculator(c) for c in group) <= 1:
+            preferred = min(group, key=lambda c: (not is_indexable_calculator(c), c["slug"] != slugify_text(c["title"]), c["cat"] != "Conversion", len(c["slug"]), c["slug"]))
+            selected = [preferred]
+        else:
+            selected = group
+        for calc in selected:
+            entry = {"title": calc["title"], "slug": calc["slug"], "desc": calc["desc"], "cat": calc["cat"], "keyword": primary_keyword(calc)}
+            if len(group) > 1 and len(selected) == 1:
+                aliases = {c.get("seo_context_label") or c["cat"] for c in group}
+                aliases.update(primary_keyword(c) for c in group if primary_keyword(c).casefold() not in (entry["keyword"].casefold(), entry["title"].casefold()))
+                entry["aliases"] = " | ".join(sorted(aliases))
+            entries.append(entry)
     # This route has a dedicated renderer rather than the imported generic engine.
     entries.append({"title": "Scientific Calculator", "slug": "scientific-calculator", "desc": "Evaluate expressions with fractions, powers, roots, logarithms, and trigonometry.", "cat": "Math", "keyword": "scientific calculator"})
     return entries
@@ -5011,7 +5038,7 @@ SEARCH_JS = r'''
     }
     await loadItems();
     if (q.value.toLowerCase().trim() !== s) return;
-    const r = items.filter(x => (x.title + " " + x.desc + " " + x.cat + " " + (x.keyword || "")).toLowerCase().includes(s)).slice(0, 8);
+    const r = items.filter(x => (x.title + " " + x.desc + " " + x.cat + " " + (x.keyword || "") + " " + (x.aliases || "")).toLowerCase().includes(s)).slice(0, 8);
     box.innerHTML = r.length ? r.map(x => `<a href="${basePath}/${x.slug}/"><strong>${x.title}</strong><small>${x.cat}: ${x.desc}</small></a>`).join("") : '<p role="status" style="margin:0;padding:12px 14px">No calculators found.</p>';
     box.style.display = "block";
   });

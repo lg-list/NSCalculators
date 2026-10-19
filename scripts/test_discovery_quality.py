@@ -1,5 +1,6 @@
 import sys
 import unittest
+from copy import deepcopy
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
@@ -26,14 +27,60 @@ class DiscoveryQualityTests(unittest.TestCase):
         self.assertTrue(unfinished)
         self.assertFalse(unfinished & self.search_slugs)
 
-    def test_working_noindex_tools_remain_searchable(self):
-        working_noindex = {
-            c["slug"] for c in self.calculators
+    def test_working_noindex_calculations_remain_represented(self):
+        working_noindex = [
+            c for c in self.calculators
             if build.has_purpose_built_calculation(c)
             and not build.is_indexable_calculator(c)
-        }
+        ]
         self.assertTrue(working_noindex)
-        self.assertTrue(working_noindex <= self.search_slugs)
+        shown_conversions = {
+            build.conversion_search_signature(c) for c in self.calculators
+            if c["slug"] in self.search_slugs and build.conversion_search_signature(c) is not None
+        }
+        for calc in working_noindex:
+            if calc["slug"] not in self.search_slugs:
+                signature = build.conversion_search_signature(calc)
+                self.assertIsNotNone(signature, calc["slug"])
+                self.assertIn(signature, shown_conversions, calc["slug"])
+
+    def test_equivalent_conversion_has_one_primary_result(self):
+        entries = [c for c in self.entries if c["title"].casefold() == "millimeters to rods calculator"]
+        self.assertEqual(len(entries), 1)
+        self.assertEqual(entries[0]["slug"], "millimeters-to-rods-calculator")
+        self.assertIn("Scientific Length Science", entries[0]["aliases"])
+        self.assertIn("Body Height Health", entries[0]["aliases"])
+
+    def test_indexable_conversion_is_preferred_independent_of_order(self):
+        group = [c for c in self.calculators if c["title"].casefold() == "milligrams to grams calculator"]
+        self.assertGreater(len(group), 1)
+        for candidates in (group, list(reversed(group))):
+            entries = [c for c in build.calculator_search_index(candidates) if c["slug"] != "scientific-calculator"]
+            self.assertEqual([c["slug"] for c in entries], ["milligrams-to-grams-calculator"])
+
+    def test_distinct_conversion_definitions_are_not_merged(self):
+        original = next(c for c in self.calculators if c["slug"] == "millimeters-to-rods-calculator")
+        for difference in ("factor", "target", "source"):
+            with self.subTest(difference=difference):
+                variant = deepcopy(original)
+                variant["slug"] = "different-definition-calculator"
+                fields = {f[0]: f for f in variant["inputs"]}
+                if difference == "source":
+                    fields["value"][1] = "Value in another unit"
+                elif difference == "factor":
+                    fields["factor"][3] *= 2
+                else:
+                    fields["target"][3] = "another unit"
+                entries = build.calculator_search_index([original, variant])
+                self.assertTrue({original["slug"], variant["slug"]} <= {c["slug"] for c in entries})
+
+    def test_multiple_indexable_routes_stay_visible(self):
+        original = deepcopy(next(c for c in self.calculators if c["slug"] == "millimeters-to-rods-calculator"))
+        original["generated"] = False
+        variant = deepcopy(original)
+        variant["slug"] = "another-primary-converter"
+        entries = build.calculator_search_index([original, variant])
+        self.assertTrue({original["slug"], variant["slug"]} <= {c["slug"] for c in entries})
 
     def test_indexable_tools_remain_searchable(self):
         indexable = {c["slug"] for c in self.calculators if build.is_indexable_calculator(c)}
