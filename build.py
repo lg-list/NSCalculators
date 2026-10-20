@@ -1,5 +1,7 @@
 from collections import Counter, defaultdict
 from datetime import date
+from functools import lru_cache
+from hashlib import sha256
 from html import escape
 from html.parser import HTMLParser
 from pathlib import Path
@@ -163,6 +165,13 @@ def read_data():
 def write(path, content):
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(content, encoding="utf-8")
+
+
+@lru_cache(maxsize=1)
+def calculator_assets():
+    rows = json.loads(RMD_JOINT_LIFE_TABLE.read_text(encoding="utf-8"))["rows"]
+    bundle = CALC_JS.replace("__RMD_JOINT_TABLE__", json.dumps(rows, separators=(",", ":"))).strip() + "\n"
+    return bundle, sha256(bundle.encode("utf-8")).hexdigest()[:16]
 
 
 def h(value):
@@ -4643,24 +4652,7 @@ def calculator_page(site, calc, related):
         guide_link = '<p>For a measured walkthrough of L-shaped and other irregular rooms, including a worked square-footage example and ordering checks, read <a href="/guides/calculate-square-footage-irregular-room/">how to calculate square footage for an irregular room</a>.</p>'
         content = content.replace('<h2>Frequently asked questions</h2>', guide_link + '<h2>Frequently asked questions</h2>', 1)
     extra = analysis_extra_html(calc)
-    calculator_asset_versions = {"amortization-calculator": "20260919b", "retirement-calculator": "20260919c", "401k-calculator": ASSET_VERSION, "social-security-calculator": "20260920b", "rmd-calculator": "20260920c", "feet-to-meters-calculator": "20260925a", "compound-interest-calculator": "20260925b"}
-    calculator_asset_version = "20261019a" if calc.get("slug") == "towing-capacity-calculator" else "20260929f" if calc.get("slug") == "f150-bed-dimensions" else "20260929e" if calc.get("slug") == "payload-capacity-calculator" else "20260929d" if calc.get("slug") == "geodesic-dome-calculator" else "20260929c" if calc.get("slug") == "years-to-minutes-calculator" else "20260929b" if calc.get("slug") in ("watts-to-amps-calculator", "amps-to-watts-calculator") else "20260929a" if calc.get("slug") == "wire-size-calculator" else "20260928c" if calc.get("slug") == "tire-size-calculator" else "20260928a" if calc.get("slug") == "volume-calculator" else "20260927d" if calc.get("slug") == "cd-calculator" else "20260927c" if calc.get("slug") == "roman-numeral-converter" else "20260927b" if calc.get("slug") == "commission-calculator" else "20260927a" if calc.get("slug") == "house-affordability-calculator" else "20260926h" if calc.get("slug") == "area-calculator" else "20260926g" if calc.get("slug") == "conversion-calculator" else "20260926f" if calc.get("slug") == "depreciation-calculator" else "20260926e" if calc.get("slug") == "triangle-calculator" else "20260926d" if calc.get("slug") == "liters-to-cu-inches-calculator" else "20260926c" if calc.get("slug") == "weeks-to-months-calculator" else "20260926b" if calc.get("slug") == "sq-feet-to-acres-calculator" else "20260926a" if calc.get("slug") == "stones-to-pounds-calculator" else "20260925c" if calc.get("slug") in PRIORITY_LENGTH_CONVERSIONS else "20260925d" if calc.get("slug") in ("car-depreciation-calculator", "car-resale-value-calculator") else "20260925e" if calc.get("slug") in ("horsepower-calculator", "power-to-weight-ratio-calculator") else "20260925f" if calc.get("slug") == "bottleneck-calculator" else "20260925g" if calc.get("slug") == "ratio-calculator" else "20260925i" if calc.get("slug") == "debt-payoff-calculator" else "20260925j" if calc.get("slug") == "average-return-calculator" else calculator_asset_versions.get(calc.get("slug"), ASSET_VERSION)
-    if calc.get("slug") == "calories-burned-calculator":
-        calculator_asset_version = "20261014a"
-    if calc.get("slug") == "debt-payoff-calculator":
-        calculator_asset_version = "20261002a"
-    if calc.get("slug") == "army-body-fat-calculator":
-        calculator_asset_version = "20261002b"
-    if calc.get("slug") == "area-calculator":
-        calculator_asset_version = "20261019a"
-    if calc.get("slug") == "marriage-calculator":
-        calculator_asset_version = "20261013a"
-    if calc.get("slug") == "payback-period-calculator":
-        calculator_asset_version = "20261013b"
-    if calc.get("slug") == "sample-size-calculator":
-        calculator_asset_version = "20261014a"
-    if calc.get("slug") == "time-duration-calculator":
-        calculator_asset_version = "20261019c"
+    calculator_asset_version = calculator_assets()[1]
     if calc.get("engine") == "loan_page":
         calc_html = f"""<section class="calc loan-page-calc"><h2>Calculator</h2>{fields}<div class="result" id="result">Enter your values and select Calculate.</div></section>"""
     else:
@@ -6997,7 +6989,7 @@ LOGO_SVG = r'''
 
 def build():
     data = read_data()
-    rmd_joint_table = json.loads(RMD_JOINT_LIFE_TABLE.read_text(encoding="utf-8"))["rows"]
+    calculator_assets.cache_clear()
     site = dict(data["site"])
     if PUBLIC_SITE_DOMAIN:
         site["domain"] = PUBLIC_SITE_DOMAIN
@@ -7013,8 +7005,8 @@ def build():
     shutil.copyfile(ROOT / "vendor" / "mathjs-15.2.0.min.js", DIST / "assets" / "mathjs.min.js")
     shutil.copyfile(ROOT / "vendor" / "mathjs-LICENSE.txt", DIST / "assets" / "mathjs-LICENSE.txt")
     shutil.copyfile(ROOT / "vendor" / "mathjs-NOTICE.txt", DIST / "assets" / "mathjs-NOTICE.txt")
-    calculator_js = CALC_JS.replace("__RMD_JOINT_TABLE__", json.dumps(rmd_joint_table, separators=(",", ":")))
-    write(DIST / "assets" / "calculator.js", calculator_js.strip() + "\n")
+    calculator_js, _ = calculator_assets()
+    (DIST / "assets" / "calculator.js").write_bytes(calculator_js.encode("utf-8"))
     search_index = calculator_search_index(calculators)
     write(DIST / "assets" / "search-index.json", json.dumps(search_index, ensure_ascii=False, separators=(",", ":")) + "\n")
     write(DIST / "favicon.svg", LOGO_SVG.strip() + "\n")
