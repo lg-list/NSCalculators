@@ -22,7 +22,7 @@ RMD_JOINT_LIFE_TABLE = ROOT / "src" / "data" / "rmd-joint-life-table.json"
 PUBLIC_BASE_PATH = os.environ.get("PUBLIC_BASE_PATH", "").strip().rstrip("/")
 PUBLIC_SITE_DOMAIN = os.environ.get("PUBLIC_SITE_DOMAIN", "").strip()
 GA4_MEASUREMENT_ID = os.environ.get("GA4_MEASUREMENT_ID", "G-19CY1VWHFM").strip()
-ASSET_VERSION = "20261020b"
+ASSET_VERSION = "20261020c"
 SEARCH_ASSET_VERSION = "20261019d"
 PRIORITY_LENGTH_CONVERSIONS = {
     "millimeters-to-feet-calculator",
@@ -63,7 +63,6 @@ NON_INDEXABLE_UNTIL_PURPOSE_BUILT = {
     "anorexic-bmi-calculator",
     "cash-back-or-low-interest-calculator",
     "conception-calculator",
-    "down-payment-calculator",
     "estate-tax-calculator",
     "fha-loan-calculator",
     "ovulation-calculator",
@@ -77,11 +76,6 @@ NON_INDEXABLE_UNTIL_PURPOSE_BUILT = {
 }
 
 UNAVAILABLE_CALCULATOR_DETAILS = {
-    "down-payment-calculator": (
-        "A dedicated purchase-cash and down-payment model is not yet available. An installment-loan payment alone does not calculate the cash needed to buy a home.",
-        "/mortgage-calculator/", "Mortgage Calculator",
-        "For a known home price and down payment, estimate the mortgage payment instead. This is not a closing-cash calculation.",
-    ),
     "fha-loan-calculator": (
         "An FHA-specific model is not yet available. A generic installment-loan payment does not account for FHA upfront and ongoing mortgage insurance.",
         "/mortgage-calculator/", "Mortgage Calculator",
@@ -807,7 +801,9 @@ def calculator_net_template(keyword, slug, cat):
         "example": f"Enter sample values to generate an illustrative {keyword.lower()} result.",
         "inputs": [["amount", "Amount", "number", 1000], ["rate", "Rate (%)", "number", 5], ["years", "Years", "number", 10]],
     }
-    if slug == "sample-size-calculator":
+    if slug == "down-payment-calculator":
+        base.update({"engine": "down_payment_advanced", "desc": "Calculate home down payment, closing costs and cash needed, or estimate a cash-based home price with monthly principal and interest.", "formula": "Cash needed = home price x down-payment rate + closing costs. With percentage closing costs, cash-based home price = available cash / (down-payment rate + closing-cost rate).", "example": "A $500,000 home with 20% down and 3% closing costs needs $115,000 in purchase cash before reserves and adjustments.", "inputs": []})
+    elif slug == "sample-size-calculator":
         base.update({"engine": "sample_size_advanced", "desc": "Estimate the number of completed responses needed to measure a population proportion at a selected confidence level and margin of error, with an optional finite-population correction.", "formula": "n0 = z² p(1 - p) / E²; for a known finite population N, n = n0 / (1 + (n0 - 1) / N). Round up to the next whole response.", "example": "At 95% confidence, a 5% margin of error, and a conservative 50% expected proportion, an unknown or very large population requires 385 completed responses.", "inputs": []})
     elif slug == "payback-period-calculator":
         base.update({"engine": "payback_advanced", "desc": "Estimate simple and discounted investment payback from fixed or irregular annual cash flows, with NPV and a year-by-year schedule.", "formula": "Simple payback is the point when cumulative cash flow recovers the initial investment; discounted payback discounts each year's cash flow before accumulation.", "inputs": []})
@@ -1820,6 +1816,20 @@ def f150_bed_input_html():
 <div class="field"><label for="f150_item_length">Cargo item length</label><div class="input-unit"><input id="f150_item_length" type="number" step="any" min="0" value="96"><span data-f150-unit>in</span></div></div>
 <div class="field"><label for="f150_item_width">Cargo item width</label><div class="input-unit"><input id="f150_item_width" type="number" step="any" min="0" value="48"><span data-f150-unit>in</span></div></div>
 <p class="field-note field-wide">Published box dimensions are nominal reference values. Cargo fit checks a flat rectangle against floor length and the 50.6-inch minimum width between wheelhouses; it does not model height, wheel-well shape, tie-downs, liners, or an open tailgate.</p>
+</div>"""
+
+
+def down_payment_input_html():
+    return """<div class="fields down-payment-fields">
+<div class="field field-wide"><label for="dp_mode">Calculate</label><select id="dp_mode"><option value="cash">Home price from available cash</option><option value="price">Cash needed from home price</option><option value="both">Down payment from price and cash</option></select></div>
+<div class="field" data-dp-price hidden><label for="dp_price">Home price ($)</label><input id="dp_price" type="number" min="0" step="any" value="500000"></div>
+<div class="field" data-dp-cash><label for="dp_cash">Purchase cash ($)</label><input id="dp_cash" type="number" min="0" step="any" value="100000"></div>
+<div class="field" data-dp-percent><label for="dp_percent">Down payment (%)</label><input id="dp_percent" type="number" min="0" max="100" step="any" value="20"></div>
+<div class="field field-wide option-field"><label class="checkline"><input id="dp_include_closing" type="checkbox" checked> Include closing costs</label></div>
+<div class="field field-wide" data-dp-closing><label for="dp_closing">Closing costs</label><div class="input-unit"><input id="dp_closing" type="number" min="0" step="any" value="3"><select id="dp_closing_unit" aria-label="Closing cost unit"><option value="percent">% of home price</option><option value="dollars">$ total</option></select></div></div>
+<div class="field"><label for="dp_rate">Interest rate (%/year)</label><input id="dp_rate" type="number" min="0" max="100" step="any" value="7.297"></div>
+<div class="field"><label for="dp_years">Loan term (years)</label><input id="dp_years" type="number" min="0" max="100" step="any" value="30"></div>
+<p class="field-note field-wide">Illustrative rate. Payment excludes taxes, insurance, PMI and HOA.</p>
 </div>"""
 
 
@@ -2920,6 +2930,15 @@ def conversion_copy(calc):
 
 
 def high_value_calculator_copy(calc):
+    if calc.get("slug") == "down-payment-calculator":
+        return """
+<h2>Home down payment and purchase cash</h2><p>A down payment is the portion of the home price you pay rather than borrow. This calculator separates that amount from estimated closing costs, then shows the loan balance and a fixed-rate monthly principal-and-interest payment. All amounts are in US dollars. The starting values are examples, not market quotes or lending requirements.</p>
+<h2>Three ways to plan</h2><p><strong>Home price from available cash:</strong> enter the purchase cash you intend to use and a down-payment percentage. The calculator solves for the home price that uses that cash after modeled closing costs. Keep emergency savings and any lender-required reserves outside this cash figure. This is a cash-based price ceiling, not an income-based affordability or approval decision.</p><p><strong>Cash needed from home price:</strong> enter a price and a down-payment percentage to calculate down payment plus closing costs. <strong>Down payment from price and cash:</strong> enter both amounts; the cash remaining after closing costs goes toward the purchase price. If it exceeds the price, the model caps the down payment at 100%, sets the loan to zero and reports unused cash.</p>
+<h2>Down payment and closing-cost formulas</h2><p class="formula">down payment = home price x down-payment percentage / 100<br>loan amount = home price - down payment<br>purchase cash needed = down payment + estimated closing costs</p><p>Closing costs can be entered as a percentage of the home price or as one fixed dollar amount. For percentage costs, a cash-based price equals cash divided by the sum of the two decimal rates. For fixed-dollar costs, subtract those costs from cash before dividing by the down-payment rate. Unchecking closing costs excludes them entirely; it does not mean a real purchase has no fees.</p><p>A cash-only estimate has no finite price when both the down-payment and percentage closing-cost rates are zero. The calculator asks for a positive rate instead of inventing a price. With a fixed closing fee, the cash-only mode needs a positive down-payment percentage. Use a known home price for a zero-down scenario; eligibility is not assessed.</p>
+<h2>Worked purchase-cash example</h2><p>For a $500,000 home, 20% down is $100,000. If closing costs are assumed to be 3% of the price, they add $15,000, so modeled purchase cash is $115,000 and the loan is $400,000. If instead the same home is paired with $100,000 total available cash, subtracting the $15,000 closing estimate leaves an $85,000 down payment, or 17%, and a $415,000 loan. These are arithmetic examples, not a recommendation to spend your entire savings.</p>
+<h2>What the monthly payment leaves out</h2><p>The payment uses a fixed annual interest rate divided by 12 and a whole number of monthly payments. At zero interest, the principal is divided equally over the term. Do not enter APR that includes fees in place of the note interest rate. Supported terms run from one month through 100 years in whole-month increments; that mathematical range is not a list of available loan products.</p><p>Property taxes, homeowners insurance, mortgage insurance, HOA dues, maintenance and future rate changes are not included. Use the <a href="/mortgage-calculator/">mortgage calculator</a> to explore recurring housing costs and amortization, or the <a href="/house-affordability-calculator/">house affordability calculator</a> to include income and debt constraints.</p>
+<h2>Purchase cash is not your final cash to close</h2><p>Your lender's closing figures can account for deposits already paid, credits, prepaid items and other adjustments that this simplified model does not accept. The CFPB's <a href="https://www.consumerfinance.gov/owning-a-home/closing-disclosure/" target="_blank" rel="noopener">Closing Disclosure explainer</a> distinguishes closing costs from cash to close and helps you compare the lender's figures. Use actual lender documents before arranging payment.</p>
+<h2>Frequently asked questions</h2><h3>Does a 20% down payment apply to every mortgage?</h3><p>No. The entered percentage is your planning assumption. Loan program rules, property, credit, fees and insurance vary; this calculator does not determine eligibility or insurance cancellation.</p><h3>Can I enter closing costs in dollars?</h3><p>Yes. Select the dollar-total unit to use a fixed fee estimate instead of a percentage. The two units describe different assumptions and are not automatically converted when switched.</p><h3>Why does the calculator reject my available cash?</h3><p>Cash must cover the included closing costs before it can fund a down payment. For a known price, increase cash or revise the cost estimate if cash falls short. Reducing an estimate does not eliminate a real expense.</p><h3>Is the result lender approval?</h3><p>No. It does not check credit, income, debt-to-income ratios, reserves, property appraisal or loan program limits. Review a comfortable budget separately.</p>"""
     if calc.get("slug") == "time-duration-calculator":
         return """
 <h2>Calculate the time between two times</h2><p>Enter a start and end time, including seconds when needed. The result shows the interval as days, hours, minutes, and seconds, then gives equivalent totals in hours, minutes, and seconds. The browser may display an AM/PM control or a 24-hour clock according to your locale; both represent the same calculation.</p>
@@ -3067,7 +3086,7 @@ def high_value_calculator_copy(calc):
 <h2>Interest rate and loan term</h2><p>The mortgage payment uses the standard fixed-rate amortization formula. A higher interest rate increases the monthly principal-and-interest payment for the same loan, reducing the home price supported by a fixed budget. A longer term usually lowers the required monthly payment but increases total interest if the loan remains outstanding for the full term.</p><p class="formula">monthly principal and interest = P x r(1 + r)^n / ((1 + r)^n - 1)</p><p>Here, P is principal, r is the monthly interest rate, and n is the number of monthly payments. The rate entered is a planning APR assumption; a quote can change with market conditions, points, credit profile, property type, occupancy, loan-to-value ratio, and lock timing.</p>
 <h2>Worked affordability example</h2><p>Suppose gross household income is $100,000 per year, other monthly income is zero, and existing monthly debts are $500. A 28% housing ratio allows about $2,333 per month. A 36% total DTI allows $3,000 after subtracting the $500 of other debt. The housing ratio is therefore the tighter monthly limit. The calculator then subtracts taxes, insurance, HOA, and applicable PMI from that budget and solves for the principal-and-interest payment and home price.</p><p>Changing only one assumption can materially change the result. Compare a higher rate, a lower down payment, or a more conservative DTI target. Use the <a href="/mortgage-calculator/">mortgage calculator</a> once you have a target purchase price and want a complete amortization schedule and extra-payment analysis.</p>
 <h2>Income limit versus cash limit</h2><p>The results identify the controlling constraint. <strong>Income limited</strong> means the modeled monthly payment reaches a DTI budget before available cash is exhausted. <strong>Cash limited</strong> means the down payment and estimated closing costs cap the home price first. The results also show the income-only ceiling and cash-only ceiling so you can see which assumption is holding the estimate back.</p>
-<h2>Use a comfort budget, not only a qualification ceiling</h2><p>Affordability is personal. Consider take-home pay, emergency reserves, retirement saving, maintenance, insurance deductibles, future tax increases, HOA assessments, transportation, family plans, and income stability. Try lower DTI percentages to create breathing room. The <a href="/take-home-pay-calculator/">take-home pay calculator</a> can help compare gross income with estimated after-tax pay. Use this affordability calculator's cash-only ceiling to check how the entered down-payment and closing-cost assumptions constrain the purchase price.</p>
+<h2>Use a comfort budget, not only a qualification ceiling</h2><p>Affordability is personal. Consider take-home pay, emergency reserves, retirement saving, maintenance, insurance deductibles, future tax increases, HOA assessments, transportation, family plans, and income stability. Try lower DTI percentages to create breathing room. The <a href="/take-home-pay-calculator/">take-home pay calculator</a> can help compare gross income with estimated after-tax pay. Use this affordability calculator's cash-only ceiling to check how the entered down-payment and closing-cost assumptions constrain the purchase price. For a chosen purchase price, use the <a href="/down-payment-calculator/">down payment calculator</a> to separate the down payment from estimated closing costs.</p>
 <h2>Frequently asked questions</h2><h3>What income should I enter?</h3><p>Enter stable gross income before taxes and deductions that you reasonably expect a lender to document. Do not count uncertain income without understanding the applicable documentation rules.</p><h3>Does this calculator guarantee mortgage approval?</h3><p>No. Lenders also review credit, assets, reserves, employment, property, loan eligibility, documentation, and other underwriting requirements.</p><h3>Why does PMI disappear at 20% down?</h3><p>This planning model applies the entered PMI rate only below 20% down. Actual conventional, FHA, VA, USDA, and other programs follow different mortgage-insurance or fee rules.</p><h3>Should I use the maximum result as my budget?</h3><p>Not automatically. A lower price or more conservative DTI target may better protect savings and monthly cash flow.</p>"""
     if calc.get("slug") == "area-calculator":
         return """
@@ -3824,6 +3843,8 @@ def default_calculator_copy(calc):
 
 
 def analysis_extra_html(calc):
+    if calc.get("slug") == "down-payment-calculator":
+        return """<section class="mortgage-dashboard generic-dashboard" aria-label="Down payment results"><div class="section-head stack"><h2>Purchase Cash Results</h2></div><div class="summary-grid" id="genericSummary"></div><div class="table-card"><h3>Down Payment Details</h3><div class="table-scroll"><table class="data-table" id="genericTable"><thead><tr><th>Metric</th><th>Value</th><th>Assumption</th></tr></thead><tbody></tbody></table></div></div></section>"""
     if calc.get("slug") == "time-duration-calculator":
         return """<section class="mortgage-dashboard generic-dashboard duration-dashboard" aria-label="Time duration results"><div class="section-head stack"><h2>Duration Results</h2></div><div class="summary-grid" id="genericSummary"></div><div class="table-card"><h3>Duration Details</h3><div class="table-scroll"><table class="data-table" id="genericTable"><thead><tr><th>Metric</th><th>Value</th><th>Note</th></tr></thead><tbody></tbody></table></div></div></section>"""
     if calc.get("slug") == "calories-burned-calculator":
@@ -4474,7 +4495,10 @@ def calculator_page(site, calc, related):
     desc = seo_description(calc)
     group = calculator_group(calc)
     page_engine = calc.get("engine")
-    if calc.get("slug") == "calories-burned-calculator":
+    if calc.get("slug") == "down-payment-calculator":
+        fields = down_payment_input_html()
+        page_engine = "down_payment_advanced"
+    elif calc.get("slug") == "calories-burned-calculator":
         fields = activity_calorie_input_html()
         page_engine = "activity_calorie"
     elif calc.get("slug") == "payback-period-calculator":
@@ -5070,6 +5094,10 @@ CSS += r'''
 .duration-modes{display:flex;flex-wrap:wrap;gap:4px;margin:0 0 14px;padding:5px;border:1px solid var(--line);border-radius:6px}.duration-modes legend{padding:0 5px;font-size:14px;font-weight:700}.duration-modes label{position:relative;flex:1;min-width:120px;text-align:center;padding:7px 8px;border-radius:4px;font-size:14px;cursor:pointer}.duration-modes input{position:absolute;opacity:0;width:1px!important;height:1px!important}.duration-modes label:has(input:checked){background:var(--brand);color:#fff}.duration-modes label:has(input:focus-visible){outline:2px solid var(--ink);outline-offset:2px}.duration-row{display:grid;grid-template-columns:minmax(0,1fr);gap:10px}.duration-with-dates .duration-row{grid-template-columns:minmax(0,1fr) minmax(0,1.2fr)}.duration-fields [hidden]{display:none!important}.duration-time-control{display:flex;gap:5px;align-items:center}.duration-time-control input{flex:1;min-width:0}.duration-now,.duration-swap{border:1px solid var(--line);border-radius:4px;background:#fff;color:var(--brand);cursor:pointer}.duration-now{padding:0 7px;height:40px;font-size:14px}.duration-swap{display:block;width:34px;height:30px;margin:7px 0 7px auto;font-size:20px;line-height:1}.duration-now:hover,.duration-swap:hover{background:var(--soft)}.duration-fields .field-note{font-size:13px;line-height:1.4;margin:10px 0 0}.duration-dashboard .summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.duration-dashboard .summary-card strong{font-size:22px;overflow-wrap:anywhere}@media(max-width:560px){.duration-with-dates .duration-row{grid-template-columns:minmax(0,1fr)}.duration-row{gap:8px}.duration-fields .field label{min-height:0}.duration-dashboard .summary-card strong{font-size:20px}}
 '''
 
+CSS += r'''
+.calculator-article:has(.down-payment-fields) .lead{max-width:none}.calculator-article .fields.down-payment-fields{grid-template-columns:repeat(2,minmax(0,1fr))}.calculator-article .down-payment-fields .checkline{min-height:40px;padding:6px 10px}.calculator-article .down-payment-fields input[type=checkbox]{width:18px;height:18px;flex:0 0 18px}.down-payment-fields .field-note{margin:2px 0;padding:0;border:0;background:transparent;font-size:13px;line-height:1.4}.down-payment-fields [hidden]{display:none!important}@media(max-width:560px){.down-payment-fields .field:not(.field-wide)>label{min-height:44px}}
+'''
+
 SEARCH_JS = r'''
 (function(){
   let items = window.NORTHSTAR_ITEMS || [];
@@ -5168,6 +5196,50 @@ function formatTimeDuration(p){return`${p.days?`${F(p.days,0)}d `:''}${p.hours}h
 function syncTimeDurationMode(){const mode=document.querySelector('input[name="duration_mode"]:checked')?.value||'clock',root=document.querySelector('.duration-fields');if(root){root.classList.toggle('duration-with-dates',mode==='dates');root.querySelectorAll('[data-duration-date]').forEach(el=>{el.hidden=mode!=='dates'});const note=document.getElementById('duration-clock-note');if(note)note.hidden=mode==='dates'}return mode}
 function timeDurationProjection(){const mode=syncTimeDurationMode(),startTime=document.getElementById('duration_start_time')?.value||'',endTime=document.getElementById('duration_end_time')?.value||'',startDate=mode==='dates'?document.getElementById('duration_start_date')?.value||'':null,endDate=mode==='dates'?document.getElementById('duration_end_date')?.value||'':null;return{...timeDurationDifference(startTime,endTime,startDate,endDate),mode,startLabel:mode==='dates'?`${startDate} ${startTime}`:startTime,endLabel:mode==='dates'?`${endDate} ${endTime}`:endTime}}
 function clearTimeDurationForm(){document.querySelectorAll('.duration-fields input[type="time"],.duration-fields input[type="date"]').forEach(input=>{input.value=''});calc('time_duration')}
+function downPaymentAmounts({mode,price,cash,downPercent,includeClosing,closingValue,closingUnit,rate,years}){
+  const fail=message=>({valid:false,message}),number=x=>typeof x==='number'&&Number.isFinite(x);
+  if(!['cash','price','both'].includes(mode))return fail('Choose a calculation mode.');
+  if(typeof includeClosing!=='boolean')return fail('Choose whether to include closing costs.');
+  if(mode!=='cash'&&(!number(price)||price<=0))return fail('Enter a home price greater than zero.');
+  if(mode!=='price'&&(!number(cash)||cash<0))return fail('Enter available purchase cash of zero or more.');
+  if(mode!=='both'&&(!number(downPercent)||downPercent<0||downPercent>100))return fail('Enter a down payment from 0% through 100%.');
+  if(!number(rate)||rate<0||rate>100)return fail('Enter an annual interest rate from 0% through 100%.');
+  const months=years*12;
+  if(!number(years)||years<=0||years>100||Math.abs(months-Math.round(months))>1e-8||Math.round(months)<1)return fail('Enter a term from one month through 100 years in whole-month increments.');
+  let closingRate=0,fixedClosing=0;
+  if(includeClosing){
+    if(!['percent','dollars'].includes(closingUnit))return fail('Choose a closing cost unit.');
+    if(!number(closingValue)||closingValue<0||closingUnit==='percent'&&closingValue>100)return fail('Enter nonnegative closing costs; percentage costs cannot exceed 100%.');
+    if(closingUnit==='percent')closingRate=closingValue/100;else fixedClosing=closingValue;
+  }
+  const downRate=downPercent/100;
+  if(mode==='cash'){
+    const divisor=downRate+closingRate;
+    if(!(divisor>0))return fail('No finite home price: enter a positive down-payment or percentage closing-cost rate.');
+    price=(cash-fixedClosing)/divisor;
+    if(!(price>0))return fail('Available cash must exceed the fixed closing costs to fund a positive home price.');
+  }
+  const closing=price*closingRate+fixedClosing;
+  if(mode==='both'&&cash<closing)return fail('Available cash is less than the included closing costs.');
+  const down=mode==='both'?Math.min(price,cash-closing):price*downRate;
+  const loan=Math.max(0,price-down),cashNeeded=down+closing,unusedCash=mode==='both'?Math.max(0,cash-cashNeeded):0;
+  const n=Math.round(months),r=rate/1200;
+  const payment=loan===0?0:r===0?loan/n:loan*r/(-Math.expm1(-n*Math.log1p(r)));
+  const result={valid:true,mode,price,down,downPercent:down/price*100,closing,loan,cashNeeded,unusedCash,payment,rate,years:n/12,months:n,totalInterest:payment*n-loan};
+  if(Object.values(result).some(x=>typeof x==='number'&&!Number.isFinite(x)))return fail('These values exceed the supported numerical range.');
+  return result;
+}
+function syncDownPaymentFields(){
+  const mode=document.getElementById('dp_mode')?.value||'cash',closing=document.getElementById('dp_include_closing')?.checked;
+  for(const [selector,visible] of [['[data-dp-price]',mode!=='cash'],['[data-dp-cash]',mode!=='price'],['[data-dp-percent]',mode!=='both'],['[data-dp-closing]',closing]]){
+    document.querySelectorAll(selector).forEach(el=>{el.hidden=!visible;el.classList.toggle('is-hidden',!visible);el.querySelectorAll('input,select').forEach(input=>{input.disabled=!visible})});
+  }
+  return mode;
+}
+function downPaymentProjection(){
+  const mode=syncDownPaymentFields(),read=id=>{const raw=document.getElementById(id)?.value;return raw===undefined||raw.trim()===''?NaN:Number(raw)};
+  return downPaymentAmounts({mode,price:read('dp_price'),cash:read('dp_cash'),downPercent:read('dp_percent'),includeClosing:!!document.getElementById('dp_include_closing')?.checked,closingValue:read('dp_closing'),closingUnit:document.getElementById('dp_closing_unit')?.value,rate:read('dp_rate'),years:read('dp_years')});
+}
 function vehicleSaleComparison({tradeValue,payoff,salePrice,sellingCosts,taxSavings}){
   if([tradeValue,payoff,salePrice,sellingCosts,taxSavings].some(value=>!Number.isFinite(value)||value<0))return{valid:false,message:'Enter nonnegative private-sale prices and costs.'};
   const privateNet=salePrice-sellingCosts-payoff,tradeEquity=tradeValue-payoff,effectiveTrade=tradeEquity+taxSavings,breakEven=tradeValue+taxSavings+sellingCosts,difference=privateNet-effectiveTrade,winner=Math.abs(difference)<.005?'tie':difference>0?'private':'trade';
@@ -5651,6 +5723,7 @@ function clearCalcForm(){const form=document.querySelector('.calc');if(!form)ret
 function armyWhtRatioProjection(){const waist=V('waist'),height=V('height');if(!(waist>0&&height>0))return{valid:false,message:'Enter waist and height values greater than zero.'};return{valid:true,waist,height,ratio:waist/height}}
 function calc(e){
  switch(e){
+  case'down_payment_advanced':{const p=downPaymentProjection();if(!p.valid)show(`<strong>Check the inputs</strong><br>${H(p.message)}`);else{const answer=p.mode==='cash'?`${USD(p.price)} home price`:p.mode==='price'?`${USD(p.cashNeeded)} purchase cash needed`:`${F(p.downPercent,2)}% down payment`;show(`<strong>${answer}</strong><br>${USD(p.down)} down payment; ${USD(p.closing)} closing costs.<br>${USD(p.payment)} / month principal and interest only.${p.unusedCash?`<br>${USD(p.unusedCash)} unused cash.`:''}`)}break}
   case'payback_advanced':{const p=paybackProjection(),simple=p.simple===null?'no recovery within the selected period':`${F(p.simple,2)} years`,discounted=p.discounted===null?'no recovery within the selected period':`${F(p.discounted,2)} years`;show(`<strong>Simple payback: ${simple}</strong><br>Discounted payback: ${discounted}; net present value: ${USD(p.npv)} over ${p.horizon} years.`);break}
   case'marriage_tax_advanced':{const p=marriageTaxProjection();show(`<strong>${p.difference>0?`${USD(p.difference)} higher estimated joint tax`:p.difference<0?`${USD(Math.abs(p.difference))} lower estimated joint tax`:'No estimated tax difference'}</strong><br>Joint estimate: ${USD(p.jointTax)}; combined Single estimates: ${USD(p.separate)} (${p.year}).`);break}
   case'trade_value':{let price=V('price'),age=V('age'),miles=V('miles'),cond=V('condition');let ageF=Math.pow(.84,age),expected=Math.max(1,age)*12000,mileageF=Math.max(.72,Math.min(1.12,1-(miles-expected)*0.000003));let r=price*ageF*mileageF*cond;show(`<strong>${USD(Math.max(0,r))}</strong><br>Illustrative estimate, not a dealer quote or appraisal.`);break}
@@ -5801,6 +5874,7 @@ document.addEventListener('click',e=>{const btn=e.target.closest('[data-engine]'
  document.addEventListener('change',e=>{if(e.target.closest('.geometry-area-fields')){calc('area_advanced');renderGeometryAreaTotal()}});
 document.addEventListener('click',e=>{const link=e.target.closest('a[href]');if(!link)return;try{const destination=new URL(link.href,location.href);if(/^https?:$/.test(destination.protocol)&&destination.hostname!==location.hostname)trackGA4Event('outbound_reference_click',{destination_host:destination.hostname,source_path:location.pathname})}catch{}});
 document.addEventListener('click',e=>{if(e.target.closest('[data-clear]')){if(currentEngine()==='time_duration')clearTimeDurationForm();else clearCalcForm()}});
+document.addEventListener('click',e=>{if(e.target.closest('[data-clear]')&&currentEngine()==='down_payment_advanced')calc('down_payment_advanced')});
 document.addEventListener('click',e=>{const now=e.target.closest('[data-duration-now]'),swap=e.target.closest('[data-duration-swap]');if(now){const endpoint=now.dataset.durationNow,d=new Date(),pad=n=>String(n).padStart(2,'0');document.getElementById(`duration_${endpoint}_time`).value=`${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;document.getElementById(`duration_${endpoint}_date`).value=`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;calc('time_duration')}else if(swap){for(const part of ['date','time']){const start=document.getElementById(`duration_start_${part}`),end=document.getElementById(`duration_end_${part}`),value=start.value;start.value=end.value;end.value=value}calc('time_duration')}});
 document.addEventListener('click',e=>{if(e.target.closest('[data-clear]')&&currentEngine()==='army_wht_ratio')renderGenericFromEngine('army_wht_ratio')});
 document.addEventListener('click',e=>{if(e.target.closest('[data-clear]')&&currentEngine()==='payback_advanced')renderGenericFromEngine('payback_advanced')});
@@ -5906,7 +5980,15 @@ function paybackProjection(){
 function renderGenericFromEngine(engine) {
   if (!document.getElementById("genericSummary")) return;
   let cards=[], bars=[], rows=[];
-  if(engine==="sample_size_advanced"){
+  if(engine==="down_payment_advanced"){
+    const p=downPaymentProjection();
+    if(!p.valid){cards=[["Purchase estimate","Check inputs",H(p.message)]];rows=[["Validation","Unable to calculate",H(p.message)]]}
+    else{
+      cards=[["Home price",USD(p.price),"Cash-based estimate, not loan approval."],["Down payment",USD(p.down),`${F(p.downPercent,2)}% of home price.`],["Purchase cash needed",USD(p.cashNeeded),"Down payment plus included closing costs."],["Monthly principal & interest",USD(p.payment),"Taxes, insurance, PMI and HOA excluded."]];
+      rows=[["Home price",USD(p.price),"Purchase-price assumption or cash-based result."],["Down payment",USD(p.down),`${F(p.downPercent,4)}% of home price.`],["Closing costs",USD(p.closing),document.getElementById('dp_include_closing')?.checked?'Entered percentage or fixed total.':'Excluded from this calculation.'],["Purchase cash needed",USD(p.cashNeeded),"Not a final lender cash-to-close quote."],["Loan amount",USD(p.loan),"Home price minus down payment."],["Monthly principal & interest",USD(p.payment),"Fixed-rate monthly amortization."],["Interest rate",`${F(p.rate,3)}%`,"Entered note rate, not a current quote."],["Term",`${p.months} months`,"Whole monthly payments."],["Total modeled interest",USD(Math.max(0,p.totalInterest)),"No extra payments or recurring housing costs."]];
+      if(p.mode==='both')rows.push(["Unused cash",USD(p.unusedCash),"Cash above a 100% down payment plus closing costs."]);
+    }
+  } else if(engine==="sample_size_advanced"){
     const p=sampleSizeProjection();
     if(!p.valid){cards=[["Required sample","Check inputs",p.message],["Large-population estimate","Unavailable","Correct the inputs first."],["Population adjustment","Unavailable","Correct the inputs first."],["Confidence level","Unavailable","Correct the inputs first."]];bars=[];rows=[["Validation","Unable to calculate",p.message]]}
     else{cards=[["Completed responses",F(p.required,0),"Minimum target after rounding up."],["Large-population estimate",F(p.uncorrected,0),"Before finite population correction."],["Finite population",p.population?F(p.population,0):"Not applied",p.adjusted?"Correction applied for sampling without replacement.":"Unknown or very large population; no correction."],["Confidence and margin",`${F(p.z===1.645?90:p.z===1.96?95:99,0)}% / ${F(p.margin,2)}%`,`${F(p.proportion,1)}% expected proportion.`]];bars=[{label:"Large population",value:p.uncorrected,display:F(p.uncorrected,0)},{label:"Required sample",value:p.required,display:F(p.required,0)}];rows=[["Confidence level",`${F(p.z===1.645?90:p.z===1.96?95:99,0)}%`,`${F(p.z,3)} normal critical value.`],["Margin of error",`${F(p.margin,2)}%`,"Entered percentage points."],["Expected proportion",`${F(p.proportion,2)}%`,"p is converted to a decimal in the formula."],["Large-population estimate",F(p.n0,3),"z² × p × (1 − p) / E²."],["Population size",p.population?F(p.population,0):"Not entered",p.population?"Finite population correction applied.":"No finite-population correction."],["Required completed responses",F(p.required,0),"Adjusted estimate rounded up to a whole response."]];}

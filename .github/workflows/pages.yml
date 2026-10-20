@@ -47,6 +47,9 @@ jobs:
       - name: Check trade-in versus private-sale comparisons
         run: node scripts/test_vehicle_sale_comparison.cjs dist/assets/calculator.js
 
+      - name: Check purchase cash and down payments
+        run: node scripts/test_down_payment.cjs dist/assets/calculator.js
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

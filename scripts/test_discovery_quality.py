@@ -116,7 +116,7 @@ class DiscoveryQualityTests(unittest.TestCase):
 
     def test_misclassified_financial_tools_are_withheld_until_implemented(self):
         self.assertEqual(set(build.UNAVAILABLE_CALCULATOR_DETAILS), {
-            "down-payment-calculator", "fha-loan-calculator", "cash-back-or-low-interest-calculator",
+            "fha-loan-calculator", "cash-back-or-low-interest-calculator",
         })
         for slug, (reason, path, title, limitation) in build.UNAVAILABLE_CALCULATOR_DETAILS.items():
             with self.subTest(slug=slug):
@@ -133,12 +133,26 @@ class DiscoveryQualityTests(unittest.TestCase):
                 self.assertNotIn('/assets/calculator.js', html)
                 self.assertNotIn('"SoftwareApplication"', html)
 
-    def test_affordability_does_not_recommend_unfinished_down_payment_tool(self):
+    def test_affordability_links_to_completed_down_payment_tool(self):
         calc = next(c for c in self.calculators if c["slug"] == "house-affordability-calculator")
         html = build.calculator_page(self.data["site"], calc, [])
-        self.assertNotIn('href="/down-payment-calculator/"', html)
+        self.assertIn('href="/down-payment-calculator/"', html)
         self.assertIn("cash-only ceiling", html)
         self.assertTrue(build.is_indexable_calculator(calc))
+
+    def test_down_payment_has_dedicated_model_before_restoring_discovery(self):
+        calc = next(c for c in self.calculators if c["slug"] == "down-payment-calculator")
+        self.assertEqual(calc["engine"], "down_payment_advanced")
+        self.assertTrue(build.is_indexable_calculator(calc))
+        self.assertIn(calc["slug"], self.search_slugs)
+        html = build.calculator_page(self.data["site"], calc, [])
+        for marker in ('data-engine="down_payment_advanced"', 'id="dp_mode"', 'id="dp_include_closing"',
+                       'id="dp_closing_unit"', 'id="genericSummary"', 'id="genericTable"',
+                       'Purchase cash is not your final cash to close', 'closing-disclosure/',
+                       'value="cash"', 'value="price"', 'value="both"'):
+            self.assertIn(marker, html)
+        for marker in ('content="noindex,follow"', 'id="amount"', 'id="genericChart"', 'currently unavailable'):
+            self.assertNotIn(marker, html)
 
     def test_401k_uses_current_calculator_bundle_version(self):
         calc = next(c for c in self.calculators if c["slug"] == "401k-calculator")
