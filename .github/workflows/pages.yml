@@ -38,6 +38,9 @@ jobs:
       - name: Check elapsed-time calculations
         run: node scripts/test_time_duration.cjs dist/assets/calculator.js
 
+      - name: Check 401(k) employer matching
+        run: node scripts/test_401k_match.cjs dist/assets/calculator.js
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
