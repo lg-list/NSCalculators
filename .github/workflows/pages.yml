@@ -44,6 +44,9 @@ jobs:
       - name: Check 401(k) employer matching
         run: node scripts/test_401k_match.cjs dist/assets/calculator.js
 
+      - name: Check trade-in versus private-sale comparisons
+        run: node scripts/test_vehicle_sale_comparison.cjs dist/assets/calculator.js
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

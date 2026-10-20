@@ -120,6 +120,15 @@ class DiscoveryQualityTests(unittest.TestCase):
         self.assertIn(f'<script src="/assets/calculator.js?v={build.calculator_assets()[1]}">', html)
         self.assertNotIn('calculator.js?v=20260920a', html)
 
+    def test_trade_in_comparison_enhances_existing_indexable_page(self):
+        calc = next(c for c in self.calculators if c["slug"] == "car-trade-in-value-calculator")
+        self.assertTrue(build.is_indexable_calculator(calc))
+        html = build.calculator_page(self.data["site"], calc, [])
+        for value in ('id="private_sale_price"', 'id="private_sale_costs"', 'Trade-in vs private sale calculator',
+                      'private-sale break-even price', 'separate cash-buyer offer'):
+            self.assertIn(value, html)
+        self.assertNotIn('content="noindex,follow"', html)
+
 
 if __name__ == "__main__":
     unittest.main()
