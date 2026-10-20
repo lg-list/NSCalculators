@@ -1,0 +1,50 @@
+{
+  "source": "Live NS Calculators UI, Playwright",
+  "sourceUrl": "https://nscalculators.com/area-calculator/",
+  "capturedAt": "2026-10-20T13:07:13.250Z",
+  "externalMessagesSent": 0,
+  "observations": [
+    {
+      "width": 1366,
+      "totalText": "232 ft² across 2 sections",
+      "screenshot": "area-demo-desktop.png",
+      "inputSections": [
+        [
+          12,
+          14
+        ],
+        [
+          8,
+          8
+        ]
+      ],
+      "squareFeet": 232,
+      "squareMeters": 21.55350528,
+      "exactFourInchSquare": {
+        "squareFeet": 0.1111111111111111,
+        "resultText": "0.1111111111 ft²\n\nRectangle: 16 in²; 16 in perimeter."
+      }
+    },
+    {
+      "width": 390,
+      "totalText": "232 ft² across 2 sections",
+      "screenshot": "area-demo-mobile.png",
+      "inputSections": [
+        [
+          12,
+          14
+        ],
+        [
+          8,
+          8
+        ]
+      ],
+      "squareFeet": 232,
+      "squareMeters": 21.55350528,
+      "exactFourInchSquare": {
+        "squareFeet": 0.1111111111111111,
+        "resultText": "0.1111111111 ft²\n\nRectangle: 16 in²; 16 in perimeter."
+      }
+    }
+  ]
+}
