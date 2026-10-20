@@ -1,4 +1,13 @@
 {
+  "data_quality_correction": {
+    "audited_on": "2026-10-20",
+    "historical_stats_country": "CN",
+    "forecast_country": "CN",
+    "us_search_volume_validated": false,
+    "forecast_is_organic_search_volume": false,
+    "priority_scores_status": "legacy_non_US_source_do_not_use_for_US_demand_ranking",
+    "note": "United States below is the intended market, not the geography of either source export. Ads competition is not organic SEO difficulty."
+  },
   "source_file": "C:\\Users\\Administrator\\Downloads\\Keyword Stats 2026-09-02 at 10_40_43.csv",
   "forecast_file": "C:\\Users\\Administrator\\Downloads\\Keyword Forecasts 2026-09-05 at 09_28_21.csv",
   "valid_keywords": 175,

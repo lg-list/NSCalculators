@@ -1,6 +1,6 @@
 # NS Calculators — US Growth Plan
 
-Updated: October 19, 2026
+Updated: October 20, 2026
 
 ## Goal
 
@@ -13,7 +13,26 @@ Grow qualified US organic traffic by concentrating authority, content improvemen
 - Other near-page-one queries include `fuel cost calculator` (14 impressions, position 8.5), `car price estimate` (22 impressions, position 11), `used car value` (29 impressions, position 25.7), and `ratio calculator` (21 impressions, position 22.6).
 - The latest settled Search Console data predates the October 18 Area title/description update, the new irregular-room guide, and the October 19 multi-section area feature. Do not judge or repeat those changes until a post-deployment data window is available.
 - The audited priority pages are indexable, return HTTP 200, use self-referencing canonicals, have one H1, and include structured data. The main constraint is relevance, differentiation, and authority rather than a basic crawl failure.
-- 2026-10-19 keyword-map audit: `seo-priority-keywords.csv` contains 371 URL rows for 174 unique terms. Every term has exactly one indexable URL; the other 197 rows are noindex contextual variants. Use `exports/seo-priority-keywords-indexable.csv` for prioritization and keep the all-targets export as the source; the normalized map is reproducible with `scripts/build_indexable_keyword_targets.py`.
+- 2026-10-19 keyword-map audit: `seo-priority-keywords.csv` contains 371 URL rows for 174 unique terms. Every term has exactly one indexable URL; the other 197 rows are noindex contextual variants. Use `exports/seo-priority-keywords-indexable.csv` for canonical URL mapping only, not US volume prioritization; the normalized map is reproducible with `scripts/build_indexable_keyword_targets.py`.
+
+## Keyword Source Correction
+
+The 2026-10-20 source audit confirmed that both supplied Keyword Planner exports
+target China, not the United States. All earlier references in this plan to the
+50/500 monthly-volume estimates or the supplied forecast as US demand evidence
+are superseded by this correction. The 9,650 source total is not a US market
+estimate. The 381.76 forecast clicks assume a $30/day China paid-search campaign;
+they are not organic demand or actual spending.
+
+Preserve the historical exports for traceability, with country and period fields
+in current derived mappings. Unknown US volume must remain blank/null, not zero.
+Use the explicitly US-filtered Search Console evidence in
+`exports/us-search-opportunities-2026-10-20.json` for observed site opportunities;
+its impressions are not market-wide monthly searches. Request a verified US
+historical-metrics export before expanding clusters on volume estimates. Ads
+competition is not organic SEO difficulty. Homepage featured tools are editorial
+selections rather than a ranking inferred from the China file. Keep the existing
+reviewed indexable routes stable while correcting prioritization.
 
 ## Priority Pages
 
@@ -111,6 +130,8 @@ Initial 30-day targets after deployment:
 - 2026-10-14: Refined the Compound Interest Calculator title and description to reflect monthly/annual deposits, nine compounding frequencies, timing, tax, inflation, charts, and schedules. The keyword forecast export estimates 500 monthly searches for the head term (dated 2026-09-02); GSC URL Inspection reports the page as discovered but not indexed, with no on-page or technical audit issues. Monitor indexing and query performance; request indexing only after user authorization.
 
 ## Search Console Baseline
+
+- 2026-10-20: Reopened both original supplied keyword files and verified China geography in each, rather than inferring market from USD or the plan's intended audience. Added source hashes, separate historical/paid-forecast scope, data fingerprints, geography/period fields, unknown US-volume markers, an export README, and `reports/seo/keyword-geography-correction-2026-10-20.md`. The legacy 371-row mapping still normalizes to 174 canonical keyword targets; all are explicitly CN with blank US volume and legacy non-US priority labels. The route-based JSON map retains 173 entries with CN scope and null US volumes. Stopped CN metrics and Ads competition from determining US scores, switched homepage recommendations to editorial featured tools, and recorded a separate US GSC measurement queue with coverage limitations. Added seven source-provenance/scoring/homepage/index-scope regression tests (35 total passing). Full build/link validation checks 140,676 links; sitemap remains 303 URLs / 285 calculators, with unchanged calculation bundle `5188429e167fa7a0`. Local Playwright checks passed at 1366px, 390px and 320px for 12 featured links, working search and no overflow. Requested a US historical-metrics export from the owner; no Ads account changes, spending or external submissions were made. The 1,000 daily-visit target remains an aspiration, not a forecast supported by the old China files.
 
 - 2026-10-20: Mobile screenshot review of the new ratio explanation caught an in-table horizontal scroll that the page-wide overflow check did not detect. Scoped wrapping, fixed column sizing, and 16px type to the new teaching table only; added a container-level overflow assertion and refreshed the stylesheet version for the ratio page. Existing amortization and data tables keep their scrolling behavior.
 

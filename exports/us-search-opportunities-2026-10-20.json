@@ -1,0 +1,22 @@
+{
+  "source": "Google Search Console query/page API",
+  "site": "sc-domain:nscalculators.com",
+  "country_filter": "usa",
+  "search_type": "web",
+  "period_start": "2026-09-20",
+  "period_end": "2026-10-17",
+  "metric_scope": "observed_site_visibility_not_total_market_search_volume",
+  "filtered_site_clicks": 4,
+  "filtered_site_impressions": 4760,
+  "named_query_click_coverage": 0.25,
+  "named_query_impression_coverage": 0.6733,
+  "keyword_planner_us_volume": null,
+  "measurement_queue": [
+    {"query": "area calculator", "url": "https://nscalculators.com/area-calculator/", "impressions": 591, "clicks": 0, "position": 8.395939086294415, "action": "observe_settled_post_change_window"},
+    {"query": "car price estimate", "url": "https://nscalculators.com/used-car-value-calculator/", "impressions": 24, "clicks": 0, "position": 10.958333333333334, "action": "observe_settled_post_change_window"},
+    {"query": "used car value", "url": "https://nscalculators.com/used-car-value-calculator/", "impressions": 31, "clicks": 0, "position": 28.096774193548388, "action": "observe_settled_post_change_window"},
+    {"query": "ratio calculator", "url": "https://nscalculators.com/ratio-calculator/", "impressions": 20, "clicks": 0, "position": 20.95, "action": "observe_settled_post_change_window"},
+    {"query": "trade-in calculator", "url": "https://nscalculators.com/car-trade-in-value-calculator/", "impressions": 109, "clicks": 0, "position": 81.6788990825688, "action": "observe_new_private_sale_feature_after_deployment"}
+  ],
+  "new_content_policy": "Do not approve US keyword expansion from legacy China search volumes. Validate US geography before importing replacement historical metrics."
+}

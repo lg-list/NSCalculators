@@ -15,6 +15,9 @@ OUTPUT = ROOT / "exports" / "seo-priority-keywords-indexable.csv"
 
 
 def keyword_targets(rows, calculators):
+    provenance = json.loads(build.KEYWORD_STATS_PROVENANCE.read_text(encoding="utf-8")) if build.KEYWORD_STATS_PROVENANCE.exists() else {}
+    mapping = provenance.get("priority_mapping", {})
+    mapping_verified = build.keyword_data_fingerprint(rows) == mapping.get("normalized_data_sha256")
     grouped = defaultdict(list)
     for row in rows:
         key = " ".join(row["keyword"].casefold().split())
@@ -41,6 +44,10 @@ def keyword_targets(rows, calculators):
 
         target = next(iter(indexable.values()))
         target["nonindexable_variants_excluded"] = str(len(candidates) - 1)
+        country = mapping.get("country", "unknown") if mapping_verified else "unknown"
+        target["search_volume_country"] = country
+        target["us_avg_monthly_searches"] = target["avg_monthly_searches"] if country == "US" and mapping_verified else ""
+        target["priority_scope"] = mapping.get("priority_scope", "unverified") if mapping_verified else "unverified"
         targets.append(target)
 
     priority_order = {"P1": 0, "P2": 1, "P3": 2}
@@ -59,7 +66,7 @@ def main():
         rows = list(csv.DictReader(source_file))
     targets = keyword_targets(rows, calculators)
 
-    fields = list(rows[0]) + ["nonindexable_variants_excluded"]
+    fields = list(rows[0]) + ["nonindexable_variants_excluded", "search_volume_country", "us_avg_monthly_searches", "priority_scope"]
     with OUTPUT.open("w", newline="", encoding="utf-8-sig") as output_file:
         writer = csv.DictWriter(output_file, fieldnames=fields, lineterminator="\n")
         writer.writeheader()

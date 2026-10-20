@@ -16,6 +16,7 @@ ROOT = Path(__file__).parent
 SRC = ROOT / "src" / "data" / "calculators.json"
 DIST = ROOT / "dist"
 KEYWORD_STATS = ROOT / "exports" / "keyword-stats-positive.json"
+KEYWORD_STATS_PROVENANCE = ROOT / "exports" / "keyword-stats-provenance.json"
 SEO_STRATEGY = ROOT / "exports" / "seo-keyword-strategy-2026-09-05.json"
 RMD_JOINT_LIFE_TABLE = ROOT / "src" / "data" / "rmd-joint-life-table.json"
 PUBLIC_BASE_PATH = os.environ.get("PUBLIC_BASE_PATH", "").strip().rstrip("/")
@@ -53,6 +54,11 @@ CATEGORY_PAGE_REDIRECTS = {
     "math-calculator": ("Math Calculators", "/math-calculators/"),
     "other-calculator": ("All Calculators", "/"),
 }
+HOME_FEATURED_SLUGS = (
+    "area-calculator", "mortgage-calculator", "loan-calculator", "auto-loan-calculator",
+    "compound-interest-calculator", "used-car-value-calculator", "car-trade-in-value-calculator",
+    "trip-fuel-cost-calculator", "ratio-calculator", "fraction-calculator", "bmi-calculator", "age-calculator",
+)
 NON_INDEXABLE_UNTIL_PURPOSE_BUILT = {
     "anorexic-bmi-calculator",
     "conception-calculator",
@@ -198,10 +204,17 @@ def slugify_text(text):
     )
 
 
+def keyword_data_fingerprint(rows):
+    return sha256(json.dumps(rows, sort_keys=True, ensure_ascii=False, separators=(",", ":")).encode("utf-8")).hexdigest()
+
+
 def load_google_keyword_metrics():
     if not KEYWORD_STATS.exists():
         return {}
     rows = json.loads(KEYWORD_STATS.read_text(encoding="utf-8"))
+    provenance = json.loads(KEYWORD_STATS_PROVENANCE.read_text(encoding="utf-8")) if KEYWORD_STATS_PROVENANCE.exists() else {}
+    fingerprint = keyword_data_fingerprint(rows)
+    market_verified = fingerprint == provenance.get("normalized_data_sha256")
     metrics = {}
     for row in rows:
         keyword = str(row.get("keyword") or "").strip().lower()
@@ -216,6 +229,10 @@ def load_google_keyword_metrics():
             "bid_low": row.get("bid_low"),
             "bid_high": row.get("bid_high"),
             "source": "Google Keyword Planner stats",
+            "country": provenance.get("country", "unknown") if market_verified else "unknown",
+            "market_verified": market_verified,
+            "period_start": provenance.get("period_start") if market_verified else None,
+            "period_end": provenance.get("period_end") if market_verified else None,
         }
         metrics[slugify_text(keyword)] = record
     return metrics
@@ -1467,11 +1484,18 @@ def keyword_section(calc):
 
 def keyword_score(calc):
     kd = calc.get("keyword_data") or {}
-    searches = int(kd.get("monthly_searches") or 0)
-    comp = int(kd.get("competition_index") or 0)
-    yoy = str(kd.get("yoy") or "")
-    growth = 20 if yoy.startswith("+") else -8 if yoy.startswith("-") else 0
-    return searches * (1 + max(0, 60 - comp) / 80) + growth
+    if kd.get("country") != "US" or not kd.get("market_verified"):
+        return 0
+    # Ads competition measures advertisers, not organic ranking difficulty.
+    return max(0, int(kd.get("monthly_searches") or 0))
+
+
+def homepage_featured_calculators(calculators):
+    available = {c["slug"]: c for c in calculators if is_indexable_calculator(c) and has_purpose_built_calculation(c)}
+    featured = [available[slug] for slug in HOME_FEATURED_SLUGS if slug in available]
+    remaining = sorted((c for c in available.values() if c["slug"] not in HOME_FEATURED_SLUGS),
+                       key=lambda c: (-keyword_score(c), c["title"].casefold(), c["slug"]))
+    return (featured + remaining)[:12]
 
 
 def card(calc, label=None, compact=False):
@@ -2737,14 +2761,7 @@ def home_new(site, calculators):
     by_cat = defaultdict(list)
     for calc in calculators:
         by_cat[calc["cat"]].append(calc)
-    featured = sorted((c for c in calculators if has_purpose_built_calculation(c)), key=keyword_score, reverse=True)[:24]
-    home_featured = featured[:12]
-    area_calculator = next(
-        (c for c in calculators if c["slug"] == "area-calculator" and is_indexable_calculator(c)),
-        None,
-    )
-    if area_calculator and area_calculator not in home_featured:
-        home_featured = [area_calculator] + home_featured[:-1]
+    home_featured = homepage_featured_calculators(calculators)
     popular_links = "".join(
         f"""<a href="/{h(c['slug'])}/"><span>{h(c['title'])}</span></a>"""
         for c in home_featured
@@ -2775,12 +2792,12 @@ def home_new(site, calculators):
 <section class="home-hero"><div class="wrap hero-stack">
 <div class="hero-copy"><h1>Free Online Calculators</h1><p>Calculate mortgage payments, loans, compound interest, BMI, auto costs, and unit conversions with clear formulas, examples, and no signup.</p></div>
 <div class="search-panel wide-search" aria-label="Calculator search"><label for="siteSearch">Search calculators</label><div class="search-wrap"><input id="siteSearch" class="search" placeholder="Search calculators..." aria-label="Search calculators"><div id="searchResults" class="search-results"></div></div></div>
-<nav class="home-quick-links" aria-label="Popular calculators"><span>Popular:</span><a href="/compound-interest-calculator/">Compound Interest</a><a href="/feet-to-meters-calculator/">Feet to Meters</a><a href="/area-calculator/">Area</a><a href="/mortgage-calculator/">Mortgage</a></nav>
+<nav class="home-quick-links" aria-label="Featured calculators"><span>Featured:</span><a href="/area-calculator/">Area</a><a href="/mortgage-calculator/">Mortgage</a><a href="/car-trade-in-value-calculator/">Trade-In</a><a href="/ratio-calculator/">Ratio</a></nav>
 </div></section>
 <section class="home-block"><div class="wrap"><h2>Calculator Categories</h2><div class="category-filter"><input id="categoryFilter" type="search" placeholder="Filter categories..." aria-label="Filter categories"></div><div class="home-category-grid">{category_cards}</div></div></section>
 <section class="home-block browse-all"><div class="wrap browse-panel"><div><h2>Browse All Calculators</h2><p>Start with a main category, then choose the calculator that matches your task from its grouped directory.</p></div><a class="btn primary" href="/conversion-calculators/">Browse all calculators</a></div></section>
 <section class="home-block"><div class="wrap scientific-panel"><div><h2>Scientific Calculator</h2><p>Use quick math functions directly from the homepage.</p></div><div class="scientific-widget"><input id="sciExpression" value="" placeholder="0" aria-label="Scientific expression"><button class="btn primary sci-run" id="sciRun" type="button">Calculate</button><div id="sciResult" class="mini-result">Ready</div><div class="sci-keypad">{sci_buttons}</div></div></div></section>
-<section class="home-block popular-block"><div class="wrap"><h2>Most Popular Calculators</h2><div class="popular-list">{popular_links}</div></div></section>
+<section class="home-block popular-block"><div class="wrap"><h2>Featured Calculators</h2><div class="popular-list">{popular_links}</div></div></section>
 <section class="home-block faq-section"><div class="wrap"><h2>Common Questions</h2><div class="faq-list">{faq_list}</div></div></section>
 <section class="ad-band"><div class="wrap"><div class="ad-slot">Advertisement</div></div></section>
 </main><script src="/assets/search.js?v={SEARCH_ASSET_VERSION}"></script><script src="/assets/scientific.js?v={ASSET_VERSION}"></script><script src="/assets/home.js?v={ASSET_VERSION}"></script>"""
@@ -7103,11 +7120,15 @@ def build():
         {
             "keyword": c["keyword_data"]["keyword"],
             "monthly_searches": c["keyword_data"]["monthly_searches"],
+            "search_volume_country": c["keyword_data"]["country"],
+            "search_volume_period_start": c["keyword_data"]["period_start"],
+            "search_volume_period_end": c["keyword_data"]["period_end"],
+            "us_monthly_searches": c["keyword_data"]["monthly_searches"] if c["keyword_data"]["country"] == "US" and c["keyword_data"]["market_verified"] else None,
             "competition_index": c["keyword_data"]["competition_index"],
             "category": c["cat"],
             "page": site_url(site, f"/{c['slug']}/"),
         }
-        for c in sorted((item for item in calculators if item.get("keyword_data")), key=keyword_score, reverse=True)
+        for c in sorted((item for item in calculators if item.get("keyword_data")), key=lambda item: int(item["keyword_data"].get("monthly_searches") or 0), reverse=True)
     ]
     write(ROOT / "exports" / "keyword-page-map.json", json.dumps(keyword_map, ensure_ascii=False, indent=2) + "\n")
 

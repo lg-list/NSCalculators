@@ -1,0 +1,41 @@
+{
+  "audited_on": "2026-10-20",
+  "country": "CN",
+  "location_name": "China",
+  "metric": "historical_avg_monthly_searches",
+  "period_start": "2025-08-01",
+  "period_end": "2026-07-31",
+  "source_file": "Keyword Stats 2026-09-02 at 10_40_43.csv",
+  "source_sha256": "82984fb21f8563f733db8aba9e2b7f3bba3fa315dfee47618d98420cd4452ffa",
+  "source_keyword_rows": 2354,
+  "source_positive_keyword_rows": 175,
+  "source_positive_monthly_searches_sum": 9650,
+  "derived_file": "keyword-stats-positive.json",
+  "derived_keyword_rows": 174,
+  "derived_monthly_searches_sum": 9600,
+  "derived_exclusions": ["f 150 bed dimensions"],
+  "normalized_data_sha256": "cdc7671820cc8371dd88b7cd84719c84d9d7039c6fbd9599a428ece8a5dfea4b",
+  "us_demand_status": "not_validated",
+  "priority_mapping": {
+    "source_file": "seo-priority-keywords.csv",
+    "country": "CN",
+    "normalized_data_sha256": "b8714414e9740826feb43e065de447465a1b38ae00f2c0d903ce0c83e659d745",
+    "priority_scope": "legacy_source_market_not_US"
+  },
+  "forecast": {
+    "source_file": "Keyword Forecasts 2026-09-05 at 09_28_21.csv",
+    "source_sha256": "7b7b7bc62362cd425b32ee0c8cd5b2a178ac1d11203ef640a8026fcbeca9e173",
+    "country": "CN",
+    "location_id": "2156",
+    "metric": "paid_campaign_forecast",
+    "period_start": "2026-10-01",
+    "period_end": "2026-10-31",
+    "network": "Google Search",
+    "daily_budget_usd": 30,
+    "estimated_clicks": 381.76,
+    "estimated_impressions": 6468.97,
+    "estimated_cost_usd": 930,
+    "is_organic_search_volume": false,
+    "is_actual_spend": false
+  }
+}
