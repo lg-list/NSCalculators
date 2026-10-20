@@ -51,6 +51,8 @@ class MathClusterTests(unittest.TestCase):
     def test_ratio_example_distinguishes_part_and_whole(self):
         html = self.pages["ratio-calculator"]
         self.assertIn("<caption>Two-part ratio 2:3", html)
+        self.assertIn('class="data-table ratio-conversion-table"', html)
+        self.assertIn(".prose .ratio-conversion-table{table-layout:fixed;font-size:16px", build.CSS)
         self.assertIn("2/(2+3) = 2/5", html)
         self.assertIn("40%", html)
         self.assertIn("66.6667%", html)
