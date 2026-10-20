@@ -13,7 +13,7 @@ class DiscoveryQualityTests(unittest.TestCase):
         cls.data = build.read_data()
         cls.calculators = [
             c for c in build.base_and_supplemental(cls.data)
-            if c["slug"] not in build.CALCULATOR_REDIRECTS
+            if c["slug"] not in build.CALCULATOR_REDIRECTS and c["slug"] not in build.CATEGORY_PAGE_REDIRECTS
         ]
         cls.entries = build.calculator_search_index(cls.calculators)
         cls.search_slugs = {c["slug"] for c in cls.entries}

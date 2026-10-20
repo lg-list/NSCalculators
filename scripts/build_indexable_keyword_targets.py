@@ -14,12 +14,7 @@ SOURCE = ROOT / "exports" / "seo-priority-keywords.csv"
 OUTPUT = ROOT / "exports" / "seo-priority-keywords-indexable.csv"
 
 
-def main():
-    data = json.loads((ROOT / "src" / "data" / "calculators.json").read_text(encoding="utf-8"))
-    calculators = {calc["slug"]: calc for calc in build.base_and_supplemental(data)}
-    with SOURCE.open(newline="", encoding="utf-8-sig") as source_file:
-        rows = list(csv.DictReader(source_file))
-
+def keyword_targets(rows, calculators):
     grouped = defaultdict(list)
     for row in rows:
         key = " ".join(row["keyword"].casefold().split())
@@ -27,18 +22,24 @@ def main():
 
     targets = []
     for keyword, candidates in grouped.items():
-        indexable = []
+        indexable = {}
         for row in candidates:
             slug = row["url_path"].strip("/")
+            visited = set()
+            while slug in build.CALCULATOR_REDIRECTS:
+                if slug in visited:
+                    raise ValueError(f"Redirect cycle for {row['url_path']}")
+                visited.add(slug)
+                slug = build.CALCULATOR_REDIRECTS[slug]
             calc = calculators.get(slug)
             if calc is None:
                 raise ValueError(f"No calculator found for {row['url_path']}")
             if build.is_indexable_calculator(calc):
-                indexable.append(row)
+                indexable.setdefault(slug, dict(row, url_path=f"/{slug}/"))
         if len(indexable) != 1:
             raise ValueError(f"Expected one indexable target for {keyword!r}; found {len(indexable)}")
 
-        target = dict(indexable[0])
+        target = next(iter(indexable.values()))
         target["nonindexable_variants_excluded"] = str(len(candidates) - 1)
         targets.append(target)
 
@@ -48,6 +49,15 @@ def main():
         -float(row["avg_monthly_searches"] or 0),
         row["keyword"].casefold(),
     ))
+    return targets
+
+
+def main():
+    data = json.loads((ROOT / "src" / "data" / "calculators.json").read_text(encoding="utf-8"))
+    calculators = {calc["slug"]: calc for calc in build.base_and_supplemental(data)}
+    with SOURCE.open(newline="", encoding="utf-8-sig") as source_file:
+        rows = list(csv.DictReader(source_file))
+    targets = keyword_targets(rows, calculators)
 
     fields = list(rows[0]) + ["nonindexable_variants_excluded"]
     with OUTPUT.open("w", newline="", encoding="utf-8-sig") as output_file:

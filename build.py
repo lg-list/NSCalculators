@@ -38,13 +38,18 @@ CALCULATOR_REDIRECTS = {
     "concrete-calculator": "concrete-volume-calculator",
     "gvwr-calculator": "payload-capacity-calculator",
     "loan-payment-calculator": "loan-calculator",
-    "financial-calculator": "finance-calculator",
     "car-fuel-cost-calculator": "trip-fuel-cost-calculator",
     "fuel-cost-calculator": "trip-fuel-cost-calculator",
     "gas-mileage-calculator": "mpg-calculator",
     "mileage-calculator": "mpg-calculator",
     "wheel-backspacing-calculator": "wheel-offset-calculator",
     "vehicle-payload-calculator": "payload-capacity-calculator",
+}
+CATEGORY_PAGE_REDIRECTS = {
+    "financial-calculator": ("Financial Calculators", "/financial-calculators/"),
+    "fitness-and-health-calculator": ("Health Calculators", "/health-calculators/"),
+    "math-calculator": ("Math Calculators", "/math-calculators/"),
+    "other-calculator": ("All Calculators", "/"),
 }
 NON_INDEXABLE_UNTIL_PURPOSE_BUILT = {
     "anorexic-bmi-calculator",
@@ -1056,6 +1061,8 @@ def calculator_search_index(calculators):
 
 
 def is_indexable_calculator(calc):
+    if calc.get("slug") in CALCULATOR_REDIRECTS or calc.get("slug") in CATEGORY_PAGE_REDIRECTS:
+        return False
     searches = int((calc.get("keyword_data") or {}).get("monthly_searches") or 0)
     if not has_purpose_built_calculation(calc):
         return False
@@ -6984,7 +6991,8 @@ def build():
     site = dict(data["site"])
     if PUBLIC_SITE_DOMAIN:
         site["domain"] = PUBLIC_SITE_DOMAIN
-    calculators = [c for c in base_and_supplemental(data) if c["slug"] not in CALCULATOR_REDIRECTS]
+    calculators = [c for c in base_and_supplemental(data)
+                   if c["slug"] not in CALCULATOR_REDIRECTS and c["slug"] not in CATEGORY_PAGE_REDIRECTS]
     if DIST.exists():
         shutil.rmtree(DIST, ignore_errors=True)
     write(DIST / "assets" / "site.css", CSS.strip() + "\n")
@@ -7037,6 +7045,8 @@ def build():
         target_calc = next((c for c in calculators if c["slug"] == target_slug), None)
         redirect_title = target_calc["title"] if target_calc else smart_title(target_slug.replace("-", " "))
         write(DIST / source_slug / "index.html", redirect_page(site, f"/{source_slug}/", f"/{target_slug}/", redirect_title))
+    for source_slug, (redirect_title, target_path) in CATEGORY_PAGE_REDIRECTS.items():
+        write(DIST / source_slug / "index.html", redirect_page(site, f"/{source_slug}/", target_path, redirect_title))
 
     write(DIST / "scientific-calculator" / "index.html", scientific_page(site))
     for path, html in info_pages(site).items():

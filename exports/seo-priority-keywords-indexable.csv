@@ -88,7 +88,7 @@ P3,Liters to Cubic Inches Calculator,50.0,Conversion,volume,/liters-to-cu-inches
 P3,Liters to Cubic Meters Calculator,50.0,Conversion,volume,/liters-to-cu-meters-calculator/,Convert liters to cubic meters with a direct unit conversion factor.,低,,,0
 P3,Liters to Gallons Calculator,50.0,Conversion,volume,/liters-to-gallons-calculator/,Convert liters to gallons with a direct unit conversion factor.,低,,,2
 P3,Liters to Milliliters Calculator,50.0,Conversion,volume,/liters-to-milliliters-calculator/,Convert liters to milliliters with a direct unit conversion factor.,,,,2
-P3,Loan Payment Calculator,50.0,Financial,Loans,/loan-payment-calculator/,Calculate the monthly payment and total interest for a fixed-rate amortizing loan.,中,0.7,1.77,0
+P3,Loan Payment Calculator,50.0,Financial,Loans,/loan-calculator/,Calculate the monthly payment and total interest for a fixed-rate amortizing loan.,中,0.7,1.77,0
 P3,Mach to Knots Calculator,50.0,Conversion,speed,/mach-to-knots-calculator/,Convert mach to knots with a direct unit conversion factor.,,,,0
 P3,Megabytes to Gigabytes Calculator,50.0,Conversion,data storage,/megabytes-to-gigabytes-calculator/,Convert megabytes to gigabytes with a direct unit conversion factor.,,,,1
 P3,Meters to Centimeters Calculator,50.0,Conversion,length,/meters-to-centimeters-calculator/,Convert meters to centimeters with a direct unit conversion factor.,低,,,2
