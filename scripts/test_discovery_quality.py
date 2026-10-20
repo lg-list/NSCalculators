@@ -114,6 +114,12 @@ class DiscoveryQualityTests(unittest.TestCase):
         self.assertIn('id="duration_end_date"', html)
         self.assertNotIn('content="noindex,follow"', html)
 
+    def test_401k_uses_current_calculator_bundle_version(self):
+        calc = next(c for c in self.calculators if c["slug"] == "401k-calculator")
+        html = build.calculator_page(self.data["site"], calc, [])
+        self.assertIn(f'<script src="/assets/calculator.js?v={build.ASSET_VERSION}">', html)
+        self.assertNotIn('calculator.js?v=20260920a', html)
+
 
 if __name__ == "__main__":
     unittest.main()
