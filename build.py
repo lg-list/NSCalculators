@@ -4835,7 +4835,7 @@ def info_pages(site):
 <h2>Cookies and advertising</h2><p>NS Calculators may use cookies or similar technologies for analytics, site performance, advertising measurement, and ad personalization where allowed by law. Third-party advertising partners, including Google, may use cookies to serve ads based on a user's visits to this and other websites.</p>
 <h2>Your choices</h2><p>You can control cookies through your browser settings. You can also review Google's advertising settings and choices through Google's own privacy and ads controls.</p>
 <h2>Children's privacy</h2><p>This website is intended for a general audience and is not designed to collect personal information from children.</p>
-<h2>Contact</h2><p>Questions about this policy can be sent through the contact page.</p>
+<h2>Contact and public reports</h2><p>See the <a href="/contact/">contact page</a> for available routes and their visibility. GitHub Issues is a public technical-report channel, not a confidential privacy channel. Do not post personal information or private privacy requests there. A private contact channel is not currently published on this site.</p>
 """)
     terms = simple_page(site, "/terms/", "Terms of Use", "These Terms of Use describe the rules for using NS Calculators.", """
 <h2>Use of the site</h2><p>You may use the calculators and converters for personal, educational, and general planning purposes. You agree not to misuse the site, interfere with its operation, or attempt to access systems without permission.</p>
@@ -4844,10 +4844,11 @@ def info_pages(site):
 <h2>Advertising and third-party links</h2><p>The site may display advertisements or link to third-party resources. We are not responsible for third-party websites, services, claims, or policies.</p>
 <h2>Changes</h2><p>We may update these terms as the site changes. Continued use of the site means you accept the current terms.</p>
 """)
-    contact = simple_page(site, "/contact/", "Contact", "Contact NS Calculators about calculator issues, corrections, privacy questions, or general feedback.", """
-<h2>How to reach us</h2><p>For corrections, feedback, privacy questions, or general inquiries, open an issue in the public project repository: <a href="https://github.com/lg-list/NSCalculators/issues">NS Calculators issues</a>.</p>
-<h2>What to include</h2><p>Please include the calculator URL, the values you entered, the result you expected, and any authoritative source that supports the correction. This helps us review issues faster.</p>
-<h2>Advertising and partnerships</h2><p>For advertising, partnership, or business inquiries, use the same project issue tracker and include a clear subject line.</p>
+    contact = simple_page(site, "/contact/", "Contact", "Report calculator errors or corrections to NS Calculators. Read the public reporting guidance before sharing a report.", """
+<h2>Public calculator reports</h2><p>For non-sensitive calculation errors, broken links, or general technical feedback, use <a href="https://github.com/lg-list/NSCalculators/issues">NS Calculators public issues</a>. Reports and replies are visible to other people. A GitHub account is required to submit an issue; no account is needed to use the calculators.</p>
+<h2>Protect your information</h2><p>Do not post names, email addresses, phone numbers, home addresses, account details, financial documents, medical records, passwords, or other confidential information. Use made-up or anonymized example values that reproduce the calculation problem instead of your real personal inputs. Remove private information from URLs and images before sharing them.</p>
+<h2>What a technical report needs</h2><ul><li>The calculator page URL, without private query parameters.</li><li>Steps to reproduce the problem using invented example values.</li><li>The actual result and the result you expected.</li><li>A public formula, reference, or calculation supporting the correction, when available.</li></ul>
+<h2>Private inquiries</h2><p>A private contact channel is not currently published on this site. Do not use public issues for privacy requests, account information, confidential business proposals, or security-sensitive details. The <a href="/privacy-policy/">privacy policy</a> describes the site's current information practices.</p>
 """)
     vehicle_value_guide = simple_page(site, "/guides/used-car-value-vs-trade-in/", "Used Car Value vs. Trade-In Value", "Compare retail, private-party, and trade-in values, estimate loan equity, and compare dealer offers using the same vehicle, payoff, and purchase price.", """
 <p>Used car value vs. trade-in value is not an apples-to-apples comparison: dealer retail, private-party sale, trade-in offer, and future resale projection describe different transactions or dates. Compare like with like, then account for the loan payoff and full purchase terms.</p>
