@@ -61,8 +61,11 @@ HOME_FEATURED_SLUGS = (
 )
 NON_INDEXABLE_UNTIL_PURPOSE_BUILT = {
     "anorexic-bmi-calculator",
+    "cash-back-or-low-interest-calculator",
     "conception-calculator",
+    "down-payment-calculator",
     "estate-tax-calculator",
+    "fha-loan-calculator",
     "ovulation-calculator",
     "period-calculator",
     "pregnancy-conception-calculator",
@@ -71,6 +74,24 @@ NON_INDEXABLE_UNTIL_PURPOSE_BUILT = {
     "time-card-calculator",
     "time-zone-calculator",
     "weight-watchers-points-calculator",
+}
+
+UNAVAILABLE_CALCULATOR_DETAILS = {
+    "down-payment-calculator": (
+        "A dedicated purchase-cash and down-payment model is not yet available. An installment-loan payment alone does not calculate the cash needed to buy a home.",
+        "/mortgage-calculator/", "Mortgage Calculator",
+        "For a known home price and down payment, estimate the mortgage payment instead. This is not a closing-cash calculation.",
+    ),
+    "fha-loan-calculator": (
+        "An FHA-specific model is not yet available. A generic installment-loan payment does not account for FHA upfront and ongoing mortgage insurance.",
+        "/mortgage-calculator/", "Mortgage Calculator",
+        "Estimate a basic mortgage payment with your own assumptions. This alternative does not model FHA-specific insurance rules or eligibility.",
+    ),
+    "cash-back-or-low-interest-calculator": (
+        "A side-by-side rebate and promotional-rate comparison is not yet available. Simple interest on savings does not compare auto financing offers.",
+        "/auto-loan-calculator/", "Auto Loan Calculator",
+        "Estimate one auto loan at a time with your own price, incentive and interest-rate assumptions. This is not an automatic comparison of offers.",
+    ),
 }
 
 CATEGORY_ORDER = [
@@ -3046,7 +3067,7 @@ def high_value_calculator_copy(calc):
 <h2>Interest rate and loan term</h2><p>The mortgage payment uses the standard fixed-rate amortization formula. A higher interest rate increases the monthly principal-and-interest payment for the same loan, reducing the home price supported by a fixed budget. A longer term usually lowers the required monthly payment but increases total interest if the loan remains outstanding for the full term.</p><p class="formula">monthly principal and interest = P x r(1 + r)^n / ((1 + r)^n - 1)</p><p>Here, P is principal, r is the monthly interest rate, and n is the number of monthly payments. The rate entered is a planning APR assumption; a quote can change with market conditions, points, credit profile, property type, occupancy, loan-to-value ratio, and lock timing.</p>
 <h2>Worked affordability example</h2><p>Suppose gross household income is $100,000 per year, other monthly income is zero, and existing monthly debts are $500. A 28% housing ratio allows about $2,333 per month. A 36% total DTI allows $3,000 after subtracting the $500 of other debt. The housing ratio is therefore the tighter monthly limit. The calculator then subtracts taxes, insurance, HOA, and applicable PMI from that budget and solves for the principal-and-interest payment and home price.</p><p>Changing only one assumption can materially change the result. Compare a higher rate, a lower down payment, or a more conservative DTI target. Use the <a href="/mortgage-calculator/">mortgage calculator</a> once you have a target purchase price and want a complete amortization schedule and extra-payment analysis.</p>
 <h2>Income limit versus cash limit</h2><p>The results identify the controlling constraint. <strong>Income limited</strong> means the modeled monthly payment reaches a DTI budget before available cash is exhausted. <strong>Cash limited</strong> means the down payment and estimated closing costs cap the home price first. The results also show the income-only ceiling and cash-only ceiling so you can see which assumption is holding the estimate back.</p>
-<h2>Use a comfort budget, not only a qualification ceiling</h2><p>Affordability is personal. Consider take-home pay, emergency reserves, retirement saving, maintenance, insurance deductibles, future tax increases, HOA assessments, transportation, family plans, and income stability. Try lower DTI percentages to create breathing room. The <a href="/take-home-pay-calculator/">take-home pay calculator</a> can help compare gross income with estimated after-tax pay, while the <a href="/down-payment-calculator/">down payment calculator</a> can focus on savings and purchase cash.</p>
+<h2>Use a comfort budget, not only a qualification ceiling</h2><p>Affordability is personal. Consider take-home pay, emergency reserves, retirement saving, maintenance, insurance deductibles, future tax increases, HOA assessments, transportation, family plans, and income stability. Try lower DTI percentages to create breathing room. The <a href="/take-home-pay-calculator/">take-home pay calculator</a> can help compare gross income with estimated after-tax pay. Use this affordability calculator's cash-only ceiling to check how the entered down-payment and closing-cost assumptions constrain the purchase price.</p>
 <h2>Frequently asked questions</h2><h3>What income should I enter?</h3><p>Enter stable gross income before taxes and deductions that you reasonably expect a lender to document. Do not count uncertain income without understanding the applicable documentation rules.</p><h3>Does this calculator guarantee mortgage approval?</h3><p>No. Lenders also review credit, assets, reserves, employment, property, loan eligibility, documentation, and other underwriting requirements.</p><h3>Why does PMI disappear at 20% down?</h3><p>This planning model applies the entered PMI rate only below 20% down. Actual conventional, FHA, VA, USDA, and other programs follow different mortgage-insurance or fee rules.</p><h3>Should I use the maximum result as my budget?</h3><p>Not automatically. A lower price or more conservative DTI target may better protect savings and monthly cash flow.</p>"""
     if calc.get("slug") == "area-calculator":
         return """
@@ -4296,7 +4317,11 @@ def calculator_page(site, calc, related):
         desc = f"{calc['title']} is currently unavailable. Browse related calculators for another tool."
         crumbs = [("Home", "/"), (f"{calc['cat']} Calculators", f"/{slugify_cat(calc['cat'])}/"), (calc["title"], f"/{calc['slug']}/")]
         links = "".join(card(c, c["cat"]) for c in related if has_purpose_built_calculation(c))
-        body = f"""<main class="main"><div class="wrap"><div class="crumb"><a href="/">Home</a> / <a href="/{slugify_cat(calc['cat'])}/">{h(calc['cat'])}</a></div><article class="article calculator-article"><h1>{h(calc['title'])}</h1><p class="lead">This calculator is currently unavailable.</p><h2>Related calculators</h2><div class="related">{links}</div></article></div></main>"""
+        availability_detail = ""
+        if calc["slug"] in UNAVAILABLE_CALCULATOR_DETAILS:
+            reason, alternative_path, alternative_title, limitation = UNAVAILABLE_CALCULATOR_DETAILS[calc["slug"]]
+            availability_detail = f'<p>{h(reason)}</p><p><a href="{h(alternative_path)}">{h(alternative_title)}</a>: {h(limitation)}</p>'
+        body = f"""<main class="main"><div class="wrap"><div class="crumb"><a href="/">Home</a> / <a href="/{slugify_cat(calc['cat'])}/">{h(calc['cat'])}</a></div><article class="article calculator-article"><h1>{h(calc['title'])}</h1><p class="lead">This calculator is currently unavailable.</p>{availability_detail}<h2>Related calculators</h2><div class="related">{links}</div></article></div></main>"""
         return page(site, title, desc, f"/{calc['slug']}/", body, [], [breadcrumb_schema(site, crumbs)], indexable=False)
     if calc.get("slug") == "calories-burned-calculator":
         calc = {

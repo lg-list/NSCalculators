@@ -114,6 +114,32 @@ class DiscoveryQualityTests(unittest.TestCase):
         self.assertIn('id="duration_end_date"', html)
         self.assertNotIn('content="noindex,follow"', html)
 
+    def test_misclassified_financial_tools_are_withheld_until_implemented(self):
+        self.assertEqual(set(build.UNAVAILABLE_CALCULATOR_DETAILS), {
+            "down-payment-calculator", "fha-loan-calculator", "cash-back-or-low-interest-calculator",
+        })
+        for slug, (reason, path, title, limitation) in build.UNAVAILABLE_CALCULATOR_DETAILS.items():
+            with self.subTest(slug=slug):
+                calc = next(c for c in self.calculators if c["slug"] == slug)
+                self.assertFalse(build.has_purpose_built_calculation(calc))
+                self.assertFalse(build.is_indexable_calculator(calc))
+                self.assertNotIn(slug, self.search_slugs)
+                html = build.calculator_page(self.data["site"], calc, [])
+                self.assertIn(build.h(reason), html)
+                self.assertIn(build.h(limitation), html)
+                self.assertIn(f'href="{path}"', html)
+                self.assertIn('content="noindex,follow"', html)
+                self.assertNotIn('data-engine=', html)
+                self.assertNotIn('/assets/calculator.js', html)
+                self.assertNotIn('"SoftwareApplication"', html)
+
+    def test_affordability_does_not_recommend_unfinished_down_payment_tool(self):
+        calc = next(c for c in self.calculators if c["slug"] == "house-affordability-calculator")
+        html = build.calculator_page(self.data["site"], calc, [])
+        self.assertNotIn('href="/down-payment-calculator/"', html)
+        self.assertIn("cash-only ceiling", html)
+        self.assertTrue(build.is_indexable_calculator(calc))
+
     def test_401k_uses_current_calculator_bundle_version(self):
         calc = next(c for c in self.calculators if c["slug"] == "401k-calculator")
         html = build.calculator_page(self.data["site"], calc, [])

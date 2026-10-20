@@ -81,8 +81,9 @@ class KeywordProvenanceTests(unittest.TestCase):
         self.assertTrue(all(row["search_volume_country"] == "unknown" for row in changed))
         self.assertTrue(all(row["us_avg_monthly_searches"] == "" for row in changed))
 
-    def test_source_correction_does_not_mass_deindex_existing_pages(self):
-        self.assertEqual(sum(build.is_indexable_calculator(c) for c in self.calculators.values()), 285)
+    def test_reviewed_index_scope_is_not_driven_by_china_metrics(self):
+        # Three title/function mismatches were deliberately withheld after live review.
+        self.assertEqual(sum(build.is_indexable_calculator(c) for c in self.calculators.values()), 282)
 
     def test_fingerprint_ignores_json_object_key_formatting(self):
         self.assertEqual(build.keyword_data_fingerprint([{"keyword": "a", "volume": 50}]),
