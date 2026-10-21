@@ -22,7 +22,7 @@ RMD_JOINT_LIFE_TABLE = ROOT / "src" / "data" / "rmd-joint-life-table.json"
 PUBLIC_BASE_PATH = os.environ.get("PUBLIC_BASE_PATH", "").strip().rstrip("/")
 PUBLIC_SITE_DOMAIN = os.environ.get("PUBLIC_SITE_DOMAIN", "").strip()
 GA4_MEASUREMENT_ID = os.environ.get("GA4_MEASUREMENT_ID", "G-19CY1VWHFM").strip()
-ASSET_VERSION = "20261020c"
+ASSET_VERSION = "20261021a"
 SEARCH_ASSET_VERSION = "20261019d"
 PRIORITY_LENGTH_CONVERSIONS = {
     "millimeters-to-feet-calculator",
@@ -61,7 +61,6 @@ HOME_FEATURED_SLUGS = (
 )
 NON_INDEXABLE_UNTIL_PURPOSE_BUILT = {
     "anorexic-bmi-calculator",
-    "cash-back-or-low-interest-calculator",
     "conception-calculator",
     "estate-tax-calculator",
     "fha-loan-calculator",
@@ -80,11 +79,6 @@ UNAVAILABLE_CALCULATOR_DETAILS = {
         "An FHA-specific model is not yet available. A generic installment-loan payment does not account for FHA upfront and ongoing mortgage insurance.",
         "/mortgage-calculator/", "Mortgage Calculator",
         "Estimate a basic mortgage payment with your own assumptions. This alternative does not model FHA-specific insurance rules or eligibility.",
-    ),
-    "cash-back-or-low-interest-calculator": (
-        "A side-by-side rebate and promotional-rate comparison is not yet available. Simple interest on savings does not compare auto financing offers.",
-        "/auto-loan-calculator/", "Auto Loan Calculator",
-        "Estimate one auto loan at a time with your own price, incentive and interest-rate assumptions. This is not an automatic comparison of offers.",
     ),
 }
 
@@ -737,6 +731,8 @@ def calculator_net_category(keyword, source_category):
 
 def calculator_net_group(keyword, cat):
     text = keyword.lower()
+    if slugify_text(keyword) == "cash-back-or-low-interest-calculator":
+        return "Loans"
     if slugify_text(keyword) == "marriage-calculator":
         return "Taxes & Pay"
     if slugify_text(keyword) == "payback-period-calculator":
@@ -801,7 +797,9 @@ def calculator_net_template(keyword, slug, cat):
         "example": f"Enter sample values to generate an illustrative {keyword.lower()} result.",
         "inputs": [["amount", "Amount", "number", 1000], ["rate", "Rate (%)", "number", 5], ["years", "Years", "number", 10]],
     }
-    if slug == "down-payment-calculator":
+    if slug == "cash-back-or-low-interest-calculator":
+        base.update({"engine": "cash_back_compare", "desc": "Compare a car cash rebate with low-interest financing using monthly payments, interest, tax, fees and total purchase cost for both offers.", "formula": "Total purchase cost = cash paid upfront + all scheduled loan payments + trade-in value. Compare both offers using their own loan amounts and interest rates.", "example": "Compare a $1,000 rebate at 5% with no rebate at 2% on a $50,000 car over 60 months, including the entered tax and fee assumptions.", "inputs": []})
+    elif slug == "down-payment-calculator":
         base.update({"engine": "down_payment_advanced", "desc": "Calculate home down payment, closing costs and cash needed, or estimate a cash-based home price with monthly principal and interest.", "formula": "Cash needed = home price x down-payment rate + closing costs. With percentage closing costs, cash-based home price = available cash / (down-payment rate + closing-cost rate).", "example": "A $500,000 home with 20% down and 3% closing costs needs $115,000 in purchase cash before reserves and adjustments.", "inputs": []})
     elif slug == "sample-size-calculator":
         base.update({"engine": "sample_size_advanced", "desc": "Estimate the number of completed responses needed to measure a population proportion at a selected confidence level and margin of error, with an optional finite-population correction.", "formula": "n0 = z² p(1 - p) / E²; for a known finite population N, n = n0 / (1 + (n0 - 1) / N). Round up to the next whole response.", "example": "At 95% confidence, a 5% margin of error, and a conservative 50% expected proportion, an unknown or very large population requires 385 completed responses.", "inputs": []})
@@ -1816,6 +1814,30 @@ def f150_bed_input_html():
 <div class="field"><label for="f150_item_length">Cargo item length</label><div class="input-unit"><input id="f150_item_length" type="number" step="any" min="0" value="96"><span data-f150-unit>in</span></div></div>
 <div class="field"><label for="f150_item_width">Cargo item width</label><div class="input-unit"><input id="f150_item_width" type="number" step="any" min="0" value="48"><span data-f150-unit>in</span></div></div>
 <p class="field-note field-wide">Published box dimensions are nominal reference values. Cargo fit checks a flat rectangle against floor length and the 50.6-inch minimum width between wheelhouses; it does not model height, wheel-well shape, tie-downs, liners, or an open tailgate.</p>
+</div>"""
+
+
+def cash_back_input_html():
+    return """<div class="fields cash-back-fields">
+<div class="field"><label for="cb_rebate">Cash rebate ($)</label><input id="cb_rebate" type="number" min="0" step="any" value="1000"></div>
+<div class="field"><label for="cb_high">Rebate rate (%/yr)</label><input id="cb_high" type="number" min="0" max="100" step="any" value="5"></div>
+<div class="field"><label for="cb_low">Low rate (%/yr)</label><input id="cb_low" type="number" min="0" max="100" step="any" value="2"></div>
+<div class="field"><label for="cb_price">Vehicle price ($)</label><input id="cb_price" type="number" min="0" step="any" value="50000"></div>
+<div class="field"><label for="cb_months">Term (months)</label><input id="cb_months" type="number" min="1" max="600" step="1" value="60"></div>
+<div class="field"><label for="cb_down">Cash down ($)</label><input id="cb_down" type="number" min="0" step="any" value="10000"></div>
+<div class="field field-wide option-field"><label class="checkline"><input id="cb_finance" type="checkbox"> Finance tax and fees</label></div>
+<details class="more-options field-wide"><summary>Tax, Fees &amp; Trade-in</summary><div class="fields">
+<div class="field"><label for="cb_trade">Trade-in value ($)</label><input id="cb_trade" type="number" min="0" step="any" value="0"></div>
+<div class="field"><label for="cb_fees">Title and other fees ($)</label><input id="cb_fees" type="number" min="0" step="any" value="2000"></div>
+<div class="field" data-cb-rate><label for="cb_tax_rate">Sales tax rate (%)</label><input id="cb_tax_rate" type="number" min="0" max="100" step="any" value="7"></div>
+<div class="field field-wide"><label for="cb_tax_mode">Sales tax calculation</label><select id="cb_tax_mode"><option value="calculated">Rate and taxable-price assumptions</option><option value="quoted">Enter each offer's quoted tax</option></select></div>
+<div class="field field-wide option-field" data-cb-calculated><label class="checkline"><input id="cb_rebate_tax" type="checkbox"> Rebate reduces taxable price</label></div>
+<div class="field field-wide option-field" data-cb-calculated><label class="checkline"><input id="cb_trade_tax" type="checkbox" checked> Trade-in reduces taxable price</label></div>
+<div class="field" data-cb-quoted hidden><label for="cb_tax_cash">Rebate offer tax ($)</label><input id="cb_tax_cash" type="number" min="0" step="any" value="3500"></div>
+<div class="field" data-cb-quoted hidden><label for="cb_tax_low">Low-rate offer tax ($)</label><input id="cb_tax_low" type="number" min="0" step="any" value="3500"></div>
+</div><p class="option-note">Tax assumptions are not state-law presets. Confirm the taxable base or enter the dealer's quoted tax for each offer. Fees are treated as a separate, non-taxed total.</p></details>
+<p class="field-note field-wide" id="cb_assumptions"></p>
+<p class="field-note field-wide">Illustrative rates; debt-free trade-in only.</p>
 </div>"""
 
 
@@ -2930,6 +2952,15 @@ def conversion_copy(calc):
 
 
 def high_value_calculator_copy(calc):
+    if calc.get("slug") == "cash-back-or-low-interest-calculator":
+        return """
+<h2>Cash rebate vs low-interest auto financing</h2><p>A cash rebate lowers the amount you pay for the vehicle, while a lower financing rate reduces interest. This calculator compares two mutually exclusive offers on the same vehicle using the same term, cash-down budget and trade-in value. It shows each loan amount, tax estimate, upfront payment, monthly payment, total interest and total purchase cost. Starting inputs are illustrative, not current manufacturer offers.</p>
+<h2>Compare total purchase cost, not just interest</h2><p class="formula">purchase cost = upfront cash paid + scheduled loan payments + trade-in value<br>net savings = higher purchase cost - lower purchase cost</p><p>Trade-in value is included because giving up a vehicle has economic value even though it is not a cash payment. It is not added to the monthly loan payment. The winner is the offer with the lower modeled purchase cost over the full term. Differences below half a cent are treated as a tie. An offer with less interest does not automatically save the full interest difference: declining a rebate also has a cost.</p>
+<h2>Worked rebate comparison</h2><p>Consider a $50,000 car, $10,000 cash down, no trade-in, 60 months, $3,500 tax and $2,000 fees paid upfront. A $1,000 rebate with 5% financing leaves a $39,000 loan. The alternative has no rebate and a 2% rate on a $40,000 loan. Modeled monthly payments are about $735.98 and $701.11. The purchase costs are about $59,658.69 and $57,566.62. The low-rate offer saves about $2,092.06 overall, after accounting for the forgone rebate, not simply the difference between the interest totals. Calculations retain full precision before display rounding, so subtracting two already-rounded table values can differ by a cent. Lender payment rounding and the final installment may differ.</p>
+<h2>Tax and fee assumptions</h2><p>The default model applies your entered tax rate to the vehicle price, with separate choices for whether the rebate or trade-in reduces that taxable price. Those checkboxes are assumptions, not a statement about your state. Taxable price cannot fall below zero. Fees are entered as one separate total and are not themselves taxed by this simplified rate model.</p><p>If the dealer quotes different tax amounts, select the quoted-tax mode and enter both amounts directly. This can represent a quote with exemptions, capped trade-in treatment or tax on fees without pretending a general checkbox reproduces every rule. The quoted amount replaces the calculated tax; it is not added a second time. No state tax rate or legal rule is automatically selected.</p><p>When tax and fees are financed, both increase the starting loan balance. Otherwise they increase upfront cash. Financing can lower today's cash requirement but add interest. Use written itemized offers to avoid counting a charge both in the vehicle price and in the separate fee field.</p>
+<h2>Loan and cash limits</h2><p>The model uses level monthly payments at a fixed annual note interest rate divided by 12, with the first payment one month after financing. Do not substitute fee-inclusive APR for the note rate while also entering those fees separately. It supports whole-month terms from 1 through 600 months for mathematical comparison; that range does not mean lenders offer every term.</p><p>The rebate is applied immediately to the purchase, not received later by mail. If the cash-down budget exceeds an offer's remaining balance, only the amount needed is used and the unused cash is shown. A zero balance has no loan payment or interest. Trade-in value plus rebate cannot exceed the vehicle price in this model; cash payouts for excess trade credit are outside its scope.</p><p>Use a debt-free trade-in value here. A balance still owed on your current vehicle, negative equity, different negotiated vehicle prices, different terms, rate resets, early payoff, late fees and optional add-ons need a different or more detailed comparison. The <a href="/auto-loan-calculator/">auto loan calculator</a> accepts an amount owed on a trade-in; the <a href="/car-trade-in-value-calculator/">trade-in calculator</a> can help separate an offer from payoff equity. Do not treat either alternative as an automatic comparison of two incentive packages.</p>
+<h2>Check the actual financing offers</h2><p>The CFPB's <a href="https://www.consumerfinance.gov/ask-cfpb/how-do-i-compare-auto-loan-offers-what-should-i-look-at-besides-the-monthly-payment-en-753/" target="_blank" rel="noopener">guide to comparing auto loan offers</a> recommends considering rate, term, amount financed and overall cost, not only the monthly payment. Compare lender disclosures, eligibility and all required charges before choosing an offer. This calculator does not approve credit or guarantee a promotion.</p>
+<h2>Frequently asked questions</h2><h3>Does zero-percent financing always beat a rebate?</h3><p>No. A sufficiently large immediate rebate can lower total cost more than the interest saved. Compare both sets of inputs; a zero rate divides the remaining principal evenly over the term.</p><h3>Why is the lower-interest saving different from the final saving?</h3><p>One offer also includes a rebate and may have different tax. Net purchase-cost savings reflect those differences as well as interest. The details table separates them.</p><h3>Can I use different tax amounts for each offer?</h3><p>Yes. Choose the quoted-tax option. Check that each quote reflects the same vehicle, trade and fee assumptions.</p><h3>Does this account for early repayment?</h3><p>No. It assumes the loan runs to its stated term with no extra payments. The result also excludes running costs, resale value and the time value of money.</p>"""
     if calc.get("slug") == "down-payment-calculator":
         return """
 <h2>Home down payment and purchase cash</h2><p>A down payment is the portion of the home price you pay rather than borrow. This calculator separates that amount from estimated closing costs, then shows the loan balance and a fixed-rate monthly principal-and-interest payment. All amounts are in US dollars. The starting values are examples, not market quotes or lending requirements.</p>
@@ -3843,6 +3874,8 @@ def default_calculator_copy(calc):
 
 
 def analysis_extra_html(calc):
+    if calc.get("slug") == "cash-back-or-low-interest-calculator":
+        return """<section class="mortgage-dashboard generic-dashboard cash-back-dashboard" aria-label="Cash rebate and low rate comparison"><div class="section-head stack"><h2>Offer Comparison</h2></div><div class="summary-grid" id="genericSummary"></div><div class="table-card"><h3>Purchase Cost Details</h3><div class="table-scroll"><table class="data-table" id="genericTable"><thead><tr><th scope="col">Metric</th><th scope="col">Cash rebate offer</th><th scope="col">Low-rate offer</th></tr></thead><tbody></tbody></table></div></div></section>"""
     if calc.get("slug") == "down-payment-calculator":
         return """<section class="mortgage-dashboard generic-dashboard" aria-label="Down payment results"><div class="section-head stack"><h2>Purchase Cash Results</h2></div><div class="summary-grid" id="genericSummary"></div><div class="table-card"><h3>Down Payment Details</h3><div class="table-scroll"><table class="data-table" id="genericTable"><thead><tr><th>Metric</th><th>Value</th><th>Assumption</th></tr></thead><tbody></tbody></table></div></div></section>"""
     if calc.get("slug") == "time-duration-calculator":
@@ -4495,7 +4528,10 @@ def calculator_page(site, calc, related):
     desc = seo_description(calc)
     group = calculator_group(calc)
     page_engine = calc.get("engine")
-    if calc.get("slug") == "down-payment-calculator":
+    if calc.get("slug") == "cash-back-or-low-interest-calculator":
+        fields = cash_back_input_html()
+        page_engine = "cash_back_compare"
+    elif calc.get("slug") == "down-payment-calculator":
         fields = down_payment_input_html()
         page_engine = "down_payment_advanced"
     elif calc.get("slug") == "calories-burned-calculator":
@@ -4722,6 +4758,9 @@ def calculator_page(site, calc, related):
         fields = f"""<div class="fields">{''.join(input_html(f) for f in calc["inputs"])}</div>"""
     rel = "".join(card(c, compact=True) for c in related)
     content = payback_copy(calc) or marriage_tax_copy(calc) or priority_length_copy(calc) or high_value_calculator_copy(calc) or conversion_copy(calc) or default_calculator_copy(calc)
+    if calc.get("slug") == "auto-loan-calculator":
+        comparison_link = '<p>For two mutually exclusive incentive offers on the same car, compare the total purchase cost with the <a href="/cash-back-or-low-interest-calculator/">cash back or low interest calculator</a>, rather than comparing monthly payments alone.</p>'
+        content = content.replace('<h2>Frequently asked questions</h2>', comparison_link + '<h2>Frequently asked questions</h2>', 1)
     if calc.get("slug") in ("used-car-value-calculator", "car-trade-in-value-calculator", "car-resale-value-calculator"):
         guide_link = '<p>For a side-by-side explanation of current used-car, dealer trade-in, private-sale, and future resale figures, read the <a href="/guides/used-car-value-vs-trade-in/">used car value vs. trade-in guide</a>.</p>'
         content = content.replace('<h2>Frequently asked questions</h2>', guide_link + '<h2>Frequently asked questions</h2>', 1)
@@ -5098,6 +5137,14 @@ CSS += r'''
 .calculator-article:has(.down-payment-fields) .lead{max-width:none}.calculator-article .fields.down-payment-fields{grid-template-columns:repeat(2,minmax(0,1fr))}.calculator-article .down-payment-fields .checkline{min-height:40px;padding:6px 10px}.calculator-article .down-payment-fields input[type=checkbox]{width:18px;height:18px;flex:0 0 18px}.down-payment-fields .field-note{margin:2px 0;padding:0;border:0;background:transparent;font-size:13px;line-height:1.4}.down-payment-fields [hidden]{display:none!important}@media(max-width:560px){.down-payment-fields .field:not(.field-wide)>label{min-height:44px}}
 '''
 
+CSS += r'''
+.calculator-article:has(.cash-back-fields) .lead{max-width:none}.calculator-article .fields.cash-back-fields{grid-template-columns:repeat(2,minmax(0,1fr))}.calculator-article .cash-back-fields .checkline{min-height:40px;padding:6px 10px}.calculator-article .cash-back-fields input[type=checkbox]{width:18px;height:18px;flex:0 0 18px}.cash-back-fields .field-note{margin:2px 0;padding:0;border:0;background:transparent;font-size:13px;line-height:1.4}.cash-back-fields [hidden]{display:none!important}.cash-back-fields details .fields{padding:8px}@media(max-width:560px){.cash-back-fields>.field:not(.field-wide)>label{min-height:40px;line-height:1.35}}
+'''
+
+CSS += r'''
+.cash-back-dashboard .data-table{table-layout:fixed;width:100%;min-width:0}.cash-back-dashboard .data-table th,.cash-back-dashboard .data-table td{white-space:normal;overflow-wrap:anywhere;padding:8px 4px;font-size:14px;line-height:1.4}.cash-back-dashboard .data-table th:first-child{width:36%}
+'''
+
 SEARCH_JS = r'''
 (function(){
   let items = window.NORTHSTAR_ITEMS || [];
@@ -5196,6 +5243,40 @@ function formatTimeDuration(p){return`${p.days?`${F(p.days,0)}d `:''}${p.hours}h
 function syncTimeDurationMode(){const mode=document.querySelector('input[name="duration_mode"]:checked')?.value||'clock',root=document.querySelector('.duration-fields');if(root){root.classList.toggle('duration-with-dates',mode==='dates');root.querySelectorAll('[data-duration-date]').forEach(el=>{el.hidden=mode!=='dates'});const note=document.getElementById('duration-clock-note');if(note)note.hidden=mode==='dates'}return mode}
 function timeDurationProjection(){const mode=syncTimeDurationMode(),startTime=document.getElementById('duration_start_time')?.value||'',endTime=document.getElementById('duration_end_time')?.value||'',startDate=mode==='dates'?document.getElementById('duration_start_date')?.value||'':null,endDate=mode==='dates'?document.getElementById('duration_end_date')?.value||'':null;return{...timeDurationDifference(startTime,endTime,startDate,endDate),mode,startLabel:mode==='dates'?`${startDate} ${startTime}`:startTime,endLabel:mode==='dates'?`${endDate} ${endTime}`:endTime}}
 function clearTimeDurationForm(){document.querySelectorAll('.duration-fields input[type="time"],.duration-fields input[type="date"]').forEach(input=>{input.value=''});calc('time_duration')}
+function cashBackAmounts({price,rebate,highRate,lowRate,months,down,trade,fees,financeFees,taxMode,taxRate,rebateReducesTax,tradeReducesTax,quotedCashTax,quotedLowTax}){
+  const fail=message=>({valid:false,message}),number=x=>typeof x==='number'&&Number.isFinite(x);
+  if(![price,rebate,down,trade,fees].every(x=>number(x)&&x>=0)||price===0)return fail('Enter a positive vehicle price and nonnegative rebate, down payment, trade-in and fees.');
+  if(rebate+trade>price)return fail('Rebate plus trade-in credit cannot exceed the vehicle price in this model.');
+  if(![highRate,lowRate].every(x=>number(x)&&x>=0&&x<=100))return fail('Enter both annual interest rates from 0% through 100%.');
+  if(!number(months)||!Number.isInteger(months)||months<1||months>600)return fail('Enter a whole loan term from 1 through 600 months.');
+  if(typeof financeFees!=='boolean')return fail('Choose whether to finance tax and fees.');
+  if(!['calculated','quoted'].includes(taxMode))return fail('Choose a sales tax calculation method.');
+  if(taxMode==='calculated'&&(!number(taxRate)||taxRate<0||taxRate>100||typeof rebateReducesTax!=='boolean'||typeof tradeReducesTax!=='boolean'))return fail('Enter a tax rate from 0% through 100% and confirm the taxable-price assumptions.');
+  if(taxMode==='quoted'&&![quotedCashTax,quotedLowTax].every(x=>number(x)&&x>=0))return fail('Enter nonnegative quoted tax amounts for both offers.');
+  function offer(discount,rate,quotedTax){
+    const taxablePrice=Math.max(0,price-(rebateReducesTax?discount:0)-(tradeReducesTax?trade:0));
+    const tax=taxMode==='quoted'?quotedTax:taxablePrice*taxRate/100;
+    const startingBalance=price-discount-trade+(financeFees?tax+fees:0),downUsed=Math.min(down,startingBalance);
+    const loan=Math.max(0,startingBalance-downUsed),r=rate/1200;
+    const payment=loan===0?0:r===0?loan/months:loan*r/(-Math.expm1(-months*Math.log1p(r)));
+    const totalPayments=payment*months,interest=Math.max(0,totalPayments-loan),upfront=downUsed+(financeFees?0:tax+fees);
+    return{rebate:discount,rate,taxablePrice,tax,loan,downUsed,unusedDown:down-downUsed,payment,totalPayments,interest,upfront,cost:upfront+totalPayments+trade};
+  }
+  const cash=offer(rebate,highRate,quotedCashTax),low=offer(0,lowRate,quotedLowTax);
+  if([cash,low].some(o=>Object.values(o).some(x=>!Number.isFinite(x))))return fail('These values exceed the supported numerical range.');
+  const difference=cash.cost-low.cost,winner=Math.abs(difference)<.005?'tie':difference>0?'low':'cash';
+  return{valid:true,cash,low,difference,savings:Math.abs(difference),winner,months,fees,trade,taxMode,financeFees};
+}
+function cashBackProjection(){
+  const mode=document.getElementById('cb_tax_mode')?.value||'calculated',quoted=mode==='quoted';
+  for(const [selector,visible] of [['[data-cb-rate],[data-cb-calculated]',!quoted],['[data-cb-quoted]',quoted]]){
+    document.querySelectorAll(selector).forEach(el=>{el.hidden=!visible;el.classList.toggle('is-hidden',!visible);el.querySelectorAll('input').forEach(input=>{input.disabled=!visible})});
+  }
+  const read=id=>{const raw=document.getElementById(id)?.value;return raw===undefined||raw.trim()===''?NaN:Number(raw)};
+  const p=cashBackAmounts({price:read('cb_price'),rebate:read('cb_rebate'),highRate:read('cb_high'),lowRate:read('cb_low'),months:read('cb_months'),down:read('cb_down'),trade:read('cb_trade'),fees:read('cb_fees'),financeFees:!!document.getElementById('cb_finance')?.checked,taxMode:mode,taxRate:read('cb_tax_rate'),rebateReducesTax:!!document.getElementById('cb_rebate_tax')?.checked,tradeReducesTax:!!document.getElementById('cb_trade_tax')?.checked,quotedCashTax:read('cb_tax_cash'),quotedLowTax:read('cb_tax_low')});
+  const note=document.getElementById('cb_assumptions');if(note)note.textContent=p.valid?`Tax (rebate / low): ${USD(p.cash.tax)} / ${USD(p.low.tax)}. Fees: ${USD(p.fees)}. Trade-in: ${USD(p.trade)}.`:'Check vehicle, tax and fee inputs.';
+  return p;
+}
 function downPaymentAmounts({mode,price,cash,downPercent,includeClosing,closingValue,closingUnit,rate,years}){
   const fail=message=>({valid:false,message}),number=x=>typeof x==='number'&&Number.isFinite(x);
   if(!['cash','price','both'].includes(mode))return fail('Choose a calculation mode.');
@@ -5723,6 +5804,7 @@ function clearCalcForm(){const form=document.querySelector('.calc');if(!form)ret
 function armyWhtRatioProjection(){const waist=V('waist'),height=V('height');if(!(waist>0&&height>0))return{valid:false,message:'Enter waist and height values greater than zero.'};return{valid:true,waist,height,ratio:waist/height}}
 function calc(e){
  switch(e){
+  case'cash_back_compare':{const p=cashBackProjection();if(!p.valid)show(`<strong>Check the offers</strong><br>${H(p.message)}`);else{const answer=p.winner==='tie'?'Same modeled purchase cost':`${p.winner==='cash'?'Cash rebate':'Low-rate'} offer saves ${USD(p.savings)}`;show(`<strong>${answer}</strong><br>Monthly payment: ${USD(p.cash.payment)} with rebate / ${USD(p.low.payment)} at low rate.<br>Comparison includes the rebate, modeled interest, tax and fees.`)}break}
   case'down_payment_advanced':{const p=downPaymentProjection();if(!p.valid)show(`<strong>Check the inputs</strong><br>${H(p.message)}`);else{const answer=p.mode==='cash'?`${USD(p.price)} home price`:p.mode==='price'?`${USD(p.cashNeeded)} purchase cash needed`:`${F(p.downPercent,2)}% down payment`;show(`<strong>${answer}</strong><br>${USD(p.down)} down payment; ${USD(p.closing)} closing costs.<br>${USD(p.payment)} / month principal and interest only.${p.unusedCash?`<br>${USD(p.unusedCash)} unused cash.`:''}`)}break}
   case'payback_advanced':{const p=paybackProjection(),simple=p.simple===null?'no recovery within the selected period':`${F(p.simple,2)} years`,discounted=p.discounted===null?'no recovery within the selected period':`${F(p.discounted,2)} years`;show(`<strong>Simple payback: ${simple}</strong><br>Discounted payback: ${discounted}; net present value: ${USD(p.npv)} over ${p.horizon} years.`);break}
   case'marriage_tax_advanced':{const p=marriageTaxProjection();show(`<strong>${p.difference>0?`${USD(p.difference)} higher estimated joint tax`:p.difference<0?`${USD(Math.abs(p.difference))} lower estimated joint tax`:'No estimated tax difference'}</strong><br>Joint estimate: ${USD(p.jointTax)}; combined Single estimates: ${USD(p.separate)} (${p.year}).`);break}
@@ -5874,7 +5956,12 @@ document.addEventListener('click',e=>{const btn=e.target.closest('[data-engine]'
  document.addEventListener('change',e=>{if(e.target.closest('.geometry-area-fields')){calc('area_advanced');renderGeometryAreaTotal()}});
 document.addEventListener('click',e=>{const link=e.target.closest('a[href]');if(!link)return;try{const destination=new URL(link.href,location.href);if(/^https?:$/.test(destination.protocol)&&destination.hostname!==location.hostname)trackGA4Event('outbound_reference_click',{destination_host:destination.hostname,source_path:location.pathname})}catch{}});
 document.addEventListener('click',e=>{if(e.target.closest('[data-clear]')){if(currentEngine()==='time_duration')clearTimeDurationForm();else clearCalcForm()}});
-document.addEventListener('click',e=>{if(e.target.closest('[data-clear]')&&currentEngine()==='down_payment_advanced')calc('down_payment_advanced')});
+document.addEventListener('click',e=>{
+  if(!e.target.closest('[data-clear]'))return;
+  const engine=currentEngine();
+  if(engine==='cash_back_compare')for(const id of ['cb_trade','cb_fees','cb_tax_rate','cb_tax_cash','cb_tax_low'])document.getElementById(id).value='0';
+  if(['down_payment_advanced','cash_back_compare'].includes(engine))calc(engine);
+});
 document.addEventListener('click',e=>{const now=e.target.closest('[data-duration-now]'),swap=e.target.closest('[data-duration-swap]');if(now){const endpoint=now.dataset.durationNow,d=new Date(),pad=n=>String(n).padStart(2,'0');document.getElementById(`duration_${endpoint}_time`).value=`${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;document.getElementById(`duration_${endpoint}_date`).value=`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;calc('time_duration')}else if(swap){for(const part of ['date','time']){const start=document.getElementById(`duration_start_${part}`),end=document.getElementById(`duration_end_${part}`),value=start.value;start.value=end.value;end.value=value}calc('time_duration')}});
 document.addEventListener('click',e=>{if(e.target.closest('[data-clear]')&&currentEngine()==='army_wht_ratio')renderGenericFromEngine('army_wht_ratio')});
 document.addEventListener('click',e=>{if(e.target.closest('[data-clear]')&&currentEngine()==='payback_advanced')renderGenericFromEngine('payback_advanced')});
@@ -5980,7 +6067,15 @@ function paybackProjection(){
 function renderGenericFromEngine(engine) {
   if (!document.getElementById("genericSummary")) return;
   let cards=[], bars=[], rows=[];
-  if(engine==="down_payment_advanced"){
+  if(engine==="cash_back_compare"){
+    const p=cashBackProjection();
+    if(!p.valid){cards=[["Offer comparison","Check inputs",H(p.message)]];rows=[["Validation","Unable to compare",H(p.message)]]}
+    else{
+      const a=p.cash,b=p.low;
+      cards=[["Cash rebate: total cost",USD(a.cost),"Upfront cash + loan payments + trade-in."],["Low rate: total cost",USD(b.cost),"Upfront cash + loan payments + trade-in."],["Rebate: monthly payment",USD(a.payment),`${F(a.rate,3)}% annual note rate.`],["Low rate: monthly payment",USD(b.payment),`${F(b.rate,3)}% annual note rate.`]];
+      rows=[["Vehicle price",USD(V('cb_price')),USD(V('cb_price'))],["Cash rebate",USD(a.rebate),USD(b.rebate)],["Trade-in value",USD(p.trade),USD(p.trade)],["Sales tax",USD(a.tax),USD(b.tax)],["Title and other fees",USD(p.fees),USD(p.fees)],["Tax and fees financed",p.financeFees?'Yes':'No',p.financeFees?'Yes':'No'],["Cash down used",USD(a.downUsed),USD(b.downUsed)],["Unused cash down budget",USD(a.unusedDown),USD(b.unusedDown)],["Upfront cash",USD(a.upfront),USD(b.upfront)],["Loan amount",USD(a.loan),USD(b.loan)],["Annual interest rate",`${F(a.rate,3)}%`,`${F(b.rate,3)}%`],["Loan term",`${p.months} months`,`${p.months} months`],["Monthly payment",USD(a.payment),USD(b.payment)],["Total loan payments",USD(a.totalPayments),USD(b.totalPayments)],["Total loan interest",USD(a.interest),USD(b.interest)],["Total purchase cost",USD(a.cost),USD(b.cost)]];
+    }
+  } else if(engine==="down_payment_advanced"){
     const p=downPaymentProjection();
     if(!p.valid){cards=[["Purchase estimate","Check inputs",H(p.message)]];rows=[["Validation","Unable to calculate",H(p.message)]]}
     else{

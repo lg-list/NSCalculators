@@ -50,6 +50,9 @@ jobs:
       - name: Check purchase cash and down payments
         run: node scripts/test_down_payment.cjs dist/assets/calculator.js
 
+      - name: Check rebate versus promotional financing
+        run: node scripts/test_cash_back.cjs dist/assets/calculator.js
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

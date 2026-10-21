@@ -82,8 +82,8 @@ class KeywordProvenanceTests(unittest.TestCase):
         self.assertTrue(all(row["us_avg_monthly_searches"] == "" for row in changed))
 
     def test_reviewed_index_scope_is_not_driven_by_china_metrics(self):
-        # Two mismatched financial models remain withheld; dedicated down payment is restored.
-        self.assertEqual(sum(build.is_indexable_calculator(c) for c in self.calculators.values()), 283)
+        # FHA remains withheld; dedicated down-payment and rebate-comparison tools are restored.
+        self.assertEqual(sum(build.is_indexable_calculator(c) for c in self.calculators.values()), 284)
 
     def test_fingerprint_ignores_json_object_key_formatting(self):
         self.assertEqual(build.keyword_data_fingerprint([{"keyword": "a", "volume": 50}]),

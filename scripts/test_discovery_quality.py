@@ -116,7 +116,7 @@ class DiscoveryQualityTests(unittest.TestCase):
 
     def test_misclassified_financial_tools_are_withheld_until_implemented(self):
         self.assertEqual(set(build.UNAVAILABLE_CALCULATOR_DETAILS), {
-            "fha-loan-calculator", "cash-back-or-low-interest-calculator",
+            "fha-loan-calculator",
         })
         for slug, (reason, path, title, limitation) in build.UNAVAILABLE_CALCULATOR_DETAILS.items():
             with self.subTest(slug=slug):
@@ -160,6 +160,21 @@ class DiscoveryQualityTests(unittest.TestCase):
         self.assertIn(f'<script src="/assets/calculator.js?v={build.calculator_assets()[1]}">', html)
         self.assertNotIn('calculator.js?v=20260920a', html)
 
+    def test_rebate_comparison_is_a_dedicated_loan_tool(self):
+        calc = next(c for c in self.calculators if c["slug"] == "cash-back-or-low-interest-calculator")
+        self.assertEqual(calc["engine"], "cash_back_compare")
+        self.assertEqual(build.calculator_group(calc), "Loans")
+        self.assertTrue(build.is_indexable_calculator(calc))
+        self.assertIn(calc["slug"], self.search_slugs)
+        html = build.calculator_page(self.data["site"], calc, [])
+        for value in ('data-engine="cash_back_compare"', 'id="cb_rebate"', 'id="cb_high"', 'id="cb_low"',
+                      'id="cb_finance"', 'id="cb_tax_mode"', 'id="cb_tax_cash"', 'id="cb_tax_low"',
+                      'id="genericSummary"', 'id="genericTable"', 'net savings',
+                      'href="/auto-loan-calculator/"', 'same term', 'No state tax rate'):
+            self.assertIn(value, html)
+        for value in ('content="noindex,follow"', 'id="principal"', 'id="genericChart"', 'currently unavailable'):
+            self.assertNotIn(value, html)
+
     def test_trade_in_comparison_enhances_existing_indexable_page(self):
         calc = next(c for c in self.calculators if c["slug"] == "car-trade-in-value-calculator")
         self.assertTrue(build.is_indexable_calculator(calc))
@@ -168,6 +183,11 @@ class DiscoveryQualityTests(unittest.TestCase):
                       'private-sale break-even price', 'separate cash-buyer offer'):
             self.assertIn(value, html)
         self.assertNotIn('content="noindex,follow"', html)
+
+    def test_auto_loan_links_to_incentive_comparison(self):
+        calc = next(c for c in self.calculators if c["slug"] == "auto-loan-calculator")
+        html = build.calculator_page(self.data["site"], calc, [])
+        self.assertIn('href="/cash-back-or-low-interest-calculator/"', html)
 
 
 if __name__ == "__main__":
