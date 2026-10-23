@@ -68,6 +68,9 @@ jobs:
       - name: Check natural-language calculator search and ranking
         run: node scripts/test_site_search.cjs dist/assets/search.js dist/assets/search-index.json
 
+      - name: Check additive and subtractive room area totals
+        run: node scripts/test_area_sections.cjs dist/assets/calculator.js
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
