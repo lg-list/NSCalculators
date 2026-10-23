@@ -4360,6 +4360,12 @@ def analysis_extra_html(calc):
 </div>
 <div class="table-card"><h3>Age Milestones</h3><div class="table-scroll"><table class="data-table" id="ageMilestones"><thead><tr><th>Milestone</th><th>Date</th><th>Time from target date</th></tr></thead><tbody></tbody></table></div></div>
 </section>"""
+    if calc.get("engine") in {"cn_calorie", "cn_body_metric"}:
+        heading = "Daily Energy Comparison" if calc["engine"] == "cn_calorie" else "Weight Reference Comparison"
+        return f"""<section class="mortgage-dashboard generic-dashboard" aria-label="Calculator data analysis">
+<div class="section-head stack"><h2>Result Summary</h2></div><div class="summary-grid" id="genericSummary"></div>
+<div class="chart-grid"><div class="chart-card compact-chart"><h3>{heading}</h3><canvas id="genericChart" width="620" height="230" aria-label="{heading}" data-chart-type="bars"></canvas></div></div>
+<div class="table-card"><h3>Calculation Details</h3><div class="table-scroll"><table class="data-table" id="genericTable"><thead><tr><th>Metric</th><th>Value</th><th>Note</th></tr></thead><tbody></tbody></table></div></div></section>"""
     if calc.get("engine"):
         return """<section class="mortgage-dashboard generic-dashboard" aria-label="Calculator data analysis">
 <div class="section-head stack"><h2>Result Summary</h2><p>Review the main answer, supporting values, chart breakdown, and calculation details.</p></div>
@@ -6054,30 +6060,49 @@ document.addEventListener('DOMContentLoaded',()=>{const engine=currentEngine();i
 // Generic dashboard rendering
 function drawGenericBars(canvas, bars) {
   if (!canvas) return;
-  const ctx = clearCanvas(canvas);
-  const max = Math.max(...bars.map(x => Math.abs(x.value)), 1);
-  const total = bars.reduce((s, x) => s + Math.abs(x.value), 0) || 1;
+  const visible = bars.filter(bar => Number.isFinite(bar.value)).slice(0, 6);
+  const declaredHeight = Number(canvas.dataset?.barHeight || canvas.getAttribute?.('height')) || canvas.height;
+  if (canvas.dataset) canvas.dataset.barHeight = String(declaredHeight);
+  if (canvas.style) canvas.style.width = '100%';
+  const width = canvas.clientWidth || canvas.width;
+  const height = Math.min(declaredHeight, visible.length * 46 + 16);
+  const dpr = Math.max(1, window.devicePixelRatio || 1);
+  canvas.width = Math.round(width * dpr);canvas.height = Math.round(height * dpr);
+  if (canvas.style) canvas.style.height = `${height}px`;
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,width,height);
+  const low = Math.min(0, ...visible.map(bar => bar.value)), high = Math.max(0, ...visible.map(bar => bar.value));
+  const scale = Math.max(Math.abs(low), Math.abs(high)) || 1;
+  const span = high / scale - low / scale || 1;
+  const step = (height - 16) / Math.max(1, visible.length), barHeight = Math.min(12, step - 24);
   const colors = ["#173f73", "#c0333a", "#6f91bd", "#f0a8ae", "#8aa4c6"];
-  ctx.font = "700 13px system-ui, sans-serif";
-  bars.slice(0, 6).forEach((bar, index) => {
-    const y = 34 + index * 40;
-    const label = String(bar.label).slice(0, 22);
-    const pct = Math.abs(bar.value) / total * 100;
-    const valueText = `${bar.display || F(bar.value, 2)} (${F(pct,1)}%)`;
-    const valueWidth = ctx.measureText(valueText).width;
-    const valueX = Math.max(250, canvas.width - valueWidth - 16);
-    const trackWidth = Math.max(80, valueX - 170);
-    const width = trackWidth * Math.abs(bar.value) / max;
+  ctx.font = "600 16px system-ui, sans-serif";
+  visible.forEach((bar, index) => {
+    const y = 8 + index * step;
+    const valueText = bar.display || F(bar.value, 2);
+    const valueWidth = Math.min(ctx.measureText(valueText).width, (width - 24) * .6);
+    const labelWidth = width - 36 - valueWidth;
+    let label = String(bar.label);
+    if(ctx.measureText(label).width>labelWidth){while(label.length&&ctx.measureText(label+'...').width>labelWidth)label=label.slice(0,-1);label+='...'}
+    const trackWidth = width - 24;
+    const zeroX = 12 + trackWidth * (0 - low / scale) / span;
+    const valueEnd = 12 + trackWidth * (bar.value / scale - low / scale) / span;
     ctx.fillStyle = "#344054";
-    ctx.fillText(label, 16, y + 16);
+    ctx.textAlign = 'left';ctx.fillText(label, 12, y + 14, labelWidth);
     ctx.fillStyle = "#eef3f8";
-    ctx.fillRect(158, y, trackWidth, 24);
+    ctx.fillRect(12, y + 22, trackWidth, barHeight);
     ctx.fillStyle = colors[index % colors.length];
-    ctx.fillRect(158, y, Math.max(4, width), 24);
+    ctx.fillRect(Math.min(zeroX, valueEnd), y + 22, Math.abs(valueEnd - zeroX), barHeight);
+    ctx.strokeStyle = "#667085";
+    ctx.beginPath();ctx.moveTo(zeroX,y+22);ctx.lineTo(zeroX,y+22+barHeight);ctx.stroke();
     ctx.fillStyle = "#152033";
-    ctx.fillText(valueText, valueX, y + 17);
+    ctx.textAlign = 'right';ctx.fillText(valueText, width - 12, y + 14, valueWidth);
   });
+  ctx.textAlign = 'left';
 }
+
+let barResizeFrame = 0;
+window.addEventListener('resize',()=>{cancelAnimationFrame(barResizeFrame);barResizeFrame=requestAnimationFrame(()=>{if(document.querySelector('#genericChart[data-chart-type="bars"]'))renderGenericFromEngine(currentEngine())})});
 
 function drawCompoundLine(canvas, schedule, durationLabel) {
   if (!canvas || !schedule.length) return;
@@ -6107,6 +6132,8 @@ function renderGeneric(cards, bars, rows) {
   if (!summary || !table) return;
   summary.innerHTML = cards.slice(0, 4).map(item => `<div class="summary-card"><span>${item[0]}</span><strong>${item[1]}</strong><small>${item[2]}</small></div>`).join("");
   if (chart) {
+    const chartCard = chart.closest('.chart-card');
+    if (chartCard) chartCard.hidden = bars.length === 0;
     if (chart.dataset.chartType === "pie") drawPie(chart, bars.map(x => Math.abs(x.value)), bars.map(x => x.label));
     else drawGenericBars(chart, bars);
   }
@@ -6316,7 +6343,7 @@ function renderGenericFromEngine(engine) {
   } else if (engine === "cn_bmi" || engine === "cn_body_metric") {
     const h=V('feet')*12+V('inches'), bmi=h?703*V('weight')/(h*h):0, low=18.5*h*h/703, high=24.9*h*h/703;
     cards=[["BMI",F(bmi,1),"Adult screening estimate."],["Weight",`${F(V('weight'),1)} lb`,"Entered body weight."],["Healthy range",`${F(low,0)}-${F(high,0)} lb`,"BMI 18.5 to 24.9 range."],["Height",`${F(h,0)} in`,"Total height in inches."]];
-    bars=[{label:"BMI",value:bmi,display:F(bmi,1)},{label:"Current weight",value:V('weight'),display:`${F(V('weight'),0)} lb`},{label:"Range low",value:low,display:`${F(low,0)} lb`},{label:"Range high",value:high,display:`${F(high,0)} lb`}];
+    bars=[{label:"Current weight",value:V('weight'),display:`${F(V('weight'),0)} lb`},{label:"Range low",value:low,display:`${F(low,0)} lb`},{label:"Range high",value:high,display:`${F(high,0)} lb`}];
     rows=[["BMI formula",`703 x weight / height^2`,"US customary formula."],["Current BMI",F(bmi,1),"Screening value."],["Lower reference",`${F(low,0)} lb`,"BMI 18.5."],["Upper reference",`${F(high,0)} lb`,"BMI 24.9."]];
   } else if (engine === "activity_calorie") {
     const weight=V('activity_weight'),unit=document.getElementById('activity_weight_unit')?.value||'lb',kg=unit==='kg'?weight:weight*0.45359237,minutes=V('activity_hours')*60+V('activity_minutes'),met=Number(document.getElementById('activity_type')?.value||0),valid=weight>0&&minutes>0&&minutes<=1440&&met>0;
@@ -6327,7 +6354,7 @@ function renderGenericFromEngine(engine) {
   } else if (engine === "cn_calorie") {
     const h=(V('feet')*12+V('inches'))*2.54, kg=V('weight')*0.453592, age=V('age'), sex=document.getElementById('sex')?.value||'male', bmr=10*kg+6.25*h-5*age+(sex==='male'?5:-161), tdee=bmr*V('activity');
     cards=[["Daily calories",F(tdee,0),"Estimated maintenance calories."],["BMR",F(bmr,0),"Estimated resting burn."],["Protein range",`${F(kg*1.6,0)}-${F(kg*2.2,0)} g`,"Common athletic planning range."],["Activity factor",F(V('activity'),3),"Selected multiplier."]];
-    bars=[{label:"BMR",value:bmr,display:F(bmr,0)},{label:"Daily calories",value:tdee,display:F(tdee,0)},{label:"Protein low",value:kg*1.6,display:`${F(kg*1.6,0)} g`},{label:"Protein high",value:kg*2.2,display:`${F(kg*2.2,0)} g`}];
+    bars=[{label:"BMR",value:bmr,display:`${F(bmr,0)} kcal/day`},{label:"Daily calories",value:tdee,display:`${F(tdee,0)} kcal/day`}];
     rows=[["Weight",`${F(V('weight'),1)} lb`,"Converted internally to kilograms."],["Height",`${F(h,0)} cm`,"Converted from feet and inches."],["Age",F(age,0),"Entered age."],["Formula",sex==="male"?"Male Mifflin-St Jeor":"Female Mifflin-St Jeor","Screening estimate."]];
   } else if (engine === "cn_tip") {
     const tip=V('bill')*V('tip')/100,total=V('bill')+tip,people=Math.max(1,V('people'));
@@ -6378,7 +6405,7 @@ function renderGenericFromEngine(engine) {
     rows=[["Gross income",USD(income),"Entered annual income."],["Deductions",USD(V('deductions')),"Entered deductions."],["Effective rate",`${F(V('taxrate'),2)}%`,"Applied to taxable income."],["Net pay",USD(net),"Estimated take-home."]];
   } else if (engine === "fraction_advanced") {
     const p=fractionProjection();
-    if(!p.valid){cards=[["Result","Undefined",p.step],["Status","Check inputs","Denominators and divisors must be nonzero."],["Decimal","Undefined","No finite result."],["Percentage","Undefined","No finite result."]];bars=[{label:"Result",value:0,display:"Undefined"}];rows=[["Validation","Undefined",p.step]]}
+    if(!p.valid){cards=[["Result","Undefined",p.step],["Status","Check inputs","Denominators and divisors must be nonzero."],["Decimal","Undefined","No finite result."],["Percentage","Undefined","No finite result."]];bars=[];rows=[["Validation","Undefined",p.step]]}
     else{
       const decimal=p.result.n/p.result.d,improper=fractionText(p.result),mixed=mixedText(p.result),percent=`${F(decimal*100,6)}%`;
       cards=[["Simplified fraction",improper,"Answer in lowest terms."],["Mixed number",mixed,"Whole-number and fractional form."],["Decimal",F(decimal,10),"Numerator divided by denominator."],["Percentage",percent,"Decimal multiplied by 100."]];
@@ -6386,10 +6413,10 @@ function renderGenericFromEngine(engine) {
         bars=[{label:"First number",value:p.a.n/p.a.d,display:fractionText(p.a)},{label:"Second number",value:p.b.n/p.b.d,display:fractionText(p.b)},{label:"Result",value:decimal,display:improper}];
         rows=[["Convert first number",fractionText(p.a),"Improper fraction in lowest terms."],["Convert second number",fractionText(p.b),"Improper fraction in lowest terms."],["Operation",`${fractionText(p.a)} ${p.operator} ${fractionText(p.b)}`,p.step],["Before reduction",`${p.rawN}/${p.rawD}`,"Numerator and denominator after the operation."],["Greatest common divisor",F(fractionGcd(p.rawN,p.rawD),0),"Divide both terms by this value."],["Simplified fraction",improper,"Final fraction in lowest terms."],["Mixed number",mixed,"Equivalent mixed-number form."],["Decimal",F(decimal,10),"Equivalent decimal value."],["Percentage",percent,"Equivalent percentage."]];
       }else if(p.mode==='simplify'){
-        bars=[{label:"Original numerator",value:p.rawN,display:F(p.rawN,0)},{label:"Original denominator",value:p.rawD,display:F(p.rawD,0)},{label:"Result",value:decimal,display:improper}];
+        bars=[];
         rows=[["Original fraction",`${p.rawN}/${p.rawD}`,"Entered fraction."],["Greatest common divisor",F(fractionGcd(p.rawN,p.rawD),0),p.step],["Simplified fraction",improper,"Final fraction in lowest terms."],["Mixed number",mixed,"Equivalent mixed-number form."],["Decimal",F(decimal,10),"Equivalent decimal value."],["Percentage",percent,"Equivalent percentage."]];
       }else{
-        const entered=document.getElementById('fraction_decimal')?.value||'0';bars=[{label:"Entered decimal",value:Number(entered),display:entered},{label:"Numerator",value:p.result.n,display:F(p.result.n,0)},{label:"Denominator",value:p.result.d,display:F(p.result.d,0)}];
+        const entered=document.getElementById('fraction_decimal')?.value||'0';bars=[];
         rows=[["Entered decimal",entered,"Original value."],["Power-of-ten fraction",p.step,"Built from the decimal places."],["Simplified fraction",improper,"Final fraction in lowest terms."],["Mixed number",mixed,"Equivalent mixed-number form."],["Percentage",percent,"Equivalent percentage."]];
       }
     }
@@ -6397,29 +6424,30 @@ function renderGenericFromEngine(engine) {
     const p=percentageProjection();
     if(p.mode==='what_percent'){
       cards=[["Percentage",p.answer,"Part as a share of the whole."],["Part",F(p.a,4),"Entered numerator."],["Whole",F(p.b,4),"Entered denominator."],["Decimal ratio",p.valid?F(p.result/100,6):"Undefined","Part divided by whole."]];
-      bars=[{label:"Part",value:p.a,display:F(p.a,4)},{label:"Whole",value:p.b,display:F(p.b,4)},{label:"Percent",value:p.result,display:p.answer}];
+      bars=[{label:"Part",value:p.a,display:F(p.a,4)},{label:"Whole",value:p.b,display:F(p.b,4)}];
       rows=[["Question",`${F(p.a,4)} is what percent of ${F(p.b,4)}?`,"Selected calculation."],["Formula",p.formula,"Standard part-to-whole percentage."],["Answer",p.answer,p.detail]];
     }else if(p.mode==='find_whole'){
       cards=[["Whole",p.answer,"Recovered base value."],["Known part",F(p.a,4),"Entered part."],["Known percentage",`${F(p.b,4)}%`,"Entered share of the whole."],["Decimal rate",F(p.b/100,6),"Percentage divided by 100."]];
-      bars=[{label:"Known part",value:p.a,display:F(p.a,4)},{label:"Calculated whole",value:p.result,display:p.answer},{label:"Percentage",value:p.b,display:`${F(p.b,4)}%`}];
+      bars=[{label:"Known part",value:p.a,display:F(p.a,4)},{label:"Calculated whole",value:p.result,display:p.answer}];
       rows=[["Question",`${F(p.a,4)} is ${F(p.b,4)}% of what?`,"Selected calculation."],["Formula",p.formula,"Divide by the decimal percentage."],["Answer",p.answer,p.detail]];
     }else if(p.mode==='change'){
-      cards=[["Percent change",p.answer,p.valid?p.detail:"Original value cannot be zero."],["Absolute change",F(p.change,4),"New minus original."],["Original value",F(p.a,4),"Baseline denominator."],["New value",F(p.b,4),"Comparison value."]];
-      bars=[{label:"Original",value:p.a,display:F(p.a,4)},{label:"New",value:p.b,display:F(p.b,4)},{label:"Absolute change",value:Math.abs(p.change),display:F(p.change,4)}];
-      rows=[["Original value",F(p.a,4),"Baseline."],["New value",F(p.b,4),"Comparison."],["Absolute change",F(p.change,4),"New minus original."],["Formula",p.formula,"Relative to the original magnitude."],["Percent change",p.answer,p.detail]];
+      cards=[["Percent change",p.answer,p.valid?p.detail:"Original value cannot be zero."],["Change",F(p.change,4),"New minus original."],["Original value",F(p.a,4),"Baseline denominator."],["New value",F(p.b,4),"Comparison value."]];
+      bars=[{label:"Original",value:p.a,display:F(p.a,4)},{label:"New",value:p.b,display:F(p.b,4)},{label:"Change",value:p.change,display:F(p.change,4)}];
+      rows=[["Original value",F(p.a,4),"Baseline."],["New value",F(p.b,4),"Comparison."],["Change",F(p.change,4),"New minus original."],["Formula",p.formula,"Relative to the original magnitude."],["Percent change",p.answer,p.detail]];
     }else if(p.mode==='difference'){
       cards=[["Percentage difference",p.answer,"Symmetric comparison without a baseline."],["Absolute difference",F(Math.abs(p.a-p.b),4),"Distance between values."],["Average magnitude",F(p.average,4),"Denominator used by the formula."],["Values",`${F(p.a,4)} and ${F(p.b,4)}`,"Entered pair."]];
       bars=[{label:"First value",value:p.a,display:F(p.a,4)},{label:"Second value",value:p.b,display:F(p.b,4)},{label:"Absolute difference",value:Math.abs(p.a-p.b),display:F(Math.abs(p.a-p.b),4)}];
       rows=[["First value",F(p.a,4),"Entered value."],["Second value",F(p.b,4),"Entered value."],["Average magnitude",F(p.average,4),"Average of absolute values."],["Formula",p.formula,"Symmetric percentage difference."],["Answer",p.answer,p.detail]];
     }else if(p.mode==='adjust'){
       cards=[["Adjusted value",p.answer,`After the ${p.direction}.`],["Starting value",F(p.a,4),"Entered base."],["Percent",`${F(p.b,4)}%`,`${p.direction} rate.`],["Amount changed",F(p.change,4),"Signed difference from the start."]];
-      bars=[{label:"Starting value",value:p.a,display:F(p.a,4)},{label:"Change amount",value:Math.abs(p.change),display:F(p.change,4)},{label:"Adjusted value",value:p.result,display:p.answer}];
+      bars=[{label:"Starting value",value:p.a,display:F(p.a,4)},{label:"Change amount",value:p.change,display:F(p.change,4)},{label:"Adjusted value",value:p.result,display:p.answer}];
       rows=[["Operation",p.direction==='decrease'?"Decrease":"Increase","Selected adjustment."],["Starting value",F(p.a,4),"Entered base."],["Percentage",`${F(p.b,4)}%`,"Entered rate."],["Formula",p.formula,"Multiplier method."],["Adjusted value",p.answer,p.detail]];
     }else{
       cards=[["Answer",p.answer,p.detail],["Percentage",`${F(p.a,4)}%`,"Entered rate."],["Whole",F(p.b,4),"Entered value."],["Remaining amount",F(p.b-p.result,4),"Whole minus the calculated part."]];
       bars=[{label:"Whole",value:p.b,display:F(p.b,4)},{label:"Calculated part",value:p.result,display:p.answer},{label:"Remaining",value:p.b-p.result,display:F(p.b-p.result,4)}];
       rows=[["Question",`What is ${F(p.a,4)}% of ${F(p.b,4)}?`,"Selected calculation."],["Decimal percentage",F(p.a/100,6),"Percentage divided by 100."],["Formula",p.formula,"Multiply decimal rate by whole."],["Answer",p.answer,p.detail]];
     }
+    if(!p.valid)bars=[];
   } else if (engine === "cn_percent") {
     const pct=V('whole')?V('part')/V('whole')*100:0, change=V('old')?(V('new')-V('old'))/V('old')*100:0;
     cards=[["Percentage",`${F(pct,2)}%`,"Part as a share of whole."],["Percent change",`${F(change,2)}%`,"New versus old value."],["Difference",F(V('new')-V('old'),2),"New value minus old value."],["Whole",F(V('whole'),2),"Entered denominator."]];
@@ -6708,7 +6736,7 @@ function renderGenericFromEngine(engine) {
     bars=numeric.slice(0,6).map(x=>({label:x.label,value:x.value,display:F(x.value,2)}));
     rows=numeric.map(x=>[x.label,F(x.value,4),"Entered value."]);
   }
-  renderGeneric(cards,bars.length?bars:[{label:"Result",value:1,display:"Ready"}],rows.length?rows:[["Result","Ready","Enter values to update."]]);
+  renderGeneric(cards,bars,rows.length?rows:[["Result","Ready","Enter values to update."]]);
 }
 // End generic dashboard rendering
 

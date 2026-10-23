@@ -4,6 +4,8 @@ Updated: October 20, 2026
 
 Latest execution: October 23, 2026. Unified shared CSS URLs using the exact stylesheet content hash after finding five version keys for identical production bytes. Added an artifact deployment gate and five regressions (50 Python tests total). Local Playwright verified six pages at three widths; theme and calculation code are unchanged. Indexable scope remains 284 calculators / 302 sitemap URLs. See `reports/seo/shared-stylesheet-versioning-2026-10-23.md`. This prevents manual cache-version drift; no measured traffic or field performance gain is claimed.
 
+October 23 follow-up: Production canvas inspection found fabricated bar percentages (including a 150 whole labeled 50% when calculating 20% of 150), double-counted tax totals, and a calorie/protein chart labeled in dollars. Corrected shared comparison labels, signed/zero geometry and responsive 16px rendering; eight legacy energy/weight pages now compare matching units instead of generic money pies. Cleaned percentage/fraction mode charts and removed the fake Ready=1 fallback, while preserving dedicated pies and original calculation formulas. Added 25 JavaScript checks and two Python regressions; nine-page desktop/mobile browser verification passes locally. Index scope and CSS remain unchanged. See `reports/seo/result-chart-integrity-2026-10-23.md`; remaining generic chart and purpose-built nutrition work is explicitly not certified complete. No traffic improvement or current US demand estimate is inferred.
+
 ## Goal
 
 Grow qualified US organic traffic by concentrating authority, content improvements, and outreach on pages that already show search demand. Avoid publishing thousands of thin variations or buying low-quality links.

@@ -59,6 +59,9 @@ jobs:
       - name: Check adult body composition estimates and pie chart units
         run: node scripts/test_body_fat.cjs dist/assets/calculator.js
 
+      - name: Check result chart units, labels and signed values
+        run: node scripts/test_result_charts.cjs dist/assets/calculator.js
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
