@@ -62,6 +62,9 @@ jobs:
       - name: Check result chart units, labels and signed values
         run: node scripts/test_result_charts.cjs dist/assets/calculator.js
 
+      - name: Check fuel cost units, budgets and input validation
+        run: node scripts/test_fuel_cost.cjs dist/assets/calculator.js
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

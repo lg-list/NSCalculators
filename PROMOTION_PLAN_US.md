@@ -8,6 +8,8 @@ October 23 follow-up: Production canvas inspection found fabricated bar percenta
 
 ## Goal
 
+October 23 reliability follow-up: A sitemap-only static-link crawl found all 302 submitted URLs reachable within three clicks; no architecture rewrite was warranted. Reviewed the existing fuel-cost route using its historical US query evidence (14 impressions, position 8.5 in September 19-October 16; not current search volume). Live tests found silent rounding of fractional trips/payers, clamped negative detours and an unenforced buffer maximum. Added explicit validation, derived unit conversions, currency-aware comparison bars, Clear recovery and an original repeated-trip example. Moved repeat count into existing advanced options to fit the initial 844px viewport without smaller input fonts. Four Python regressions and 172 JavaScript cases join the existing checks; sitemap/index scope and CSS are unchanged. See `reports/seo/fuel-cost-validation-2026-10-23.md`. No new route, external submission or measured search uplift is claimed.
+
 Grow qualified US organic traffic by concentrating authority, content improvements, and outreach on pages that already show search demand. Avoid publishing thousands of thin variations or buying low-quality links.
 
 ## Current Search Baseline
