@@ -2,6 +2,8 @@
 
 Updated: October 20, 2026
 
+Latest execution: October 23, 2026. Unified shared CSS URLs using the exact stylesheet content hash after finding five version keys for identical production bytes. Added an artifact deployment gate and five regressions (50 Python tests total). Local Playwright verified six pages at three widths; theme and calculation code are unchanged. Indexable scope remains 284 calculators / 302 sitemap URLs. See `reports/seo/shared-stylesheet-versioning-2026-10-23.md`. This prevents manual cache-version drift; no measured traffic or field performance gain is claimed.
+
 ## Goal
 
 Grow qualified US organic traffic by concentrating authority, content improvements, and outreach on pages that already show search demand. Avoid publishing thousands of thin variations or buying low-quality links.

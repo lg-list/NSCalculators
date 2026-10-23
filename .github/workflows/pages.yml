@@ -41,6 +41,9 @@ jobs:
       - name: Check calculator bundle versions across all pages
         run: python scripts/check_calculator_assets.py dist
 
+      - name: Check shared stylesheet versions across styled pages
+        run: python scripts/check_stylesheet_assets.py dist
+
       - name: Check 401(k) employer matching
         run: node scripts/test_401k_match.cjs dist/assets/calculator.js
 

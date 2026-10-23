@@ -189,6 +189,12 @@ def calculator_assets():
     return bundle, sha256(bundle.encode("utf-8")).hexdigest()[:16]
 
 
+@lru_cache(maxsize=1)
+def stylesheet_assets():
+    stylesheet = CSS.strip() + "\n"
+    return stylesheet, sha256(stylesheet.encode("utf-8")).hexdigest()[:16]
+
+
 def h(value):
     text = str(value).replace("\u2013", "-").replace("\u2014", "-")
     return escape(text, quote=True)
@@ -500,13 +506,7 @@ def page(site, title, desc, path, body, keywords=None, extra_schema=None, page_t
         schema["keywords"] = keywords
     robots_meta = "" if indexable else '<meta name="robots" content="noindex,follow">'
     schema_html = "\n".join(json_ld(item) for item in [schema] + extra_schema)
-    style_version = "20261002a" if path == "/mortgage-calculator/" else "20261001a" if path == "/wheel-offset-calculator/" else "20260929d" if path == "/geodesic-dome-calculator/" else "20260929c" if path == "/years-to-minutes-calculator/" else "20260929b" if path in ("/watts-to-amps-calculator/", "/amps-to-watts-calculator/") else "20260929a" if path == "/wire-size-calculator/" else "20260928c" if path == "/tire-size-calculator/" else "20260928a" if path == "/volume-calculator/" else "20260927d" if path == "/cd-calculator/" else "20260927c" if path == "/roman-numeral-converter/" else "20260927b" if path == "/commission-calculator/" else "20260927a" if path == "/house-affordability-calculator/" else "20260926a" if path in ("/area-calculator/", "/conversion-calculator/") else ASSET_VERSION
-    if path == "/debt-payoff-calculator/":
-        style_version = "20261002b"
-    if path == "/area-calculator/":
-        style_version = "20261019a"
-    if path == "/time-duration-calculator/":
-        style_version = "20261019c"
+    style_version = stylesheet_assets()[1]
     html = f"""<!doctype html><html lang="{h(site['language'])}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{h(title)}</title><meta name="description" content="{h(desc)}">{robots_meta}<meta name="theme-color" content="#2563eb">
 <meta property="og:type" content="website"><meta property="og:site_name" content="NS Calculators"><meta property="og:locale" content="en_US"><meta property="og:title" content="{h(title)}"><meta property="og:description" content="{h(desc)}"><meta property="og:url" content="{h(site_url(site, path))}">
@@ -7329,6 +7329,7 @@ LOGO_SVG = r'''
 def build():
     data = read_data()
     calculator_assets.cache_clear()
+    stylesheet_assets.cache_clear()
     site = dict(data["site"])
     if PUBLIC_SITE_DOMAIN:
         site["domain"] = PUBLIC_SITE_DOMAIN
@@ -7336,7 +7337,10 @@ def build():
                    if c["slug"] not in CALCULATOR_REDIRECTS and c["slug"] not in CATEGORY_PAGE_REDIRECTS]
     if DIST.exists():
         shutil.rmtree(DIST, ignore_errors=True)
-    write(DIST / "assets" / "site.css", CSS.strip() + "\n")
+    stylesheet, _ = stylesheet_assets()
+    stylesheet_path = DIST / "assets" / "site.css"
+    stylesheet_path.parent.mkdir(parents=True, exist_ok=True)
+    stylesheet_path.write_bytes(stylesheet.encode("utf-8"))
     write(DIST / "assets" / "search.js", SEARCH_JS.strip() + "\n")
     write(DIST / "assets" / "home.js", HOME_JS.strip() + "\n")
     write(DIST / "assets" / "basic-calculator.js", BASIC_CALCULATOR_JS.strip() + "\n")
