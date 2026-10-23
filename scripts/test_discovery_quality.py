@@ -189,6 +189,25 @@ class DiscoveryQualityTests(unittest.TestCase):
         html = build.calculator_page(self.data["site"], calc, [])
         self.assertIn('href="/cash-back-or-low-interest-calculator/"', html)
 
+    def test_body_fat_returns_body_composition_not_only_bmi(self):
+        calc = next(c for c in self.calculators if c["slug"] == "body-fat-calculator")
+        self.assertEqual(calc["engine"], "body_fat_advanced")
+        self.assertTrue(build.is_indexable_calculator(calc))
+        self.assertIn(calc["slug"], self.search_slugs)
+        html = build.calculator_page(self.data["site"], calc, [])
+        for value in ('data-engine="body_fat_advanced"', 'id="bf_method"', 'id="bf_units"', 'id="bf_hip"',
+                      'data-value-format="percent"', 'Not for pregnancy', '13.9-40.9',
+                      '10.1079/BJN19910073', 'dair.nps.edu/', 'href="/bmi-calculator/"'):
+            self.assertIn(value, html)
+        self.assertNotIn('data-engine="cn_body_metric"', html)
+        self.assertNotIn('content="noindex,follow"', html)
+
+    def test_bmi_distinguishes_body_fat_and_links_to_estimator(self):
+        calc = next(c for c in self.calculators if c["slug"] == "bmi-calculator")
+        html = build.calculator_page(self.data["site"], calc, [])
+        self.assertIn('href="/body-fat-calculator/"', html)
+        self.assertIn('not body fat percentage', html)
+
 
 if __name__ == "__main__":
     unittest.main()

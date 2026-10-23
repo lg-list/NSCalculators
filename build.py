@@ -22,7 +22,7 @@ RMD_JOINT_LIFE_TABLE = ROOT / "src" / "data" / "rmd-joint-life-table.json"
 PUBLIC_BASE_PATH = os.environ.get("PUBLIC_BASE_PATH", "").strip().rstrip("/")
 PUBLIC_SITE_DOMAIN = os.environ.get("PUBLIC_SITE_DOMAIN", "").strip()
 GA4_MEASUREMENT_ID = os.environ.get("GA4_MEASUREMENT_ID", "G-19CY1VWHFM").strip()
-ASSET_VERSION = "20261021a"
+ASSET_VERSION = "20261023a"
 SEARCH_ASSET_VERSION = "20261019d"
 PRIORITY_LENGTH_CONVERSIONS = {
     "millimeters-to-feet-calculator",
@@ -797,7 +797,9 @@ def calculator_net_template(keyword, slug, cat):
         "example": f"Enter sample values to generate an illustrative {keyword.lower()} result.",
         "inputs": [["amount", "Amount", "number", 1000], ["rate", "Rate (%)", "number", 5], ["years", "Years", "number", 10]],
     }
-    if slug == "cash-back-or-low-interest-calculator":
+    if slug == "body-fat-calculator":
+        base.update({"engine": "body_fat_advanced", "desc": "Estimate adult body fat percentage, fat mass and fat-free mass using circumference or BMI-based equations, with US and metric measurements.", "formula": "Body fat is estimated with the selected circumference or BMI-based equation; fat mass = weight x estimated body fat percentage / 100.", "example": "The historical male circumference equation gives about 15.3% for a height of 70.5 inches, abdomen of 37.5 inches and neck of 19.5 inches.", "inputs": []})
+    elif slug == "cash-back-or-low-interest-calculator":
         base.update({"engine": "cash_back_compare", "desc": "Compare a car cash rebate with low-interest financing using monthly payments, interest, tax, fees and total purchase cost for both offers.", "formula": "Total purchase cost = cash paid upfront + all scheduled loan payments + trade-in value. Compare both offers using their own loan amounts and interest rates.", "example": "Compare a $1,000 rebate at 5% with no rebate at 2% on a $50,000 car over 60 months, including the entered tax and fee assumptions.", "inputs": []})
     elif slug == "down-payment-calculator":
         base.update({"engine": "down_payment_advanced", "desc": "Calculate home down payment, closing costs and cash needed, or estimate a cash-based home price with monthly principal and interest.", "formula": "Cash needed = home price x down-payment rate + closing costs. With percentage closing costs, cash-based home price = available cash / (down-payment rate + closing-cost rate).", "example": "A $500,000 home with 20% down and 3% closing costs needs $115,000 in purchase cash before reserves and adjustments.", "inputs": []})
@@ -1814,6 +1816,21 @@ def f150_bed_input_html():
 <div class="field"><label for="f150_item_length">Cargo item length</label><div class="input-unit"><input id="f150_item_length" type="number" step="any" min="0" value="96"><span data-f150-unit>in</span></div></div>
 <div class="field"><label for="f150_item_width">Cargo item width</label><div class="input-unit"><input id="f150_item_width" type="number" step="any" min="0" value="48"><span data-f150-unit>in</span></div></div>
 <p class="field-note field-wide">Published box dimensions are nominal reference values. Cargo fit checks a flat rectangle against floor length and the 50.6-inch minimum width between wheelhouses; it does not model height, wheel-well shape, tie-downs, liners, or an open tailgate.</p>
+</div>"""
+
+
+def body_fat_input_html():
+    return """<div class="fields body-fat-fields" data-units="us">
+<div class="field field-wide"><label for="bf_method">Estimation method</label><select id="bf_method"><option value="tape">Historical Navy circumference</option><option value="bmi">BMI-based equation</option></select></div>
+<div class="field"><label for="bf_units">Units</label><select id="bf_units"><option value="us">US: in/lb</option><option value="metric">Metric</option></select></div>
+<div class="field"><label for="bf_sex">Sex coefficient</label><select id="bf_sex"><option value="male">Male</option><option value="female">Female</option></select></div>
+<div class="field"><label for="bf_age">Age (18-83 years)</label><input id="bf_age" type="number" min="18" max="83" step="1" value="25"></div>
+<div class="field"><label for="bf_height">Height (<span data-bf-length>in</span>)</label><input id="bf_height" type="number" min="0" step="any" value="70.5"></div>
+<div class="field"><label for="bf_weight">Weight (<span data-bf-weight>lb</span>)</label><input id="bf_weight" type="number" min="0" step="any" value="152"></div>
+<div class="field" data-bf-tape><label for="bf_neck">Neck (<span data-bf-length>in</span>)</label><input id="bf_neck" type="number" min="0" step="any" value="19.5"></div>
+<div class="field" data-bf-tape><label for="bf_waist"><span id="bf_waist_name">Abdomen</span> (<span data-bf-length>in</span>)</label><input id="bf_waist" type="number" min="0" step="any" value="37.5"></div>
+<div class="field" data-bf-hip hidden><label for="bf_hip">Hip (<span data-bf-length>in</span>)</label><input id="bf_hip" type="number" min="0" step="any" value="34.5"></div>
+<p class="field-note field-wide">Adult estimates only. Not for pregnancy, diagnosis or military certification.</p>
 </div>"""
 
 
@@ -2952,6 +2969,17 @@ def conversion_copy(calc):
 
 
 def high_value_calculator_copy(calc):
+    if calc.get("slug") == "body-fat-calculator":
+        return """
+<h2>Body fat percentage is not BMI</h2><p>Body fat percentage describes the share of body weight estimated to be fat. BMI is weight divided by squared height, not a percentage. The <a href="https://www.cdc.gov/bmi/about/index.html" target="_blank" rel="noopener">CDC explains that BMI does not directly measure body fat</a>. This page calculates a body-fat estimate using a named equation and labels BMI separately.</p>
+<h2>Two adult estimation methods</h2><p>The circumference option uses the historical equations commonly called the US Navy method. Both need height, neck and a body circumference; the female equation also needs hip circumference. Weight determines the displayed mass breakdown, not the circumference percentage. For the male equation, abdomen refers to the measurement at the navel; the female equation uses waist at its narrowest point and hip at its fullest point. Keep abdomen/waist and hip measurements horizontal. Measure neck below the larynx, keeping circumferences snug without compressing skin. A <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC4831679/" target="_blank" rel="noopener">circumference-method study in men</a> describes the navel and neck sites. Do not mix measurement sites between equations.</p><p>The historical inch-based equations are reproduced in a <a href="https://dair.nps.edu/bitstream/123456789/4724/3/NPS-HR-22-210.pdf" target="_blank" rel="noopener">2022 Naval Postgraduate School research report</a>, page 17 of the report (PDF page 33). This citation documents the equations, not current Navy policy or an endorsement. No official tape-rounding, pass/fail standards or military certification is applied here.</p>
+<p class="formula">Male: BF% = 86.010 x log10(abdomen - neck) - 70.041 x log10(height) + 36.76<br>Female: BF% = 163.205 x log10(waist + hip - neck) - 97.684 x log10(height) - 78.387</p><p>These coefficients require inches. Metric entries are converted to inches before the same equation is evaluated, so changing units does not select a different model. Every log10 argument must be positive. Impossible percentages are rejected rather than silently clamped to a plausible-looking number.</p>
+<h2>BMI-based body fat estimate</h2><p>The alternative uses the adult equation from <a href="https://doi.org/10.1079/BJN19910073" target="_blank" rel="noopener">Deurenberg, Weststrate and Seidell (1991)</a>:</p><p class="formula">BF% = 1.20 x BMI + 0.23 x age - 10.8 x s - 5.4<br>BMI = weight in kilograms / height in meters squared</p><p>Here s is 1 for the male coefficient and 0 for the female coefficient used in the original study. The selection describes the published equation, not gender identity or a personalized assessment of which equation is appropriate. This tool supports adults aged 18-83 and does not apply the paper's separate child equation. Outside that age range it returns a limitation rather than extrapolating.</p><p>The study reported an adult standard error of estimate of about 4.1 percentage points and some overestimation among people with obesity. That group-level statistic is not a personal confidence interval or a promise that your error is within that amount. Predictions can differ from measured body composition; a clinician can advise whether an assessment is useful in your circumstances.</p>
+<p>The sampled BMI range in the 1991 paper was 13.9-40.9. This tool does not extrapolate the BMI-based prediction outside that range; a circumference result may still appear, with the BMI-based cross-check marked unavailable.</p>
+<h2>Fat mass and fat-free mass</h2><p class="formula">fat mass = weight x BF% / 100<br>fat-free mass = weight - fat mass</p><p>Fat-free mass includes more than muscle, so it must not be read as measured muscle mass. The chart and mass values follow the selected estimate, not an average of the two methods. A BMI-based cross-check is shown separately when it produces a usable percentage. It is not used to validate the circumference estimate.</p>
+<h2>Worked example and measurement consistency</h2><p>For the example male circumference entries of 70.5 inches height, 37.5 inches abdomen and 19.5 inches neck, the equation gives about 15.3% body fat. At 152 pounds, that corresponds to about 23.2 pounds of estimated fat and 128.8 pounds of fat-free mass. Changing weight alone changes those mass amounts, not the circumference percentage. The age-25 BMI-based estimate is about 15.4%; agreement in one example does not prove accuracy for another person.</p><p>Repeat measurements at consistent sites and under similar conditions when comparing your own readings. A small tape-placement difference can move the equation's answer. Switching between BMI-based and circumference methods changes the model, so it should not be interpreted as a physical change in body fat.</p>
+<h2>Limits and related tools</h2><p>This is an educational estimate, not a diagnosis, pregnancy assessment, recommended target or instruction to lose weight. It does not determine an ideal body-fat percentage, prescribe a diet, label a fitness category or certify military readiness. Neither method directly measures body composition. Do not make medical or eating decisions from a single calculator value.</p><p>For a distinct height-weight screening calculation, use the <a href="/bmi-calculator/">adult BMI calculator</a>. It answers a different question and cannot substitute for body-composition measurement.</p>
+<h2>Frequently asked questions</h2><h3>Can I calculate without a tape measure?</h3><p>The BMI-based option uses height, weight, age and the chosen coefficient, without neck, abdomen or hip inputs. It is still a statistical prediction, not a direct measurement.</p><h3>Why is hip hidden for the male equation?</h3><p>The historical male equation does not use it. Hidden inputs do not affect the result or validation.</p><h3>Does the chart show measured fat?</h3><p>No. It illustrates the selected equation's estimated split of body weight into fat and fat-free mass.</p><h3>Why did the calculator reject my inputs?</h3><p>Check the units, age range and measurement sites. Neck and the relevant circumference combination must permit a positive logarithm argument. Results outside 0-100% are not displayed as valid estimates.</p>"""
     if calc.get("slug") == "cash-back-or-low-interest-calculator":
         return """
 <h2>Cash rebate vs low-interest auto financing</h2><p>A cash rebate lowers the amount you pay for the vehicle, while a lower financing rate reduces interest. This calculator compares two mutually exclusive offers on the same vehicle using the same term, cash-down budget and trade-in value. It shows each loan amount, tax estimate, upfront payment, monthly payment, total interest and total purchase cost. Starting inputs are illustrative, not current manufacturer offers.</p>
@@ -3874,6 +3902,8 @@ def default_calculator_copy(calc):
 
 
 def analysis_extra_html(calc):
+    if calc.get("slug") == "body-fat-calculator":
+        return """<section class="mortgage-dashboard generic-dashboard body-fat-dashboard" aria-label="Estimated body composition"><div class="section-head stack"><h2>Body Fat Estimate</h2></div><div class="summary-grid" id="genericSummary"></div><div class="chart-card compact-chart"><h3>Estimated Weight Composition</h3><canvas id="genericChart" width="320" height="220" data-chart-type="pie" data-value-format="percent" data-center-label="of body weight" aria-label="Estimated fat and fat-free percentage of body weight"></canvas><p id="bf_chart_note"></p></div><div class="table-card"><h3>Methods and Measurements</h3><div class="table-scroll"><table class="data-table" id="genericTable"><thead><tr><th>Measure</th><th>Estimate</th><th>Basis</th></tr></thead><tbody></tbody></table></div></div></section>"""
     if calc.get("slug") == "cash-back-or-low-interest-calculator":
         return """<section class="mortgage-dashboard generic-dashboard cash-back-dashboard" aria-label="Cash rebate and low rate comparison"><div class="section-head stack"><h2>Offer Comparison</h2></div><div class="summary-grid" id="genericSummary"></div><div class="table-card"><h3>Purchase Cost Details</h3><div class="table-scroll"><table class="data-table" id="genericTable"><thead><tr><th scope="col">Metric</th><th scope="col">Cash rebate offer</th><th scope="col">Low-rate offer</th></tr></thead><tbody></tbody></table></div></div></section>"""
     if calc.get("slug") == "down-payment-calculator":
@@ -4528,7 +4558,10 @@ def calculator_page(site, calc, related):
     desc = seo_description(calc)
     group = calculator_group(calc)
     page_engine = calc.get("engine")
-    if calc.get("slug") == "cash-back-or-low-interest-calculator":
+    if calc.get("slug") == "body-fat-calculator":
+        fields = body_fat_input_html()
+        page_engine = "body_fat_advanced"
+    elif calc.get("slug") == "cash-back-or-low-interest-calculator":
         fields = cash_back_input_html()
         page_engine = "cash_back_compare"
     elif calc.get("slug") == "down-payment-calculator":
@@ -4758,6 +4791,9 @@ def calculator_page(site, calc, related):
         fields = f"""<div class="fields">{''.join(input_html(f) for f in calc["inputs"])}</div>"""
     rel = "".join(card(c, compact=True) for c in related)
     content = payback_copy(calc) or marriage_tax_copy(calc) or priority_length_copy(calc) or high_value_calculator_copy(calc) or conversion_copy(calc) or default_calculator_copy(calc)
+    if calc.get("slug") == "bmi-calculator":
+        composition_link = '<p>BMI is a height-weight screening value, not body fat percentage. The <a href="/body-fat-calculator/">body fat calculator</a> provides separately labeled adult circumference and BMI-based predictions, with measurement and population limits.</p>'
+        content = content.replace('<h2>Frequently asked questions</h2>', composition_link + '<h2>Frequently asked questions</h2>', 1)
     if calc.get("slug") == "auto-loan-calculator":
         comparison_link = '<p>For two mutually exclusive incentive offers on the same car, compare the total purchase cost with the <a href="/cash-back-or-low-interest-calculator/">cash back or low interest calculator</a>, rather than comparing monthly payments alone.</p>'
         content = content.replace('<h2>Frequently asked questions</h2>', comparison_link + '<h2>Frequently asked questions</h2>', 1)
@@ -5145,6 +5181,10 @@ CSS += r'''
 .cash-back-dashboard .data-table{table-layout:fixed;width:100%;min-width:0}.cash-back-dashboard .data-table th,.cash-back-dashboard .data-table td{white-space:normal;overflow-wrap:anywhere;padding:8px 4px;font-size:14px;line-height:1.4}.cash-back-dashboard .data-table th:first-child{width:36%}
 '''
 
+CSS += r'''
+.calculator-article:has(.body-fat-fields) .lead{max-width:none}.calculator-article .fields.body-fat-fields{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.body-fat-fields .field-note{margin:2px 0;padding:0;border:0;background:transparent;font-size:13px;line-height:1.4}.body-fat-fields [hidden],.body-fat-dashboard [hidden]{display:none!important}.body-fat-dashboard .chart-card canvas{display:block;margin:0 auto;max-width:320px}.body-fat-dashboard .chart-card p{font-size:16px;margin:0}.body-fat-dashboard .data-table{width:100%;min-width:0;table-layout:fixed}.body-fat-dashboard .data-table th,.body-fat-dashboard .data-table td{white-space:normal;overflow-wrap:anywhere;padding:8px 4px;font-size:14px;line-height:1.4}.body-fat-dashboard .data-table th:first-child{width:33%}.body-fat-dashboard .data-table th:nth-child(2){width:27%}
+'''
+
 SEARCH_JS = r'''
 (function(){
   let items = window.NORTHSTAR_ITEMS || [];
@@ -5243,6 +5283,46 @@ function formatTimeDuration(p){return`${p.days?`${F(p.days,0)}d `:''}${p.hours}h
 function syncTimeDurationMode(){const mode=document.querySelector('input[name="duration_mode"]:checked')?.value||'clock',root=document.querySelector('.duration-fields');if(root){root.classList.toggle('duration-with-dates',mode==='dates');root.querySelectorAll('[data-duration-date]').forEach(el=>{el.hidden=mode!=='dates'});const note=document.getElementById('duration-clock-note');if(note)note.hidden=mode==='dates'}return mode}
 function timeDurationProjection(){const mode=syncTimeDurationMode(),startTime=document.getElementById('duration_start_time')?.value||'',endTime=document.getElementById('duration_end_time')?.value||'',startDate=mode==='dates'?document.getElementById('duration_start_date')?.value||'':null,endDate=mode==='dates'?document.getElementById('duration_end_date')?.value||'':null;return{...timeDurationDifference(startTime,endTime,startDate,endDate),mode,startLabel:mode==='dates'?`${startDate} ${startTime}`:startTime,endLabel:mode==='dates'?`${endDate} ${endTime}`:endTime}}
 function clearTimeDurationForm(){document.querySelectorAll('.duration-fields input[type="time"],.duration-fields input[type="date"]').forEach(input=>{input.value=''});calc('time_duration')}
+function bodyFatAmounts({units,method,sex,age,height,weight,neck,waist,hip}){
+  const fail=message=>({valid:false,message}),positive=x=>typeof x==='number'&&Number.isFinite(x)&&x>0;
+  if(!['us','metric'].includes(units)||!['tape','bmi'].includes(method)||!['male','female'].includes(sex))return fail('Choose the units, method and equation coefficient.');
+  if(typeof age!=='number'||!Number.isInteger(age)||age<18||age>83)return fail('This tool supports adults aged 18 through 83 only.');
+  if(!positive(height)||!positive(weight))return fail('Enter positive height and weight in the selected units.');
+  const heightIn=units==='us'?height:height/2.54,kg=units==='us'?weight*.45359237:weight,heightM=heightIn*.0254,bmi=kg/(heightM*heightM);
+  if(!Number.isFinite(bmi))return fail('These measurements exceed the supported numerical range.');
+  const bmiRaw=1.2*bmi+.23*age-(sex==='male'?10.8:0)-5.4;
+  const bmiFat=bmi>=13.9&&bmi<=40.9&&bmiRaw>0&&bmiRaw<100?bmiRaw:null;
+  let tapeFat=null;
+  if(method==='tape'){
+    if(!positive(neck)||!positive(waist)||sex==='female'&&!positive(hip))return fail('Enter positive neck and abdomen/waist measurements, plus hip for the female equation.');
+    const scale=units==='us'?1:1/2.54,n=neck*scale,w=waist*scale,h=hip*scale,combination=sex==='male'?w-n:w+h-n;
+    if(!(combination>0))return fail('The circumference combination must be positive: abdomen minus neck, or waist plus hip minus neck.');
+    tapeFat=sex==='male'?86.010*Math.log10(combination)-70.041*Math.log10(heightIn)+36.76:163.205*Math.log10(combination)-97.684*Math.log10(heightIn)-78.387;
+  }
+  const percent=method==='tape'?tapeFat:bmiFat;
+  if(percent===null)return fail('The BMI-based estimate is outside the sampled BMI range of 13.9-40.9 or gives an unusable percentage.');
+  if(!Number.isFinite(percent)||percent<=0||percent>=100)return fail('These measurements give a body-fat estimate outside 0-100%. Check units and measurement sites.');
+  const fatKg=kg*percent/100,leanKg=kg-fatKg,fat=weight*percent/100,lean=weight-fat;
+  if(![fatKg,leanKg,fat,lean].every(Number.isFinite))return fail('These measurements exceed the supported numerical range.');
+  return{valid:true,units,method,sex,age,height,weight,bmi,bmiFat,tapeFat,percent,fat,lean,fatKg,leanKg,massUnit:units==='us'?'lb':'kg'};
+}
+function bodyFatProjection(){
+  const root=document.querySelector('.body-fat-fields'),units=document.getElementById('bf_units')?.value||'us',previous=root?.dataset.units||'us';
+  if(root&&units!==previous){
+    for(const id of ['bf_height','bf_neck','bf_waist','bf_hip','bf_weight']){
+      const input=document.getElementById(id),value=input?.value.trim();
+      if(value&&Number.isFinite(Number(value))){const factor=id==='bf_weight' ? .45359237 : 2.54;input.value=Number((Number(value)*(units==='metric'?factor:1/factor)).toPrecision(14)).toString()}
+    }
+    root.dataset.units=units;
+  }
+  document.querySelectorAll('[data-bf-length]').forEach(el=>{el.textContent=units==='us'?'in':'cm'});
+  document.querySelectorAll('[data-bf-weight]').forEach(el=>{el.textContent=units==='us'?'lb':'kg'});
+  const method=document.getElementById('bf_method')?.value||'tape',sex=document.getElementById('bf_sex')?.value||'male';
+  for(const [selector,visible] of [['[data-bf-tape]',method==='tape'],['[data-bf-hip]',method==='tape'&&sex==='female']])document.querySelectorAll(selector).forEach(el=>{el.hidden=!visible;el.classList.toggle('is-hidden',!visible);el.querySelectorAll('input').forEach(input=>{input.disabled=!visible})});
+  const waistName=document.getElementById('bf_waist_name');if(waistName)waistName.textContent=sex==='male'?'Abdomen':'Waist';
+  const read=id=>{const raw=document.getElementById(id)?.value;return raw===undefined||raw.trim()===''?NaN:Number(raw)};
+  return bodyFatAmounts({units,method,sex,age:read('bf_age'),height:read('bf_height'),weight:read('bf_weight'),neck:read('bf_neck'),waist:read('bf_waist'),hip:read('bf_hip')});
+}
 function cashBackAmounts({price,rebate,highRate,lowRate,months,down,trade,fees,financeFees,taxMode,taxRate,rebateReducesTax,tradeReducesTax,quotedCashTax,quotedLowTax}){
   const fail=message=>({valid:false,message}),number=x=>typeof x==='number'&&Number.isFinite(x);
   if(![price,rebate,down,trade,fees].every(x=>number(x)&&x>=0)||price===0)return fail('Enter a positive vehicle price and nonnegative rebate, down payment, trade-in and fees.');
@@ -5804,6 +5884,7 @@ function clearCalcForm(){const form=document.querySelector('.calc');if(!form)ret
 function armyWhtRatioProjection(){const waist=V('waist'),height=V('height');if(!(waist>0&&height>0))return{valid:false,message:'Enter waist and height values greater than zero.'};return{valid:true,waist,height,ratio:waist/height}}
 function calc(e){
  switch(e){
+  case'body_fat_advanced':{const p=bodyFatProjection();if(!p.valid)show(`<strong>Check the measurements</strong><br>${H(p.message)}`);else show(`<strong>${F(p.percent,1)}% estimated body fat</strong><br>${p.method==='tape'?'Historical circumference':'BMI-based'} equation. Fat mass: ${F(p.fat,1)} ${p.massUnit}; fat-free mass: ${F(p.lean,1)} ${p.massUnit}.<br>Estimate only, not a diagnosis.`);break}
   case'cash_back_compare':{const p=cashBackProjection();if(!p.valid)show(`<strong>Check the offers</strong><br>${H(p.message)}`);else{const answer=p.winner==='tie'?'Same modeled purchase cost':`${p.winner==='cash'?'Cash rebate':'Low-rate'} offer saves ${USD(p.savings)}`;show(`<strong>${answer}</strong><br>Monthly payment: ${USD(p.cash.payment)} with rebate / ${USD(p.low.payment)} at low rate.<br>Comparison includes the rebate, modeled interest, tax and fees.`)}break}
   case'down_payment_advanced':{const p=downPaymentProjection();if(!p.valid)show(`<strong>Check the inputs</strong><br>${H(p.message)}`);else{const answer=p.mode==='cash'?`${USD(p.price)} home price`:p.mode==='price'?`${USD(p.cashNeeded)} purchase cash needed`:`${F(p.downPercent,2)}% down payment`;show(`<strong>${answer}</strong><br>${USD(p.down)} down payment; ${USD(p.closing)} closing costs.<br>${USD(p.payment)} / month principal and interest only.${p.unusedCash?`<br>${USD(p.unusedCash)} unused cash.`:''}`)}break}
   case'payback_advanced':{const p=paybackProjection(),simple=p.simple===null?'no recovery within the selected period':`${F(p.simple,2)} years`,discounted=p.discounted===null?'no recovery within the selected period':`${F(p.discounted,2)} years`;show(`<strong>Simple payback: ${simple}</strong><br>Discounted payback: ${discounted}; net present value: ${USD(p.npv)} over ${p.horizon} years.`);break}
@@ -5960,7 +6041,7 @@ document.addEventListener('click',e=>{
   if(!e.target.closest('[data-clear]'))return;
   const engine=currentEngine();
   if(engine==='cash_back_compare')for(const id of ['cb_trade','cb_fees','cb_tax_rate','cb_tax_cash','cb_tax_low'])document.getElementById(id).value='0';
-  if(['down_payment_advanced','cash_back_compare'].includes(engine))calc(engine);
+  if(['down_payment_advanced','cash_back_compare','body_fat_advanced'].includes(engine))calc(engine);
 });
 document.addEventListener('click',e=>{const now=e.target.closest('[data-duration-now]'),swap=e.target.closest('[data-duration-swap]');if(now){const endpoint=now.dataset.durationNow,d=new Date(),pad=n=>String(n).padStart(2,'0');document.getElementById(`duration_${endpoint}_time`).value=`${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;document.getElementById(`duration_${endpoint}_date`).value=`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;calc('time_duration')}else if(swap){for(const part of ['date','time']){const start=document.getElementById(`duration_start_${part}`),end=document.getElementById(`duration_end_${part}`),value=start.value;start.value=end.value;end.value=value}calc('time_duration')}});
 document.addEventListener('click',e=>{if(e.target.closest('[data-clear]')&&currentEngine()==='army_wht_ratio')renderGenericFromEngine('army_wht_ratio')});
@@ -6067,7 +6148,18 @@ function paybackProjection(){
 function renderGenericFromEngine(engine) {
   if (!document.getElementById("genericSummary")) return;
   let cards=[], bars=[], rows=[];
-  if(engine==="cash_back_compare"){
+  if(engine==="body_fat_advanced"){
+    const p=bodyFatProjection(),canvas=document.getElementById('genericChart'),chartCard=canvas?.closest('.chart-card'),note=document.getElementById('bf_chart_note');if(chartCard)chartCard.hidden=!p.valid;
+    if(!p.valid){cards=[["Body fat estimate","Check inputs",H(p.message)]];rows=[["Validation","Unavailable",H(p.message)]];if(note)note.textContent=''}
+    else{
+      const primary=p.method==='tape'?'Historical circumference':'BMI-based equation',mass=x=>`${F(x,1)} ${p.massUnit}`;
+      cards=[["Estimated body fat",`${F(p.percent,1)}%`,primary+'. Not a direct measurement.'],["Estimated fat mass",mass(p.fat),'Selected estimate multiplied by weight.'],["Estimated fat-free mass",mass(p.lean),'Includes more than muscle.'],["BMI-based cross-check",p.bmiFat===null?'Unavailable':`${F(p.bmiFat,1)}%`,'Separate prediction, not confirmation.']];
+      bars=[{label:'Fat',value:p.percent},{label:'Fat-free',value:100-p.percent}];
+      rows=[["Selected method",primary,"Adult educational estimate."],["Estimated body fat",`${F(p.percent,2)}%`,primary],["Fat mass",mass(p.fat),"Weight x estimated body-fat fraction."],["Fat-free mass",mass(p.lean),"Weight minus estimated fat mass, not muscle mass."],["Body mass index",`${F(p.bmi,2)} kg/m2`,"BMI is not a percentage."],["BMI-based body fat",p.bmiFat===null?'Unavailable':`${F(p.bmiFat,2)}%`,p.bmiFat===null?'Outside sampled BMI range or unusable equation output.':'1991 Deurenberg adult prediction.'],["Age",`${p.age} years`,"Tool scope: ages 18-83."],["Weight",mass(p.weight),"Entered weight; unit changes convert the value."]];
+      if(note)note.textContent=`Estimated fat ${F(p.percent,1)}%; fat-free ${F(100-p.percent,1)}%.`;
+      if(canvas)canvas.setAttribute('aria-label',`Estimated body weight: fat ${F(p.percent,1)} percent, fat-free ${F(100-p.percent,1)} percent.`);
+    }
+  } else if(engine==="cash_back_compare"){
     const p=cashBackProjection();
     if(!p.valid){cards=[["Offer comparison","Check inputs",H(p.message)]];rows=[["Validation","Unable to compare",H(p.message)]]}
     else{
@@ -6796,6 +6888,7 @@ function clearCanvas(canvas) {
 }
 
 function drawPie(canvas, values, labels) {
+  const formatValue=canvas.dataset.valueFormat==='percent'?value=>`${F(value,1)}%`:USD;
   const logicalWidth = Number(canvas.dataset.logicalWidth || canvas.getAttribute("width")) || canvas.width;
   const logicalHeight = Number(canvas.dataset.logicalHeight || canvas.getAttribute("height")) || canvas.height;
   canvas.dataset.logicalWidth = String(logicalWidth);
@@ -6858,7 +6951,7 @@ function drawPie(canvas, values, labels) {
   ctx.fillStyle = "#152033";
   ctx.font = compact ? "800 16px system-ui, sans-serif" : "800 17px system-ui, sans-serif";
   ctx.textAlign = "center";
-  ctx.fillText(USD(total).replace(".00", ""), cx, cy - 2);
+  ctx.fillText(formatValue(total).replace(".00", ""), cx, cy - 2);
   ctx.font = compact ? "700 10px system-ui, sans-serif" : "700 11px system-ui, sans-serif";
   ctx.fillStyle = "#667085";
   ctx.fillText(canvas.dataset.centerLabel || "per month", cx, cy + 14);
@@ -6878,7 +6971,7 @@ function drawPie(canvas, values, labels) {
     ctx.fillText(`${label} (${F(pct,1)}%)`, legendX + (compact ? 18 : 23), y);
     ctx.font = compact ? "600 10px system-ui, sans-serif" : "600 12px system-ui, sans-serif";
     ctx.fillStyle = "#667085";
-    ctx.fillText(USD(amount), legendX + (compact ? 18 : 23), y + (compact ? 14 : 17));
+    if(canvas.dataset.valueFormat!=='percent')ctx.fillText(formatValue(amount), legendX + (compact ? 18 : 23), y + (compact ? 14 : 17));
   });
 }
 
