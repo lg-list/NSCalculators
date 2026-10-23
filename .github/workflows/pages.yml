@@ -65,6 +65,9 @@ jobs:
       - name: Check fuel cost units, budgets and input validation
         run: node scripts/test_fuel_cost.cjs dist/assets/calculator.js
 
+      - name: Check natural-language calculator search and ranking
+        run: node scripts/test_site_search.cjs dist/assets/search.js dist/assets/search-index.json
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

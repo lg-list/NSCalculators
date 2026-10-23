@@ -23,7 +23,7 @@ PUBLIC_BASE_PATH = os.environ.get("PUBLIC_BASE_PATH", "").strip().rstrip("/")
 PUBLIC_SITE_DOMAIN = os.environ.get("PUBLIC_SITE_DOMAIN", "").strip()
 GA4_MEASUREMENT_ID = os.environ.get("GA4_MEASUREMENT_ID", "G-19CY1VWHFM").strip()
 ASSET_VERSION = "20261023a"
-SEARCH_ASSET_VERSION = "20261019d"
+SEARCH_ASSET_VERSION = "20261023a"
 PRIORITY_LENGTH_CONVERSIONS = {
     "millimeters-to-feet-calculator",
     "meters-to-feet-calculator",
@@ -1092,7 +1092,7 @@ def calculator_search_index(calculators):
         else:
             selected = group
         for calc in selected:
-            entry = {"title": calc["title"], "slug": calc["slug"], "desc": calc["desc"], "cat": calc["cat"], "keyword": primary_keyword(calc)}
+            entry = {"title": calc["title"], "slug": calc["slug"], "desc": seo_description(calc) if is_indexable_calculator(calc) else calc["desc"], "cat": calc["cat"], "keyword": primary_keyword(calc)}
             if len(group) > 1 and len(selected) == 1:
                 aliases = {c.get("seo_context_label") or c["cat"] for c in group}
                 aliases.update(primary_keyword(c) for c in group if primary_keyword(c).casefold() not in (entry["keyword"].casefold(), entry["title"].casefold()))
@@ -5199,35 +5199,86 @@ CSS += r'''
 '''
 
 SEARCH_JS = r'''
+function normalizeCalculatorSearch(value) {
+  return String(value || '').normalize('NFKD').toLowerCase().replace(/\p{M}/gu, '').replace(/[^\p{L}\p{N}]+/gu, ' ').trim().replace(/\s+/g, ' ');
+}
+function createCalculatorSearch(items) {
+  const prepared=items.map((item,index)=>{
+    const title=normalizeCalculatorSearch(item.title),keyword=normalizeCalculatorSearch(item.keyword),aliases=normalizeCalculatorSearch(item.aliases);
+    const text=normalizeCalculatorSearch([item.title,item.keyword,item.aliases,item.desc,item.cat].filter(Boolean).join(' '));
+    return {item,index,title,keyword,aliases,text,words:text.split(' '),titleWords:title.split(' ')};
+  });
+  return (query,limit=8)=>{
+    const normalized=normalizeCalculatorSearch(query),tokens=normalized.split(' ');
+    if(!normalized)return [];
+    return prepared.filter(row=>tokens.every(token=>row.words.some(word=>word.startsWith(token)))).map(row=>{
+      let score=row.title===normalized?1000:row.keyword===normalized?950:row.title.startsWith(normalized)?900:row.title.includes(normalized)?850:row.keyword.includes(normalized)?800:row.aliases.includes(normalized)?750:tokens.every(token=>row.titleWords.some(word=>word.startsWith(token)))?700:500;
+      score+=tokens.filter(token=>row.titleWords.includes(token)).length*15;
+      if(row.text.includes(normalized))score+=40;
+      return {...row,score};
+    }).sort((a,b)=>b.score-a.score||a.title.length-b.title.length||a.index-b.index).slice(0,limit).map(row=>row.item);
+  };
+}
 (function(){
   let items = window.NORTHSTAR_ITEMS || [];
   let loading = null;
+  let search = items.length ? createCalculatorSearch(items) : null;
+  let revision = 0;
   const basePath = window.NORTHSTAR_BASE_PATH || "";
   const q = document.getElementById("siteSearch");
   const box = document.getElementById("searchResults");
   if (!q || !box) return;
+  q.setAttribute('aria-controls', 'searchResults');
+  box.setAttribute('role', 'region');
+  box.setAttribute('aria-label', 'Calculator search results');
+  function hideResults() { revision++;box.style.display='none';box.replaceChildren(); }
+  function status(message) {
+    const text=document.createElement('p');text.setAttribute('role','status');text.style.cssText='margin:0;padding:12px 14px';text.textContent=message;
+    box.replaceChildren(text);box.style.display='block';
+  }
   function loadItems() {
-    if (items.length) return Promise.resolve(items);
+    if (search) return Promise.resolve(search);
     if (!loading) {
       loading = fetch(basePath + "/assets/search-index.json", { cache: "no-cache" })
-        .then(response => response.ok ? response.json() : [])
-        .then(data => { items = Array.isArray(data) ? data : []; return items; })
-        .catch(() => []);
+        .then(response => { if(!response.ok)throw new Error('Search unavailable');return response.json(); })
+        .then(data => { if(!Array.isArray(data))throw new Error('Invalid search data');search=createCalculatorSearch(data);return search; })
+        .finally(() => { loading=null; });
     }
     return loading;
   }
   q.addEventListener("input", async () => {
-    const s = q.value.toLowerCase().trim();
+    const s = normalizeCalculatorSearch(q.value),request=++revision;
     if (!s) {
-      box.style.display = "none";
-      box.innerHTML = "";
+      hideResults();
       return;
     }
-    await loadItems();
-    if (q.value.toLowerCase().trim() !== s) return;
-    const r = items.filter(x => (x.title + " " + x.desc + " " + x.cat + " " + (x.keyword || "") + " " + (x.aliases || "")).toLowerCase().includes(s)).slice(0, 8);
-    box.innerHTML = r.length ? r.map(x => `<a href="${basePath}/${x.slug}/"><strong>${x.title}</strong><small>${x.cat}: ${x.desc}</small></a>`).join("") : '<p role="status" style="margin:0;padding:12px 14px">No calculators found.</p>';
+    if(!search)status('Searching...');
+    let find;
+    try { find=await loadItems(); }
+    catch(error) { if(request===revision)status('Search could not be loaded. Try again.');return; }
+    if (request!==revision || normalizeCalculatorSearch(q.value)!==s) return;
+    const results=find(s);
+    if(!results.length){status('No calculators found.');return;}
+    box.replaceChildren(...results.map(item=>{
+      const link=document.createElement('a'),title=document.createElement('strong'),description=document.createElement('small');
+      link.href=`${basePath}/${item.slug}/`;title.textContent=item.title;description.textContent=`${item.cat}: ${item.desc}`;
+      link.append(title,description);return link;
+    }));
     box.style.display = "block";
+  });
+  q.addEventListener('keydown',event=>{
+    if(event.key==='Escape'){event.preventDefault();hideResults();}
+    else if(event.key==='ArrowDown'||event.key==='Enter'){
+      const first=box.querySelector('a');
+      if(first&&box.style.display!=='none'){event.preventDefault();if(event.key==='Enter')first.click();else first.focus();}
+    }
+  });
+  box.addEventListener('keydown',event=>{
+    if(event.key==='Escape'){event.preventDefault();hideResults();q.focus();return;}
+    const links=Array.from(box.querySelectorAll('a')),index=links.indexOf(document.activeElement);
+    if(index<0)return;
+    if(event.key==='ArrowDown'){event.preventDefault();links[Math.min(index+1,links.length-1)].focus();}
+    else if(event.key==='ArrowUp'){event.preventDefault();if(index===0)q.focus();else links[index-1].focus();}
   });
 })();
 '''
