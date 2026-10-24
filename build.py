@@ -487,7 +487,17 @@ def google_tag():
 window.dataLayer = window.dataLayer || [];
 function gtag(){{dataLayer.push(arguments);}}
 gtag('js', new Date());
-gtag('config', {measurement_id_json});
+const northstarAnalyticsContext = {{
+  page_location: window.location.origin + window.location.pathname,
+  page_referrer: (() => {{
+    try {{
+      const referrer = new URL(document.referrer);
+      return ['https:', 'http:'].includes(referrer.protocol) ? referrer.origin + '/' : '';
+    }} catch {{ return ''; }}
+  }})()
+}};
+gtag('set', northstarAnalyticsContext);
+gtag('config', {measurement_id_json}, northstarAnalyticsContext);
 </script>"""
 
 

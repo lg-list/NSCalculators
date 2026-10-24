@@ -4,6 +4,8 @@ Updated: October 24, 2026
 
 ## Current Measurement
 
+October 24 analytics follow-up: added explicit query/fragment-free page_location and origin-only page_referrer to the existing Google tag; real-SDK collection requests were intercepted locally, not sent as production traffic. Found that automatic view_search_results still reads URL q into search_term independently; explicit approval to disable Site search enhanced measurement has been requested, not assumed. No account setting changed. Keep Search Console clicks, GA4 Google-organic sessions/users and calculator attempts separate; no GA4 session total or goal attainment is established. 78 Python tests and six context scenarios pass. See `reports/seo/analytics-context-2026-10-24.md`.
+
 October 24 Area correctness follow-up: reproduced and corrected a full-circle sector perimeter overstatement and direct-Heron failure for thin/large/small triangles. Added stable Kahan-factor evaluation and explicit boundary explanations on the existing page; titles/theme/index scope remain stable. All 76 Python and 708 JavaScript checks pass locally; desktop/mobile room-total workflows remain intact. See `reports/seo/area-boundary-stability-2026-10-24.md`. No search outcome is yet measured.
 
 October 24 technical guard: verified all 302 sitemap URLs are self-canonical, statically index-eligible and reachable through sitemap-page HTML links within three clicks. Added a full-sitemap deployment gate with eight regression methods (75 Python tests total), including robots/canonical drift and crawl-path checks. Public spot checks of four priority pages, robots and sitemap pass. No public content/theme/indexing policy changed and no indexation or traffic lift is claimed. See `reports/seo/indexation-contract-2026-10-24.md`.
