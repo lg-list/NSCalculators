@@ -4,6 +4,8 @@ Updated: October 24, 2026
 
 ## Current Measurement
 
+October 24 technical guard: verified all 302 sitemap URLs are self-canonical, statically index-eligible and reachable through sitemap-page HTML links within three clicks. Added a full-sitemap deployment gate with eight regression methods (75 Python tests total), including robots/canonical drift and crawl-path checks. Public spot checks of four priority pages, robots and sitemap pass. No public content/theme/indexing policy changed and no indexation or traffic lift is claimed. See `reports/seo/indexation-contract-2026-10-24.md`.
+
 October 24 exact-query follow-up: Pages breakdown confirms `car price estimate` -> Used Car Value (25 impressions), while the poor-condition long tail exposes both current-value and future-resale tools (6 and 9 page impressions against 11 property impressions; do not add them as unique searches). Keep distinct tools, not redirects. Upgraded current-value condition differences, validation and stale-output cleanup; added condition-matched examples and contextual routing between current/future intent. All 67 Python and 644 JavaScript cases pass locally. See `reports/seo/used-car-condition-2026-10-24.md`; outcome remains unmeasured.
 
 Latest usability execution, October 24: shared calculators now support scoped Enter submission from numeric/text fields, including each loan model, while preserving native controls and IME behavior. Added 34 keyboard regressions; local desktop/mobile checks pass. No formula, snippet, theme or indexation change. See `reports/seo/calculator-keyboard-2026-10-24.md`. Traffic impact is unmeasured.

@@ -35,6 +35,9 @@ jobs:
           PUBLIC_BASE_PATH: ""
         run: python build.py
 
+      - name: Check sitemap eligibility and crawl paths
+        run: python scripts/check_indexation_contract.py dist
+
       - name: Check elapsed-time calculations
         run: node scripts/test_time_duration.cjs dist/assets/calculator.js
 
