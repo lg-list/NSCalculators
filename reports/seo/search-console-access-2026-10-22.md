@@ -1,5 +1,9 @@
 # Search Console measurement access
 
+## Update: October 24
+
+The existing signed-in in-app browser now provides a working free path. Selected a completed September 24-October 21 daily interval, United States and Web (text-based), and downloaded/validated the original Google CSV export. The new baseline is 4 clicks / 5,933 impressions, with incomplete query/page detail. See `us-measurement-recovery-2026-10-24.md` and `exports/us-search-baseline-2026-10-24.json`. The limitation below remains historical evidence about the paid connector and the earlier failed browser attempt, not a current claim that all Search Console access is blocked. No paid subscription or account change was made.
+
 ## Newly verified limitation
 
 On 2026-10-22 the connected GSC Wizard reader refused requests. Its detailed error was `payment_required` / `subscription_required`; the initial structured response only reported `INVALID_ARGUMENT`. The follow-up property listing exposed the actual reason: the connector has no active trial or subscription. Further retries cannot provide current Search Console data until that access condition changes.

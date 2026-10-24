@@ -1,0 +1,279 @@
+{
+  "source": "Google Search Console browser CSV export",
+  "report_url": "https://search.google.com/u/1/search-console/performance/search-analytics?resource_id=sc-domain%3Anscalculators.com&time_granularity=DAY&start_date=20260924&end_date=20261021&country=usa",
+  "source_filename": "nscalculators.com-Performance-on-Search-2026-10-24.zip",
+  "source_sha256": "c5a2ec4c2e7132624cf60b78d7cbbe5aa7e08af221d3765e25129a59dd4b791e",
+  "source_tables": {
+    "dates": {
+      "name": "\u56fe\u8868.csv",
+      "sha256": "89cab832b2f98825989ab5981923a1a2ef501d9a14d3686b6c66094b8215508e",
+      "rows": 28
+    },
+    "queries": {
+      "name": "\u67e5\u8be2\u6570.csv",
+      "sha256": "0402590c7004f8462524d7768a028510814f118e5b3902c2ce1c53cfb9c087cd",
+      "rows": 1000
+    },
+    "pages": {
+      "name": "\u7f51\u9875.csv",
+      "sha256": "2b0117198f30ec4e0c16c128335bc26aaccc6f96702ed7e4c90977a084032c95",
+      "rows": 154
+    },
+    "countries": {
+      "name": "\u56fd\u5bb6_\u5730\u533a.csv",
+      "sha256": "e9d407e55c2f2566457cd1709c82632dcf7aff9df4e3658cc679dc23169325ba",
+      "rows": 1
+    },
+    "devices": {
+      "name": "\u8bbe\u5907.csv",
+      "sha256": "61fbf844e482853c762d91fcf5b462f84c92c7517a6e54afe252ec46bb29cc27",
+      "rows": 3
+    },
+    "filters": {
+      "name": "\u8fc7\u6ee4\u5668.csv",
+      "sha256": "a8052afc3bc2f214eb4317d5ed0d48c370ef9c1568f5460a59e068d7ce198b61",
+      "rows": 3
+    }
+  },
+  "site": "sc-domain:nscalculators.com",
+  "country": "usa",
+  "search_type": "web_text_based",
+  "search_type_source_label": "\u7f51\u9875\uff08\u57fa\u4e8e\u6587\u672c\uff09",
+  "period_start": "2026-09-24",
+  "period_end": "2026-10-21",
+  "totals": {
+    "clicks": 4,
+    "impressions": 5933,
+    "ctr_percent_calculated": 0.06741951795044665,
+    "position_reported": 49.9,
+    "days": 28
+  },
+  "row_totals_vs_site": {
+    "queries": {
+      "clicks": 1,
+      "impressions": 3380,
+      "clicks_row_to_site_ratio": 0.25,
+      "impressions_row_to_site_ratio": 0.5696949266812742,
+      "rows": 1000
+    },
+    "pages": {
+      "clicks": 1,
+      "impressions": 4006,
+      "clicks_row_to_site_ratio": 0.25,
+      "impressions_row_to_site_ratio": 0.6752064722737232,
+      "rows": 154
+    }
+  },
+  "query_rows_at_export_limit": true,
+  "near_page_one_queries": [
+    {
+      "key": "area calculator",
+      "clicks": 0,
+      "impressions": 590,
+      "ctr_percent_reported": 0.0,
+      "position": 8.29
+    },
+    {
+      "key": "car price estimate",
+      "clicks": 0,
+      "impressions": 25,
+      "ctr_percent_reported": 0.0,
+      "position": 11.72
+    },
+    {
+      "key": "ratio calculator",
+      "clicks": 0,
+      "impressions": 16,
+      "ctr_percent_reported": 0.0,
+      "position": 12.44
+    },
+    {
+      "key": "fuel cost calculator",
+      "clicks": 0,
+      "impressions": 14,
+      "ctr_percent_reported": 0.0,
+      "position": 8.5
+    },
+    {
+      "key": "vehicle price estimator that includes values for poor condition cars",
+      "clicks": 0,
+      "impressions": 11,
+      "ctr_percent_reported": 0.0,
+      "position": 20.09
+    }
+  ],
+  "page_rows": [
+    {
+      "key": "https://nscalculators.com/area-calculator/",
+      "clicks": 0,
+      "impressions": 592,
+      "ctr_percent_reported": 0.0,
+      "position": 8.41
+    },
+    {
+      "key": "https://nscalculators.com/car-trade-in-value-calculator/",
+      "clicks": 0,
+      "impressions": 533,
+      "ctr_percent_reported": 0.0,
+      "position": 81.68
+    },
+    {
+      "key": "https://nscalculators.com/used-car-value-calculator/",
+      "clicks": 0,
+      "impressions": 329,
+      "ctr_percent_reported": 0.0,
+      "position": 59.84
+    },
+    {
+      "key": "https://nscalculators.com/boat-loan-calculator/",
+      "clicks": 0,
+      "impressions": 294,
+      "ctr_percent_reported": 0.0,
+      "position": 90.27
+    },
+    {
+      "key": "https://nscalculators.com/personal-loan-calculator/",
+      "clicks": 0,
+      "impressions": 240,
+      "ctr_percent_reported": 0.0,
+      "position": 80.5
+    },
+    {
+      "key": "https://nscalculators.com/401k-calculator/",
+      "clicks": 0,
+      "impressions": 176,
+      "ctr_percent_reported": 0.0,
+      "position": 77.55
+    },
+    {
+      "key": "https://nscalculators.com/towing-capacity-calculator/",
+      "clicks": 0,
+      "impressions": 105,
+      "ctr_percent_reported": 0.0,
+      "position": 76.47
+    },
+    {
+      "key": "https://nscalculators.com/rmd-calculator/",
+      "clicks": 0,
+      "impressions": 99,
+      "ctr_percent_reported": 0.0,
+      "position": 82.94
+    },
+    {
+      "key": "https://nscalculators.com/car-resale-value-calculator/",
+      "clicks": 0,
+      "impressions": 86,
+      "ctr_percent_reported": 0.0,
+      "position": 57.57
+    },
+    {
+      "key": "https://nscalculators.com/wheel-offset-calculator/",
+      "clicks": 0,
+      "impressions": 84,
+      "ctr_percent_reported": 0.0,
+      "position": 79.74
+    },
+    {
+      "key": "https://nscalculators.com/amortization-calculator/",
+      "clicks": 0,
+      "impressions": 83,
+      "ctr_percent_reported": 0.0,
+      "position": 71.14
+    },
+    {
+      "key": "https://nscalculators.com/trip-fuel-cost-calculator/",
+      "clicks": 0,
+      "impressions": 70,
+      "ctr_percent_reported": 0.0,
+      "position": 50.46
+    },
+    {
+      "key": "https://nscalculators.com/business-loan-calculator/",
+      "clicks": 0,
+      "impressions": 61,
+      "ctr_percent_reported": 0.0,
+      "position": 87.82
+    },
+    {
+      "key": "https://nscalculators.com/private-party-car-value-calculator/",
+      "clicks": 0,
+      "impressions": 56,
+      "ctr_percent_reported": 0.0,
+      "position": 60.79
+    },
+    {
+      "key": "https://nscalculators.com/sq-feet-to-sq-meters-calculator/",
+      "clicks": 0,
+      "impressions": 55,
+      "ctr_percent_reported": 0.0,
+      "position": 74.65
+    },
+    {
+      "key": "https://nscalculators.com/kilometers-to-miles-calculator/",
+      "clicks": 0,
+      "impressions": 51,
+      "ctr_percent_reported": 0.0,
+      "position": 68.67
+    },
+    {
+      "key": "https://nscalculators.com/grams-to-pounds-calculator/",
+      "clicks": 0,
+      "impressions": 45,
+      "ctr_percent_reported": 0.0,
+      "position": 68.18
+    },
+    {
+      "key": "https://nscalculators.com/seconds-to-hours-calculator/",
+      "clicks": 0,
+      "impressions": 44,
+      "ctr_percent_reported": 0.0,
+      "position": 60.86
+    },
+    {
+      "key": "https://nscalculators.com/ira-calculator/",
+      "clicks": 0,
+      "impressions": 41,
+      "ctr_percent_reported": 0.0,
+      "position": 83.0
+    },
+    {
+      "key": "https://nscalculators.com/knots-to-miles-per-hour-calculator/",
+      "clicks": 0,
+      "impressions": 40,
+      "ctr_percent_reported": 0.0,
+      "position": 55.45
+    }
+  ],
+  "devices": [
+    {
+      "key": "\u79fb\u52a8\u8bbe\u5907",
+      "clicks": 3,
+      "impressions": 1669,
+      "ctr_percent_reported": 0.18,
+      "position": 43.99
+    },
+    {
+      "key": "\u684c\u9762",
+      "clicks": 1,
+      "impressions": 4228,
+      "ctr_percent_reported": 0.02,
+      "position": 52.33
+    },
+    {
+      "key": "\u5e73\u677f\u7535\u8111",
+      "clicks": 0,
+      "impressions": 36,
+      "ctr_percent_reported": 0.0,
+      "position": 37.89
+    }
+  ],
+  "us_monthly_market_search_volume": null,
+  "limitations": [
+    "Separate query/page tables are not query-page pairs.",
+    "Named rows are incomplete; missing rows are not zero.",
+    "Clicks are not sessions or visitors.",
+    "This lagged interval cannot measure releases after its end date.",
+    "Daily/country/device totals reconcile here; page/property aggregation and table limits prevent treating row ratios as exact completeness measures.",
+    "Google exports unavailable placeholders as zeros; the CSV alone cannot distinguish every such value from a real zero."
+  ]
+}

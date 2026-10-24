@@ -4,6 +4,8 @@ The source geography was audited on 2026-10-20. The existing Keyword Planner
 statistics and paid forecast both target **China**, not the United States.
 Do not use their volumes, bids or priority labels as US demand validation.
 
+On 2026-10-24 a free signed-in Search Console browser export restored current measurement access. `us-search-baseline-2026-10-24.json` is an aggregate audit of the United States, text-based Web, September 24-October 21 export. Counts and table-grain limitations are explicit; this is observed site performance, not US monthly market search volume. Separate Queries and Pages files must not be joined to invent exact query/page pairs. Original CSV ZIP files stay local and unchanged; the summary retains source hashes. Validate subsequent exports with `scripts/audit_gsc_export.py` and their observed report URL before comparing equal, non-overlapping windows.
+
 | File | Meaning and permitted use |
 | --- | --- |
 | `keyword-stats-positive.json` | Historical China averages, August 2025-July 2026; preserved unchanged. Not US volume. |
