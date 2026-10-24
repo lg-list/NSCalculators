@@ -6152,6 +6152,17 @@ function calc(e){
 }
 function trackGA4Event(name,params){if(typeof window.gtag==='function')window.gtag('event',name,params)}
 function currentEngine(){return document.querySelector('[data-engine]')?.dataset.engine||''}
+function calculateOnEnter(event){
+  if(event.key!=='Enter'||event.defaultPrevented||event.isComposing||event.keyCode===229||event.repeat||event.ctrlKey||event.altKey||event.metaKey||event.shiftKey)return;
+  const input=event.target;
+  if(input?.tagName!=='INPUT'||!['text','number'].includes(input.type)||input.disabled||input.readOnly||input.closest('form'))return;
+  const scope=input.closest('.loan-mode-input')||input.closest('.calc');
+  const button=scope?.querySelector('.calc-btn[data-engine]');
+  if(!button||button.disabled||!input.getClientRects().length||!button.getClientRects().length)return;
+  event.preventDefault();
+  button.click();
+}
+document.addEventListener('keydown',calculateOnEnter);
 document.addEventListener('click',e=>{const btn=e.target.closest('[data-engine]');if(btn){const engine=btn.dataset.engine;calc(engine);trackGA4Event('calculator_submit',{calculator_engine:engine,calculator_path:location.pathname})}});
  document.addEventListener('click',e=>{const button=e.target.closest('#geo_add_section,#geo_subtract_section');if(button){const p=geometryAreaProjection();if(!p.valid||!Number.isFinite(p.squareMeters)||p.squareMeters<=0){show(`<strong>Section not saved</strong><br>${H(p.message||'Enter dimensions with a finite positive area.')}`);return}const operation=button.id==='geo_subtract_section'?'subtract':'add';geometryAreaSections.push({shape:p.shapeLabel,squareMeters:p.squareMeters,operation});renderGeometryAreaTotal();calc('area_advanced');trackGA4Event('calculator_submit',{calculator_engine:'area_advanced',calculator_path:location.pathname,interaction_type:operation==='subtract'?'subtract_room_section':'add_room_section',shape:p.shape});return}const remove=e.target.closest('[data-geo-remove]');if(remove){geometryAreaSections.splice(Number(remove.dataset.geoRemove),1);renderGeometryAreaTotal();calc('area_advanced');return}if(e.target.closest('#geo_clear_sections')||e.target.closest('[data-clear]')&&currentEngine()==='area_advanced'){geometryAreaSections.length=0;renderGeometryAreaTotal()}});
  document.addEventListener('change',e=>{if(e.target.closest('.geometry-area-fields')){calc('area_advanced');renderGeometryAreaTotal()}});
