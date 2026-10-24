@@ -64,6 +64,13 @@ class MathClusterTests(unittest.TestCase):
         self.assertIn("Using Y = 3 answers the part-to-part question", html)
         self.assertIn("https://openstax.org/books/prealgebra-2e/pages/6-1-understand-percent", html)
 
+    def test_ratio_small_results_explain_scientific_notation(self):
+        html = self.pages["ratio-calculator"]
+        self.assertIn("1e-12:2e-12", html)
+        self.assertIn("0.000000000001:0.000000000002", html)
+        self.assertIn("rather than being rounded to a misleading 0:0", html)
+        self.assertIn("safe-integer range", html)
+
 
 if __name__ == "__main__":
     unittest.main()

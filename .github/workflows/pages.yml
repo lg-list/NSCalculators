@@ -89,6 +89,9 @@ jobs:
       - name: Check exact-cent tips and bill splitting
         run: node scripts/test_tip.cjs dist/assets/calculator.js
 
+      - name: Check ratios, small outputs and allocation ranges
+        run: node scripts/test_ratio.cjs dist/assets/calculator.js
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
