@@ -38,6 +38,9 @@ jobs:
       - name: Check sitemap eligibility and crawl paths
         run: python scripts/check_indexation_contract.py dist
 
+      - name: Check structured data and breadcrumb target consistency
+        run: python scripts/check_schema_contract.py dist
+
       - name: Check analytics URL metadata minimization
         run: node scripts/test_analytics_context.cjs dist/area-calculator/index.html
 
