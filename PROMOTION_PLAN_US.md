@@ -4,6 +4,8 @@ Updated: October 24, 2026
 
 ## Current Measurement
 
+October 24 original-content follow-up: added a scaled L-shaped-room diagram, accessible caption/table and calculator workflow to the existing irregular-room guide. Coordinates verify 280 - 48 = 168 + 64 = 232 sq ft; no new/competing URL or snippet change. 80 Python tests and local three-width browser checks pass; all 302 sitemap URLs retain crawl-path eligibility. See `reports/seo/irregular-room-diagram-2026-10-24.md`. Traffic impact is unmeasured.
+
 October 24 analytics follow-up: added explicit query/fragment-free page_location and origin-only page_referrer to the existing Google tag; real-SDK collection requests were intercepted locally, not sent as production traffic. Found that automatic view_search_results still reads URL q into search_term independently; explicit approval to disable Site search enhanced measurement has been requested, not assumed. No account setting changed. Keep Search Console clicks, GA4 Google-organic sessions/users and calculator attempts separate; no GA4 session total or goal attainment is established. 78 Python tests and six context scenarios pass. See `reports/seo/analytics-context-2026-10-24.md`.
 
 October 24 Area correctness follow-up: reproduced and corrected a full-circle sector perimeter overstatement and direct-Heron failure for thin/large/small triangles. Added stable Kahan-factor evaluation and explicit boundary explanations on the existing page; titles/theme/index scope remain stable. All 76 Python and 708 JavaScript checks pass locally; desktop/mobile room-total workflows remain intact. See `reports/seo/area-boundary-stability-2026-10-24.md`. No search outcome is yet measured.

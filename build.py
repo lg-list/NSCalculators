@@ -5032,8 +5032,11 @@ def info_pages(site):
 <p>For a stepped or L-shaped room, draw imaginary lines to create rectangles. Choose either a horizontal or vertical split and ensure each part is counted exactly once. If the room has a central cutout, calculate the full outside rectangle first, then subtract the cutout. Do not both subtract a cutout and omit it from the component rectangles; that would count the missing space twice.</p>
 <p>Use a triangle for a straight diagonal boundary, a circle or sector for a curved section, and a rectangle for a square-cornered alcove. If a wall jog is easier to measure as a triangle plus rectangle, that is valid as long as the shapes cover the floor with no gaps or overlap.</p>
 <h2>Worked example: an L-shaped room</h2>
+<figure class="room-area-figure"><img src="/assets/images/l-shaped-room-232-sq-ft.svg" width="360" height="350" loading="lazy" decoding="async" alt="L-shaped floor plan: 20 by 14 feet outside, minus an 8 by 6 foot upper-right cutout; sections A and B total 232 square feet."><figcaption>Blue A and green B are floor area. The dashed red corner is missing floor, not a third section to add.</figcaption></figure>
 <p>Suppose the L-shaped floor fits inside a 20 ft by 14 ft rectangle, with an 8 ft by 6 ft rectangular corner missing. The outside rectangle is 20 x 14 = 280 sq ft. The missing section is 8 x 6 = 48 sq ft. Subtract the missing area: 280 - 48 = <strong>232 sq ft</strong>.</p>
 <p>You can check the same room by splitting it into two non-overlapping rectangles: a 12 ft by 14 ft section (168 sq ft) and an 8 ft by 8 ft section (64 sq ft). Their total is 168 + 64 = 232 sq ft. If the two methods disagree, recheck which side lengths belong to the inset and whether a section was included twice.</p>
+<div class="table-scroll"><table class="data-table"><caption>Two checks for the same L-shaped floor</caption><thead><tr><th scope="col">Method</th><th scope="col">Calculation</th><th scope="col">Net area</th></tr></thead><tbody><tr><th scope="row">Subtract the corner</th><td>20 x 14 - 8 x 6 = 280 - 48</td><td>232 sq ft</td></tr><tr><th scope="row">Add A and B</th><td>12 x 14 + 8 x 8 = 168 + 64</td><td>232 sq ft</td></tr></tbody></table></div>
+<p>In the <a href="/area-calculator/">area calculator</a>, the subtraction check is one 20-by-14 rectangle added and one 8-by-6 rectangle subtracted. The addition check is a 12-by-14 rectangle plus an 8-by-8 rectangle. Clear the room total between methods so the same floor is not counted twice. These numbers describe this example only; measure your own outline before ordering material.</p>
 <h2>Convert feet and inches before multiplying</h2>
 <p>Do not multiply a measurement in feet by one in inches and label the result square feet. Convert both lengths first. Divide inches by 12 to express them as feet, or convert both dimensions to inches and divide the square-inch result by 144.</p>
 <p>For example, 14 ft 8 in = 14 + 8/12 = 14.6667 ft. A rectangular section that is 14 ft 8 in by 12 ft has an area of about 14.6667 x 12 = 176 sq ft. Keep extra decimal places during intermediate calculations and round the final result to a precision appropriate for the project.</p>
@@ -5052,6 +5055,9 @@ def info_pages(site):
 
 
 CSS = r'''
+.room-area-figure{margin:20px 0;max-width:460px}
+.room-area-figure img{display:block;width:100%;height:auto}
+.room-area-figure figcaption{margin-top:8px;font-size:16px;line-height:1.5;color:var(--muted)}
 .prose .ratio-conversion-table{table-layout:fixed;font-size:16px;line-height:1.4}
 .prose .ratio-conversion-table th,.prose .ratio-conversion-table td{white-space:normal;overflow-wrap:anywhere;padding:8px 6px}
 .prose .ratio-conversion-table th:first-child{width:42%}
@@ -7574,6 +7580,8 @@ def build():
     shutil.copyfile(ROOT / "vendor" / "mathjs-15.2.0.min.js", DIST / "assets" / "mathjs.min.js")
     shutil.copyfile(ROOT / "vendor" / "mathjs-LICENSE.txt", DIST / "assets" / "mathjs-LICENSE.txt")
     shutil.copyfile(ROOT / "vendor" / "mathjs-NOTICE.txt", DIST / "assets" / "mathjs-NOTICE.txt")
+    (DIST / "assets" / "images").mkdir(parents=True, exist_ok=True)
+    shutil.copyfile(ROOT / "src" / "images" / "l-shaped-room-232-sq-ft.svg", DIST / "assets" / "images" / "l-shaped-room-232-sq-ft.svg")
     calculator_js, _ = calculator_assets()
     (DIST / "assets" / "calculator.js").write_bytes(calculator_js.encode("utf-8"))
     search_index = calculator_search_index(calculators)

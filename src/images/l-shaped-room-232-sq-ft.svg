@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="350" viewBox="0 0 360 350" role="img" aria-labelledby="title description">
+  <title id="title">L-shaped room: 232 square feet</title>
+  <desc id="description">An outer rectangle is 20 feet wide and 14 feet tall. An 8 by 6 foot corner is missing at the upper right. Section A is 12 by 14 feet, or 168 square feet. Section B at the lower right is 8 by 8 feet, or 64 square feet. Both 280 minus 48 and 168 plus 64 give 232 square feet.</desc>
+  <g font-family="Arial, Helvetica, sans-serif" font-size="20" text-anchor="middle" fill="#152033">
+    <rect id="section-a" x="50" y="90" width="156" height="182" fill="#e4eeff"/>
+    <rect id="section-b" x="206" y="168" width="104" height="104" fill="#dcf4ee"/>
+    <rect id="cutout" x="206" y="90" width="104" height="78" fill="#fff0f0" stroke="#bc3e47" stroke-width="2" stroke-dasharray="5 4"/>
+    <path d="M50 90H206V168H310V272H50Z" fill="none" stroke="#2563eb" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M206 168V272" stroke="#417c73" stroke-width="2" stroke-dasharray="5 4"/>
+    <text x="128" y="178" font-weight="700">A</text>
+    <text x="128" y="208">168 sq ft</text>
+    <text x="258" y="211" font-weight="700">B</text>
+    <text x="258" y="242">64 sq ft</text>
+    <text x="258" y="118" fill="#9b3039">8 x 6 ft</text>
+    <text x="258" y="149" fill="#9b3039">48 sq ft</text>
+    <g stroke="#667085" stroke-width="1.5" fill="none">
+      <path d="M50 42H310M50 36V48M310 36V48"/>
+      <path d="M50 76H206M50 70V82M206 70V82"/>
+      <path d="M32 90V272M26 90H38M26 272H38"/>
+      <path d="M332 90V168M326 90H338M326 168H338"/>
+      <path d="M332 168V272M326 272H338"/>
+      <path d="M206 298H310M206 292V304M310 292V304"/>
+    </g>
+    <text x="180" y="30">20 ft</text>
+    <text x="128" y="66">12 ft</text>
+    <text transform="translate(20 181) rotate(-90)">14 ft</text>
+    <text transform="translate(350 129) rotate(-90)">6 ft</text>
+    <text transform="translate(350 220) rotate(-90)">8 ft</text>
+    <text x="258" y="325">8 ft</text>
+  </g>
+</svg>
