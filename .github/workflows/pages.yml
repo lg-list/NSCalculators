@@ -92,6 +92,9 @@ jobs:
       - name: Check ratios, small outputs and allocation ranges
         run: node scripts/test_ratio.cjs dist/assets/calculator.js
 
+      - name: Check shared numeric formatting and formatter reuse
+        run: node scripts/test_number_formatters.cjs dist/assets/calculator.js
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

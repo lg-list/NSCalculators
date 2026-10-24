@@ -5366,9 +5366,13 @@ HOME_JS = r'''
 
 CALC_JS = r'''
 const $=s=>document.querySelector(s), V=id=>parseFloat(document.getElementById(id)?.value||0);
-const F=(n,d=2)=>Number.isFinite(n)?n.toLocaleString('en-US',{maximumFractionDigits:d}):'n/a';
-const USD=n=>new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:2}).format(Number.isFinite(n)?n:0);
-const MONEY=(n,currency='USD')=>new Intl.NumberFormat('en-US',{style:'currency',currency,maximumFractionDigits:2}).format(Number.isFinite(n)?n:0);
+const NUMBER_FORMATTERS=new Map();
+const numberFormatter=digits=>{if(!NUMBER_FORMATTERS.has(digits))NUMBER_FORMATTERS.set(digits,new Intl.NumberFormat('en-US',{maximumFractionDigits:digits}));return NUMBER_FORMATTERS.get(digits)};
+const CURRENCY_FORMATTERS=new Map();
+const currencyFormatter=currency=>{if(!CURRENCY_FORMATTERS.has(currency))CURRENCY_FORMATTERS.set(currency,new Intl.NumberFormat('en-US',{style:'currency',currency,maximumFractionDigits:2}));return CURRENCY_FORMATTERS.get(currency)};
+const F=(n,d=2)=>Number.isFinite(n)?numberFormatter(d).format(n):'n/a';
+const USD=n=>currencyFormatter('USD').format(Number.isFinite(n)?n:0);
+const MONEY=(n,currency='USD')=>currencyFormatter(currency).format(Number.isFinite(n)?n:0);
 const H=value=>String(value).replace(/[&<>"']/g,char=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[char]);
 const RMD_JOINT_TABLE=__RMD_JOINT_TABLE__;
 function show(html){const r=$('#result');if(r)r.innerHTML=html}
