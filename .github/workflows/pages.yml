@@ -95,6 +95,9 @@ jobs:
       - name: Check shared numeric formatting and formatter reuse
         run: node scripts/test_number_formatters.cjs dist/assets/calculator.js
 
+      - name: Check proportion and mean sample-size planning
+        run: node scripts/test_sample_size.cjs dist/assets/calculator.js
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
