@@ -86,6 +86,9 @@ jobs:
       - name: Check comparable-based used-car valuation
         run: node scripts/test_used_car_value.cjs dist/assets/calculator.js
 
+      - name: Check exact-cent tips and bill splitting
+        run: node scripts/test_tip.cjs dist/assets/calculator.js
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
