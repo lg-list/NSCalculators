@@ -8,6 +8,7 @@ On 2026-10-24 a free signed-in Search Console browser export restored current me
 
 | File | Meaning and permitted use |
 | --- | --- |
+| `us-query-page-observations-2026-10-24.json` | Browser-observed exact-query Pages breakdowns for two US car-value intents. Genuine scoped pairs, not a join of separate exports. Page impression counts are not unique searches. |
 | `keyword-stats-positive.json` | Historical China averages, August 2025-July 2026; preserved unchanged. Not US volume. |
 | `keyword-stats-provenance.json` | Verified source geography, periods, original-file hashes and a canonical-JSON fingerprint of the derived rows. |
 | `seo-keyword-strategy-2026-09-05.json` | Historical strategy; its intended US audience was incorrectly combined with China metrics. See its correction block before using it. |

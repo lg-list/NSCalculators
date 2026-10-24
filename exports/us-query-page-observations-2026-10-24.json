@@ -1,0 +1,35 @@
+{
+  "source": "Search Console visible report UI; exact query filter with Pages breakdown",
+  "observed_date": "2026-10-24",
+  "site": "sc-domain:nscalculators.com",
+  "country": "usa",
+  "period_start": "2026-09-24",
+  "period_end": "2026-10-21",
+  "search_type_ui_label": "Web / Network",
+  "observations": [
+    {
+      "query": "car price estimate",
+      "report_url": "https://search.google.com/u/1/search-console/performance/search-analytics?resource_id=sc-domain%3Anscalculators.com&time_granularity=DAY&start_date=20260924&end_date=20261021&country=usa&query=!car%20price%20estimate&breakdown=page",
+      "query_aggregate": {"clicks": 0, "impressions": 25, "position_ui_rounded": 11.7},
+      "visible_page_rows": [
+        {"url": "https://nscalculators.com/used-car-value-calculator/", "clicks": 0, "impressions": 25}
+      ]
+    },
+    {
+      "query": "vehicle price estimator that includes values for poor condition cars",
+      "report_url": "https://search.google.com/u/1/search-console/performance/search-analytics?resource_id=sc-domain%3Anscalculators.com&time_granularity=DAY&start_date=20260924&end_date=20261021&country=usa&breakdown=page&query=!vehicle%20price%20estimator%20that%20includes%20values%20for%20poor%20condition%20cars",
+      "query_aggregate": {"clicks": 0, "impressions": 11, "position_ui_rounded": 20.1},
+      "visible_page_rows": [
+        {"url": "https://nscalculators.com/car-resale-value-calculator/", "clicks": 0, "impressions": 9},
+        {"url": "https://nscalculators.com/used-car-value-calculator/", "clicks": 0, "impressions": 6}
+      ]
+    }
+  ],
+  "limitations": [
+    "Page rows are observed under an explicit query filter, not inferred from separate exports.",
+    "Query/site and page impression aggregation differ; 9 plus 6 page impressions are not 15 unique searches.",
+    "Position values above are query aggregates, not separate page positions.",
+    "Multiple displayed URLs alone do not prove harmful cannibalization or justify redirecting distinct tools.",
+    "These are historical site observations, not monthly US market volumes or evidence of this release's effect."
+  ]
+}
