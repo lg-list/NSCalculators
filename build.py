@@ -1344,6 +1344,8 @@ def seo_description(calc):
         return "Calculate square feet for room floors, circles, triangles, or four walls. Subtract doors and windows, add material overage, and estimate cost per square foot."
     if calc.get("slug") == "sample-size-calculator":
         return "Estimate sample size for surveys or a population mean. Choose confidence and margin of error; use a proportion or standard deviation."
+    if calc.get("slug") == "seconds-to-hours-calculator":
+        return "Convert seconds to decimal hours and hours, minutes, seconds. See a days breakdown, preserve fractional seconds, or convert decimal hours back to seconds."
     if calc.get("slug") == "payback-period-calculator":
         return "Calculate simple and discounted payback periods from fixed or annual cash flows. Compare NPV, break-even year, and an investment schedule."
     if calc.get("slug") == "marriage-calculator":
@@ -1882,6 +1884,13 @@ def down_payment_input_html():
 <div class="field"><label for="dp_rate">Interest rate (%/year)</label><input id="dp_rate" type="number" min="0" max="100" step="any" value="7.297"></div>
 <div class="field"><label for="dp_years">Loan term (years)</label><input id="dp_years" type="number" min="0" max="100" step="any" value="30"></div>
 <p class="field-note field-wide">Illustrative rate. Payment excludes taxes, insurance, PMI and HOA.</p>
+</div>"""
+
+
+def seconds_hours_input_html():
+    return """<div class="fields">
+<div class="field field-wide"><label for="seconds_hours_direction">Conversion</label><select id="seconds_hours_direction"><option value="seconds_to_hours" selected>Seconds to hours</option><option value="hours_to_seconds">Decimal hours to seconds</option></select></div>
+<div class="field field-wide"><label for="seconds_hours_value" id="seconds_hours_label">Seconds</label><div class="input-unit"><input id="seconds_hours_value" type="number" min="0" step="any" value="3600"><span id="seconds_hours_unit">s</span></div></div>
 </div>"""
 
 
@@ -2990,6 +2999,14 @@ def conversion_copy(calc):
 
 
 def high_value_calculator_copy(calc):
+    if calc.get("slug") == "seconds-to-hours-calculator":
+        return """
+<h2>Convert seconds to hours, minutes, and seconds</h2><p>Divide seconds by 3,600 to get decimal hours. For a component duration, take the whole hours first, then divide the remaining seconds by 60 to find minutes. The seconds left over complete the result. Hours in this format can exceed 24; a separate breakdown groups full 24-hour days.</p><p class="formula">decimal hours = seconds / 3,600<br>whole hours = floor(seconds / 3,600)<br>minutes = floor(remaining seconds / 60)</p>
+<h2>Worked duration examples</h2><p>3,661 seconds is 1 hour, 1 minute, and 1 second, or about 1.016944444444 decimal hours. For a longer interval, 356,442 seconds is <strong>99 hours, 0 minutes, and 42 seconds</strong>. Grouping full days gives <strong>4 days, 3 hours, 0 minutes, and 42 seconds</strong>. Check it by multiplying 99 by 3,600 and adding 42.</p>
+<h2>Decimal hours are not an hours-and-minutes code</h2><p>1.5 hours means 1 hour and 30 minutes, not 1 hour and 5 minutes. To reverse the conversion, multiply decimal hours by 3,600. For example, 0.1 hour is 360 seconds, or 6 minutes. Neither conversion applies payroll rounding, unpaid breaks, or overtime rules.</p>
+<h2>Fractional seconds and precision</h2><p>Inputs accept nonnegative ordinary decimals with up to six decimal places. The component breakdown uses integer microsecond arithmetic, so 59.999999 seconds stays below one minute and 60 seconds becomes exactly one minute. Decimal hours can repeat and are rounded for display; the component duration preserves the supported input precision.</p><p>The total duration is limited to 9,007,199,254.740991 seconds to keep integer microseconds within the supported range. Enter decimal hours in ordinary notation, not hours:minutes:seconds or scientific notation.</p>
+<h2>Fixed durations versus calendar time</h2><p>The <a href="https://www.nist.gov/pml/special-publication-811/nist-guide-si-chapter-5-units-outside-si" rel="external noopener">NIST Guide to the SI</a> gives 60 seconds per minute, 3,600 seconds per hour, and 86,400 seconds per day. Those are the fixed-duration units used here. This converter does not determine the elapsed time between local timestamps or model daylight-saving transitions, time zones, or leap seconds.</p><p>For two clock times or dates, use the <a href="/time-duration-calculator/">time duration calculator</a> and review its same-clock assumptions. To convert a quantity already in minutes, use the <a href="/minutes-to-seconds-calculator/">minutes to seconds calculator</a>.</p>
+<h2>Frequently asked questions</h2><h3>How many seconds are in an hour?</h3><p>One hour contains 3,600 seconds.</p><h3>Why does the result show 99 hours rather than 3 hours?</h3><p>The hours-minutes-seconds result keeps all whole hours. The days result groups each full 24 hours into a day, leaving hours from 0 through 23.</p><h3>Does 1.30 hours mean 1 hour 30 minutes?</h3><p>No. It means 1.3 decimal hours, or 1 hour and 18 minutes.</p>"""
     if calc.get("slug") == "body-fat-calculator":
         return """
 <h2>Body fat percentage is not BMI</h2><p>Body fat percentage describes the share of body weight estimated to be fat. BMI is weight divided by squared height, not a percentage. The <a href="https://www.cdc.gov/bmi/about/index.html" target="_blank" rel="noopener">CDC explains that BMI does not directly measure body fat</a>. This page calculates a body-fat estimate using a named equation and labels BMI separately.</p>
@@ -3028,6 +3045,7 @@ def high_value_calculator_copy(calc):
 <h2>Decimal hours are different from hours and minutes</h2><p>Divide total seconds by 3,600 to convert a duration to decimal hours. A duration of 1 hour and 30 minutes is 1.5 hours, not 1.30 hours. Likewise, 1 hour, 0 minutes, and 20 seconds equals 3,620 seconds, about 60.333333 minutes, or 1.005556 hours. Displayed decimal totals are rounded, while the component result preserves the entered whole seconds.</p><p class="formula">total hours = total seconds / 3,600; total minutes = total seconds / 60</p>
 <h2>Clock time, time zones, and daylight saving</h2><p>This tool measures the difference on one shared clock. It treats each calendar day as 24 hours and does not apply geographic time zones, daylight-saving transitions, or leap seconds. A real trip across time zones or a shift spanning a daylight-saving change can have a different physical elapsed time. For those situations, first convert both endpoints to the same UTC timeline using a time-zone-aware service.</p>
 <h2>Choose the right related tool</h2><p>Use the <a href="/date-calculator/">date calculator</a> for a difference in whole calendar days, the <a href="/age-calculator/">age calculator</a> for age in calendar years, months, and days, or the <a href="/hours-calculator/">hours calculator</a> to add entered hours and minutes and apply an hourly rate. A duration is not automatically a paid-work total: unpaid breaks, rounding policies, overtime, and payroll rules are not applied here.</p>
+<p>If you already have a total duration rather than two endpoints, use the <a href="/seconds-to-hours-calculator/">seconds to hours converter</a> for decimal hours and a component hours-minutes-seconds breakdown.</p>
 <h2>Frequently asked questions</h2><h3>Is 12 AM midnight or noon?</h3><p>12 AM is midnight and 12 PM is noon in a 12-hour display. In a 24-hour display, use 00:00 for midnight and 12:00 for noon.</p><h3>Can I include seconds?</h3><p>Yes. Both time inputs accept seconds from 00 through 59. The calculation does not round to a whole minute.</p><h3>Does date mode include the entire end day?</h3><p>No. It stops at the exact end time you enter. Midnight on the next day is the end of a full day that began at midnight.</p><h3>What does Now use?</h3><p>Now fills that endpoint with the date and time reported by your device. In time-only mode, its date is retained for use if you switch to date mode.</p>"""
     if calc.get("slug") == "calories-burned-calculator":
         return """
@@ -3939,6 +3957,8 @@ def default_calculator_copy(calc):
 
 
 def analysis_extra_html(calc):
+    if calc.get("slug") == "seconds-to-hours-calculator":
+        return """<section class="mortgage-dashboard generic-dashboard duration-conversion-dashboard" aria-label="Duration conversion results"><div class="section-head stack"><h2>Duration Breakdown</h2></div><div class="summary-grid" id="genericSummary"></div><div class="table-card"><h3>Conversion Details</h3><div class="table-scroll"><table class="data-table" id="genericTable"><thead><tr><th>Measure</th><th>Value</th><th>Basis</th></tr></thead><tbody></tbody></table></div></div></section>"""
     if calc.get("slug") == "body-fat-calculator":
         return """<section class="mortgage-dashboard generic-dashboard body-fat-dashboard" aria-label="Estimated body composition"><div class="section-head stack"><h2>Body Fat Estimate</h2></div><div class="summary-grid" id="genericSummary"></div><div class="chart-card compact-chart"><h3>Estimated Weight Composition</h3><canvas id="genericChart" width="320" height="220" data-chart-type="pie" data-value-format="percent" data-center-label="of body weight" aria-label="Estimated fat and fat-free percentage of body weight"></canvas><p id="bf_chart_note"></p></div><div class="table-card"><h3>Methods and Measurements</h3><div class="table-scroll"><table class="data-table" id="genericTable"><thead><tr><th>Measure</th><th>Estimate</th><th>Basis</th></tr></thead><tbody></tbody></table></div></div></section>"""
     if calc.get("slug") == "cash-back-or-low-interest-calculator":
@@ -4602,6 +4622,8 @@ def calculator_page(site, calc, related):
             "formula": "total pounds = (stones x 14) + additional pounds.",
             "example": "11 stone 10 pounds equals 164 pounds.",
         }
+    if calc.get("slug") == "seconds-to-hours-calculator":
+        calc = {**calc, "desc": "Convert seconds to decimal hours and a complete hours, minutes, seconds or days breakdown. Reverse decimal hours to seconds."}
     title = seo_title(calc)
     desc = seo_description(calc)
     group = calculator_group(calc)
@@ -4654,6 +4676,9 @@ def calculator_page(site, calc, related):
     elif calc.get("slug") == "tip-calculator":
         fields = tip_input_html()
         page_engine = "cn_tip"
+    elif calc.get("slug") == "seconds-to-hours-calculator":
+        fields = seconds_hours_input_html()
+        page_engine = "seconds_hours_advanced"
     elif calc.get("slug") == "time-duration-calculator":
         fields = time_duration_input_html()
         page_engine = "time_duration"
@@ -5084,6 +5109,7 @@ CSS = r'''
 .room-area-figure img{display:block;width:100%;height:auto}
 .room-area-figure figcaption{margin-top:8px;font-size:16px;line-height:1.5;color:var(--muted)}
 .prose .ratio-conversion-table{table-layout:fixed;font-size:16px;line-height:1.4}
+.duration-conversion-dashboard .summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.duration-conversion-dashboard .summary-card{min-width:0}.duration-conversion-dashboard .summary-card strong{overflow-wrap:anywhere}
 .prose .ratio-conversion-table th,.prose .ratio-conversion-table td{white-space:normal;overflow-wrap:anywhere;padding:8px 6px}
 .prose .ratio-conversion-table th:first-child{width:42%}
 .prose .ratio-conversion-table caption{white-space:normal;text-align:left;padding:0 0 8px;line-height:1.4}
@@ -5396,6 +5422,24 @@ function timeDurationDifference(startTime,endTime,startDate=null,endDate=null){
   return{valid:true,totalSeconds,days,hours,minutes,seconds,totalHours:totalSeconds/3600,totalMinutes:totalSeconds/60,overnight,dated};
 }
 function formatTimeDuration(p){return`${p.days?`${F(p.days,0)}d `:''}${p.hours}h ${p.minutes}m ${p.seconds}s`}
+function secondsHoursAmounts({direction,raw}){
+  const fail=message=>({valid:false,message});
+  if(!['seconds_to_hours','hours_to_seconds'].includes(direction))return fail('Choose seconds to hours or decimal hours to seconds.');
+  if(typeof raw!=='string')return fail('Enter a nonnegative duration.');
+  const value=raw.trim();
+  if(value.length>24||! /^(?:\d+(?:\.\d{0,6})?|\.\d{1,6})$/.test(value))return fail('Enter a nonnegative ordinary decimal with up to six decimal places.');
+  const [whole,fraction='']=value.split('.');
+  // Keep remainders exact at the supported microsecond input precision.
+  const inputTicks=BigInt(whole||'0')*1000000n+BigInt(fraction.padEnd(6,'0'));
+  const ticks=inputTicks*(direction==='hours_to_seconds'?3600n:1n);
+  if(ticks>BigInt(Number.MAX_SAFE_INTEGER))return fail('Duration exceeds the supported integer-microsecond range.');
+  const wholeSeconds=ticks/1000000n,fractionText=String(ticks%1000000n).padStart(6,'0').replace(/0+$/,''),suffix=fractionText?'.'+fractionText:'';
+  const secondsText=String(wholeSeconds%60n)+suffix,totalSecondsText=F(Number(wholeSeconds),0)+suffix;
+  const hours=Number(wholeSeconds/3600n),minutes=Number(wholeSeconds%3600n/60n),days=Number(wholeSeconds/86400n),dayHours=hours%24,totalSeconds=Number(ticks)/1000000;
+  return{valid:true,direction,ticks,hours,minutes,secondsText,days,dayHours,totalSecondsText,totalSeconds,totalHours:totalSeconds/3600,totalMinutes:totalSeconds/60,hms:`${F(hours,0)}h ${minutes}m ${secondsText}s`,dhms:`${F(days,0)}d ${dayHours}h ${minutes}m ${secondsText}s`};
+}
+function secondsHoursProjection(){const direction=document.getElementById('seconds_hours_direction')?.value||'seconds_to_hours',label=document.getElementById('seconds_hours_label'),unit=document.getElementById('seconds_hours_unit');if(label)label.textContent=direction==='seconds_to_hours'?'Seconds':'Decimal hours';if(unit)unit.textContent=direction==='seconds_to_hours'?'s':'h';return secondsHoursAmounts({direction,raw:document.getElementById('seconds_hours_value')?.value})}
+function durationDecimal(value){return value>0&&value<1e-9?value.toExponential(8).replace(/\.?0+e/,'e'):F(value,12)}
 function syncTimeDurationMode(){const mode=document.querySelector('input[name="duration_mode"]:checked')?.value||'clock',root=document.querySelector('.duration-fields');if(root){root.classList.toggle('duration-with-dates',mode==='dates');root.querySelectorAll('[data-duration-date]').forEach(el=>{el.hidden=mode!=='dates'});const note=document.getElementById('duration-clock-note');if(note)note.hidden=mode==='dates'}return mode}
 function timeDurationProjection(){const mode=syncTimeDurationMode(),startTime=document.getElementById('duration_start_time')?.value||'',endTime=document.getElementById('duration_end_time')?.value||'',startDate=mode==='dates'?document.getElementById('duration_start_date')?.value||'':null,endDate=mode==='dates'?document.getElementById('duration_end_date')?.value||'':null;return{...timeDurationDifference(startTime,endTime,startDate,endDate),mode,startLabel:mode==='dates'?`${startDate} ${startTime}`:startTime,endLabel:mode==='dates'?`${endDate} ${endTime}`:endTime}}
 function clearTimeDurationForm(){document.querySelectorAll('.duration-fields input[type="time"],.duration-fields input[type="date"]').forEach(input=>{input.value=''});calc('time_duration')}
@@ -6145,7 +6189,7 @@ function syncSquareFeetAcresFields(){const mode=document.getElementById('acre_mo
 function squareFeetAcresProjection(){const mode=syncSquareFeetAcresFields();let squareFeet=0,length=0,width=0;if(mode==='acres_to_sqft')squareFeet=Math.max(0,V('acre_value'))*43560;else if(mode==='dimensions'){length=Math.max(0,V('acre_length'));width=Math.max(0,V('acre_width'));squareFeet=length*width}else squareFeet=Math.max(0,V('acre_sqft'));const acres=squareFeet/43560,squareYards=squareFeet/9,squareMeters=squareFeet*0.09290304,hectares=squareMeters/10000,squareMiles=squareFeet/27878400,sideFeet=Math.sqrt(squareFeet);return{mode,squareFeet,acres,squareYards,squareMeters,hectares,squareMiles,sideFeet,length,width}}
 function syncStonesPoundsFields(){const mode=document.getElementById('stone_mode')?.value||'to_pounds';document.querySelectorAll('[data-stone-mode]').forEach(el=>el.classList.toggle('is-hidden',el.dataset.stoneMode!==mode));return mode}
 function stonesPoundsProjection(){const mode=syncStonesPoundsFields();let enteredStones=0,enteredExtra=0,totalPounds=0;if(mode==='to_stones'){totalPounds=Math.max(0,V('stone_total_lb'))}else{enteredStones=Math.max(0,Math.floor(V('stone_whole')));enteredExtra=Math.max(0,V('stone_extra_lb'));totalPounds=enteredStones*14+enteredExtra}const wholeStones=Math.floor(totalPounds/14+1e-12),remainder=Math.max(0,totalPounds-wholeStones*14),decimalStones=totalPounds/14,kilograms=totalPounds*0.45359237,ounces=totalPounds*16,stonePounds=wholeStones*14;return{mode,enteredStones,enteredExtra,totalPounds,wholeStones,remainder,decimalStones,kilograms,ounces,stonePounds}}
-function clearCalcForm(){const form=document.querySelector('.calc');if(!form)return;form.querySelectorAll('input').forEach(input=>{if(input.type==='checkbox')input.checked=false;else input.value=''});form.querySelectorAll('textarea').forEach(textarea=>{textarea.value=''});form.querySelectorAll('select').forEach(select=>{select.selectedIndex=0});form.querySelectorAll('details').forEach(item=>{item.open=false});syncMortgageCosts();syncConcreteFields();syncRoofFields();syncAreaFields();syncPayDeductionFields();syncSalesTaxFields();syncPercentFields();syncFractionFields();syncRatioFields();syncBmiFields();syncMpgFields();syncCarResaleFields();syncFinanceTarget();syncPaymentMode();syncRetirementMode();syncK401Mode();syncSocialSecurityMode();syncAverageReturnFields();syncDepreciationFields();syncTriangleFields();syncGeometryAreaFields();syncUnitConverterFields(true);syncLitersCubicInchesFields();syncWeeksMonthsFields();syncF150BedFields();syncPayloadCapacityFields();syncDomeGeometryFields();syncYearsMinutesFields();syncSquareFeetAcresFields();syncStonesPoundsFields();syncRomanFields();syncCommissionFields();syncVolumeFields();syncTireFields();show('<strong>0</strong><br>Enter values to calculate a new result.');const engine=currentEngine();if(engine==='sample_size_advanced')renderGenericFromEngine(engine);if(engine==='cn_tip')renderGenericFromEngine(engine);if(engine==='cn_mortgage')renderMortgage(0,0,1,0,0,0,0,0,0,0,0,0,0,new Date());if(engine==='loan_page')renderLoanPage();if(engine==='activity_calorie'||engine==='mpg_advanced'||engine==='fuel_cost_advanced'||engine==='trade_in_estimate'||engine==='f150_bed_advanced'||engine==='payload_capacity_advanced'||engine==='volume_advanced'||engine==='cd_advanced'||engine==='roman_advanced'||engine==='commission_advanced'||engine==='house_affordability_advanced'||engine==='ratio_advanced'||engine==='average_return_advanced'||engine==='depreciation_advanced'||engine==='triangle_advanced'||engine==='area_advanced'||engine==='stones_pounds_advanced'||engine==='square_feet_acres_advanced'||engine==='dome_geometry_advanced'||engine==='years_minutes_advanced'||engine==='weeks_months_advanced'||engine==='liters_cubic_inches_advanced'||engine==='unit_converter_advanced'||engine==='car_resale_advanced')renderGenericFromEngine(engine)}
+function clearCalcForm(){const form=document.querySelector('.calc');if(!form)return;form.querySelectorAll('input').forEach(input=>{if(input.type==='checkbox')input.checked=false;else input.value=''});form.querySelectorAll('textarea').forEach(textarea=>{textarea.value=''});form.querySelectorAll('select').forEach(select=>{select.selectedIndex=0});form.querySelectorAll('details').forEach(item=>{item.open=false});syncMortgageCosts();syncConcreteFields();syncRoofFields();syncAreaFields();syncPayDeductionFields();syncSalesTaxFields();syncPercentFields();syncFractionFields();syncRatioFields();syncBmiFields();syncMpgFields();syncCarResaleFields();syncFinanceTarget();syncPaymentMode();syncRetirementMode();syncK401Mode();syncSocialSecurityMode();syncAverageReturnFields();syncDepreciationFields();syncTriangleFields();syncGeometryAreaFields();syncUnitConverterFields(true);syncLitersCubicInchesFields();syncWeeksMonthsFields();syncF150BedFields();syncPayloadCapacityFields();syncDomeGeometryFields();syncYearsMinutesFields();syncSquareFeetAcresFields();syncStonesPoundsFields();syncRomanFields();syncCommissionFields();syncVolumeFields();syncTireFields();show('<strong>0</strong><br>Enter values to calculate a new result.');const engine=currentEngine();if(engine==='seconds_hours_advanced')renderGenericFromEngine(engine);if(engine==='sample_size_advanced')renderGenericFromEngine(engine);if(engine==='cn_tip')renderGenericFromEngine(engine);if(engine==='cn_mortgage')renderMortgage(0,0,1,0,0,0,0,0,0,0,0,0,0,new Date());if(engine==='loan_page')renderLoanPage();if(engine==='activity_calorie'||engine==='mpg_advanced'||engine==='fuel_cost_advanced'||engine==='trade_in_estimate'||engine==='f150_bed_advanced'||engine==='payload_capacity_advanced'||engine==='volume_advanced'||engine==='cd_advanced'||engine==='roman_advanced'||engine==='commission_advanced'||engine==='house_affordability_advanced'||engine==='ratio_advanced'||engine==='average_return_advanced'||engine==='depreciation_advanced'||engine==='triangle_advanced'||engine==='area_advanced'||engine==='stones_pounds_advanced'||engine==='square_feet_acres_advanced'||engine==='dome_geometry_advanced'||engine==='years_minutes_advanced'||engine==='weeks_months_advanced'||engine==='liters_cubic_inches_advanced'||engine==='unit_converter_advanced'||engine==='car_resale_advanced')renderGenericFromEngine(engine)}
 function armyWhtRatioProjection(){const waist=V('waist'),height=V('height');if(!(waist>0&&height>0))return{valid:false,message:'Enter waist and height values greater than zero.'};return{valid:true,waist,height,ratio:waist/height}}
 function calc(e){
  switch(e){
@@ -6278,6 +6322,7 @@ function calc(e){
   case'cn_random':{let min=Math.ceil(V('min')),max=Math.floor(V('max'));if(max<min){let t=min;min=max;max=t}let val=Math.floor(Math.random()*(max-min+1))+min;show(`<strong>${val}</strong><br>Random integer from ${min} to ${max}.`);break}
   case'cn_age':{let b=new Date(document.getElementById('birth')?.value||''),t=new Date(document.getElementById('target')?.value||'');if(isNaN(b)||isNaN(t)){show('Enter valid dates.');break}let years=t.getFullYear()-b.getFullYear();let before=t.getMonth()<b.getMonth()||(t.getMonth()===b.getMonth()&&t.getDate()<b.getDate());if(before)years--;let days=Math.floor((t-b)/86400000);show(`<strong>${years} years old</strong><br>Total days: ${F(days,0)}.`);renderAge(b,t,years,days);break}
   case'cn_date':{let s=new Date(document.getElementById('start')?.value||''),e2=new Date(document.getElementById('end')?.value||'');if(isNaN(s)||isNaN(e2)){show('Enter valid dates.');break}let days=Math.round((e2-s)/86400000);show(`<strong>${F(days,0)} days</strong><br>End date weekday: ${e2.toLocaleDateString('en-US',{weekday:'long'})}.`);break}
+  case'seconds_hours_advanced':{const p=secondsHoursProjection();show(p.valid?`<strong>${p.direction==='seconds_to_hours'?p.hms:p.totalSecondsText+(p.ticks===1000000n?' second':' seconds')}</strong><br>${p.direction==='seconds_to_hours'?durationDecimal(p.totalHours)+(p.totalHours===1?' decimal hour':' decimal hours'):p.hms}`:`<strong>Check the duration</strong><br>${H(p.message)}`);break}
   case'time_duration':{const p=timeDurationProjection();if(!p.valid)show(`<strong>Check the times</strong><br>${H(p.message)}`);else show(`<strong>${formatTimeDuration(p)}</strong><br>${F(p.totalHours,6)} total hours; ${F(p.totalSeconds,0)} seconds.${p.overnight?'<br>End time is treated as the next day.':''}`);break}
   case'cn_hours':{let total=V('hours')+V('minutes')/60;show(`<strong>${F(total,2)} hours</strong><br>Estimated pay at the entered rate: ${USD(total*V('rate'))}.`);break}
   case'cn_grade':{let pct=V('possible')?V('earned')/V('possible')*100:0,letter=pct>=90?'A':pct>=80?'B':pct>=70?'C':pct>=60?'D':'F';show(`<strong>${F(pct,2)}%</strong><br>Approximate letter grade: ${letter}; weighted points: ${F(pct*V('credits')/100,2)}.`);break}
@@ -6822,6 +6867,10 @@ function renderGenericFromEngine(engine) {
     cards=[["Range size",F(count,0),"Possible integer results."],["Minimum",F(min,0),"Lower bound."],["Maximum",F(max,0),"Upper bound."],["Chance each",`${F(100/count,2)}%`,"Uniform random estimate."]];
     bars=[{label:"Minimum",value:min,display:F(min,0)},{label:"Maximum",value:max,display:F(max,0)},{label:"Range size",value:count,display:F(count,0)}];
     rows=[["Minimum",F(min,0),"Included bound."],["Maximum",F(max,0),"Included bound."],["Possible results",F(count,0),"Inclusive integer count."],["Per-result chance",`${F(100/count,2)}%`,"If uniformly random."]];
+  } else if (engine === "seconds_hours_advanced") {
+    const p=secondsHoursProjection();
+    if(!p.valid){cards=[["Duration","Check inputs",p.message]];rows=[["Validation","Unavailable",p.message]]}
+    else{cards=[["Decimal hours",durationDecimal(p.totalHours),"Total duration divided by 3,600; rounded for display."],["Hours, minutes, seconds",p.hms,"Hours may exceed 24."],["Days and time",p.dhms,"Each day is a fixed 24 hours."],["Total seconds",p.totalSecondsText,"Preserves supported fractional seconds."]];rows=[["Component duration",p.hms,"Whole hours, remaining minutes and seconds."],["Days breakdown",p.dhms,"24-hour days; not calendar dates."],["Total seconds",p.totalSecondsText,"Exact at supported microsecond precision."],["Total minutes",durationDecimal(p.totalMinutes),"Seconds divided by 60; rounded for display."],["Decimal hours",durationDecimal(p.totalHours),"Seconds divided by 3,600; rounded for display."],["Model","Fixed duration","No time-zone, daylight-saving, leap-second or payroll rules."]]}
   } else if (engine === "time_duration") {
     const p=timeDurationProjection();bars=[];
     if(!p.valid){cards=[["Duration","Check inputs",p.message],["Total hours","Unavailable","Enter both endpoints."],["Total minutes","Unavailable","Enter both endpoints."],["Total seconds","Unavailable","Enter both endpoints."]];rows=[["Validation","Unable to calculate",H(p.message)]]}

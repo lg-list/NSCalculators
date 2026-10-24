@@ -8,6 +8,14 @@
   "search_type_ui_label": "Web / Network",
   "observations": [
     {
+      "query": "356442 seconds to hours minutes and seconds",
+      "report_url": "https://search.google.com/u/1/search-console/performance/search-analytics?resource_id=sc-domain%3Anscalculators.com&time_granularity=DAY&start_date=20260924&end_date=20261021&country=usa&breakdown=page&query=!356442%20seconds%20to%20hours%20minutes%20and%20seconds",
+      "query_aggregate": {"clicks": 0, "impressions": 6, "position_ui_rounded": 4.7},
+      "visible_page_rows": [
+        {"url": "https://nscalculators.com/seconds-to-hours-calculator/", "clicks": 0, "impressions": 6}
+      ]
+    },
+    {
       "query": "sample size calculator standard deviation",
       "report_url": "https://search.google.com/u/1/search-console/performance/search-analytics?resource_id=sc-domain%3Anscalculators.com&time_granularity=DAY&start_date=20260924&end_date=20261021&country=usa&breakdown=page&query=!sample%20size%20calculator%20standard%20deviation",
       "query_aggregate": {"clicks": 0, "impressions": 5, "position_ui_rounded": 72.8},
