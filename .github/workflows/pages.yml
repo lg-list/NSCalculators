@@ -74,6 +74,9 @@ jobs:
       - name: Check additive and subtractive room area totals
         run: node scripts/test_area_sections.cjs dist/assets/calculator.js
 
+      - name: Check area boundaries and stable triangle formulas
+        run: node scripts/test_area_geometry.cjs dist/assets/calculator.js
+
       - name: Check scoped calculator keyboard submission
         run: node scripts/test_calculator_keyboard.cjs dist/assets/calculator.js
 

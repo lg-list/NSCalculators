@@ -4,6 +4,8 @@ Updated: October 24, 2026
 
 ## Current Measurement
 
+October 24 Area correctness follow-up: reproduced and corrected a full-circle sector perimeter overstatement and direct-Heron failure for thin/large/small triangles. Added stable Kahan-factor evaluation and explicit boundary explanations on the existing page; titles/theme/index scope remain stable. All 76 Python and 708 JavaScript checks pass locally; desktop/mobile room-total workflows remain intact. See `reports/seo/area-boundary-stability-2026-10-24.md`. No search outcome is yet measured.
+
 October 24 technical guard: verified all 302 sitemap URLs are self-canonical, statically index-eligible and reachable through sitemap-page HTML links within three clicks. Added a full-sitemap deployment gate with eight regression methods (75 Python tests total), including robots/canonical drift and crawl-path checks. Public spot checks of four priority pages, robots and sitemap pass. No public content/theme/indexing policy changed and no indexation or traffic lift is claimed. See `reports/seo/indexation-contract-2026-10-24.md`.
 
 October 24 exact-query follow-up: Pages breakdown confirms `car price estimate` -> Used Car Value (25 impressions), while the poor-condition long tail exposes both current-value and future-resale tools (6 and 9 page impressions against 11 property impressions; do not add them as unique searches). Keep distinct tools, not redirects. Upgraded current-value condition differences, validation and stale-output cleanup; added condition-matched examples and contextual routing between current/future intent. All 67 Python and 644 JavaScript cases pass locally. See `reports/seo/used-car-condition-2026-10-24.md`; outcome remains unmeasured.

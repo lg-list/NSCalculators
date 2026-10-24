@@ -18,6 +18,15 @@ class Buttons(HTMLParser):
 
 
 class AreaSectionTests(unittest.TestCase):
+    def test_boundary_and_numerical_limits_are_explained(self):
+        data = build.read_data()
+        calc = next(c for c in build.base_and_supplemental(data) if c['slug'] == 'area-calculator')
+        html = build.calculator_page(data['site'], calc, [])
+        self.assertIn('no radial cut edges', html)
+        self.assertIn('37.6991 feet, not 49.6991 feet', html)
+        self.assertIn('https://people.eecs.berkeley.edu/~wkahan/Triangle.pdf', html)
+        self.assertIn('cannot recover precision missing from the original measurements', html)
+
     def test_add_and_subtract_commands_share_existing_area_tool(self):
         data = build.read_data()
         calc = next(c for c in build.base_and_supplemental(data) if c['slug'] == 'area-calculator')
