@@ -1,5 +1,7 @@
 # Analytics Metadata and Measurement Scope
 
+Follow-up after explicit owner approval on October 24: Site search enhanced measurement has now been disabled for the matching NS Calculators stream. Reopened settings confirm persistence; a fresh intercepted SDK run retained page_view and calculator_submit without view_search_results or the synthetic search marker. See `analytics-site-search-disabled-2026-10-24.md`. The account-setting limitation below records the state before approval, not a current outstanding request.
+
 Date: 2026-10-24. No GA4 account/report settings were modified.
 
 ## Finding and Bounded Fix
