@@ -80,6 +80,9 @@ jobs:
       - name: Check additive and subtractive room area totals
         run: node scripts/test_area_sections.cjs dist/assets/calculator.js
 
+      - name: Check saved area measurements and local CSV downloads
+        run: node scripts/test_area_records.cjs dist/assets/calculator.js
+
       - name: Check area boundaries and stable triangle formulas
         run: node scripts/test_area_geometry.cjs dist/assets/calculator.js
 

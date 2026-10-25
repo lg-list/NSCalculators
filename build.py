@@ -2008,7 +2008,12 @@ def area_calculator_input_html():
 <div class="field is-hidden" data-geo-shapes="trapezoid"><label for="geo_trap_height">Perpendicular height</label><input id="geo_trap_height" type="number" step="any" min="0" value="7"></div>
 <p class="field-note field-wide">All length inputs use the selected input unit. Height means the perpendicular distance to the base, not a slanted side. Avoid overlapping sections or deducting the same cutout twice.</p>
 <div class="field-wide geo-total-controls"><button class="btn secondary" id="geo_add_section" type="button" title="Add current shape to room total" aria-label="Add current shape to room total">Add section</button><button class="btn secondary" id="geo_subtract_section" type="button" title="Subtract current shape from room total" aria-label="Subtract current shape from room total">Subtract</button></div>
-<section class="geo-total-panel is-hidden" id="geo_total_panel" aria-labelledby="geo_total_heading" aria-live="polite"><h3 id="geo_total_heading">Room area total</h3><p class="geo-total-value" id="geo_total_value"></p><ol class="geo-total-list" id="geo_total_list"></ol><button class="btn secondary" id="geo_clear_sections" type="button">Clear room total</button></section>
+<section class="geo-total-panel is-hidden" id="geo_total_panel" aria-labelledby="geo_total_heading" aria-live="polite"><h3 id="geo_total_heading">Room area total</h3><p class="geo-total-value" id="geo_total_value"></p><ol class="geo-total-list" id="geo_total_list"></ol><div class="geo-record-actions"><button class="btn secondary" id="geo_export_sections" type="button" title="Download saved room total as CSV" aria-label="Download room total CSV" disabled>
+<!-- Lucide download icon, lucide-static 0.468.0, ISC License.
+Copyright (c) for portions of Lucide are held by Cole Bemis 2013-2022 as part of Feather (MIT). All other copyright (c) for Lucide are held by Lucide Contributors 2022.
+Permission to use, copy, modify, and/or distribute this software for any purpose with or without fee is hereby granted, provided that the above copyright notice and this permission notice appear in all copies.
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+--><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>CSV</button><button class="btn secondary" id="geo_clear_sections" type="button">Clear room total</button></div><p class="geo-export-status" id="geo_export_status"></p></section>
 </div>"""
 
 
@@ -3300,7 +3305,7 @@ def high_value_calculator_copy(calc):
 <h2>Ellipse area</h2><p>An ellipse uses two radii: the semi-major axis from the center to the farthest edge and the semi-minor axis from the center to the nearest edge. Multiply the two semi-axis lengths by pi.</p><p class="formula">ellipse area = pi x semi-major axis x semi-minor axis</p><p>The ellipse perimeter has no simple elementary formula. This calculator uses Ramanujan's widely used approximation for the supporting perimeter result, while the area calculation itself is direct.</p>
 <h2>Parallelogram and trapezoid area</h2><p>A parallelogram has the same area as a rectangle with the same base and perpendicular height. A trapezoid's area is its height multiplied by the average of the two parallel base lengths.</p><p class="formula">parallelogram area = base x perpendicular height<br>trapezoid area = (base a + base b) x height / 2</p><p>The calculator does not report a trapezoid perimeter because the two nonparallel side lengths are not provided. Likewise, base and height do not uniquely determine the slanted side lengths of a parallelogram.</p>
 <h2>Convert square units correctly</h2><p>Linear conversion factors must be squared for area. One foot is exactly 0.3048 meter, so one square foot is 0.3048² = 0.09290304 square meter. Multiplying square feet by only 0.3048 would be incorrect. This calculator converts the computed area to square inches, square feet, square yards, square millimeters, square centimeters, square meters, square kilometers, acres, and hectares through square meters.</p><p>One acre is exactly 43,560 square feet under the international-foot relationship used here, and one hectare is 10,000 square meters. Use the <a href="/sq-feet-to-acres-calculator/">square feet to acres calculator</a> when you need lot dimensions and one-acre comparisons.</p>
-<h2>Choosing measurements and rounding</h2><p>Use measurements taken in the same linear unit. If one dimension is in feet and another is in inches, convert one before calculating. The selected input unit applies to every length field on this page. The result is converted to the chosen area unit after the geometric formula is applied. Keep more precision during intermediate calculations and round only the final value to the accuracy supported by the original measurements.</p>
+<h2>Choosing measurements and rounding</h2><p>Use measurements taken in the same linear unit. If one dimension is in feet and another is in inches, convert one before calculating. The selected input unit applies to every length field on this page. The result is converted to the chosen area unit after the geometric formula is applied. Keep more precision during intermediate calculations and round only the final value to the accuracy supported by the original measurements.</p><p>Keep each room section's original dimensions, units and addition or deduction separately from the final converted area. A 280-square-foot outline minus a 48-square-foot cutout gives 232 square feet, but those three numbers alone cannot show whether the cutout measurements or placement were correct. Verify the underlying outline and avoid overlapping sections or subtracting the same opening twice.</p>
 <h2>Formula and unit references</h2><p>The rectangle, square, triangle, circle, and trapezoid formulas match the <a href="https://openstax.org/books/prealgebra/pages/c-geometric-formulas" rel="external noopener">OpenStax geometric formulas reference</a>. The SI unit of area is the square meter, as described by the <a href="https://www.nist.gov/pml/owm/metric-si/si-units-area" rel="external noopener">National Institute of Standards and Technology</a>. NIST conversion tables provide the relationships used for US customary and metric area units. Construction estimates should still include waste, openings, material coverage, and local project requirements; use the <a href="/square-footage-calculator/">square footage calculator</a> for material overage and cost planning.</p>
 <h2>Frequently asked questions</h2><h3>Is area the same as square footage?</h3><p>Square footage is area expressed specifically in square feet. Area can be expressed in any square unit.</p><h3>Can I calculate an irregular room?</h3><p>Split it into supported shapes that do not overlap, then use Add current shape to room total for each piece. For a cutout, leave the missing section out of the sum or subtract its area separately. Confirm that every dimension uses the same scale.</p><h3>Why is triangle perimeter unavailable in base-height mode?</h3><p>Many different triangles can share the same base and height. The other side lengths are required for a unique perimeter.</p><h3>Does the calculator include material waste?</h3><p>No. It calculates geometric area. Flooring, tile, roofing, paint, and concrete projects require product-specific coverage and waste allowances.</p>"""
     if calc.get("slug") == "conversion-calculator":
@@ -5223,6 +5228,7 @@ CSS = r'''
 .calendar-date-dashboard .summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.calendar-date-dashboard .summary-card{min-width:0}.calendar-date-dashboard .summary-card strong{font-size:18px;overflow-wrap:anywhere}
 .new-used-fields .fields{grid-template-columns:repeat(2,minmax(0,1fr));padding:10px}.new-used-fields .field-wide{grid-column:1/-1}.new-used-dashboard .summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.new-used-dashboard .summary-card{min-width:0}.new-used-dashboard .summary-card strong{font-size:20px;overflow-wrap:anywhere}
 .calculator-article .fields.personal-loan-fields{grid-template-columns:repeat(2,minmax(0,1fr))}.personal-loan-fields .field{min-width:0}.personal-loan-fields .field-wide{grid-column:1/-1}.personal-loan-fields .is-hidden{display:none!important}.personal-loan-dashboard .summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.personal-loan-dashboard .summary-card{min-width:0}.personal-loan-dashboard .summary-card strong{font-size:20px;overflow-wrap:anywhere}@media(max-width:560px){.personal-loan-fields>.field:not(.field-wide)>label{min-height:38px;line-height:1.35}}
+.geo-section-measures{display:block;margin-top:3px;font-size:14px;line-height:1.4;color:var(--muted)}.geo-record-actions{display:flex;flex-wrap:wrap;gap:8px}.geo-record-actions .btn{min-height:40px;padding:8px 10px;font-size:14px}.geo-record-actions svg{flex:none;margin-right:6px}.geo-record-actions .btn:disabled{opacity:.55;cursor:not-allowed}.geo-export-status{margin:6px 0 0;font-size:14px;line-height:1.4}.geo-export-status:empty{display:none}
 .prose .ratio-conversion-table th,.prose .ratio-conversion-table td{white-space:normal;overflow-wrap:anywhere;padding:8px 6px}
 .prose .ratio-conversion-table th:first-child{width:42%}
 .prose .ratio-conversion-table caption{white-space:normal;text-align:left;padding:0 0 8px;line-height:1.4}
@@ -6281,6 +6287,10 @@ const AREA_LENGTH_UNITS={mm:['Millimeter','mm',.001],cm:['Centimeter','cm',.01],
 const AREA_OUTPUT_UNITS={sqmm:['Square millimeter','mm²',1e-6],sqcm:['Square centimeter','cm²',1e-4],sqm:['Square meter','m²',1],sqkm:['Square kilometer','km²',1e6],sqin:['Square inch','in²',.00064516],sqft:['Square foot','ft²',.09290304],sqyd:['Square yard','yd²',.83612736],acre:['Acre','acre',4046.8564224],ha:['Hectare','ha',10000]};
 function syncGeometryAreaFields(){const shape=document.getElementById('geo_shape')?.value||'rectangle';document.querySelectorAll('[data-geo-shapes]').forEach(el=>el.classList.toggle('is-hidden',!el.dataset.geoShapes.split(' ').includes(shape)));return shape}
 const geometryAreaSections=[];
+function geometryAreaSection(p,operation='add'){
+  if(!p?.valid||!['add','subtract'].includes(operation)||!Number.isFinite(p.squareMeters)||p.squareMeters<=0||!Array.isArray(p.dimensions)||!p.dimensions.length)return null;
+  return{shape:p.shapeLabel,squareMeters:p.squareMeters,operation,formula:p.formula,measurements:p.dimensions.map(([name,value,unit])=>({name,value,unit}))};
+}
 function geometryAreaTotal(sections,outputKey='sqft'){
   const unit=AREA_OUTPUT_UNITS[outputKey];
   if(!unit)return{valid:false,message:'Choose a valid area result unit.'};
@@ -6302,12 +6312,34 @@ function geometryAreaTotal(sections,outputKey='sqft'){
 function renderGeometryAreaTotal(){
   const panel=document.getElementById('geo_total_panel'),value=document.getElementById('geo_total_value'),list=document.getElementById('geo_total_list');
   if(!panel||!value||!list)return;
+  const download=document.getElementById('geo_export_sections'),status=document.getElementById('geo_export_status');if(status)status.textContent='';
+  if(download)download.disabled=true;
   panel.classList.toggle('is-hidden',geometryAreaSections.length===0);
   if(!geometryAreaSections.length){value.textContent='';list.replaceChildren();return}
   const key=document.getElementById('geo_output_unit')?.value||'sqft',total=geometryAreaTotal(geometryAreaSections,key),unit=AREA_OUTPUT_UNITS[key];
+  if(download)download.disabled=!total.valid;
   value.textContent=total.valid?`${F(total.result,10)} ${total.unit[1]} net room area`:total.message;
   if(!unit){list.replaceChildren();return}
-  list.innerHTML=geometryAreaSections.map((item,index)=>`<li><span>Section ${index+1}: ${item.operation==='subtract'?'Subtract':'Add'} ${H(item.shape)} - ${F(item.squareMeters/unit[2],10)} ${unit[1]}</span><button class="geo-remove-section" type="button" data-geo-remove="${index}" aria-label="Remove section ${index+1}">Remove</button></li>`).join('');
+  list.innerHTML=geometryAreaSections.map((item,index)=>`<li><span>Section ${index+1}: ${item.operation==='subtract'?'Subtract':'Add'} ${H(item.shape)} - ${F(item.squareMeters/unit[2],10)} ${unit[1]}${item.measurements?.length?`<small class="geo-section-measures">${item.measurements.map(m=>`${H(m.name)}: ${H(m.value)} ${H(m.unit)}`).join('; ')}</small>`:''}</span><button class="geo-remove-section" type="button" data-geo-remove="${index}" aria-label="Remove section ${index+1}">Remove</button></li>`).join('');
+}
+function geometryAreaCsv(sections,outputKey='sqft',source='https://nscalculators.com/area-calculator/'){
+  const total=geometryAreaTotal(sections,outputKey);
+  if(!total.valid)return total;
+  if(!sections.length)return{valid:false,message:'Add a room section before exporting.'};
+  if(sections.some(item=>typeof item.shape!=='string'||typeof item.formula!=='string'||!Array.isArray(item.measurements)||!item.measurements.length||item.measurements.some(m=>!m||typeof m.name!=='string'||typeof m.unit!=='string'||!Number.isFinite(m.value)||m.value<=0)))return{valid:false,message:'Recorded dimensions are unavailable. Add those sections again before exporting.'};
+  const computed=value=>Number(value.toPrecision(15)),unit=total.unit,rows=[['Record','Section','Operation','Shape','Measurements','Formula','Area','Area unit','Square meters','Source URL']];
+  sections.forEach((item,index)=>rows.push(['Section',index+1,item.operation==='subtract'?'Subtract':'Add',item.shape,item.measurements.map(m=>`${m.name}: ${m.value} ${m.unit}`).join('; '),item.formula,computed(item.squareMeters/unit[2]),unit[1],computed(item.squareMeters),source]));
+  for(const [label,value] of [['Added',total.added],['Deducted',total.deducted],['Net',total.result]])rows.push(['Summary','',label,'Room total','',label==='Net'?'Added - deducted':'',computed(value),unit[1],computed(value*unit[2]),source]);
+  const cell=value=>{let text=String(value);if(typeof value==='string'&&/^(?:[\t\r\n]|\s*[=+@-])/.test(text))text="'"+text;return '"'+text.replace(/"/g,'""')+'"'};
+  return{valid:true,csv:'\ufeff'+rows.map(row=>row.map(cell).join(',')).join('\r\n')+'\r\n',total};
+}
+function downloadGeometryAreaSections(){
+  const status=document.getElementById('geo_export_status'),key=document.getElementById('geo_output_unit')?.value||'sqft',source=document.querySelector('link[rel="canonical"]')?.href||'https://nscalculators.com/area-calculator/',report=geometryAreaCsv(geometryAreaSections,key,source);
+  if(!report.valid){if(status)status.textContent=report.message;return false}
+  let url,anchor;
+  try{url=URL.createObjectURL(new Blob([report.csv],{type:'text/csv;charset=utf-8'}));anchor=document.createElement('a');anchor.href=url;anchor.download='ns-calculators-room-area.csv';document.body.appendChild(anchor);anchor.click();if(status)status.textContent='CSV prepared for download.';return true}
+  catch{if(status)status.textContent='Unable to create a CSV download in this browser.';return false}
+  finally{anchor?.remove();if(url)setTimeout(()=>URL.revokeObjectURL(url),1000)}
 }
 function stableTriangleArea(a,b,c){
   if(![a,b,c].every(value=>Number.isFinite(value)&&value>0))return NaN;
@@ -6351,7 +6383,9 @@ function geometryAreaProjection(){
   }catch(error){return{valid:false,message:error.message}}
   const squareMeters=area*inputUnit[2]*inputUnit[2],result=squareMeters/outputUnit[2],equivalents=Object.entries(AREA_OUTPUT_UNITS).map(([id,u])=>({id,name:u[0],symbol:u[1],value:squareMeters/u[2]}));
   if(!(area>0&&squareMeters>0&&result>0)||![area,squareMeters,result,...equivalents.map(x=>x.value),...measures.map(x=>x[1])].every(Number.isFinite)||(perimeter!==null&&!Number.isFinite(perimeter)))return{valid:false,message:'Dimensions are too large or small to calculate reliably.'};
-  return{valid:true,shape,shapeLabel,inputKey,outputKey,inputUnit,outputUnit,area,squareMeters,result,perimeter,formula,measures,equivalents};
+  const dimensions=measures.filter(([name])=>!['Diagonal','Diameter','Arc length'].includes(name)).map(([name,value])=>[name,value,inputUnit[1]]);
+  if(shape==='sector')dimensions.push(['Central angle',V('geo_angle'),'deg']);
+  return{valid:true,shape,shapeLabel,inputKey,outputKey,inputUnit,outputUnit,area,squareMeters,result,perimeter,formula,measures,dimensions,equivalents};
 }
 const UNIT_CATEGORIES={
 length:{label:'Length',base:'m',defaults:['in','mm'],units:{mm:['Millimeter','mm',.001],cm:['Centimeter','cm',.01],m:['Meter','m',1],km:['Kilometer','km',1000],in:['Inch','in',.0254],ft:['Foot','ft',.3048],yd:['Yard','yd',.9144],mi:['Mile','mi',1609.344]}},
@@ -6559,7 +6593,19 @@ function calculateOnEnter(event){
 }
 document.addEventListener('keydown',calculateOnEnter);
 document.addEventListener('click',e=>{const btn=e.target.closest('[data-engine]');if(btn){const engine=btn.dataset.engine;calc(engine);trackGA4Event('calculator_submit',{calculator_engine:engine,calculator_path:location.pathname})}});
- document.addEventListener('click',e=>{const button=e.target.closest('#geo_add_section,#geo_subtract_section');if(button){const p=geometryAreaProjection();if(!p.valid||!Number.isFinite(p.squareMeters)||p.squareMeters<=0){show(`<strong>Section not saved</strong><br>${H(p.message||'Enter dimensions with a finite positive area.')}`);return}const operation=button.id==='geo_subtract_section'?'subtract':'add';geometryAreaSections.push({shape:p.shapeLabel,squareMeters:p.squareMeters,operation});renderGeometryAreaTotal();calc('area_advanced');trackGA4Event('calculator_submit',{calculator_engine:'area_advanced',calculator_path:location.pathname,interaction_type:operation==='subtract'?'subtract_room_section':'add_room_section',shape:p.shape});return}const remove=e.target.closest('[data-geo-remove]');if(remove){geometryAreaSections.splice(Number(remove.dataset.geoRemove),1);renderGeometryAreaTotal();calc('area_advanced');return}if(e.target.closest('#geo_clear_sections')||e.target.closest('[data-clear]')&&currentEngine()==='area_advanced'){geometryAreaSections.length=0;renderGeometryAreaTotal()}});
+document.addEventListener('click',e=>{
+  const button=e.target.closest('#geo_add_section,#geo_subtract_section');
+  if(button){
+    const p=geometryAreaProjection(),operation=button.id==='geo_subtract_section'?'subtract':'add',section=geometryAreaSection(p,operation);
+    if(!section){show(`<strong>Section not saved</strong><br>${H(p.message||'Enter dimensions with a finite positive area.')}`);return}
+    geometryAreaSections.push(section);renderGeometryAreaTotal();calc('area_advanced');
+    trackGA4Event('calculator_submit',{calculator_engine:'area_advanced',calculator_path:location.pathname,interaction_type:operation==='subtract'?'subtract_room_section':'add_room_section',shape:p.shape});return;
+  }
+  if(e.target.closest('#geo_export_sections')){downloadGeometryAreaSections();return}
+  const remove=e.target.closest('[data-geo-remove]');
+  if(remove){geometryAreaSections.splice(Number(remove.dataset.geoRemove),1);renderGeometryAreaTotal();calc('area_advanced');return}
+  if(e.target.closest('#geo_clear_sections')||e.target.closest('[data-clear]')&&currentEngine()==='area_advanced'){geometryAreaSections.length=0;renderGeometryAreaTotal()}
+});
  document.addEventListener('change',e=>{if(e.target.closest('.geometry-area-fields')){calc('area_advanced');renderGeometryAreaTotal()}});
 document.addEventListener('click',e=>{const link=e.target.closest('a[href]');if(!link)return;try{const destination=new URL(link.href,location.href);if(/^https?:$/.test(destination.protocol)&&destination.hostname!==location.hostname)trackGA4Event('outbound_reference_click',{destination_host:destination.hostname,source_path:location.pathname})}catch{}});
 document.addEventListener('click',e=>{if(e.target.closest('[data-clear]')){if(currentEngine()==='time_duration')clearTimeDurationForm();else clearCalcForm()}});
