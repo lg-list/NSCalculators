@@ -1,0 +1,21 @@
+{
+  "observed_at_utc": "2026-10-25",
+  "source": "Signed-in Google Search Console UI; exact query filter and Pages table",
+  "property": "sc-domain:nscalculators.com",
+  "country": "United States",
+  "search_type": "Web",
+  "start_date": "2026-09-24",
+  "end_date": "2026-10-21",
+  "query_match": "exact",
+  "query": "cpu calculator",
+  "page": "https://nscalculators.com/bottleneck-calculator/",
+  "clicks": 1,
+  "impressions": 1,
+  "average_position": 58,
+  "limitations": [
+    "The query/page association was checked with an exact query filter, not inferred by joining separate query and page exports.",
+    "One observed click is a tiny sample, not market search volume or evidence to prioritize this cluster above Area.",
+    "Historical UI totals can be revised after an export; that difference is not growth.",
+    "The October 24-25 report is incomplete and is not a comparable post-release measurement window."
+  ]
+}

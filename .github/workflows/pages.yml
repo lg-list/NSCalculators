@@ -98,6 +98,9 @@ jobs:
       - name: Check personal-loan net cash, fees and repayment schedules
         run: node scripts/test_personal_loan.cjs dist/assets/calculator.js
 
+      - name: Check PC evidence ranges and target-status wording
+        run: node scripts/test_bottleneck.cjs dist/assets/calculator.js
+
       - name: Check exact-cent tips and bill splitting
         run: node scripts/test_tip.cjs dist/assets/calculator.js
 
