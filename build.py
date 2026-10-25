@@ -2999,6 +2999,15 @@ def conversion_copy(calc):
 
 
 def high_value_calculator_copy(calc):
+    if calc.get("engine") == "cn_date":
+        return """
+<h2>Calendar day counter</h2><p>Subtract the start date from the end date to count whole calendar-day boundaries. The result also identifies both weekdays and expresses the absolute span as complete weeks plus remaining days. The dates you enter are kept as calendar dates, without shifting them to your device's time zone.</p>
+<p class="formula">signed day difference = end calendar date - start calendar date<br>complete weeks = round down(absolute days / 7); remaining days = remainder after complete weeks</p>
+<h2>Does the count include the end date?</h2><p>The difference does not add an extra day for an inclusive count. January 1 to January 2, 2026 is 1 day: the endpoints are Thursday and Friday. The same start and end date gives 0 days. If your task counts both named dates, that two-date example contains 2 calendar dates; this tool still reports the difference of 1 day.</p>
+<h2>Leap days, weeks and reversed dates</h2><p>February 28 to March 1, 2024 is 2 days because February 29 falls between them. The same endpoints in 2025 are 1 day apart. January 1 to January 10, 2026 is 9 days, or 1 complete week and 2 remaining days. Reversing those dates gives -9 days; the absolute span remains 1 week and 2 days, with the direction shown separately.</p>
+<h2>Calendar days are not stopwatch hours</h2><p>The day count is independent of your device's time zone. A change of clocks for daylight saving does not add or remove a calendar date. This does not measure physical elapsed hours between time-zone-aware timestamps. It also does not divide by an average month length: a calendar month is not a fixed number of days.</p>
+<h2>Business days and deadline rules</h2><p>Every calendar day counts, including weekends and holidays. There is no business-day calendar, holiday lookup, filing rule, payroll rule or automatic deadline adjustment. Use the rules governing your specific task instead of treating this general day difference as a deadline determination. Supported inputs are valid Gregorian calendar dates from year 0001 through 9999; the same calendar is applied to historical dates rather than reconstructing local calendar adoption.</p>
+<h2>Related date and duration tools</h2><p>Use the <a href="/age-calculator/">age calculator</a> for calendar years, months and days, or the <a href="/time-duration-calculator/">time duration calculator</a> when both endpoints also have clock times. Neither a plain day count nor a fixed-hour conversion determines holiday or legal deadline rules.</p>"""
     if calc.get("slug") == "seconds-to-hours-calculator":
         return """
 <h2>Convert seconds to hours, minutes, and seconds</h2><p>Divide seconds by 3,600 to get decimal hours. For a component duration, take the whole hours first, then divide the remaining seconds by 60 to find minutes. The seconds left over complete the result. Hours in this format can exceed 24; a separate breakdown groups full 24-hour days.</p><p class="formula">decimal hours = seconds / 3,600<br>whole hours = floor(seconds / 3,600)<br>minutes = floor(remaining seconds / 60)</p>
@@ -3957,6 +3966,8 @@ def default_calculator_copy(calc):
 
 
 def analysis_extra_html(calc):
+    if calc.get("engine") == "cn_date":
+        return """<section class="mortgage-dashboard generic-dashboard calendar-date-dashboard" aria-label="Calendar date results"><div class="section-head stack"><h2>Calendar Date Results</h2></div><div class="summary-grid" id="genericSummary"></div><div class="table-card"><h3>Date Difference Details</h3><div class="table-scroll"><table class="data-table" id="genericTable"><thead><tr><th>Measure</th><th>Value</th><th>Basis</th></tr></thead><tbody></tbody></table></div></div></section>"""
     if calc.get("slug") == "seconds-to-hours-calculator":
         return """<section class="mortgage-dashboard generic-dashboard duration-conversion-dashboard" aria-label="Duration conversion results"><div class="section-head stack"><h2>Duration Breakdown</h2></div><div class="summary-grid" id="genericSummary"></div><div class="table-card"><h3>Conversion Details</h3><div class="table-scroll"><table class="data-table" id="genericTable"><thead><tr><th>Measure</th><th>Value</th><th>Basis</th></tr></thead><tbody></tbody></table></div></div></section>"""
     if calc.get("slug") == "body-fat-calculator":
@@ -5110,6 +5121,7 @@ CSS = r'''
 .room-area-figure figcaption{margin-top:8px;font-size:16px;line-height:1.5;color:var(--muted)}
 .prose .ratio-conversion-table{table-layout:fixed;font-size:16px;line-height:1.4}
 .duration-conversion-dashboard .summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.duration-conversion-dashboard .summary-card{min-width:0}.duration-conversion-dashboard .summary-card strong{overflow-wrap:anywhere}
+.calendar-date-dashboard .summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.calendar-date-dashboard .summary-card{min-width:0}.calendar-date-dashboard .summary-card strong{font-size:18px;overflow-wrap:anywhere}
 .prose .ratio-conversion-table th,.prose .ratio-conversion-table td{white-space:normal;overflow-wrap:anywhere;padding:8px 6px}
 .prose .ratio-conversion-table th:first-child{width:42%}
 .prose .ratio-conversion-table caption{white-space:normal;text-align:left;padding:0 0 8px;line-height:1.4}
@@ -5412,6 +5424,20 @@ function unitValue(id, base){return document.getElementById(`${id}_unit`)?.value
 function annualCost(id, base){return document.getElementById(`${id}_unit`)?.value==='percent'?base*V(id)/100:V(id)}
 function monthlyCost(id, base){return document.getElementById(`${id}_unit`)?.value==='percent'?base*V(id)/100/12:V(id)/12}
 function monthDate(id){const raw=document.getElementById(id)?.value||'';return /^\d{4}-\d{2}$/.test(raw)?new Date(`${raw}-01T00:00:00`):new Date(raw||Date.now())}
+function calendarDayValue(value){
+  if(typeof value!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(value)||Number(value.slice(0,4))<1)return null;
+  const ms=Date.parse(value+'T00:00:00Z');
+  return Number.isFinite(ms)&&new Date(ms).toISOString().slice(0,10)===value?ms:null;
+}
+function calendarDateLabel(ms){return new Date(ms).toLocaleDateString('en-US',{timeZone:'UTC'})}
+function calendarWeekday(ms){return new Date(ms).toLocaleDateString('en-US',{weekday:'long',timeZone:'UTC'})}
+function calendarDayDifference(start,end){
+  const startMs=calendarDayValue(start),endMs=calendarDayValue(end);
+  if(startMs===null||endMs===null)return{valid:false,message:'Enter valid start and end dates from year 0001 through 9999.'};
+  const days=(endMs-startMs)/86400000,absoluteDays=Math.abs(days);
+  return{valid:true,startMs,endMs,days,absoluteDays,wholeWeeks:Math.floor(absoluteDays/7),remainingDays:absoluteDays%7,startLabel:calendarDateLabel(startMs),endLabel:calendarDateLabel(endMs),startWeekday:calendarWeekday(startMs),endWeekday:calendarWeekday(endMs),direction:days<0?'End before start':days>0?'End after start':'Same date'};
+}
+function calendarDayProjection(){return calendarDayDifference(document.getElementById('start')?.value,document.getElementById('end')?.value)}
 function timeDurationDifference(startTime,endTime,startDate=null,endDate=null){
   const parseTime=value=>{const m=/^([01]\d|2[0-3]):([0-5]\d)(?::([0-5]\d))?$/.exec(value||'');return m?Number(m[1])*3600+Number(m[2])*60+Number(m[3]||0):null},startSeconds=parseTime(startTime),endSeconds=parseTime(endTime),dated=startDate!==null||endDate!==null;
   if(startSeconds===null||endSeconds===null)return{valid:false,message:'Enter valid start and end times, including seconds if needed.'};
@@ -6321,7 +6347,7 @@ function calc(e){
   case'cn_stats':{let vals=(document.getElementById('values')?.value||'').split(/[,\s]+/).map(Number).filter(Number.isFinite);if(!vals.length){show('Enter at least one number.');break}let mean=vals.reduce((x,y)=>x+y,0)/vals.length,sorted=[...vals].sort((x,y)=>x-y),mid=Math.floor(sorted.length/2),median=sorted.length%2?sorted[mid]:(sorted[mid-1]+sorted[mid])/2,sd=Math.sqrt(vals.reduce((s,x)=>s+(x-mean)**2,0)/Math.max(1,vals.length-1));show(`<strong>${F(mean,4)} mean</strong><br>Median: ${F(median,4)}; sample standard deviation: ${F(sd,4)}; count: ${vals.length}.`);break}
   case'cn_random':{let min=Math.ceil(V('min')),max=Math.floor(V('max'));if(max<min){let t=min;min=max;max=t}let val=Math.floor(Math.random()*(max-min+1))+min;show(`<strong>${val}</strong><br>Random integer from ${min} to ${max}.`);break}
   case'cn_age':{let b=new Date(document.getElementById('birth')?.value||''),t=new Date(document.getElementById('target')?.value||'');if(isNaN(b)||isNaN(t)){show('Enter valid dates.');break}let years=t.getFullYear()-b.getFullYear();let before=t.getMonth()<b.getMonth()||(t.getMonth()===b.getMonth()&&t.getDate()<b.getDate());if(before)years--;let days=Math.floor((t-b)/86400000);show(`<strong>${years} years old</strong><br>Total days: ${F(days,0)}.`);renderAge(b,t,years,days);break}
-  case'cn_date':{let s=new Date(document.getElementById('start')?.value||''),e2=new Date(document.getElementById('end')?.value||'');if(isNaN(s)||isNaN(e2)){show('Enter valid dates.');break}let days=Math.round((e2-s)/86400000);show(`<strong>${F(days,0)} days</strong><br>End date weekday: ${e2.toLocaleDateString('en-US',{weekday:'long'})}.`);break}
+  case'cn_date':{const p=calendarDayProjection();show(p.valid?`<strong>${F(p.days,0)} ${Math.abs(p.days)===1?'day':'days'}</strong><br>End date: ${p.endWeekday}, ${p.endLabel}.`:`<strong>Check the dates</strong><br>${p.message}`);break}
   case'seconds_hours_advanced':{const p=secondsHoursProjection();show(p.valid?`<strong>${p.direction==='seconds_to_hours'?p.hms:p.totalSecondsText+(p.ticks===1000000n?' second':' seconds')}</strong><br>${p.direction==='seconds_to_hours'?durationDecimal(p.totalHours)+(p.totalHours===1?' decimal hour':' decimal hours'):p.hms}`:`<strong>Check the duration</strong><br>${H(p.message)}`);break}
   case'time_duration':{const p=timeDurationProjection();if(!p.valid)show(`<strong>Check the times</strong><br>${H(p.message)}`);else show(`<strong>${formatTimeDuration(p)}</strong><br>${F(p.totalHours,6)} total hours; ${F(p.totalSeconds,0)} seconds.${p.overnight?'<br>End time is treated as the next day.':''}`);break}
   case'cn_hours':{let total=V('hours')+V('minutes')/60;show(`<strong>${F(total,2)} hours</strong><br>Estimated pay at the entered rate: ${USD(total*V('rate'))}.`);break}
@@ -6359,6 +6385,7 @@ document.addEventListener('click',e=>{const btn=e.target.closest('[data-engine]'
 document.addEventListener('click',e=>{const link=e.target.closest('a[href]');if(!link)return;try{const destination=new URL(link.href,location.href);if(/^https?:$/.test(destination.protocol)&&destination.hostname!==location.hostname)trackGA4Event('outbound_reference_click',{destination_host:destination.hostname,source_path:location.pathname})}catch{}});
 document.addEventListener('click',e=>{if(e.target.closest('[data-clear]')){if(currentEngine()==='time_duration')clearTimeDurationForm();else clearCalcForm()}});
 document.addEventListener('click',e=>{if(e.target.closest('[data-clear]')&&currentEngine()==='used_car_estimate')renderGenericFromEngine('used_car_estimate')});
+document.addEventListener('click',e=>{if(e.target.closest('[data-clear]')&&currentEngine()==='cn_date')calc('cn_date')});
 document.addEventListener('click',e=>{
   if(!e.target.closest('[data-clear]'))return;
   const engine=currentEngine();
@@ -6711,9 +6738,16 @@ function renderGenericFromEngine(engine) {
       bars=p.total>0?[{label:"Bill before tip",value:p.bill,display:tipMoney(p.billCents)},{label:"Tip",value:p.tip,display:tipMoney(p.tipCents)}]:[];
       rows=[["Bill before tip",tipMoney(p.billCents),"The tip applies to this entire entered amount."],["Tip rate",`${F(p.rate,4)}%`,"Chosen percentage, not a recommended gratuity."],["Rounded tip",tipMoney(p.tipCents),"Rounded once before splitting."],["Total",tipMoney(p.totalCents),"Includes the rounded tip."],["Cent-balanced split",tipSplitText(p),"Suggested shares add to the exact total."]];
     }
-  } else if (engine === "cn_date" || engine === "cn_due_date") {
-    const start=new Date(document.getElementById(engine==="cn_date"?'start':'date')?.value||''), days=engine==="cn_date"?Math.round((new Date(document.getElementById('end')?.value||'')-start)/86400000):V('days');
-    const end=engine==="cn_date"?new Date(document.getElementById('end')?.value||''):new Date(start.getTime()+days*86400000);
+  } else if (engine === "cn_date") {
+    const p=calendarDayProjection();
+    if(!p.valid){cards=[["Calendar difference","Check the dates",p.message]];rows=[["Validation","Unavailable",p.message]]}
+    else{
+      cards=[["Signed day difference",`${F(p.days,0)} ${Math.abs(p.days)===1?'day':'days'}`,"Calendar-day boundaries; no extra inclusive day."],["Absolute span",`${F(p.wholeWeeks,0)}w ${p.remainingDays}d`,"Complete weeks and remaining days, ignoring direction."],["Start weekday",p.startWeekday,p.startLabel],["End weekday",p.endWeekday,p.endLabel]];
+      rows=[["Start date",p.startLabel,p.startWeekday],["End date",p.endLabel,p.endWeekday],["Signed days",F(p.days,0),p.direction],["Complete weeks",F(p.wholeWeeks,0),"Absolute span divided by 7, rounded down."],["Remaining days",F(p.remainingDays,0),"Days left after complete weeks."],["Counting rule","End minus start","Same date = 0; no extra inclusive day."],["Calendar","Gregorian","Every calendar day counts, including weekends and holidays."]];
+    }
+  } else if (engine === "cn_due_date") {
+    const start=new Date(document.getElementById('date')?.value||''), days=V('days');
+    const end=new Date(start.getTime()+days*86400000);
     if (isNaN(start)||isNaN(end)) return;
     cards=[["Day difference",`${F(days,0)} days`,"Calendar day span."],["Weeks",F(days/7,1),"Days divided by 7."],["Months",F(days/30.436875,1),"Average month estimate."],["End weekday",end.toLocaleDateString("en-US",{weekday:"long"}),"Day of week."]];
     bars=[{label:"Days",value:Math.abs(days),display:F(days,0)},{label:"Weeks",value:Math.abs(days/7),display:F(days/7,1)},{label:"Months",value:Math.abs(days/30.436875),display:F(days/30.436875,1)}];

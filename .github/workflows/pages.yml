@@ -104,6 +104,12 @@ jobs:
       - name: Check seconds/hours precision and duration decomposition
         run: node scripts/test_seconds_hours.cjs dist/assets/calculator.js
 
+      - name: Check calendar days and weekdays across US time zones
+        run: |
+          TZ=America/Los_Angeles node scripts/test_calendar_days.cjs dist/assets/calculator.js
+          TZ=America/New_York node scripts/test_calendar_days.cjs dist/assets/calculator.js
+          TZ=UTC node scripts/test_calendar_days.cjs dist/assets/calculator.js
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
