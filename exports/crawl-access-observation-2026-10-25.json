@@ -1,0 +1,42 @@
+{
+  "observed_date": "2026-10-25",
+  "site": "https://nscalculators.com/",
+  "transport": "Playwright APIRequestContext GET requests from the local environment",
+  "request_variation": "Separate anonymous contexts, changing only the userAgent option; no authenticated cookies, origin bypass or security-setting changes",
+  "paths": ["/robots.txt", "/sitemap.xml", "/area-calculator/"],
+  "status_by_user_agent": [
+    {"label": "Playwright default", "statuses": [200, 200, 200]},
+    {"label": "Python-urllib/3.13", "statuses": [403, 403, 403]},
+    {"label": "Googlebot string only; not a verified Google crawler", "statuses": [200, 200, 200]}
+  ],
+  "denial_response": {
+    "path": "/sitemap.xml",
+    "user_agent": "Python-urllib/3.13",
+    "status": 403,
+    "title": "Access denied | nscalculators.com used Cloudflare to restrict access | nscalculators.com | Cloudflare",
+    "exact_security_rule": null
+  },
+  "robots_observed": "User-agent: *\nAllow: /\nSitemap: https://nscalculators.com/sitemap.xml\n",
+  "google_search_console": {
+    "source": "Signed-in visible Sitemaps report, read only",
+    "site": "sc-domain:nscalculators.com",
+    "sitemap": "https://nscalculators.com/sitemap.xml",
+    "submitted_date": "2026-10-19",
+    "last_read_date": "2026-10-23",
+    "status": "Success",
+    "discovered_pages": 302,
+    "discovered_videos": 0
+  },
+  "decisions": [
+    "Do not interpret a Python-user-agent denial alone as verified Googlebot failure.",
+    "Do not treat a Googlebot user-agent string sent from this environment as a real Google crawler or proof of current crawl access.",
+    "Retain the current sitemap and canonical configuration; no resubmission or account/security change is justified by this evidence.",
+    "The current 303-URL sitemap includes the new ownership tool; the October 23 report predates it and does not yet confirm its discovery or indexing."
+  ],
+  "limitations": [
+    "One environment and observation time, not a geographic or comprehensive crawler availability audit.",
+    "Cloudflare-branded denial does not identify the responsible rule without account logs.",
+    "Successful sitemap reading does not prove every page is crawled or indexed.",
+    "No traffic gain or daily-goal attainment is inferred."
+  ]
+}
