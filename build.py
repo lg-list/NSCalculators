@@ -6375,6 +6375,7 @@ document.addEventListener('change',e=>{if(e.target.closest('.calc')){const engin
 document.addEventListener('DOMContentLoaded',()=>{const engine=currentEngine();if(engine)calc(engine)});
 
 // Generic dashboard rendering
+const genericBarSizes = new WeakMap();
 function drawGenericBars(canvas, bars) {
   if (!canvas) return;
   const visible = bars.filter(bar => Number.isFinite(bar.value)).slice(0, 6);
@@ -6384,6 +6385,7 @@ function drawGenericBars(canvas, bars) {
   const width = canvas.clientWidth || canvas.width;
   const height = Math.min(declaredHeight, visible.length * 46 + 16);
   const dpr = Math.max(1, window.devicePixelRatio || 1);
+  genericBarSizes.set(canvas, {width, dpr});
   canvas.width = Math.round(width * dpr);canvas.height = Math.round(height * dpr);
   if (canvas.style) canvas.style.height = `${height}px`;
   const ctx = canvas.getContext('2d');
@@ -6419,7 +6421,14 @@ function drawGenericBars(canvas, bars) {
 }
 
 let barResizeFrame = 0;
-window.addEventListener('resize',()=>{cancelAnimationFrame(barResizeFrame);barResizeFrame=requestAnimationFrame(()=>{if(document.querySelector('#genericChart[data-chart-type="bars"]'))renderGenericFromEngine(currentEngine())})});
+function resizeGenericBars(){
+  const canvas=document.querySelector('#genericChart[data-chart-type="bars"]');
+  if(!canvas||canvas.closest('.chart-card')?.hidden||!canvas.clientWidth)return;
+  const previous=genericBarSizes.get(canvas),dpr=Math.max(1,window.devicePixelRatio||1);
+  if(previous&&previous.width===canvas.clientWidth&&previous.dpr===dpr)return;
+  renderGenericFromEngine(currentEngine());
+}
+window.addEventListener('resize',()=>{cancelAnimationFrame(barResizeFrame);barResizeFrame=requestAnimationFrame(resizeGenericBars)});
 
 function drawCompoundLine(canvas, schedule, durationLabel) {
   if (!canvas || !schedule.length) return;

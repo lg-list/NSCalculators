@@ -2,10 +2,14 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const vm = require('node:vm');
 const inputs = new Map();
+const windowListeners = new Map(), frames = new Map();
+let frameId = 0;
 const context = vm.createContext({
   document: { addEventListener() {}, querySelector() { return null; }, querySelectorAll() { return []; },
     getElementById(id) { return id === 'genericSummary' ? {} : inputs.has(id) ? { value: String(inputs.get(id)) } : null; } },
-  window: { addEventListener() {}, devicePixelRatio: 1 }, console,
+  window: { addEventListener(name, handler) { windowListeners.set(name, handler); }, devicePixelRatio: 1 },
+  requestAnimationFrame(handler) { frames.set(++frameId, handler); return frameId; },
+  cancelAnimationFrame(id) { frames.delete(id); }, console,
 });
 const bundle = process.argv[2] || 'dist/assets/calculator.js';
 vm.runInContext(fs.readFileSync(bundle, 'utf8'), context, { filename: bundle });
@@ -88,4 +92,47 @@ const weight = render('cn_body_metric', { weight: 175, feet: 5, inches: 10 });
 assert.equal(weight.bars.length, 3);
 assert.ok(weight.bars.every(bar => bar.display.endsWith('lb')));
 assert.ok(weight.cards.some(card => card[0] === 'BMI'));
-console.log(`Passed ${drawingCases} chart geometry/label cases, 8 percentage cases, 4 fraction cases and 2 matching-unit cases.`);
+// Height-only viewport changes must not rebuild result cards/tables or rerun projections.
+let resizeCalls = 0;
+const card = { hidden: false };
+const resizeCanvas = { clientWidth: 262, width: 620, height: 230, dataset: {}, style: {},
+  getAttribute: () => '230', closest: () => card,
+  getContext: () => new Proxy({ measureText: () => ({ width: 30 }) }, { get: (o, k) => k in o ? o[k] : () => {} }) };
+context.document.querySelector = () => resizeCanvas;
+context.renderGenericFromEngine = () => { resizeCalls++; drawResizeChart(); };
+function drawResizeChart() { context.drawGenericBars(resizeCanvas, [{ label: 'Area', value: 240, display: '240 ft2' }]); }
+drawResizeChart();
+context.resizeGenericBars();
+assert.equal(resizeCalls, 0, 'unchanged canvas dimensions do no work');
+context.window.innerHeight = 500;
+context.resizeGenericBars();
+assert.equal(resizeCalls, 0, 'height-only resize leaves results untouched');
+resizeCanvas.clientWidth = 320;
+context.resizeGenericBars();
+assert.equal(resizeCalls, 1, 'width change rebuilds the chart');
+context.resizeGenericBars();
+assert.equal(resizeCalls, 1, 'new width is remembered after drawing');
+context.window.devicePixelRatio = 2;
+context.resizeGenericBars();
+assert.equal(resizeCalls, 2, 'pixel-density change redraws at the same CSS width');
+assert.equal(resizeCanvas.width, 640);
+card.hidden = true;
+resizeCanvas.clientWidth = 360;
+context.resizeGenericBars();
+assert.equal(resizeCalls, 2, 'hidden charts do not rebuild result tables');
+card.hidden = false;
+context.resizeGenericBars();
+assert.equal(resizeCalls, 3, 'visible chart catches up after a hidden resize');
+resizeCanvas.clientWidth = 0;
+context.resizeGenericBars();
+assert.equal(resizeCalls, 3, 'zero-width chart is not redrawn');
+resizeCanvas.clientWidth = 400;
+const resize = windowListeners.get('resize');
+resize(); resize(); resize();
+assert.equal(frames.size, 1, 'resize burst coalesces to one frame');
+const pending = [...frames.values()][0]; frames.clear(); pending();
+assert.equal(resizeCalls, 4);
+context.document.querySelector = () => null;
+context.resizeGenericBars();
+assert.equal(resizeCalls, 4, 'pages without a bar chart remain untouched');
+console.log(`Passed ${drawingCases} chart geometry/label cases, 8 percentage cases, 4 fraction cases, 2 matching-unit cases and 12 resize checks.`);
