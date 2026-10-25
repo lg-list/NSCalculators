@@ -1,0 +1,44 @@
+{
+  "source": "GA4 signed-in visible Traffic acquisition report",
+  "observation_date": "2026-10-25",
+  "site": "https://nscalculators.com/",
+  "collection_method": "Manually transcribed aggregate report cells; not an API or CSV export",
+  "period_start": "2026-09-27",
+  "period_end": "2026-10-24",
+  "days_inclusive": 28,
+  "report_timezone": null,
+  "filters": {
+    "operator": "AND",
+    "country": {"match": "exact", "value": "United States"},
+    "hostname": {"match": "exact", "value": "nscalculators.com"},
+    "session_source_medium": {"match": "exact", "value": "google / organic"}
+  },
+  "totals": {
+    "sessions": 1,
+    "engaged_sessions": 0,
+    "average_engagement_seconds_per_session_reported": 7,
+    "event_count_all_events": 5,
+    "key_event_count_all_events": 0
+  },
+  "derived": {
+    "daily_reported_sessions": 0.03571428571428571
+  },
+  "landing_page_rows": [
+    {
+      "pathname": "/finance-calculator/",
+      "session_default_channel_group": "Organic Search",
+      "sessions": 1,
+      "engaged_sessions": 0,
+      "event_count_all_events": 5
+    }
+  ],
+  "limitations": [
+    "Reported sessions are not unique visitors, verified humans or Search Console clicks.",
+    "The report's timezone was not inspected; dates are the visible report dates.",
+    "The report uses temporary view filters, not persistent collection filters.",
+    "A one-session sample cannot establish conversion performance or release impact.",
+    "Zero key events does not establish zero successful calculations; success instrumentation and key-event configuration were not audited here.",
+    "No causal reconciliation with the September 24-October 21 GSC baseline is possible from these aggregates.",
+    "No account setting or external submission was changed in this observation."
+  ]
+}

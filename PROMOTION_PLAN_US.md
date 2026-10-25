@@ -1,8 +1,10 @@
 # NS Calculators — US Growth Plan
 
-Updated: October 24, 2026
+Updated: October 25, 2026
 
 ## Current Measurement
+
+October 25 GA4 recovery: verified the visible September 27-October 24 Traffic acquisition report with exact AND filters for United States, nscalculators.com and google / organic. It reports one session, zero engaged sessions and five events; the landing-page secondary dimension identifies /finance-calculator/. This is approximately 0.036 reported sessions/day, not unique visitors, GSC clicks or proof of failed conversions. Preserve the independently supported Area/car-price/Ratio/Fuel Cost queue instead of reprioritizing from a single session. Next compare an absolute October 25-31 window only after both products make it available, retaining their separate metric definitions and timezone limitations. See `reports/seo/us-ga4-measurement-2026-10-25.md` and `exports/us-ga4-baseline-2026-10-25.json`. No account or production-site change was made; the traffic goal remains unachieved.
 
 October 24 duration-intent follow-up: exact US query `356442 seconds to hours minutes and seconds` maps to the existing Seconds to Hours page (six impressions, zero clicks, query position 4.7; September 24-October 21, not market volume). Live reproduction lacked HMS output. Added exact supported fractional HMS/day breakdowns, reverse decimal-hour conversion, validation, original examples and a reciprocal clock-tool link on the same URL. Fixed a long-number mobile overflow with scoped CSS; title/index scope remain stable. All 95 Python and 1,739 JavaScript checks pass, including 65 new conversion cases. See `reports/seo/seconds-hours-breakdown-2026-10-24.md`. No numeric doorway pages or traffic-lift claim.
 
