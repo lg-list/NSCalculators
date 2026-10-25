@@ -983,6 +983,8 @@ def base_and_supplemental(data):
             calc["title"] = smart_title(calc["title"])
         else:
             calc["keyword_data"] = {}
+        if calc["slug"] == "personal-loan-calculator":
+            calc.update({"engine": "personal_loan_advanced", "desc": "Calculate personal loan payments, origination fees, net cash available, insurance costs and a monthly repayment schedule.", "inputs": []})
         if calc["slug"] == "time-duration-calculator":
             calc.update({
                 "cat": "Time & Date",
@@ -1211,6 +1213,8 @@ def seo_keywords(calc):
 
 
 def seo_title(calc):
+    if calc.get("slug") == "personal-loan-calculator":
+        return "Personal Loan Calculator: Payments, Fees & Net Proceeds"
     if calc.get("slug") == "new-vs-used-car-calculator":
         return "New vs Used Car Calculator: Compare Ownership Costs"
     if calc.get("slug") == "time-duration-calculator":
@@ -1347,6 +1351,8 @@ def seo_title(calc):
 
 
 def seo_description(calc):
+    if calc.get("slug") == "personal-loan-calculator":
+        return "Estimate personal loan payments, origination fees, net proceeds and insurance. Compare total borrowing cost and review a monthly amortization schedule."
     if calc.get("slug") == "new-vs-used-car-calculator":
         return "Compare new vs used car costs using purchase and resale values, loan interest, fuel, insurance and maintenance. See total cost, cash outlay and sale equity."
     if calc.get("slug") == "time-duration-calculator":
@@ -2157,6 +2163,20 @@ def trip_fuel_cost_input_html():
 <div class="field"><label for="other_costs">Tolls, parking, and shared costs</label><input id="other_costs" type="number" step="any" min="0" value="0"></div>
 <div class="field"><label for="people">People sharing cost</label><input id="people" type="number" step="1" min="1" value="1"></div>
 </div></details>
+</div>"""
+
+
+def personal_loan_input_html():
+    return f"""<div class="fields personal-loan-fields">
+<div class="field"><label for="pl_amount">Loan principal ($)</label><input id="pl_amount" type="number" step="any" min="0.01" value="10000"></div>
+<div class="field"><label for="pl_rate">Annual note rate (%)</label><input id="pl_rate" type="number" step="any" min="0" max="100" value="10"></div>
+<div class="field"><label for="pl_years">Term: whole years</label><input id="pl_years" type="number" step="1" min="0" max="50" value="5"></div>
+<div class="field"><label for="pl_months">Additional months</label><input id="pl_months" type="number" step="1" min="0" max="11" value="0"></div>
+<div class="field field-wide"><label for="pl_start">First payment month</label><input id="pl_start" type="month" value="{date.today():%Y-%m}"></div>
+<div class="field field-wide option-field"><label class="checkline"><input id="pl_add_costs" type="checkbox"> Add origination fee and monthly insurance</label></div>
+<div class="field is-hidden" data-pl-cost><label for="pl_fee">Origination fee</label><div class="input-unit"><input id="pl_fee" type="number" step="any" min="0" value="5"><select id="pl_fee_unit" aria-label="Origination fee unit"><option value="percent">%</option><option value="dollars">$</option></select></div></div>
+<div class="field is-hidden" data-pl-cost><label for="pl_fee_method">Fee handling</label><select id="pl_fee_method"><option value="deducted">Deducted from loan</option><option value="upfront">Paid upfront</option></select></div>
+<div class="field field-wide is-hidden" data-pl-cost><label for="pl_insurance">Insurance per month ($)</label><input id="pl_insurance" type="number" step="any" min="0" value="0"></div>
 </div>"""
 
 
@@ -3043,6 +3063,15 @@ def conversion_copy(calc):
 
 
 def high_value_calculator_copy(calc):
+    if calc.get("slug") == "personal-loan-calculator":
+        return """
+<h2>Personal loan payments and net cash</h2><p>The loan principal is the amount your monthly principal-and-interest payments repay. An origination fee can reduce the money you receive without reducing that balance. This tool separates principal, disbursement, upfront fees, net cash available, monthly insurance, interest and total borrowing cost. Initial values are examples, not rate quotes or approval terms.</p>
+<h2>Monthly payment formula</h2><p class="formula">payment = principal x monthly rate / (1 - (1 + monthly rate)^(-number of payments))<br>monthly rate = annual note rate / 12; at 0%, payment = principal / number of payments</p><p>A $10,000 loan at a 10% annual note rate over 60 months has a modeled principal-and-interest payment of about $212.47. Interest totals about $2,748.23 before any fee or insurance. The first payment is one monthly period after funding; the selected month labels that payment, not a particular day or a daily-interest calculation.</p>
+<h2>Deducted fee versus an upfront fee</h2><p>A 5% origination fee on $10,000 is $500. If deducted, the disbursement is $9,500 and the balance repaid is still $10,000. If paid upfront at funding, disbursement is $10,000 and the separate upfront payment is $500. Both leave $9,500 net cash at funding under the same-day assumption, so their modeled cash-flow cost rate is equal when all other inputs match.</p><p>With this fee and no insurance, borrowing cost is $2,748.23 interest plus $500, or about $3,248.23. The monthly loan payment is unchanged. A fee paid later, added to principal, refunded on early payoff or applied to a different base needs a different model. A fee-inclusive APR should not be entered as the note rate while also entering the same fee separately.</p>
+<h2>Insurance and total cash outflow</h2><p>When enabled, the insurance amount is paid every month for the complete entered term, separately from principal and interest. It is not financed, does not reduce the balance and is not a one-time premium. At $10 per month for 60 months it adds $600. Total borrowing cost includes all modeled interest, the origination fee and these insurance payments.</p><p>The pie describes cash paid, not only interest: a deducted-fee case splits the repaid principal into net disbursement and the withheld fee; an upfront-fee case shows principal plus that separately paid fee. The pieces sum to the total cash outflow shown. Do not add net cash available as another repayment cost.</p>
+<h2>Cash-flow cost rate is not a lender disclosure</h2><p>The displayed annualized cash-flow cost rate solves for the monthly discount rate equating net cash available at funding to all modeled monthly payments, then multiplies that monthly rate by 12. It includes every entered insurance payment. It is not an effective annual yield, a legal APR calculation, or a determination of whether a particular optional insurance product is a finance charge. Use the lender's actual disclosures when comparing regulated APRs.</p><p>The <a href="https://www.consumerfinance.gov/ask-cfpb/what-is-the-difference-between-a-loan-interest-rate-and-the-apr-en-733/" rel="external noopener">CFPB distinguishes interest rate from APR</a>, which can include additional charges. Compare like measures rather than treating a note rate, this scenario cost rate and a disclosed APR as interchangeable.</p>
+<h2>Repayment schedule and limits</h2><p>The schedule uses full-precision monthly interest on the opening balance and shows principal, interest, insurance and remaining balance. Displayed amounts round to cents; adding already-rounded rows may differ from the unrounded totals. The final loan installment clears the remaining principal rather than leaving a rounding balance. This is not a lender payoff quote.</p><p>The numerical scope is $0.01-$1 billion principal, a 0%-100% annual note rate, and 1-600 whole monthly payments. Additional months must be 0-11. These limits do not imply a lender offers those terms. A fee must leave positive net cash. Dates label whole months and the schedule must end by December 9999. There are no late charges, daily accrual, prepayment penalties, extra payments, rate changes, credit approval or state-law limits in this model.</p>
+<h2>Related borrowing tools</h2><p>Use the <a href="/loan-calculator/">loan calculator</a> for different payment/compounding structures, or the <a href="/amortization-calculator/">amortization calculator</a> for a separate extra-payment scenario. Those are different models; do not assume fees entered on this page transfer automatically.</p>"""
     if calc.get("slug") == "new-vs-used-car-calculator":
         return """
 <h2>Compare new and used car ownership costs</h2><p>A lower sticker price or loan payment does not by itself identify the lower-cost vehicle. This comparison uses the same holding period and annual driving distance for both cars. Purchase prices, future resale values, financing terms and operating costs are your assumptions, not live market quotes or predictions. All money is in US dollars and fuel economy is US miles per gallon.</p>
@@ -4021,6 +4050,8 @@ def default_calculator_copy(calc):
 
 
 def analysis_extra_html(calc):
+    if calc.get("slug") == "personal-loan-calculator":
+        return """<section class="mortgage-dashboard generic-dashboard personal-loan-dashboard" aria-label="Personal loan payment and cost analysis"><div class="section-head stack"><h2>Personal Loan Results</h2></div><div class="summary-grid" id="genericSummary"></div><div class="chart-card compact-chart"><h3>Total Cash Outflow</h3><canvas id="genericChart" width="360" height="240" data-chart-type="pie" data-center-label="cash paid" aria-label="Principal, fee, interest and insurance cash outflow"></canvas></div><div class="table-card"><h3>Loan and Cash Details</h3><div class="table-scroll"><table class="data-table" id="genericTable"><thead><tr><th>Measure</th><th>Value</th><th>Basis</th></tr></thead><tbody></tbody></table></div></div><details class="schedule-details"><summary>Monthly repayment schedule</summary><div class="table-scroll"><table class="data-table" id="personalSchedule"><thead><tr><th>Payment</th><th>Month</th><th>Loan payment</th><th>Interest</th><th>Principal</th><th>Insurance</th><th>Balance</th></tr></thead><tbody></tbody></table></div></details></section>"""
     if calc.get("slug") == "new-vs-used-car-calculator":
         return """<section class="mortgage-dashboard generic-dashboard new-used-dashboard" aria-label="New and used ownership comparison"><div class="section-head stack"><h2>Ownership Cost Comparison</h2></div><div class="summary-grid" id="genericSummary"></div><div class="chart-card compact-chart"><h3>Total Cost Over the Holding Period</h3><canvas id="genericChart" width="620" height="130" data-chart-type="bars" aria-label="New and used car ownership costs in US dollars"></canvas></div><div class="table-card"><h3>Cost and Cash Flow Details</h3><div class="table-scroll"><table class="data-table" id="genericTable"><thead><tr><th scope="col">Measure</th><th scope="col">New car</th><th scope="col">Used car</th></tr></thead><tbody></tbody></table></div></div></section>"""
     if calc.get("engine") == "cn_date":
@@ -4882,6 +4913,9 @@ def calculator_page(site, calc, related):
     elif calc.get("slug") == "new-vs-used-car-calculator":
         fields = new_used_input_html()
         page_engine = "new_used_cost"
+    elif calc.get("slug") == "personal-loan-calculator":
+        fields = personal_loan_input_html()
+        page_engine = "personal_loan_advanced"
     elif calc.get("slug") == "tire-size-calculator":
         fields = tire_size_input_html()
         page_engine = "tire_compare"
@@ -4938,6 +4972,8 @@ def calculator_page(site, calc, related):
         fields = f"""<div class="fields">{''.join(input_html(f) for f in calc["inputs"])}</div>"""
     rel = "".join(card(c, compact=True) for c in related)
     content = payback_copy(calc) or marriage_tax_copy(calc) or priority_length_copy(calc) or high_value_calculator_copy(calc) or conversion_copy(calc) or default_calculator_copy(calc)
+    if calc.get("slug") in ("loan-calculator", "amortization-calculator"):
+        content = '<p>For an installment loan with a quoted origination fee or monthly insurance, use the <a href="/personal-loan-calculator/">personal loan calculator</a> to separate disbursement, net cash available and modeled borrowing costs.</p>' + content
     if calc.get("slug") in ("used-car-value-calculator", "car-resale-value-calculator", "auto-loan-calculator"):
         ownership_link = '<p>Comparing two purchases? Use the <a href="/new-vs-used-car-calculator/">new vs used car calculator</a> for a shared holding-period comparison of depreciation, financing and operating costs, rather than treating a current value estimate as a buying recommendation.</p>'
         content = ownership_link + content
@@ -5186,6 +5222,7 @@ CSS = r'''
 .duration-conversion-dashboard .summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.duration-conversion-dashboard .summary-card{min-width:0}.duration-conversion-dashboard .summary-card strong{overflow-wrap:anywhere}
 .calendar-date-dashboard .summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.calendar-date-dashboard .summary-card{min-width:0}.calendar-date-dashboard .summary-card strong{font-size:18px;overflow-wrap:anywhere}
 .new-used-fields .fields{grid-template-columns:repeat(2,minmax(0,1fr));padding:10px}.new-used-fields .field-wide{grid-column:1/-1}.new-used-dashboard .summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.new-used-dashboard .summary-card{min-width:0}.new-used-dashboard .summary-card strong{font-size:20px;overflow-wrap:anywhere}
+.calculator-article .fields.personal-loan-fields{grid-template-columns:repeat(2,minmax(0,1fr))}.personal-loan-fields .field{min-width:0}.personal-loan-fields .field-wide{grid-column:1/-1}.personal-loan-fields .is-hidden{display:none!important}.personal-loan-dashboard .summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.personal-loan-dashboard .summary-card{min-width:0}.personal-loan-dashboard .summary-card strong{font-size:20px;overflow-wrap:anywhere}@media(max-width:560px){.personal-loan-fields>.field:not(.field-wide)>label{min-height:38px;line-height:1.35}}
 .prose .ratio-conversion-table th,.prose .ratio-conversion-table td{white-space:normal;overflow-wrap:anywhere;padding:8px 6px}
 .prose .ratio-conversion-table th:first-child{width:42%}
 .prose .ratio-conversion-table caption{white-space:normal;text-align:left;padding:0 0 8px;line-height:1.4}
@@ -5574,6 +5611,51 @@ function bodyFatProjection(){
   return bodyFatAmounts({units,method,sex,age:read('bf_age'),height:read('bf_height'),weight:read('bf_weight'),neck:read('bf_neck'),waist:read('bf_waist'),hip:read('bf_hip')});
 }
 function fixedMonthlyPayment(principal,annualRate,months){const r=annualRate/1200;return principal===0?0:r===0?principal/months:principal*r/(-Math.expm1(-months*Math.log1p(r)))}
+function personalMonthLabel(index){return ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][index%12]+' '+String(Math.floor(index/12)).padStart(4,'0')}
+function annualCashCostRate(net,monthly,months,lastMonthly){
+  const pv=r=>r===0?monthly*months+lastMonthly-monthly:monthly*(-Math.expm1(-months*Math.log1p(r)))/r+(lastMonthly-monthly)*Math.exp(-months*Math.log1p(r));
+  if(pv(0)<=net)return 0;
+  let low=0,high=1;for(let i=0;i<100&&pv(high)>net;i++)high*=2;
+  if(pv(high)>net)return null;
+  for(let i=0;i<160;i++){const mid=(low+high)/2;if(pv(mid)>net)low=mid;else high=mid}
+  return (low+high)/2*1200;
+}
+function personalLoanAmounts({amount,rate,years,months,startMonth,addCosts,fee,feeUnit,feeMethod,insurance}){
+  const fail=message=>({valid:false,message}),finite=x=>typeof x==='number'&&Number.isFinite(x),term=years*12+months;
+  if(!finite(amount)||amount<.01||amount>1e9)return fail('Enter loan principal from $0.01 through $1 billion.');
+  if(!finite(rate)||rate<0||rate>100)return fail('Enter an annual note rate from 0% through 100%.');
+  if(!Number.isInteger(years)||years<0||!Number.isInteger(months)||months<0||months>11||term<1||term>600)return fail('Enter whole years and 0-11 additional months, totaling 1-600 payments.');
+  if(typeof startMonth!=='string'||!/^\d{4}-\d{2}$/.test(startMonth)||calendarDayValue(startMonth+'-01')===null)return fail('Enter a valid first payment month from year 0001 through 9999.');
+  const [y,m]=startMonth.split('-').map(Number),startIndex=y*12+m-1;
+  if(startIndex+term-1>119999)return fail('The schedule must finish by December 9999.');
+  if(typeof addCosts!=='boolean')return fail('Choose whether to include fees and insurance.');
+  let origination=0,monthlyInsurance=0,method='deducted';
+  if(addCosts){
+    if(!['percent','dollars'].includes(feeUnit)||!['deducted','upfront'].includes(feeMethod)||!finite(fee)||fee<0)return fail('Enter a nonnegative origination fee and choose its unit and handling.');
+    origination=feeUnit==='percent'?amount*fee/100:fee;
+    if(!Number.isFinite(origination)||origination>=amount)return fail('The origination fee must be less than principal so net cash stays positive.');
+    if(!finite(insurance)||insurance<0||insurance>1e6)return fail('Enter monthly insurance from $0 through $1 million.');
+    monthlyInsurance=insurance;method=feeMethod;
+  }
+  const r=rate/1200,payment=fixedMonthlyPayment(amount,rate,term),schedule=[];
+  let balance=amount,loanPayments=0,totalInterest=0;
+  for(let month=1;month<=term;month++){
+    const remaining=term-month,opening=balance;
+    // Remaining-payment PV avoids a spurious balloon on long, high-rate terms.
+    balance=r===0?amount*remaining/term:payment*(-Math.expm1(-remaining*Math.log1p(r)))/r;
+    const principal=month===term?opening:r===0?payment:payment*Math.exp(-(remaining+1)*Math.log1p(r)),interest=month===term?opening*r:Math.max(0,payment-principal),paid=principal+interest;
+    loanPayments+=paid;totalInterest+=interest;schedule.push({month,label:personalMonthLabel(startIndex+month-1),payment:paid,principal,interest,insurance:monthlyInsurance,balance:Math.max(0,balance)});
+  }
+  const upfront=method==='upfront'?origination:0,disbursement=amount-(method==='deducted'?origination:0),netCash=disbursement-upfront,totalInsurance=monthlyInsurance*term,totalCash=loanPayments+totalInsurance+upfront,borrowingCost=totalInterest+origination+totalInsurance;
+  const costRate=origination===0&&monthlyInsurance===0?rate:annualCashCostRate(netCash,payment+monthlyInsurance,term,schedule.at(-1).payment+monthlyInsurance);
+  return{valid:true,amount,rate,term,startIndex,origination,method,monthlyInsurance,payment,monthlyCash:payment+monthlyInsurance,disbursement,upfront,netCash,loanPayments,totalInterest,totalInsurance,totalCash,borrowingCost,costRate,payoff:personalMonthLabel(startIndex+term-1),schedule};
+}
+function personalLoanProjection(){
+  const addCosts=!!document.getElementById('pl_add_costs')?.checked;
+  document.querySelectorAll('[data-pl-cost]').forEach(el=>{el.classList.toggle('is-hidden',!addCosts);el.querySelectorAll('input,select').forEach(input=>{input.disabled=!addCosts})});
+  const read=id=>{const raw=document.getElementById(id)?.value;return typeof raw==='string'&&raw.trim()!==''?Number(raw):NaN};
+  return personalLoanAmounts({amount:read('pl_amount'),rate:read('pl_rate'),years:read('pl_years'),months:read('pl_months'),startMonth:document.getElementById('pl_start')?.value,addCosts,fee:read('pl_fee'),feeUnit:document.getElementById('pl_fee_unit')?.value,feeMethod:document.getElementById('pl_fee_method')?.value,insurance:read('pl_insurance')});
+}
 function newUsedAmounts({years,miles,fuel,newCar,usedCar}){
   const fail=message=>({valid:false,message}),finite=x=>typeof x==='number'&&Number.isFinite(x),money=x=>finite(x)&&x>=0&&x<=1e9;
   if(!Number.isInteger(years)||years<1||years>10)return fail('Enter a whole ownership period from 1 through 10 years.');
@@ -6384,6 +6466,7 @@ function calc(e){
   case'power_weight':{let a=V('hp')/V('weight'),b=V('weight')/V('hp');show(`<strong>${F(a,4)} hp/lb</strong><br>${F(b,2)} lb per hp.`);break}
   case'car_loan':{let price=V('price'),tax=price*V('tax')/100,fees=V('fees'),include=(document.getElementById('include_fees')?.value||'0')==='1';let base=Math.max(0,price-V('incentives')-V('down')-V('trade')+V('owed')),P=Math.max(0,base+(include?tax+fees:0));let rr=V('apr')/1200,n=Math.max(1,V('months'));let pay=rr?P*rr*Math.pow(1+rr,n)/(Math.pow(1+rr,n)-1):P/n,upfront=V('down')+(include?0:tax+fees);show(`<strong>${USD(pay)} / month</strong><br>Total loan amount: ${USD(P)}; upfront payment: ${USD(upfront)}; sale tax: ${USD(tax)}.`);break}
   case'loan':{let P=V('amount'),rr=V('apr')/1200,n=Math.max(1,(V('years')*12)+(V('months_extra')||V('months')));let pay=rr?P*rr*Math.pow(1+rr,n)/(Math.pow(1+rr,n)-1):P/n,total=pay*n;show(`<strong>${USD(pay)} / month</strong><br>Total paid: ${USD(total)}; total interest: ${USD(total-P)}.`);break}
+  case'personal_loan_advanced':{const p=personalLoanProjection();show(p.valid?`<strong>${USD(p.monthlyCash)} / month</strong><br>Net cash available: ${USD(p.netCash)}; modeled borrowing cost: ${USD(p.borrowingCost)}.`:`<strong>Check the loan inputs</strong><br>${H(p.message)}`);break}
   case'loan_page':{renderLoanPage();break}
   case'finance_tvm':{const p=financeProjection();if(!p.valid)show(`<strong>Check the inputs</strong><br>${p.message}`);else{const labels={fv:'Future value',pmt:'Periodic payment',iy:'Annual interest rate',n:'Number of periods',pv:'Present value'},value=p.target==='iy'?`${F(p.iy,8)}%`:p.target==='n'?F(p.n,8):USD(p[p.target]);show(`<strong>${value} ${labels[p.target].toLowerCase()}</strong><br>${F(p.rate*100,6)}% effective rate per payment period; ${F(p.effectiveAnnual,6)}% effective annual rate.`)}break}
   case'payment_advanced':{const p=paymentProjection();if(!p.valid)show(`<strong>Payment cannot repay this loan</strong><br>${p.message}`);else show(`<strong>${USD(p.regularPayment)} monthly payment</strong><br>${p.termLabel} to payoff; ${USD(p.totalInterest)} total interest; ${USD(p.totalPaid)} total paid.`);break}
@@ -6481,7 +6564,7 @@ document.addEventListener('click',e=>{const btn=e.target.closest('[data-engine]'
 document.addEventListener('click',e=>{const link=e.target.closest('a[href]');if(!link)return;try{const destination=new URL(link.href,location.href);if(/^https?:$/.test(destination.protocol)&&destination.hostname!==location.hostname)trackGA4Event('outbound_reference_click',{destination_host:destination.hostname,source_path:location.pathname})}catch{}});
 document.addEventListener('click',e=>{if(e.target.closest('[data-clear]')){if(currentEngine()==='time_duration')clearTimeDurationForm();else clearCalcForm()}});
 document.addEventListener('click',e=>{if(e.target.closest('[data-clear]')&&currentEngine()==='used_car_estimate')renderGenericFromEngine('used_car_estimate')});
-document.addEventListener('click',e=>{if(e.target.closest('[data-clear]')&&['cn_date','new_used_cost'].includes(currentEngine()))calc(currentEngine())});
+document.addEventListener('click',e=>{if(e.target.closest('[data-clear]')&&['cn_date','new_used_cost','personal_loan_advanced'].includes(currentEngine()))calc(currentEngine())});
 document.addEventListener('click',e=>{
   if(!e.target.closest('[data-clear]'))return;
   const engine=currentEngine();
@@ -6641,7 +6724,17 @@ function paybackProjection(){
 function renderGenericFromEngine(engine) {
   if (!document.getElementById("genericSummary")) return;
   let cards=[], bars=[], rows=[];
-  if(engine==="new_used_cost"){
+  if(engine==="personal_loan_advanced"){
+    const p=personalLoanProjection(),schedule=document.querySelector('#personalSchedule tbody');
+    if(!p.valid){cards=[["Personal loan","Check inputs",H(p.message)]];rows=[["Validation","Unavailable",H(p.message)]];if(schedule)schedule.innerHTML=''}
+    else{
+      const costRate=p.costRate===null?'Unavailable':(p.costRate>1e6?p.costRate.toExponential(4):F(p.costRate,4))+'%';
+      cards=[["Monthly cash payment",USD(p.monthlyCash),"Loan payment plus included insurance."],["Net cash available",USD(p.netCash),"Disbursement minus any upfront fee."],["Total borrowing cost",USD(p.borrowingCost),"Interest, fee and included insurance."],["Annualized cash-flow cost rate",costRate,"Scenario measure, not a disclosed legal APR."]];
+      bars=[{label:p.method==='deducted'?'Net disbursement':'Loan principal',value:p.method==='deducted'?p.disbursement:p.amount},{label:'Origination fee',value:p.origination},{label:'Interest',value:p.totalInterest},{label:'Insurance',value:p.totalInsurance}];
+      rows=[["Loan principal",USD(p.amount),"Balance on which loan payments are calculated."],["Annual note rate",`${F(p.rate,4)}%`,"Fixed nominal rate divided by 12."],["Number of payments",F(p.term,0),"Whole monthly periods."],["Last payment month",p.payoff,"First payment month plus term minus one."],["Loan payment / month",USD(p.payment),"Principal and interest only."],["Insurance / month",USD(p.monthlyInsurance),"Separate from loan principal and interest."],["Monthly cash payment",USD(p.monthlyCash),"Regular loan payment plus insurance."],["Origination fee",USD(p.origination),p.method==='deducted'?'Withheld at funding.':'Paid separately at funding.'],["Disbursement",USD(p.disbursement),"Before any separately paid upfront fee."],["Upfront fee paid",USD(p.upfront),"Separate payment, not financed."],["Net cash available",USD(p.netCash),"Disbursement minus upfront fee."],["Total loan payments",USD(p.loanPayments),"Principal and interest, before insurance or upfront fee."],["Total interest",USD(p.totalInterest),"Full-precision monthly schedule sum."],["Total insurance",USD(p.totalInsurance),"Monthly insurance times number of payments."],["Total cash outflow",USD(p.totalCash),"Loan payments + insurance + separately paid upfront fee."],["Total borrowing cost",USD(p.borrowingCost),"Interest + origination fee + included insurance."],["Annualized cash-flow cost rate",costRate,"Monthly cash-flow rate x 12; not a legal APR or effective annual yield."]];
+      if(schedule)schedule.innerHTML=p.schedule.map(row=>`<tr><td>${row.month}</td><td>${row.label}</td><td>${USD(row.payment)}</td><td>${USD(row.interest)}</td><td>${USD(row.principal)}</td><td>${USD(row.insurance)}</td><td>${USD(row.balance)}</td></tr>`).join('');
+    }
+  } else if(engine==="new_used_cost"){
     const p=newUsedProjection();
     if(!p.valid){cards=[["Ownership comparison","Check inputs",H(p.message)]];rows=[["Validation",H(p.message),H(p.message)]]}
     else{

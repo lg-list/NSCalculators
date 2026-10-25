@@ -1,0 +1,24 @@
+{
+  "source": "Search Console signed-in visible report; exact query filter and Pages breakdown",
+  "observed_date": "2026-10-25",
+  "site": "sc-domain:nscalculators.com",
+  "country": "usa",
+  "period_start": "2026-09-24",
+  "period_end": "2026-10-21",
+  "query": "personal loan calculator",
+  "query_match": "exact",
+  "query_aggregate": {"clicks": 0, "impressions": 34, "position_ui_rounded": 71.3},
+  "visible_page_rows": [
+    {"url": "https://nscalculators.com/personal-loan-calculator/", "clicks": 0, "impressions": 34}
+  ],
+  "target_preserved": "https://nscalculators.com/personal-loan-calculator/",
+  "gap_verified_on_production": "Generic loan model accepted negative principal and lacked fee handling, net proceeds, monthly insurance and a repayment schedule.",
+  "implementation": "Dedicated personal-loan model on the same URL; cash-flow cost rate explicitly not a legal APR disclosure",
+  "us_avg_monthly_searches": null,
+  "limitations": [
+    "Historical site visibility, not market search volume or current visits.",
+    "Query-page row was observed under an exact query, not joined from separate exports.",
+    "Position is the query aggregate, not a separately measured page position.",
+    "No post-release traffic, ranking improvement, lender quotation or goal attainment is established."
+  ]
+}

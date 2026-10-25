@@ -92,6 +92,9 @@ jobs:
       - name: Check new-versus-used ownership and sale cash-flow reconciliation
         run: node scripts/test_new_used.cjs dist/assets/calculator.js
 
+      - name: Check personal-loan net cash, fees and repayment schedules
+        run: node scripts/test_personal_loan.cjs dist/assets/calculator.js
+
       - name: Check exact-cent tips and bill splitting
         run: node scripts/test_tip.cjs dist/assets/calculator.js
 
