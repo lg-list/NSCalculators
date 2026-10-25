@@ -1,0 +1,26 @@
+{
+  "source": "Search Console signed-in visible report; exact query filter and Pages breakdown",
+  "observed_date": "2026-10-25",
+  "site": "sc-domain:nscalculators.com",
+  "country": "usa",
+  "search_type_ui_label": "Web / Network",
+  "period_start": "2026-09-24",
+  "period_end": "2026-10-21",
+  "query": "new vs used car calculator",
+  "query_match": "exact",
+  "query_aggregate": {"clicks": 0, "impressions": 35, "position_ui_rounded": 93.5},
+  "visible_page_rows": [
+    {"url": "https://nscalculators.com/used-car-value-calculator/", "clicks": 0, "impressions": 35}
+  ],
+  "interpretation": "An ownership-comparison query is exposing a current-value tool; supply a distinct functional comparison, without redirecting the valuation page.",
+  "implemented_target": "https://nscalculators.com/new-vs-used-car-calculator/",
+  "current_value_target_preserved": "https://nscalculators.com/used-car-value-calculator/",
+  "us_avg_monthly_searches": null,
+  "limitations": [
+    "Historical site impressions are not market-wide search volume or visits.",
+    "The page row was observed under the exact query, not joined from separate exports.",
+    "Reported position is the query aggregate, not a separately measured page position.",
+    "The new target was not present during this observation interval; no traffic lift or ranking is established.",
+    "Implementation does not guarantee indexation, competitiveness or the daily traffic objective."
+  ]
+}

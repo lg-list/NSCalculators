@@ -690,6 +690,19 @@ def supplemental_calculators():
 
 def manual_calculators():
     return [{
+        "slug": "new-vs-used-car-calculator",
+        "title": "New vs Used Car Calculator",
+        "cat": "Automotive",
+        "group": "Car Value",
+        "engine": "new_used_cost",
+        "desc": "Compare new and used car ownership costs over the same holding period, including resale, financing, fuel, insurance and maintenance.",
+        "formula": "Ownership cost = purchase price - resale value + interest paid + upfront tax and fees + operating costs.",
+        "example": "Compare two quoted purchases using the same years and annual mileage; account for any loan balance remaining when the vehicle is sold.",
+        "inputs": [],
+        "keyword_data": {},
+        "seo_keyword": "new vs used car calculator",
+        "source": "Google Search Console query opportunity",
+    }, {
         "slug": "average-return-calculator",
         "title": "Average Return Calculator",
         "cat": "Financial",
@@ -1198,6 +1211,8 @@ def seo_keywords(calc):
 
 
 def seo_title(calc):
+    if calc.get("slug") == "new-vs-used-car-calculator":
+        return "New vs Used Car Calculator: Compare Ownership Costs"
     if calc.get("slug") == "time-duration-calculator":
         return "Time Duration Calculator: Hours, Minutes & Seconds"
     if calc.get("slug") == "calories-burned-calculator":
@@ -1332,6 +1347,8 @@ def seo_title(calc):
 
 
 def seo_description(calc):
+    if calc.get("slug") == "new-vs-used-car-calculator":
+        return "Compare new vs used car costs using purchase and resale values, loan interest, fuel, insurance and maintenance. See total cost, cash outlay and sale equity."
     if calc.get("slug") == "time-duration-calculator":
         return "Calculate elapsed time between two times or dates, including overnight intervals. Get days, hours, minutes, seconds, and decimal totals."
     keyword = primary_keyword(calc)
@@ -2141,6 +2158,33 @@ def trip_fuel_cost_input_html():
 <div class="field"><label for="people">People sharing cost</label><input id="people" type="number" step="1" min="1" value="1"></div>
 </div></details>
 </div>"""
+
+
+def new_used_input_html():
+    fields = [
+        input_html(["nu_years", "Years owned", "number", 5]),
+        input_html(["nu_miles", "Miles per year", "number", 12000]),
+    ]
+    pairs = [
+        ("price", "purchase price ($)", 35000, 25000),
+        ("resale", "resale at end ($)", 20000, 13000),
+    ]
+    finance = [("down", "cash down ($)", 5000, 5000), ("rate", "annual note rate (%)", 6, 8),
+               ("months", "loan term (months)", 60, 60), ("fees", "upfront tax + fees ($)", 2000, 1500)]
+    operating = [("mpg", "US MPG", 30, 25), ("insurance", "insurance / year ($)", 1500, 1200),
+                 ("maintenance", "maintenance / year ($)", 500, 1000)]
+
+    def pair_fields(rows):
+        return "".join(input_html([f"nu_{side}_{key}", f"{label}: {name}", "number", value])
+                       for key, name, new, used in rows
+                       for side, label, value in (("new", "New", new), ("used", "Used", used)))
+
+    return ('<div class="fields vehicle-value-fields new-used-fields">' + "".join(fields) + pair_fields(pairs)
+            + '<details class="more-options field-wide"><summary>Financing and upfront costs</summary><div class="fields">'
+            + pair_fields(finance) + '</div></details>'
+            + '<details class="more-options field-wide"><summary>Fuel, insurance and maintenance</summary><div class="fields">'
+            + input_html(["nu_fuel", "Fuel price ($ / US gallon)", "number", 3.50]) + pair_fields(operating)
+            + '</div></details></div>')
 
 
 def trade_in_value_input_html():
@@ -2999,6 +3043,17 @@ def conversion_copy(calc):
 
 
 def high_value_calculator_copy(calc):
+    if calc.get("slug") == "new-vs-used-car-calculator":
+        return """
+<h2>Compare new and used car ownership costs</h2><p>A lower sticker price or loan payment does not by itself identify the lower-cost vehicle. This comparison uses the same holding period and annual driving distance for both cars. Purchase prices, future resale values, financing terms and operating costs are your assumptions, not live market quotes or predictions. All money is in US dollars and fuel economy is US miles per gallon.</p>
+<p class="formula">ownership cost = purchase price - end resale value + interest paid during ownership + upfront tax and fees + fuel, insurance and maintenance</p>
+<h2>Why principal is not counted twice</h2><p>The purchase price already includes the car's value. Adding every loan payment to depreciation would count the principal twice. Instead, the cost model adds only loan interest accrued through the holding period. A separate cash-flow calculation reconciles the answer: cash down plus tax and fees, payments and operating costs, minus the sale proceeds after paying the remaining loan balance. If the loan outlasts your ownership, that balance is still owed when you sell.</p>
+<p class="formula">net cost = cash paid during ownership - (resale value - remaining loan balance)</p>
+<h2>A worked five-year comparison</h2><p>Consider a $35,000 new car with $20,000 resale after five years, $2,000 upfront tax and fees, $1,500 annual insurance, $500 annual maintenance and 30 US MPG. Compare a $25,000 used car with $13,000 end resale, $1,500 tax and fees, $1,200 annual insurance, $1,000 annual maintenance and 25 US MPG. At 12,000 miles per year and $3.50 per US gallon, annual fuel costs are $1,400 and $1,680.</p><p>With cash purchases or an illustrative 0% loan rate for both, the new car costs $34,000 over five years: $15,000 depreciation + $2,000 tax/fees + $17,000 operating costs. The used car costs $32,900: $12,000 depreciation + $1,500 tax/fees + $19,400 operating costs. The used car is $1,100 lower in this scenario. Zero-percent financing is an example, not an available offer; the initial inputs use different illustrative rates.</p>
+<h2>Resale and repair uncertainty</h2><p>End resale is the expected sale price at the end of your selected holding period, before repaying the loan. Update this assumption when you change the years owned. It is not today's trade-in offer. A resale assumption above purchase price is allowed and creates negative depreciation; that is an assumption about appreciation, not a promised profit. Compare several resale and repair scenarios rather than relying on a single forecast.</p><p>For a current comparable-based estimate, use the <a href="/used-car-value-calculator/">used car value calculator</a>. For an explicit future depreciation assumption, use the <a href="/car-resale-value-calculator/">car resale value calculator</a>. Neither supplies a guaranteed future selling price.</p>
+<h2>Financing and payment timing</h2><p>Cash down reduces the financed purchase price. To model a cash purchase, make cash down equal to price; unused loan rate and term inputs then do not affect the result. Otherwise the loan uses fixed end-of-month payments at the annual note interest rate divided by 12. Ownership ends just after the final month's scheduled payment. Payment and interest calculations retain full precision before display rounding; lenders may use daily interest and different final-payment rounding.</p><p>Tax and fees are one combined quoted amount paid upfront, not financed or automatically calculated from state law. Enter them once and do not also include them in the vehicle price. This model has no trade-in, negative-equity rollover, balloon payment, extra payment, prepayment penalty, refinance, lease or variable rate. Use the <a href="/auto-loan-calculator/">auto loan calculator</a> for a separate financed purchase estimate; it is not a substitute for this ownership comparison.</p>
+<h2>Operating costs and scope</h2><p>Fuel cost is annual miles divided by US MPG, multiplied by the shared entered price per US gallon. Insurance and maintenance/repair budgets are fixed annual amounts; operating costs are spread evenly over the holding period. There is no inflation, discounting or opportunity cost of cash. Parking, tolls, recurring registration, selling expenses, incentives, warranty reimbursement and unexpected repair timing are not modeled. Add important omitted costs separately before making a decision. The tool supports 1-10 whole years, 1-120 whole loan months, rates from 0% to 100%, and monetary assumptions up to $1 billion as a numerical limit, not a typical vehicle price.</p>
+<h2>Check quotes, not just payments</h2><p>The <a href="https://www.consumerfinance.gov/ask-cfpb/how-much-can-i-afford-to-borrow-for-a-car-or-auto-loan-en-751/" rel="external noopener">CFPB's vehicle-budget guidance</a> includes borrowing and ongoing ownership expenses. The FTC's <a href="https://consumer.ftc.gov/articles/financing-or-leasing-car" rel="external noopener">financing guidance</a> recommends comparing the overall deal, not just the monthly payment. Obtain itemized purchase and financing quotes and insurance estimates for both vehicles. This is a scenario comparison, not personalized buying advice, a valuation service or loan approval.</p>"""
     if calc.get("engine") == "cn_date":
         return """
 <h2>Calendar day counter</h2><p>Subtract the start date from the end date to count whole calendar-day boundaries. The result also identifies both weekdays and expresses the absolute span as complete weeks plus remaining days. The dates you enter are kept as calendar dates, without shifting them to your device's time zone.</p>
@@ -3966,6 +4021,8 @@ def default_calculator_copy(calc):
 
 
 def analysis_extra_html(calc):
+    if calc.get("slug") == "new-vs-used-car-calculator":
+        return """<section class="mortgage-dashboard generic-dashboard new-used-dashboard" aria-label="New and used ownership comparison"><div class="section-head stack"><h2>Ownership Cost Comparison</h2></div><div class="summary-grid" id="genericSummary"></div><div class="chart-card compact-chart"><h3>Total Cost Over the Holding Period</h3><canvas id="genericChart" width="620" height="130" data-chart-type="bars" aria-label="New and used car ownership costs in US dollars"></canvas></div><div class="table-card"><h3>Cost and Cash Flow Details</h3><div class="table-scroll"><table class="data-table" id="genericTable"><thead><tr><th scope="col">Measure</th><th scope="col">New car</th><th scope="col">Used car</th></tr></thead><tbody></tbody></table></div></div></section>"""
     if calc.get("engine") == "cn_date":
         return """<section class="mortgage-dashboard generic-dashboard calendar-date-dashboard" aria-label="Calendar date results"><div class="section-head stack"><h2>Calendar Date Results</h2></div><div class="summary-grid" id="genericSummary"></div><div class="table-card"><h3>Date Difference Details</h3><div class="table-scroll"><table class="data-table" id="genericTable"><thead><tr><th>Measure</th><th>Value</th><th>Basis</th></tr></thead><tbody></tbody></table></div></div></section>"""
     if calc.get("slug") == "seconds-to-hours-calculator":
@@ -4822,6 +4879,9 @@ def calculator_page(site, calc, related):
     elif calc.get("slug") == "used-car-value-calculator":
         fields = used_car_value_input_html()
         page_engine = "used_car_estimate"
+    elif calc.get("slug") == "new-vs-used-car-calculator":
+        fields = new_used_input_html()
+        page_engine = "new_used_cost"
     elif calc.get("slug") == "tire-size-calculator":
         fields = tire_size_input_html()
         page_engine = "tire_compare"
@@ -4878,6 +4938,9 @@ def calculator_page(site, calc, related):
         fields = f"""<div class="fields">{''.join(input_html(f) for f in calc["inputs"])}</div>"""
     rel = "".join(card(c, compact=True) for c in related)
     content = payback_copy(calc) or marriage_tax_copy(calc) or priority_length_copy(calc) or high_value_calculator_copy(calc) or conversion_copy(calc) or default_calculator_copy(calc)
+    if calc.get("slug") in ("used-car-value-calculator", "car-resale-value-calculator", "auto-loan-calculator"):
+        ownership_link = '<p>Comparing two purchases? Use the <a href="/new-vs-used-car-calculator/">new vs used car calculator</a> for a shared holding-period comparison of depreciation, financing and operating costs, rather than treating a current value estimate as a buying recommendation.</p>'
+        content = ownership_link + content
     if calc.get("slug") == "bmi-calculator":
         composition_link = '<p>BMI is a height-weight screening value, not body fat percentage. The <a href="/body-fat-calculator/">body fat calculator</a> provides separately labeled adult circumference and BMI-based predictions, with measurement and population limits.</p>'
         content = content.replace('<h2>Frequently asked questions</h2>', composition_link + '<h2>Frequently asked questions</h2>', 1)
@@ -5122,6 +5185,7 @@ CSS = r'''
 .prose .ratio-conversion-table{table-layout:fixed;font-size:16px;line-height:1.4}
 .duration-conversion-dashboard .summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.duration-conversion-dashboard .summary-card{min-width:0}.duration-conversion-dashboard .summary-card strong{overflow-wrap:anywhere}
 .calendar-date-dashboard .summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.calendar-date-dashboard .summary-card{min-width:0}.calendar-date-dashboard .summary-card strong{font-size:18px;overflow-wrap:anywhere}
+.new-used-fields .fields{grid-template-columns:repeat(2,minmax(0,1fr));padding:10px}.new-used-fields .field-wide{grid-column:1/-1}.new-used-dashboard .summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.new-used-dashboard .summary-card{min-width:0}.new-used-dashboard .summary-card strong{font-size:20px;overflow-wrap:anywhere}
 .prose .ratio-conversion-table th,.prose .ratio-conversion-table td{white-space:normal;overflow-wrap:anywhere;padding:8px 6px}
 .prose .ratio-conversion-table th:first-child{width:42%}
 .prose .ratio-conversion-table caption{white-space:normal;text-align:left;padding:0 0 8px;line-height:1.4}
@@ -5509,6 +5573,37 @@ function bodyFatProjection(){
   const read=id=>{const raw=document.getElementById(id)?.value;return raw===undefined||raw.trim()===''?NaN:Number(raw)};
   return bodyFatAmounts({units,method,sex,age:read('bf_age'),height:read('bf_height'),weight:read('bf_weight'),neck:read('bf_neck'),waist:read('bf_waist'),hip:read('bf_hip')});
 }
+function fixedMonthlyPayment(principal,annualRate,months){const r=annualRate/1200;return principal===0?0:r===0?principal/months:principal*r/(-Math.expm1(-months*Math.log1p(r)))}
+function newUsedAmounts({years,miles,fuel,newCar,usedCar}){
+  const fail=message=>({valid:false,message}),finite=x=>typeof x==='number'&&Number.isFinite(x),money=x=>finite(x)&&x>=0&&x<=1e9;
+  if(!Number.isInteger(years)||years<1||years>10)return fail('Enter a whole ownership period from 1 through 10 years.');
+  if(!finite(miles)||miles<0||miles>1e6||!finite(fuel)||fuel<0||fuel>1000)return fail('Enter annual miles from 0 through 1,000,000 and fuel price from $0 through $1,000 per US gallon.');
+  const months=years*12;
+  function vehicle(car,label){
+    if(!car||!['price','down','resale','fees','insurance','maintenance'].every(key=>money(car[key]))||car.price===0)throw Error(`${label}: enter a positive price and nonnegative monetary assumptions no greater than $1 billion.`);
+    if(car.down>car.price)throw Error(`${label}: cash down cannot exceed the purchase price.`);
+    if(miles>0&&(!finite(car.mpg)||car.mpg<=0||car.mpg>1000))throw Error(`${label}: enter US MPG greater than zero and no greater than 1,000.`);
+    const loan=car.price-car.down,rate=loan>0?car.rate:0,term=loan>0?car.months:0;
+    if(loan>0&&(!finite(rate)||rate<0||rate>100||!Number.isInteger(term)||term<1||term>120))throw Error(`${label}: enter an annual note rate from 0% through 100% and a whole loan term from 1 through 120 months.`);
+    const payment=fixedMonthlyPayment(loan,rate,term),r=rate/1200;
+    let balance=loan,paid=0,interestPaid=0;
+    for(let month=1;month<=Math.min(months,term);month++){
+      const interest=balance*r,installment=month===term?balance+interest:Math.min(payment,balance+interest);
+      interestPaid+=interest;paid+=installment;balance=Math.max(0,balance+interest-installment);
+    }
+    const annualFuel=miles===0?0:miles/car.mpg*fuel,annualOperating=annualFuel+car.insurance+car.maintenance,operating=annualOperating*years;
+    // Principal is already in the purchase price, not an extra ownership cost.
+    const depreciation=car.price-car.resale,cost=depreciation+interestPaid+car.fees+operating;
+    const cashPaid=car.down+car.fees+paid+operating,saleEquity=car.resale-balance,netCashCost=cashPaid-saleEquity;
+    return{price:car.price,down:car.down,resale:car.resale,fees:car.fees,insurance:car.insurance,maintenance:car.maintenance,mpg:miles>0?car.mpg:null,rate,term,loan,payment,balance,paid,interestPaid,annualFuel,annualOperating,operating,depreciation,cost,cashPaid,saleEquity,netCashCost,monthlyAverage:cost/months,costPerMile:miles>0?cost/(miles*years):null};
+  }
+  try{const a=vehicle(newCar,'New car'),b=vehicle(usedCar,'Used car');if([a,b].some(car=>Object.values(car).some(value=>typeof value==='number'&&!Number.isFinite(value))))return fail('These assumptions exceed the supported numerical range.');const difference=a.cost-b.cost;return{valid:true,years,months,miles,fuel,newCar:a,usedCar:b,difference,savings:Math.abs(difference),winner:Math.abs(difference)<.005?'tie':difference>0?'used':'new'}}catch(error){return fail(error.message)}
+}
+function newUsedProjection(){
+  const read=id=>{const raw=document.getElementById(id)?.value;return typeof raw==='string'&&raw.trim()!==''?Number(raw):NaN};
+  const car=side=>Object.fromEntries(['price','down','resale','fees','insurance','maintenance','mpg','rate','months'].map(key=>[key,read(`nu_${side}_${key}`)]));
+  return newUsedAmounts({years:read('nu_years'),miles:read('nu_miles'),fuel:read('nu_fuel'),newCar:car('new'),usedCar:car('used')});
+}
 function cashBackAmounts({price,rebate,highRate,lowRate,months,down,trade,fees,financeFees,taxMode,taxRate,rebateReducesTax,tradeReducesTax,quotedCashTax,quotedLowTax}){
   const fail=message=>({valid:false,message}),number=x=>typeof x==='number'&&Number.isFinite(x);
   if(![price,rebate,down,trade,fees].every(x=>number(x)&&x>=0)||price===0)return fail('Enter a positive vehicle price and nonnegative rebate, down payment, trade-in and fees.');
@@ -5523,8 +5618,8 @@ function cashBackAmounts({price,rebate,highRate,lowRate,months,down,trade,fees,f
     const taxablePrice=Math.max(0,price-(rebateReducesTax?discount:0)-(tradeReducesTax?trade:0));
     const tax=taxMode==='quoted'?quotedTax:taxablePrice*taxRate/100;
     const startingBalance=price-discount-trade+(financeFees?tax+fees:0),downUsed=Math.min(down,startingBalance);
-    const loan=Math.max(0,startingBalance-downUsed),r=rate/1200;
-    const payment=loan===0?0:r===0?loan/months:loan*r/(-Math.expm1(-months*Math.log1p(r)));
+    const loan=Math.max(0,startingBalance-downUsed);
+    const payment=fixedMonthlyPayment(loan,rate,months);
     const totalPayments=payment*months,interest=Math.max(0,totalPayments-loan),upfront=downUsed+(financeFees?0:tax+fees);
     return{rebate:discount,rate,taxablePrice,tax,loan,downUsed,unusedDown:down-downUsed,payment,totalPayments,interest,upfront,cost:upfront+totalPayments+trade};
   }
@@ -6258,6 +6353,7 @@ function calc(e){
   case'fuel_cost_advanced':{const p=fuelCostProjection();if(!p.valid)show(`<strong>Unable to estimate trip fuel cost</strong><br>${p.message}`);else show(`<strong>${MONEY(p.fuelCost,p.currency)} estimated fuel cost</strong><br>${F(p.usGallons,2)} US gal (${F(p.liters,2)} L); ${MONEY(p.totalBudget,p.currency)} total trip budget; ${MONEY(p.perPerson,p.currency)} per person.`);break}
   case'trade_in_estimate':{const p=tradeInProjection(),comparison=tradeSaleComparison(p),equityLabel=p.equity>=0?'positive equity':'negative equity',source=p.bestOffer?'best entered offer':'planning estimate',comparisonText=!comparison?'':!comparison.valid?`<br>${comparison.message}`:comparison.winner==='tie'?'<br>Trade-in and private sale have equal modeled value.':`<br>${comparison.winner==='private'?'Private sale':'Trade-in'} ahead by ${USD(Math.abs(comparison.difference))} after entered selling costs and eligible tax savings.`;show(`<strong>${USD(p.rangeLow)} - ${USD(p.rangeHigh)} estimated range</strong><br>${USD(p.selectedTrade)} ${source}; ${USD(Math.abs(p.equity))} ${equityLabel}; ${USD(p.monthlyPayment)} estimated monthly payment.${comparisonText}`);break}
   case'used_car_estimate':{const p=usedCarProjection();if(!p.valid)show(`<strong>Check the estimate inputs</strong><br>${H(p.message)}`);else show(`<strong>${USD(p.privateValue)} private-party estimate</strong><br>Adjusted retail: ${USD(p.retail)}; trade-in estimate: ${USD(p.trade)}; review the planning ranges below.`);break}
+  case'new_used_cost':{const p=newUsedProjection();show(!p.valid?`<strong>Check the comparison inputs</strong><br>${H(p.message)}`:p.winner==='tie'?`<strong>Modeled costs are equal</strong><br>Both vehicles cost about ${USD(p.newCar.cost)} over ${p.years} years.`:`<strong>${p.winner==='new'?'New':'Used'} car is ${USD(p.savings)} lower</strong><br>Modeled ownership cost over ${p.years} years, using your assumptions.`);break}
   case'car_depreciation_advanced':{const p=carDepreciationProjection();show(`<strong>${USD(p.value)} projected vehicle value</strong><br>${USD(p.totalLoss)} total depreciation (${F(100-p.retained,1)}%); ${USD(p.averageAnnual)} average per year; ${USD(p.costPerMile)} per projected mile.`);break}
   case'car_resale_advanced':{const p=carResaleProjection();if(!p.valid)show(`<strong>Unable to estimate resale value</strong><br>${p.message}`);else{const equity=p.base.net>=0?'net proceeds':'negative equity';show(`<strong>${USD(p.base.value)} projected resale value</strong><br>${F(p.rate*100,2)}% equivalent annual depreciation; ${USD(Math.abs(p.base.net))} ${equity} after costs and payoff.`)}break}
   case'horsepower_advanced':{const p=horsepowerProjection();if(!p.valid)show(`<strong>Unable to calculate</strong><br>${p.message}`);else{const answer=p.mode==='torque'?`${F(p.torqueLb,2)} lb-ft torque`:p.mode==='rpm'?`${F(p.rpm,0)} RPM`:`${F(p.hp,2)} horsepower`;show(`<strong>${answer}</strong><br>${F(p.kw,2)} kW; ${F(p.ps,2)} PS; ${F(p.torqueNm,2)} N-m at ${F(p.rpm,0)} RPM.`)}break}
@@ -6385,7 +6481,7 @@ document.addEventListener('click',e=>{const btn=e.target.closest('[data-engine]'
 document.addEventListener('click',e=>{const link=e.target.closest('a[href]');if(!link)return;try{const destination=new URL(link.href,location.href);if(/^https?:$/.test(destination.protocol)&&destination.hostname!==location.hostname)trackGA4Event('outbound_reference_click',{destination_host:destination.hostname,source_path:location.pathname})}catch{}});
 document.addEventListener('click',e=>{if(e.target.closest('[data-clear]')){if(currentEngine()==='time_duration')clearTimeDurationForm();else clearCalcForm()}});
 document.addEventListener('click',e=>{if(e.target.closest('[data-clear]')&&currentEngine()==='used_car_estimate')renderGenericFromEngine('used_car_estimate')});
-document.addEventListener('click',e=>{if(e.target.closest('[data-clear]')&&currentEngine()==='cn_date')calc('cn_date')});
+document.addEventListener('click',e=>{if(e.target.closest('[data-clear]')&&['cn_date','new_used_cost'].includes(currentEngine()))calc(currentEngine())});
 document.addEventListener('click',e=>{
   if(!e.target.closest('[data-clear]'))return;
   const engine=currentEngine();
@@ -6545,7 +6641,19 @@ function paybackProjection(){
 function renderGenericFromEngine(engine) {
   if (!document.getElementById("genericSummary")) return;
   let cards=[], bars=[], rows=[];
-  if(engine==="body_fat_advanced"){
+  if(engine==="new_used_cost"){
+    const p=newUsedProjection();
+    if(!p.valid){cards=[["Ownership comparison","Check inputs",H(p.message)]];rows=[["Validation",H(p.message),H(p.message)]]}
+    else{
+      const a=p.newCar,b=p.usedCar;
+      cards=[["New car: total cost",USD(a.cost),`${p.years}-year holding period.`],["Used car: total cost",USD(b.cost),"Same period and annual mileage."],["Modeled difference",USD(p.savings),p.winner==='tie'?"Costs equal within half a cent.":`${p.winner==='new'?'New':'Used'} car has the lower modeled cost.`],["Driving over period",`${F(p.miles*p.years,0)} miles`,"Both vehicles use this distance."]];
+      bars=[{label:'New car',value:a.cost,display:USD(a.cost)},{label:'Used car',value:b.cost,display:USD(b.cost)}];
+      const dollarRows=[['Purchase price','price'],['Assumed end resale','resale'],['Depreciation (price - resale)','depreciation'],['Upfront tax and fees','fees'],['Cash down','down'],['Original loan','loan'],['Regular loan payment / month','payment'],['Loan payments during ownership','paid'],['Interest during ownership','interestPaid'],['Loan balance at sale','balance'],['Fuel / year','annualFuel'],['Insurance / year','insurance'],['Maintenance / year','maintenance'],['All operating costs during ownership','operating'],['Total ownership cost','cost'],['Average cost / month','monthlyAverage'],['Cash paid before sale','cashPaid'],['Sale value minus loan payoff','saleEquity'],['Reconciled net cash cost','netCashCost']];
+      rows=dollarRows.map(([label,key])=>[label,USD(a[key]),USD(b[key])]);
+      rows.unshift(['Years owned',String(p.years),String(p.years)],['Annual miles',F(p.miles,0),F(p.miles,0)]);
+      rows.push(['Cost / mile',a.costPerMile===null?'No miles entered':USD(a.costPerMile),b.costPerMile===null?'No miles entered':USD(b.costPerMile)],['US MPG',a.mpg===null?'No driving':F(a.mpg,2),b.mpg===null?'No driving':F(b.mpg,2)],['Annual note rate',a.loan?`${F(a.rate,4)}%`:'Cash purchase',b.loan?`${F(b.rate,4)}%`:'Cash purchase'],['Loan term',a.loan?`${a.term} months`:'Not used',b.loan?`${b.term} months`:'Not used']);
+    }
+  } else if(engine==="body_fat_advanced"){
     const p=bodyFatProjection(),canvas=document.getElementById('genericChart'),chartCard=canvas?.closest('.chart-card'),note=document.getElementById('bf_chart_note');if(chartCard)chartCard.hidden=!p.valid;
     if(!p.valid){cards=[["Body fat estimate","Check inputs",H(p.message)]];rows=[["Validation","Unavailable",H(p.message)]];if(note)note.textContent=''}
     else{

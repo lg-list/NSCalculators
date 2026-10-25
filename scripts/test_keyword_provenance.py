@@ -83,7 +83,13 @@ class KeywordProvenanceTests(unittest.TestCase):
 
     def test_reviewed_index_scope_is_not_driven_by_china_metrics(self):
         # FHA remains withheld; dedicated down-payment and rebate-comparison tools are restored.
-        self.assertEqual(sum(build.is_indexable_calculator(c) for c in self.calculators.values()), 284)
+        # Only the purpose-built US query-backed ownership comparison expands this baseline.
+        baseline = [c for c in self.calculators.values() if c['slug'] != 'new-vs-used-car-calculator']
+        self.assertEqual(sum(build.is_indexable_calculator(c) for c in baseline), 284)
+        comparison = self.calculators['new-vs-used-car-calculator']
+        self.assertTrue(build.is_indexable_calculator(comparison))
+        self.assertEqual(comparison['source'], 'Google Search Console query opportunity')
+        self.assertFalse(comparison['keyword_data'])
 
     def test_fingerprint_ignores_json_object_key_formatting(self):
         self.assertEqual(build.keyword_data_fingerprint([{"keyword": "a", "volume": 50}]),

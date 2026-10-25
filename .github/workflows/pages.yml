@@ -89,6 +89,9 @@ jobs:
       - name: Check comparable-based used-car valuation
         run: node scripts/test_used_car_value.cjs dist/assets/calculator.js
 
+      - name: Check new-versus-used ownership and sale cash-flow reconciliation
+        run: node scripts/test_new_used.cjs dist/assets/calculator.js
+
       - name: Check exact-cent tips and bill splitting
         run: node scripts/test_tip.cjs dist/assets/calculator.js
 
