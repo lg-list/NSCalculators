@@ -1,0 +1,29 @@
+{
+  "source": "Google Search Console CSV export",
+  "source_filename": "nscalculators.com-Performance-on-Search-2026-10-24.zip",
+  "source_sha256": "c5a2ec4c2e7132624cf60b78d7cbbe5aa7e08af221d3765e25129a59dd4b791e",
+  "country": "United States",
+  "search_type": "Web text-based",
+  "start_date": "2026-09-24",
+  "end_date": "2026-10-21",
+  "page_observation": {
+    "page": "https://nscalculators.com/boat-loan-calculator/",
+    "clicks": 0,
+    "impressions": 294,
+    "average_position": 90.27
+  },
+  "separate_query_observation": {
+    "query": "boat loan calculator",
+    "clicks": 0,
+    "impressions": 21,
+    "average_position": 89.86
+  },
+  "query_page_pair_verified": false,
+  "us_monthly_search_volume": null,
+  "limitations": [
+    "Page and query observations are independent CSV tables, not a joined query/page attribution.",
+    "These impressions describe observed site visibility, not total US search demand or a traffic forecast.",
+    "Named query rows are capped at 1000; page and query totals do not equal property totals.",
+    "The owner will upload US-targeted historical Keyword Planner data; that file has not yet been received or validated."
+  ]
+}

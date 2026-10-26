@@ -101,6 +101,9 @@ jobs:
       - name: Check PC evidence ranges and target-status wording
         run: node scripts/test_bottleneck.cjs dist/assets/calculator.js
 
+      - name: Check boat purchase cash flow and repayment schedule
+        run: node scripts/test_boat_loan.cjs dist/assets/calculator.js
+
       - name: Check exact-cent tips and bill splitting
         run: node scripts/test_tip.cjs dist/assets/calculator.js
 

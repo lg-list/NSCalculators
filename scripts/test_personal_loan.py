@@ -25,9 +25,8 @@ class PersonalLoanTests(unittest.TestCase):
         self.assertIn('Net Proceeds', build.seo_title(calc))
         self.assertIn('origination fees', build.seo_description(calc))
 
-    def test_other_loans_keep_their_models_and_have_contextual_route(self):
+    def test_business_loan_keeps_its_model_and_general_loans_have_contextual_route(self):
         self.assertEqual(self.calcs['business-loan-calculator']['engine'], 'loan')
-        self.assertEqual(self.calcs['boat-loan-calculator']['engine'], 'loan')
         for slug in ('loan-calculator', 'amortization-calculator'):
             html = build.calculator_page(self.data['site'], self.calcs[slug], [])
             self.assertIn('href="/personal-loan-calculator/"', html)

@@ -985,6 +985,8 @@ def base_and_supplemental(data):
             calc["keyword_data"] = {}
         if calc["slug"] == "personal-loan-calculator":
             calc.update({"engine": "personal_loan_advanced", "desc": "Calculate personal loan payments, origination fees, net cash available, insurance costs and a monthly repayment schedule.", "inputs": []})
+        if calc["slug"] == "boat-loan-calculator":
+            calc.update({"engine": "boat_loan_advanced", "desc": "Estimate boat loan payments from price, down payment and note rate, with optional purchase costs, a separate boating budget and an amortization schedule.", "inputs": []})
         if calc["slug"] == "time-duration-calculator":
             calc.update({
                 "cat": "Time & Date",
@@ -1213,6 +1215,8 @@ def seo_keywords(calc):
 
 
 def seo_title(calc):
+    if calc.get("slug") == "boat-loan-calculator":
+        return "Boat Loan Calculator: Payments, Down Payment & Costs"
     if calc.get("slug") == "personal-loan-calculator":
         return "Personal Loan Calculator: Payments, Fees & Net Proceeds"
     if calc.get("slug") == "new-vs-used-car-calculator":
@@ -1351,6 +1355,8 @@ def seo_title(calc):
 
 
 def seo_description(calc):
+    if calc.get("slug") == "boat-loan-calculator":
+        return "Calculate boat loan payments with down payment, optional tax and fees, a separate boating budget, interest breakdown and monthly amortization schedule."
     if calc.get("slug") == "personal-loan-calculator":
         return "Estimate personal loan payments, origination fees, net proceeds and insurance. Compare total borrowing cost and review a monthly amortization schedule."
     if calc.get("slug") == "new-vs-used-car-calculator":
@@ -2183,6 +2189,24 @@ def personal_loan_input_html():
 <div class="field is-hidden" data-pl-cost><label for="pl_fee_method">Fee handling</label><select id="pl_fee_method"><option value="deducted">Deducted from loan</option><option value="upfront">Paid upfront</option></select></div>
 <div class="field field-wide is-hidden" data-pl-cost><label for="pl_insurance">Insurance per month ($)</label><input id="pl_insurance" type="number" step="any" min="0" value="0"></div>
 </div>"""
+
+
+def boat_loan_input_html():
+    return f"""<div class="fields personal-loan-fields boat-loan-fields">
+<div class="field"><label for="bl_price">Boat price ($)</label><input id="bl_price" type="number" step="any" min="0.01" value="50000"></div>
+<div class="field"><label for="bl_down">Down payment</label><div class="input-unit"><input id="bl_down" type="number" step="any" min="0" value="20"><select id="bl_down_unit" aria-label="Boat down payment unit"><option value="percent">%</option><option value="dollars">$</option></select></div></div>
+<div class="field"><label for="bl_rate">Annual note rate (%)</label><input id="bl_rate" type="number" step="any" min="0" max="100" value="7.5"></div>
+<div class="field"><label for="bl_years">Term: whole years</label><input id="bl_years" type="number" step="1" min="0" max="50" value="10"></div>
+<div class="field"><label for="bl_months">Additional months</label><input id="bl_months" type="number" step="1" min="0" max="11" value="0"></div>
+<div class="field"><label for="bl_start">First payment month</label><input id="bl_start" type="month" value="{date.today():%Y-%m}"></div>
+<div class="field field-wide option-field"><label class="checkline"><input id="bl_add_costs" type="checkbox"> Include purchase tax and fees</label></div>
+<div class="field is-hidden" data-bl-cost><label for="bl_fees">Total tax and fees ($)</label><input id="bl_fees" type="number" step="any" min="0" value="3000"></div>
+<div class="field is-hidden" data-bl-cost><label for="bl_fee_method">Tax and fees paid</label><select id="bl_fee_method"><option value="financed">Add to loan</option><option value="upfront">Pay upfront</option></select></div>
+<details class="more-options field-wide"><summary>Annual boating budget</summary><div class="fields personal-loan-fields">
+<div class="field"><label for="bl_insurance">Insurance / year ($)</label><input id="bl_insurance" type="number" step="any" min="0" value="0"></div>
+<div class="field"><label for="bl_storage">Storage / year ($)</label><input id="bl_storage" type="number" step="any" min="0" value="0"></div>
+<div class="field field-wide"><label for="bl_operating">Other operation / year ($)</label><input id="bl_operating" type="number" step="any" min="0" value="0"></div>
+</div></details></div>"""
 
 
 def new_used_input_html():
@@ -3068,6 +3092,15 @@ def conversion_copy(calc):
 
 
 def high_value_calculator_copy(calc):
+    if calc.get("slug") == "boat-loan-calculator":
+        return """
+<h2>Boat loan payment and purchase budget</h2><p>Start with the negotiated boat price and your cash down payment. The amount financed is price minus down payment, plus purchase tax and fees only when you choose to finance them. A dollar down payment and a percentage of the boat price are alternative inputs, not two deposits. Initial amounts and rates are examples, not current offers, required down payments or approval criteria.</p>
+<h2>How boat payments are calculated</h2><p class="formula">Principal = boat price - cash down + financed purchase costs. Monthly payment = principal x r / [1 - (1 + r)^(-n)], where r = annual note rate / 1200 and n = whole monthly payments.</p><p>At zero interest, payment is principal divided by months. The annual note rate is the nominal interest rate used for monthly amortization, not a fee-inclusive APR. Do not enter the same finance charge both through an APR and as a separate fee. The <a href="https://www.consumerfinance.gov/ask-cfpb/what-is-the-difference-between-a-loan-interest-rate-and-the-apr-en-733/" rel="external noopener">CFPB explains the distinction between interest rate and APR</a>. Use the lender's disclosures for actual loan comparisons.</p>
+<h2>Worked purchase example</h2><p>A $50,000 boat with 20% down has a $10,000 down payment and $40,000 principal before purchase costs. At a 7.5% annual note rate over 120 months, the monthly loan payment is about $474.81 and total interest is about $16,976.85. Financing $3,000 of purchase tax and fees instead raises principal to $43,000 and payment to about $510.42; it does not turn those fees into a monthly charge. Paying the same $3,000 upfront leaves the original $40,000 principal and raises purchase cash due to $13,000.</p>
+<h2>Purchase costs versus recurring boating costs</h2><p>Tax and fees are one-time purchase amounts you supply from a quote. The calculator does not determine a state's tax base, trade-in allowance, tax cap, registration rules or whether a lender permits a charge to be financed. Enter the combined quoted amount, then select financed or upfront. Unchecking the purchase-cost option excludes those fields entirely.</p><p>Annual insurance, storage and other operation are separate budget assumptions. Include maintenance, fuel, recurring registration and other expected expenses in the last field without duplicating amounts already entered. Annual totals are divided by 12 for an average monthly reserve, not a claim that bills arrive monthly. For example, $1,200 insurance plus $2,400 storage adds a $300 monthly reserve to the loan payment. These costs are not financed and do not affect the repayment pie or amortization balance. Discover Boating's <a href="https://www.discoverboating.com/sites/default/files/2020-06/DBBoatBuyingGuide.pdf" rel="external noopener">boat-buying guide</a> includes an ownership-budget worksheet beyond the loan itself.</p>
+<h2>Reading the results and schedule</h2><p>The repayment pie contains principal and interest only; its total is scheduled loan payments, not the full purchase cash flow. Purchase cash due is cash down plus any upfront tax and fees. Modeled cash through the loan term adds purchase cash due, all loan installments and the entered annual operating reserve prorated over that term. It is not economic ownership cost: no future resale proceeds, depreciation, sale taxes or remaining value are subtracted.</p><p>The schedule labels payment one with the entered first payment month and assumes equal monthly periods. It uses unrounded amounts internally, with displayed rows rounded to cents; a sum of rounded rows may differ slightly from the displayed total. With a fully cash-funded boat and no financed fees, there is no loan schedule or interest. The rate is then unused, while the entered term still determines the operating-reserve budget horizon.</p>
+<h2>Scope and omitted costs</h2><p>Supported planning inputs are a positive boat price up to $1 billion, a down payment no greater than price, resulting principal up to $1 billion, a 0%-100% note rate and a 1-600-month budget horizon. These are numerical bounds, not lender offers. No trade-in payoff, balloon, daily accrual, variable rate, early payment, penalty, lender approval or legal APR is modeled. Use the <a href="/loan-calculator/">loan calculator</a> for other repayment structures and the <a href="/personal-loan-calculator/">personal loan calculator</a> when a disbursement has withheld origination fees.</p>
+<h2>Does a lower monthly payment mean a cheaper boat loan?</h2><p>Not necessarily. Changing the term changes both payment and total interest. Compare principal, total scheduled payments, upfront cash and the separate operating reserve together. A mathematical payment estimate is not a loan offer or an affordability decision.</p>"""
     if calc.get("slug") == "personal-loan-calculator":
         return """
 <h2>Personal loan payments and net cash</h2><p>The loan principal is the amount your monthly principal-and-interest payments repay. An origination fee can reduce the money you receive without reducing that balance. This tool separates principal, disbursement, upfront fees, net cash available, monthly insurance, interest and total borrowing cost. Initial values are examples, not rate quotes or approval terms.</p>
@@ -4056,6 +4089,8 @@ def default_calculator_copy(calc):
 
 
 def analysis_extra_html(calc):
+    if calc.get("slug") == "boat-loan-calculator":
+        return """<section class="mortgage-dashboard generic-dashboard personal-loan-dashboard" aria-label="Boat loan payment and budget analysis"><div class="section-head stack"><h2>Boat Loan Results</h2></div><div class="summary-grid" id="genericSummary"></div><div class="chart-card compact-chart"><h3>Loan Repayment Breakdown</h3><canvas id="genericChart" width="360" height="240" data-chart-type="pie" data-center-label="loan payments" aria-label="Loan principal and interest in US dollars"></canvas></div><div class="table-card"><h3>Purchase and Budget Details</h3><div class="table-scroll"><table class="data-table" id="genericTable"><thead><tr><th>Measure</th><th>Value</th><th>Basis</th></tr></thead><tbody></tbody></table></div></div><details class="schedule-details"><summary>Monthly loan repayment schedule</summary><div class="table-scroll"><table class="data-table" id="boatSchedule"><thead><tr><th>Payment</th><th>Month</th><th>Loan payment</th><th>Interest</th><th>Principal</th><th>Balance</th></tr></thead><tbody></tbody></table></div></details></section>"""
     if calc.get("slug") == "personal-loan-calculator":
         return """<section class="mortgage-dashboard generic-dashboard personal-loan-dashboard" aria-label="Personal loan payment and cost analysis"><div class="section-head stack"><h2>Personal Loan Results</h2></div><div class="summary-grid" id="genericSummary"></div><div class="chart-card compact-chart"><h3>Total Cash Outflow</h3><canvas id="genericChart" width="360" height="240" data-chart-type="pie" data-center-label="cash paid" aria-label="Principal, fee, interest and insurance cash outflow"></canvas></div><div class="table-card"><h3>Loan and Cash Details</h3><div class="table-scroll"><table class="data-table" id="genericTable"><thead><tr><th>Measure</th><th>Value</th><th>Basis</th></tr></thead><tbody></tbody></table></div></div><details class="schedule-details"><summary>Monthly repayment schedule</summary><div class="table-scroll"><table class="data-table" id="personalSchedule"><thead><tr><th>Payment</th><th>Month</th><th>Loan payment</th><th>Interest</th><th>Principal</th><th>Insurance</th><th>Balance</th></tr></thead><tbody></tbody></table></div></details></section>"""
     if calc.get("slug") == "new-vs-used-car-calculator":
@@ -4922,6 +4957,9 @@ def calculator_page(site, calc, related):
     elif calc.get("slug") == "personal-loan-calculator":
         fields = personal_loan_input_html()
         page_engine = "personal_loan_advanced"
+    elif calc.get("slug") == "boat-loan-calculator":
+        fields = boat_loan_input_html()
+        page_engine = "boat_loan_advanced"
     elif calc.get("slug") == "tire-size-calculator":
         fields = tire_size_input_html()
         page_engine = "tire_compare"
@@ -4980,6 +5018,7 @@ def calculator_page(site, calc, related):
     content = payback_copy(calc) or marriage_tax_copy(calc) or priority_length_copy(calc) or high_value_calculator_copy(calc) or conversion_copy(calc) or default_calculator_copy(calc)
     if calc.get("slug") in ("loan-calculator", "amortization-calculator"):
         content = '<p>For an installment loan with a quoted origination fee or monthly insurance, use the <a href="/personal-loan-calculator/">personal loan calculator</a> to separate disbursement, net cash available and modeled borrowing costs.</p>' + content
+        content = '<p>Planning a boat purchase? The <a href="/boat-loan-calculator/">boat loan calculator</a> separates price, down payment, financed or upfront purchase costs and an annual boating reserve from the loan payment.</p>' + content
     if calc.get("slug") in ("used-car-value-calculator", "car-resale-value-calculator", "auto-loan-calculator"):
         ownership_link = '<p>Comparing two purchases? Use the <a href="/new-vs-used-car-calculator/">new vs used car calculator</a> for a shared holding-period comparison of depreciation, financing and operating costs, rather than treating a current value estimate as a buying recommendation.</p>'
         content = ownership_link + content
@@ -5662,6 +5701,32 @@ function personalLoanProjection(){
   document.querySelectorAll('[data-pl-cost]').forEach(el=>{el.classList.toggle('is-hidden',!addCosts);el.querySelectorAll('input,select').forEach(input=>{input.disabled=!addCosts})});
   const read=id=>{const raw=document.getElementById(id)?.value;return typeof raw==='string'&&raw.trim()!==''?Number(raw):NaN};
   return personalLoanAmounts({amount:read('pl_amount'),rate:read('pl_rate'),years:read('pl_years'),months:read('pl_months'),startMonth:document.getElementById('pl_start')?.value,addCosts,fee:read('pl_fee'),feeUnit:document.getElementById('pl_fee_unit')?.value,feeMethod:document.getElementById('pl_fee_method')?.value,insurance:read('pl_insurance')});
+}
+function boatLoanAmounts({price,down,downUnit,rate,years,months,startMonth,addCosts,fees,feeMethod,insurance,storage,operating}){
+  const fail=message=>({valid:false,message}),finite=x=>typeof x==='number'&&Number.isFinite(x),term=years*12+months;
+  if(!finite(price)||price<.01||price>1e9)return fail('Enter a boat price from $0.01 through $1 billion.');
+  if(!['percent','dollars'].includes(downUnit)||!finite(down)||down<0)return fail('Enter a nonnegative down payment and choose dollars or percent.');
+  const cashDown=downUnit==='percent'?price*down/100:down;
+  if(!Number.isFinite(cashDown)||cashDown>price)return fail('Cash down cannot exceed the boat price.');
+  if(!Number.isInteger(years)||years<0||!Number.isInteger(months)||months<0||months>11||term<1||term>600)return fail('Enter whole years and 0-11 additional months, totaling 1-600 months.');
+  if(typeof startMonth!=='string'||!/^\d{4}-\d{2}$/.test(startMonth)||calendarDayValue(startMonth+'-01')===null)return fail('Enter a valid first payment month from year 0001 through 9999.');
+  const [y,m]=startMonth.split('-').map(Number),startIndex=y*12+m-1;
+  if(startIndex+term-1>119999)return fail('The modeled period must finish by December 9999.');
+  if(typeof addCosts!=='boolean')return fail('Choose whether to include purchase costs.');
+  if(addCosts&&(!finite(fees)||fees<0||fees>1e9||!['financed','upfront'].includes(feeMethod)))return fail('Enter purchase tax and fees from $0 through $1 billion and choose how they are paid.');
+  if(![insurance,storage,operating].every(x=>finite(x)&&x>=0&&x<=1e7))return fail('Enter each annual boating budget from $0 through $10 million.');
+  const purchaseCosts=addCosts?fees:0,financedFees=addCosts&&feeMethod==='financed'?purchaseCosts:0,upfrontFees=purchaseCosts-financedFees,principal=price-cashDown+financedFees;
+  if(principal>1e9||(principal>0&&principal<.01))return fail('Resulting financed principal must be zero or from $0.01 through $1 billion.');
+  let loan={payment:0,totalInterest:0,loanPayments:0,schedule:[]};
+  if(principal>0){loan=personalLoanAmounts({amount:principal,rate,years,months,startMonth,addCosts:false});if(!loan.valid)return loan;}
+  const annualBudget=insurance+storage+operating,monthlyReserve=annualBudget/12,periodReserve=annualBudget*term/12,cashDue=cashDown+upfrontFees,totalCash=cashDue+loan.loanPayments+periodReserve;
+  return{valid:true,price,cashDown,principal,rate:principal>0?rate:null,term,purchaseCosts,financedFees,upfrontFees,insurance,storage,operating,annualBudget,monthlyReserve,periodReserve,cashDue,totalCash,payment:loan.payment,monthlyBudget:loan.payment+monthlyReserve,totalInterest:loan.totalInterest,loanPayments:loan.loanPayments,schedule:loan.schedule,payoff:principal>0?loan.payoff:'No loan'};
+}
+function boatLoanProjection(){
+  const addCosts=!!document.getElementById('bl_add_costs')?.checked;
+  document.querySelectorAll('[data-bl-cost]').forEach(el=>{el.classList.toggle('is-hidden',!addCosts);el.querySelectorAll('input,select').forEach(input=>{input.disabled=!addCosts})});
+  const read=id=>{const raw=document.getElementById(id)?.value;return typeof raw==='string'&&raw.trim()!==''?Number(raw):NaN};
+  return boatLoanAmounts({price:read('bl_price'),down:read('bl_down'),downUnit:document.getElementById('bl_down_unit')?.value,rate:read('bl_rate'),years:read('bl_years'),months:read('bl_months'),startMonth:document.getElementById('bl_start')?.value,addCosts,fees:read('bl_fees'),feeMethod:document.getElementById('bl_fee_method')?.value,insurance:read('bl_insurance'),storage:read('bl_storage'),operating:read('bl_operating')});
 }
 function newUsedAmounts({years,miles,fuel,newCar,usedCar}){
   const fail=message=>({valid:false,message}),finite=x=>typeof x==='number'&&Number.isFinite(x),money=x=>finite(x)&&x>=0&&x<=1e9;
@@ -6528,6 +6593,7 @@ function calc(e){
   case'car_loan':{let price=V('price'),tax=price*V('tax')/100,fees=V('fees'),include=(document.getElementById('include_fees')?.value||'0')==='1';let base=Math.max(0,price-V('incentives')-V('down')-V('trade')+V('owed')),P=Math.max(0,base+(include?tax+fees:0));let rr=V('apr')/1200,n=Math.max(1,V('months'));let pay=rr?P*rr*Math.pow(1+rr,n)/(Math.pow(1+rr,n)-1):P/n,upfront=V('down')+(include?0:tax+fees);show(`<strong>${USD(pay)} / month</strong><br>Total loan amount: ${USD(P)}; upfront payment: ${USD(upfront)}; sale tax: ${USD(tax)}.`);break}
   case'loan':{let P=V('amount'),rr=V('apr')/1200,n=Math.max(1,(V('years')*12)+(V('months_extra')||V('months')));let pay=rr?P*rr*Math.pow(1+rr,n)/(Math.pow(1+rr,n)-1):P/n,total=pay*n;show(`<strong>${USD(pay)} / month</strong><br>Total paid: ${USD(total)}; total interest: ${USD(total-P)}.`);break}
   case'personal_loan_advanced':{const p=personalLoanProjection();show(p.valid?`<strong>${USD(p.monthlyCash)} / month</strong><br>Net cash available: ${USD(p.netCash)}; modeled borrowing cost: ${USD(p.borrowingCost)}.`:`<strong>Check the loan inputs</strong><br>${H(p.message)}`);break}
+  case'boat_loan_advanced':{const p=boatLoanProjection();show(p.valid?`<strong>${USD(p.payment)} / month loan</strong><br>Amount financed: ${USD(p.principal)}; with entered operating reserve: ${USD(p.monthlyBudget)} / month.`:`<strong>Check the boat inputs</strong><br>${H(p.message)}`);break}
   case'loan_page':{renderLoanPage();break}
   case'finance_tvm':{const p=financeProjection();if(!p.valid)show(`<strong>Check the inputs</strong><br>${p.message}`);else{const labels={fv:'Future value',pmt:'Periodic payment',iy:'Annual interest rate',n:'Number of periods',pv:'Present value'},value=p.target==='iy'?`${F(p.iy,8)}%`:p.target==='n'?F(p.n,8):USD(p[p.target]);show(`<strong>${value} ${labels[p.target].toLowerCase()}</strong><br>${F(p.rate*100,6)}% effective rate per payment period; ${F(p.effectiveAnnual,6)}% effective annual rate.`)}break}
   case'payment_advanced':{const p=paymentProjection();if(!p.valid)show(`<strong>Payment cannot repay this loan</strong><br>${p.message}`);else show(`<strong>${USD(p.regularPayment)} monthly payment</strong><br>${p.termLabel} to payoff; ${USD(p.totalInterest)} total interest; ${USD(p.totalPaid)} total paid.`);break}
@@ -6637,7 +6703,7 @@ document.addEventListener('click',e=>{
 document.addEventListener('click',e=>{const link=e.target.closest('a[href]');if(!link)return;try{const destination=new URL(link.href,location.href);if(/^https?:$/.test(destination.protocol)&&destination.hostname!==location.hostname)trackGA4Event('outbound_reference_click',{destination_host:destination.hostname,source_path:location.pathname})}catch{}});
 document.addEventListener('click',e=>{if(e.target.closest('[data-clear]')){if(currentEngine()==='time_duration')clearTimeDurationForm();else clearCalcForm()}});
 document.addEventListener('click',e=>{if(e.target.closest('[data-clear]')&&currentEngine()==='used_car_estimate')renderGenericFromEngine('used_car_estimate')});
-document.addEventListener('click',e=>{if(e.target.closest('[data-clear]')&&['cn_date','new_used_cost','personal_loan_advanced','bottleneck_advanced'].includes(currentEngine()))calc(currentEngine())});
+document.addEventListener('click',e=>{if(e.target.closest('[data-clear]')&&['cn_date','new_used_cost','personal_loan_advanced','boat_loan_advanced','bottleneck_advanced'].includes(currentEngine()))calc(currentEngine())});
 document.addEventListener('click',e=>{
   if(!e.target.closest('[data-clear]'))return;
   const engine=currentEngine();
@@ -6797,7 +6863,16 @@ function paybackProjection(){
 function renderGenericFromEngine(engine) {
   if (!document.getElementById("genericSummary")) return;
   let cards=[], bars=[], rows=[];
-  if(engine==="personal_loan_advanced"){
+  if(engine==="boat_loan_advanced"){
+    const p=boatLoanProjection(),schedule=document.querySelector('#boatSchedule tbody');
+    if(!p.valid){cards=[["Boat loan","Check inputs",H(p.message)]];rows=[["Validation","Unavailable",H(p.message)]];if(schedule)schedule.innerHTML=''}
+    else{
+      cards=[["Monthly loan payment",USD(p.payment),"Principal and interest only."],["Amount financed",USD(p.principal),"Price less down payment plus financed purchase costs."],["Purchase cash due",USD(p.cashDue),"Cash down plus separately paid purchase costs."],["Average monthly budget",USD(p.monthlyBudget),"Loan payment plus entered operating reserve."]];
+      bars=p.principal>0?[{label:'Loan principal',value:p.principal},{label:'Loan interest',value:p.totalInterest}]:[];
+      rows=[["Boat price",USD(p.price),"Entered purchase price, not a valuation."],["Cash down",USD(p.cashDown),"Applied once to the boat price."],["Purchase tax and fees",USD(p.purchaseCosts),"Entered one-time purchase costs."],["Financed purchase costs",USD(p.financedFees),"Included once in principal."],["Upfront purchase costs",USD(p.upfrontFees),"Paid separately, not financed."],["Purchase cash due",USD(p.cashDue),"Cash down plus upfront purchase costs."],["Amount financed",USD(p.principal),"Price - cash down + financed costs."],["Annual note rate",p.rate===null?'No loan':`${F(p.rate,4)}%`,"Not a fee-inclusive APR."],["Budget horizon",`${p.term} months`,"Also the repayment term when financed."],["Last loan payment month",p.payoff,"Equal monthly periods from the first payment."],["Monthly loan payment",USD(p.payment),"Principal and interest only."],["Total loan interest",USD(p.totalInterest),"Full-precision schedule sum."],["Total loan payments",USD(p.loanPayments),"Principal plus interest; repayment pie total."],["Insurance / year",USD(p.insurance),"Entered annual reserve, separate from the loan."],["Storage / year",USD(p.storage),"Entered annual reserve."],["Other operation / year",USD(p.operating),"Entered maintenance, fuel and other recurring reserve."],["Average operating reserve / month",USD(p.monthlyReserve),"Annual boating budget divided by 12."],["Average monthly budget",USD(p.monthlyBudget),"Loan payment plus monthly operating reserve."],["Operating reserve over horizon",USD(p.periodReserve),"Annual budget x horizon months / 12."],["Modeled cash through loan term",USD(p.totalCash),"Purchase cash due + loan payments + operating reserve; no resale deduction."]];
+      if(schedule)schedule.innerHTML=p.schedule.map(row=>`<tr><td>${row.month}</td><td>${row.label}</td><td>${USD(row.payment)}</td><td>${USD(row.interest)}</td><td>${USD(row.principal)}</td><td>${USD(row.balance)}</td></tr>`).join('')||'<tr><td colspan="6">No loan: purchase is fully cash-funded.</td></tr>';
+    }
+  } else if(engine==="personal_loan_advanced"){
     const p=personalLoanProjection(),schedule=document.querySelector('#personalSchedule tbody');
     if(!p.valid){cards=[["Personal loan","Check inputs",H(p.message)]];rows=[["Validation","Unavailable",H(p.message)]];if(schedule)schedule.innerHTML=''}
     else{

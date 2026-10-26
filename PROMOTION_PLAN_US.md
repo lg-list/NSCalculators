@@ -1,8 +1,10 @@
 # NS Calculators — US Growth Plan
 
-Updated: October 25, 2026
+Updated: October 26, 2026
 
 ## Current Measurement
+
+October 26 boat-purchase follow-up: the unchanged US export has 294 page impressions for Boat Loan; its separate named boat-loan query has 21 impressions. These are not a verified query/page pair or market volume. Production accepted negative principal and lacked purchase/down-payment distinctions. Replaced only Boat's generic model with validated purchase financing, one-time tax/fee handling, a separate annual boating reserve and a compact repayment pie/schedule, reusing the stable loan core. Added original examples and reciprocal Loan/Amortization links. All 105 Python tests and JavaScript suites pass, including 194 new boat scenarios; local three-width UI checks pass. No theme/plugin/CSS/index-scope change; 285 indexable calculator records and 303 sitemap URLs remain. See `reports/seo/boat-loan-purchase-budget-2026-10-26.md`. Owner has agreed to upload a US historical Keyword Planner CSV; it is not yet received, and China metrics remain excluded. No external submission or traffic-lift claim.
 
 October 25 PC evidence follow-up: confirmed the exact US `cpu calculator` to Bottleneck query/page pair in Search Console (one click, one impression, position 58; September 24-October 21). This tiny observation is not market demand or a reason to displace Area. Live reproduction found silent uncertainty clamping and a false within-5%/frame-cap claim for 200 FPS against a 144 FPS target. Added strict finite active-mode validation, distinct reached/near-target wording, Clear cleanup and original worked examples. All 103 Python tests and JavaScript suites pass, including 84 new PC scenarios; local three-width browser checks pass. Theme/plugins, snippet and 285/303 index/sitemap scope are unchanged. See `reports/seo/bottleneck-validation-2026-10-25.md`; no traffic uplift, universal hardware score, new URL or external submission is claimed.
 
