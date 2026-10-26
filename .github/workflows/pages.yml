@@ -116,6 +116,9 @@ jobs:
       - name: Check roof pitch input validation and length-only charts
         run: node scripts/test_roof_pitch.cjs dist/assets/calculator.js
 
+      - name: Check flooring coverage, package rounding and optional costs
+        run: node scripts/test_flooring.cjs dist/assets/calculator.js
+
       - name: Check exact-cent tips and bill splitting
         run: node scripts/test_tip.cjs dist/assets/calculator.js
 
