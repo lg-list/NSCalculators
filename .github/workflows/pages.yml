@@ -104,6 +104,9 @@ jobs:
       - name: Check boat purchase cash flow and repayment schedule
         run: node scripts/test_boat_loan.cjs dist/assets/calculator.js
 
+      - name: Check shared fixed-installment payment validation and term handling
+        run: node scripts/test_basic_installment.cjs dist/assets/calculator.js
+
       - name: Check exact-cent tips and bill splitting
         run: node scripts/test_tip.cjs dist/assets/calculator.js
 

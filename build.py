@@ -987,6 +987,8 @@ def base_and_supplemental(data):
             calc.update({"engine": "personal_loan_advanced", "desc": "Calculate personal loan payments, origination fees, net cash available, insurance costs and a monthly repayment schedule.", "inputs": []})
         if calc["slug"] == "boat-loan-calculator":
             calc.update({"engine": "boat_loan_advanced", "desc": "Estimate boat loan payments from price, down payment and note rate, with optional purchase costs, a separate boating budget and an amortization schedule.", "inputs": []})
+        if calc["slug"] in ("repayment-calculator", "student-loan-calculator", "business-loan-calculator", "home-equity-loan-calculator"):
+            calc["desc"] = "Estimate fixed monthly loan payments, total repayments and interest from principal, a nominal annual note rate and a whole-month term."
         if calc["slug"] == "time-duration-calculator":
             calc.update({
                 "cat": "Time & Date",
@@ -5016,6 +5018,15 @@ def calculator_page(site, calc, related):
         fields = f"""<div class="fields">{''.join(input_html(f) for f in calc["inputs"])}</div>"""
     rel = "".join(card(c, compact=True) for c in related)
     content = payback_copy(calc) or marriage_tax_copy(calc) or priority_length_copy(calc) or high_value_calculator_copy(calc) or conversion_copy(calc) or default_calculator_copy(calc)
+    if page_engine == "loan":
+        limitations = {
+            "student-loan-calculator": "This is a fixed-payment loan estimate, not a federal repayment-plan comparison. It does not model income-driven payments, deferment, subsidies, forgiveness or eligibility.",
+            "business-loan-calculator": "This is a fixed-rate, fully amortizing installment estimate. It does not model SBA fees or guarantees, factor-rate products, interest-only periods, revolving draws or balloon payments.",
+            "home-equity-loan-calculator": "This models a lump-sum fixed-rate loan, not a HELOC. Closing costs, variable rates, draw periods, property eligibility and tax treatment are not calculated.",
+            "repayment-calculator": "This solves the payment for a fixed monthly term. For a payoff period from a chosen payment, use the payment calculator instead.",
+        }
+        note = limitations.get(calc["slug"], "This is a fixed-rate, fully amortizing installment estimate, without fees or irregular payments.")
+        content = '<h2>Fixed-rate payment scope</h2><p>' + note + '</p><p>Enter principal from $0.01 through $1 billion, a nominal annual interest rate from 0% through 100%, and 1-600 whole monthly payments. Fractional years are accepted when the combined term is a whole number of months; extra months must be whole numbers from 0 through 11. These are numerical bounds, not offered loan terms. The input rate is divided by 12, and fees are not included. The <a href="https://www.consumerfinance.gov/ask-cfpb/what-is-the-difference-between-a-loan-interest-rate-and-the-apr-en-733/" rel="external noopener">CFPB distinguishes an interest rate from APR</a>, which can include other charges.</p><p>For example, $10,000 at a 10% annual note rate over 60 months gives about $212.47 monthly, $12,748.23 in loan payments and $2,748.23 interest. At 0% it gives about $166.67 monthly. Values are calculated before display rounding; the chart compares principal with total interest, not principal plus an extra copy of one monthly payment. This is not a lender payoff quote.</p>' + content
     if calc.get("slug") in ("loan-calculator", "amortization-calculator"):
         content = '<p>For an installment loan with a quoted origination fee or monthly insurance, use the <a href="/personal-loan-calculator/">personal loan calculator</a> to separate disbursement, net cash available and modeled borrowing costs.</p>' + content
         content = '<p>Planning a boat purchase? The <a href="/boat-loan-calculator/">boat loan calculator</a> separates price, down payment, financed or upfront purchase costs and an annual boating reserve from the loan payment.</p>' + content
@@ -5657,6 +5668,25 @@ function bodyFatProjection(){
   return bodyFatAmounts({units,method,sex,age:read('bf_age'),height:read('bf_height'),weight:read('bf_weight'),neck:read('bf_neck'),waist:read('bf_waist'),hip:read('bf_hip')});
 }
 function fixedMonthlyPayment(principal,annualRate,months){const r=annualRate/1200;return principal===0?0:r===0?principal/months:principal*r/(-Math.expm1(-months*Math.log1p(r)))}
+function basicInstallmentAmounts({amount,rate,months}){
+  const finite=x=>typeof x==='number'&&Number.isFinite(x),fail=message=>({valid:false,message});
+  if(!finite(amount)||amount<.01||amount>1e9)return fail('Enter loan principal from $0.01 through $1 billion.');
+  if(!finite(rate)||rate<0||rate>100)return fail('Enter an annual note rate from 0% through 100%.');
+  if(!Number.isInteger(months)||months<1||months>600)return fail('Enter a whole repayment period from 1 through 600 months.');
+  const payment=fixedMonthlyPayment(amount,rate,months),interest=Math.max(0,payment*months-amount),total=amount+interest;
+  if(![payment,interest,total].every(Number.isFinite)||payment<=0)return fail('The entered values exceed the supported numerical range.');
+  return{valid:true,amount,rate,months,payment,interest,total};
+}
+function basicInstallmentProjection(){
+  const read=id=>{const raw=document.getElementById(id)?.value;return typeof raw==='string'&&raw.trim()!==''?Number(raw):NaN};
+  let months;
+  if(document.getElementById('years')){
+    const years=read('years'),extra=read('months_extra'),raw=years*12+extra;
+    if(!Number.isFinite(years)||years<0||years>50||!Number.isInteger(extra)||extra<0||extra>11||!Number.isFinite(raw)||Math.abs(raw-Math.round(raw))>Number.EPSILON*Math.max(1,Math.abs(raw))*4)return{valid:false,message:'Use nonnegative years and 0-11 extra whole months, totaling a whole number of monthly payments.'};
+    months=Math.round(raw);
+  }else months=read('months');
+  return basicInstallmentAmounts({amount:read('amount'),rate:read('apr'),months});
+}
 function personalMonthLabel(index){return ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][index%12]+' '+String(Math.floor(index/12)).padStart(4,'0')}
 function annualCashCostRate(net,monthly,months,lastMonthly){
   const pv=r=>r===0?monthly*months+lastMonthly-monthly:monthly*(-Math.expm1(-months*Math.log1p(r)))/r+(lastMonthly-monthly)*Math.exp(-months*Math.log1p(r));
@@ -6591,7 +6621,7 @@ function calc(e){
   case'horsepower':{let r=V('torque')*V('rpm')/5252;show(`<strong>${F(r,1)} hp</strong>`);break}
   case'power_weight':{let a=V('hp')/V('weight'),b=V('weight')/V('hp');show(`<strong>${F(a,4)} hp/lb</strong><br>${F(b,2)} lb per hp.`);break}
   case'car_loan':{let price=V('price'),tax=price*V('tax')/100,fees=V('fees'),include=(document.getElementById('include_fees')?.value||'0')==='1';let base=Math.max(0,price-V('incentives')-V('down')-V('trade')+V('owed')),P=Math.max(0,base+(include?tax+fees:0));let rr=V('apr')/1200,n=Math.max(1,V('months'));let pay=rr?P*rr*Math.pow(1+rr,n)/(Math.pow(1+rr,n)-1):P/n,upfront=V('down')+(include?0:tax+fees);show(`<strong>${USD(pay)} / month</strong><br>Total loan amount: ${USD(P)}; upfront payment: ${USD(upfront)}; sale tax: ${USD(tax)}.`);break}
-  case'loan':{let P=V('amount'),rr=V('apr')/1200,n=Math.max(1,(V('years')*12)+(V('months_extra')||V('months')));let pay=rr?P*rr*Math.pow(1+rr,n)/(Math.pow(1+rr,n)-1):P/n,total=pay*n;show(`<strong>${USD(pay)} / month</strong><br>Total paid: ${USD(total)}; total interest: ${USD(total-P)}.`);break}
+  case'loan':{const p=basicInstallmentProjection();show(p.valid?`<strong>${USD(p.payment)} / month</strong><br>Total paid: ${USD(p.total)}; total interest: ${USD(p.interest)}.`:`<strong>Check the loan inputs</strong><br>${H(p.message)}`);break}
   case'personal_loan_advanced':{const p=personalLoanProjection();show(p.valid?`<strong>${USD(p.monthlyCash)} / month</strong><br>Net cash available: ${USD(p.netCash)}; modeled borrowing cost: ${USD(p.borrowingCost)}.`:`<strong>Check the loan inputs</strong><br>${H(p.message)}`);break}
   case'boat_loan_advanced':{const p=boatLoanProjection();show(p.valid?`<strong>${USD(p.payment)} / month loan</strong><br>Amount financed: ${USD(p.principal)}; with entered operating reserve: ${USD(p.monthlyBudget)} / month.`:`<strong>Check the boat inputs</strong><br>${H(p.message)}`);break}
   case'loan_page':{renderLoanPage();break}
@@ -6703,7 +6733,7 @@ document.addEventListener('click',e=>{
 document.addEventListener('click',e=>{const link=e.target.closest('a[href]');if(!link)return;try{const destination=new URL(link.href,location.href);if(/^https?:$/.test(destination.protocol)&&destination.hostname!==location.hostname)trackGA4Event('outbound_reference_click',{destination_host:destination.hostname,source_path:location.pathname})}catch{}});
 document.addEventListener('click',e=>{if(e.target.closest('[data-clear]')){if(currentEngine()==='time_duration')clearTimeDurationForm();else clearCalcForm()}});
 document.addEventListener('click',e=>{if(e.target.closest('[data-clear]')&&currentEngine()==='used_car_estimate')renderGenericFromEngine('used_car_estimate')});
-document.addEventListener('click',e=>{if(e.target.closest('[data-clear]')&&['cn_date','new_used_cost','personal_loan_advanced','boat_loan_advanced','bottleneck_advanced'].includes(currentEngine()))calc(currentEngine())});
+document.addEventListener('click',e=>{if(e.target.closest('[data-clear]')&&['cn_date','new_used_cost','personal_loan_advanced','boat_loan_advanced','bottleneck_advanced','loan'].includes(currentEngine()))calc(currentEngine())});
 document.addEventListener('click',e=>{
   if(!e.target.closest('[data-clear]'))return;
   const engine=currentEngine();
@@ -7030,10 +7060,13 @@ function renderGenericFromEngine(engine) {
     bars=[];
     rows=[["Exact conversion factor","1 ft = 0.3048 m","International foot definition."],["Meters",`${F(meters,8)} m`,"Total feet multiplied by 0.3048."],["Centimeters",`${F(meters*100,6)} cm`,"Meters multiplied by 100."],["Decimal feet",`${F(totalFeet,8)} ft`,"Meters divided by 0.3048."],["Feet and inches",`${wholeFeet} ft ${F(inches,4)} in`,"Whole feet plus the remaining inches."],["Total inches",`${F(totalFeet*12,6)} in`,"Decimal feet multiplied by 12."],["Yards",`${F(totalFeet/3,8)} yd`,"Feet divided by 3."]];
   } else if (engine === "loan") {
-    const P=V('amount'), rr=V('apr')/1200, n=Math.max(1,(V('years')*12)+(V('months_extra')||V('months'))), pay=rr?P*rr*Math.pow(1+rr,n)/(Math.pow(1+rr,n)-1):P/n, total=pay*n, interest=total-P;
-    cards=[["Monthly payment",USD(pay),"Estimated recurring payment."],["Total paid",USD(total),"Principal plus interest."],["Total interest",USD(interest),"Cost of borrowing."],["Loan term",`${F(n,0)} months`,"Entered repayment period."]];
-    bars=[{label:"Principal",value:P,display:USD(P)},{label:"Interest",value:interest,display:USD(interest)},{label:"Monthly payment",value:pay,display:USD(pay)}];
-    rows=[["Loan amount",USD(P),"Starting balance."],["APR",`${F(V('apr'),2)}%`,"Annual percentage rate."],["Term",`${F(n,0)} months`,"Number of payments."],["Total paid",USD(total),"Payment multiplied by term."]];
+    const p=basicInstallmentProjection();
+    if(!p.valid){cards=[["Loan payment","Check inputs",H(p.message)]];rows=[["Validation","Unavailable",H(p.message)]]}
+    else{
+      cards=[["Monthly payment",USD(p.payment),"Fixed principal-and-interest installment."],["Total paid",USD(p.total),"Principal plus interest; excludes fees."],["Total interest",USD(p.interest),"Interest only, before other borrowing costs."],["Loan term",`${F(p.months,0)} months`,"Whole monthly payments."]];
+      bars=[{label:"Principal",value:p.amount,display:USD(p.amount)},{label:"Interest",value:p.interest,display:USD(p.interest)}];
+      rows=[["Loan principal",USD(p.amount),"Starting balance."],["Annual note rate",`${p.rate>0&&p.rate<5e-9?p.rate.toExponential(3):F(p.rate,8)}%`,"Nominal rate divided by 12; not a fee-inclusive APR."],["Term",`${F(p.months,0)} months`,"Number of monthly payments."],["Monthly payment",USD(p.payment),"Fixed principal-and-interest installment."],["Total interest",USD(p.interest),"Total loan payments minus principal."],["Total paid",USD(p.total),"Principal plus interest; no duplicated monthly-payment chart slice."]];
+    }
   } else if (engine === "car_loan") {
     const price=V('price'), tax=price*V('tax')/100, fees=V('fees'), include=(document.getElementById('include_fees')?.value||'0')==='1', base=Math.max(0,price-V('incentives')-V('down')-V('trade')+V('owed')), P=Math.max(0,base+(include?tax+fees:0)), rr=V('apr')/1200, n=Math.max(1,V('months')), pay=rr?P*rr*Math.pow(1+rr,n)/(Math.pow(1+rr,n)-1):P/n, total=pay*n, upfront=V('down')+(include?0:tax+fees);
     cards=[["Monthly Pay",USD(pay),"Estimated auto loan payment."],["Total Loan Amount",USD(P),"Amount financed."],["Sale Tax",USD(tax),"Estimated tax from entered rate."],["Upfront Payment",USD(upfront),"Down payment plus taxes and fees when not financed."]];
