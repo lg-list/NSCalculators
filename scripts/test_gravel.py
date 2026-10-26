@@ -34,8 +34,8 @@ class GravelTests(unittest.TestCase):
     def test_discovery_and_context_links_restore_only_reviewed_tool(self):
         entries = {c['slug']: c for c in build.calculator_search_index(list(self.calcs.values()))}
         self.assertIn('gravel-calculator', entries)
-        self.assertNotIn('mulch-calculator', entries)
-        self.assertFalse(build.is_indexable_calculator(self.calcs['mulch-calculator']))
+        self.assertNotIn('fha-loan-calculator', entries)
+        self.assertFalse(build.is_indexable_calculator(self.calcs['fha-loan-calculator']))
         for slug in ('concrete-volume-calculator', 'square-footage-calculator'):
             self.assertIn('href="/gravel-calculator/"', build.calculator_page(self.data['site'], self.calcs[slug], []))
 

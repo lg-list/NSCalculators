@@ -22,11 +22,12 @@ class SiteSearchTests(unittest.TestCase):
         self.assertIn('elapsed time', entries['time-duration-calculator']['desc'])
 
     def test_search_update_does_not_expand_discovery_scope(self):
-        baseline = [c for c in self.entries if c['slug'] not in {'new-vs-used-car-calculator', 'gravel-calculator'}]
+        baseline = [c for c in self.entries if c['slug'] not in {'new-vs-used-car-calculator', 'gravel-calculator', 'mulch-calculator'}]
         self.assertEqual(len(baseline), 2456)
         self.assertEqual(len({c['slug'] for c in baseline}), 2456)
         self.assertEqual(sum(c['slug'] == 'new-vs-used-car-calculator' for c in self.entries), 1)
         self.assertEqual(sum(c['slug'] == 'gravel-calculator' for c in self.entries), 1)
+        self.assertEqual(sum(c['slug'] == 'mulch-calculator' for c in self.entries), 1)
         self.assertNotIn('fha-loan-calculator', {c['slug'] for c in self.entries})
 
     def test_homepage_requests_new_search_asset(self):

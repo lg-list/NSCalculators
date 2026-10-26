@@ -139,6 +139,9 @@ jobs:
       - name: Check gravel volume, supplier density and material cost
         run: node scripts/test_gravel.cjs dist/assets/calculator.js
 
+      - name: Check mulch volume, bag rounding and independent cost scenarios
+        run: node scripts/test_mulch.cjs dist/assets/calculator.js
+
       - name: Check exact-cent tips and bill splitting
         run: node scripts/test_tip.cjs dist/assets/calculator.js
 

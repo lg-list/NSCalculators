@@ -989,6 +989,8 @@ def base_and_supplemental(data):
             calc.update({"engine": "boat_loan_advanced", "desc": "Estimate boat loan payments from price, down payment and note rate, with optional purchase costs, a separate boating budget and an amortization schedule.", "inputs": []})
         if calc["slug"] == "gravel-calculator":
             calc.update({"cat": "Construction", "engine": "gravel_advanced", "desc": "Estimate gravel volume, supplier-based weight and optional material cost.", "formula": "Volume = measured area x loose layer depth; weight = volume x supplier bulk density.", "example": "20 ft x 10 ft x 3 in = 50 cubic feet, or 50/27 cubic yards, before any allowance.", "inputs": []})
+        if calc["slug"] == "mulch-calculator":
+            calc.update({"cat": "Construction", "engine": "mulch_advanced", "desc": "Estimate mulch cubic yards, whole bags and separate bagged or bulk material costs.", "formula": "Volume = net area x entered depth; bags = round up(adjusted volume / labeled volume per bag).", "example": "200 square feet at 3 inches contains 50 cubic feet, requiring 25 bags labeled 2 cubic feet before any allowance.", "inputs": []})
         if calc["slug"] in ("repayment-calculator", "student-loan-calculator", "business-loan-calculator", "home-equity-loan-calculator"):
             calc["desc"] = "Estimate fixed monthly loan payments, total repayments and interest from principal, a nominal annual note rate and a whole-month term."
         if calc["slug"] == "time-duration-calculator":
@@ -1144,6 +1146,8 @@ def is_indexable_calculator(calc):
 
 
 def seo_keywords(calc):
+    if calc.get("slug") == "mulch-calculator":
+        return ["mulch calculator", "how much mulch do i need", "mulch calculator cubic yards", "mulch calculator bags", "mulch cost calculator"]
     if calc.get("slug") == "gravel-calculator":
         return ["gravel calculator", "gravel calculator yards", "gravel calculator tons", "how much gravel do i need", "driveway gravel calculator", "pea gravel calculator"]
     if calc.get("slug") == "time-duration-calculator":
@@ -1221,6 +1225,8 @@ def seo_keywords(calc):
 
 
 def seo_title(calc):
+    if calc.get("slug") == "mulch-calculator":
+        return "Mulch Calculator: Cubic Yards, Bags & Material Cost"
     if calc.get("slug") == "gravel-calculator":
         return "Gravel Calculator: Cubic Yards, US Tons & Material Cost"
     if calc.get("slug") == "boat-loan-calculator":
@@ -1363,6 +1369,8 @@ def seo_title(calc):
 
 
 def seo_description(calc):
+    if calc.get("slug") == "mulch-calculator":
+        return "Calculate mulch cubic yards and whole bags from area and depth. Enter bag-label volume, optional allowance and prices to estimate bagged or bulk material costs."
     if calc.get("slug") == "gravel-calculator":
         return "Calculate gravel cubic yards, feet and meters from area and depth. Enter supplier density for US short tons and metric tonnes, plus optional material cost."
     if calc.get("slug") == "boat-loan-calculator":
@@ -2446,6 +2454,25 @@ def square_footage_input_html():
 </div>"""
 
 
+def mulch_input_html():
+    return """<div class="fields project-fields mulch-fields">
+<div class="field"><label for="mulch_units">Dimensions</label><select id="mulch_units"><option value="us">US (ft / in)</option><option value="metric">Metric (m / cm)</option></select></div>
+<div class="field"><label for="mulch_mode">Area from</label><select id="mulch_mode"><option value="dimensions">Rectangle</option><option value="area">Net area</option></select></div>
+<div class="field" data-mulch-dimensions><label for="mulch_length">Length</label><div class="input-unit"><input id="mulch_length" type="number" step="any" min="0" value="20"><span data-mulch-length-unit>ft</span></div></div>
+<div class="field" data-mulch-dimensions><label for="mulch_width">Width</label><div class="input-unit"><input id="mulch_width" type="number" step="any" min="0" value="10"><span data-mulch-length-unit>ft</span></div></div>
+<div class="field field-wide is-hidden" data-mulch-area><label for="mulch_area">Net area to cover</label><div class="input-unit"><input id="mulch_area" type="number" step="any" min="0" value="200"><span data-mulch-area-unit>ft²</span></div></div>
+<div class="field"><label for="mulch_depth">Depth to add</label><div class="input-unit"><input id="mulch_depth" type="number" step="any" min="0" value="3"><span data-mulch-depth-unit>in</span></div></div>
+<div class="field"><label for="mulch_allowance">Volume allowance</label><div class="input-unit"><input id="mulch_allowance" type="number" step="any" min="0" max="100" value="0"><span>%</span></div></div>
+<div class="field"><label for="mulch_bag_volume">Bag volume (optional)</label><input id="mulch_bag_volume" type="number" step="any" min="0" value="2"></div>
+<div class="field"><label for="mulch_bag_unit">Bag-label unit</label><select id="mulch_bag_unit"><option value="ft3">ft³</option><option value="liters">Liters</option><option value="m3">m³</option></select></div>
+<details class="more-options field-wide"><summary>Material cost options</summary><div class="fields concrete-cost-fields">
+<div class="field"><label for="mulch_bag_price">Price per bag</label><div class="input-unit"><input id="mulch_bag_price" type="number" step="any" min="0" placeholder="Optional"><span>$</span></div></div>
+<div class="field"><label for="mulch_bulk_price">Bulk price</label><div class="input-unit"><input id="mulch_bulk_price" type="number" step="any" min="0" placeholder="Optional"><span>$</span></div></div>
+<div class="field field-wide"><label for="mulch_bulk_unit">Bulk price per</label><select id="mulch_bulk_unit"><option value="yd3">Cubic yard</option><option value="m3">Cubic meter</option></select></div>
+</div><p class="table-note">Bagged and bulk prices are separate material-only scenarios. Delivery, tax, labor and supplier minimums are excluded.</p></details>
+</div>"""
+
+
 def gravel_input_html():
     return """<div class="fields project-fields gravel-fields">
 <div class="field"><label for="gravel_units">Dimensions</label><select id="gravel_units"><option value="us">US (ft / in)</option><option value="metric">Metric (m / cm)</option></select></div>
@@ -3124,6 +3151,15 @@ def conversion_copy(calc):
 
 
 def high_value_calculator_copy(calc):
+    if calc.get("slug") == "mulch-calculator":
+        return """
+<h2>How much mulch do I need?</h2><p>Measure the net area you intend to cover and enter the depth of material to add. Choose rectangle dimensions or enter net square feet directly; metric dimensions use meters and centimeters. Unit changes convert the dimension values. Use the <a href="/area-calculator/">area calculator</a> or <a href="/square-footage-calculator/">square footage calculator</a> for irregular sections, then add only non-overlapping areas. Exclude surfaces and locations you will not mulch before entering net area.</p>
+<p class="formula">cubic feet = area in ft² x depth in inches / 12; cubic yards = cubic feet / 27; whole bags = round up(adjusted cubic feet / labeled cubic feet per bag)</p>
+<h2>Mulch volume and bag example</h2><p>A 20 ft by 10 ft measured bed has an area of 200 ft². At an entered 3 in depth, 200 x (3/12) = <strong>50 ft³</strong>, or about <strong>1.852 yd³</strong>. A bag labeled 2 ft³ requires exactly 25 bags. With a user-selected 10% volume allowance, the target is 55 ft³: 27.5 such bags rounds up to <strong>28 whole bags</strong>, providing 56 ft³. The extra 1 ft³ is package-rounding excess, separate from the 5 ft³ allowance.</p>
+<h2>Bag size and rounding</h2><p>Use the actual volume printed on the selected bag in cubic feet, liters or cubic meters. There is no universal bag size. A weight label in pounds or kilograms is not a volume label; this tool does not infer volume from bag weight. It applies the allowance to unrounded volume, then rounds the final bag quantity up once. Leaving bag volume blank keeps bulk volume available while bag count, purchased coverage and bag cost remain unknown. An entered zero or negative bag volume is invalid.</p><p><a href="https://yardandgarden.extension.iastate.edu/how-to/how-determine-amount-mulch-needed-garden-bed" rel="external noopener">Iowa State Extension's quantity guidance</a> describes area-times-depth volume, division by labeled bag volume and the 27 ft³ per cubic yard conversion. Its rounded examples are guidance; this calculator retains full precision for subsequent quantities and prices.</p>
+<h2>Bagged versus bulk material cost</h2><p>Enter each price independently. In the 55 ft³ target example, 28 bags at an entered $4 each cost $112 in bagged material. An entered bulk quote of $50/yd³ gives about $101.85 for the unrounded volume target. These are separate scenarios, not prices to add together or a claim that bulk is always cheaper. A bulk quote per cubic meter uses the same target converted to m³.</p><p>Blank prices mean unknown, while an explicit $0 is a zero-price scenario. Bag cost requires a bag volume and price; bulk cost only needs a bulk price. The comparison excludes delivery, taxes, labor, supplier minimums, delivery increments and unused or returned material. Ask suppliers to quote the actual order quantity and fees before deciding. The chart compares volume in cubic feet only, not dollars mixed with volume.</p>
+<h2>Depth, existing mulch and allowance</h2><p>The example depth is editable and is not a universal planting recommendation. For a top-up project, enter only the depth to add rather than automatically reordering the entire existing layer. Appropriate material, depth and placement depend on plants, soil, drainage, product and local conditions. <a href="https://ucanr.edu/site/uc-marin-master-gardeners/applying-mulch" rel="external noopener">UC Marin's application guidance</a> discusses those distinctions. This quantity calculator does not assess fire risk, choose a product or prescribe placement.</p><p>A volume allowance is your stated planning assumption, not a measured settling rate or automatic compaction conversion. Bag rounding is reported separately. Select a net area and depth appropriate to your project before calculating; there is no automatic subtraction for trunks, paths or existing mulch.</p>
+<h2>Frequently asked questions</h2><h3>How many bags are in a cubic yard?</h3><p>Divide 27 ft³ by the volume of one bag. A 2 ft³ label gives 13.5 bags, so buying at least one cubic yard in whole bags requires 14 bags, providing 28 ft³. This does not mean every bag is 2 ft³.</p><h3>Can I use liters on the bag label?</h3><p>Yes. Choose Liters per bag and enter the label volume. Bag-label units are independent of the project's dimension units; changing feet to meters does not reinterpret the bag label.</p><h3>Can this estimate rubber mulch, topsoil or weight?</h3><p>It performs entered-volume arithmetic only. Product suitability, weight-based coverage, compressed products, installation standards and soil requirements need separate information. For loose aggregate with a supplier density, use the <a href="/gravel-calculator/">gravel calculator</a>; do not transfer a gravel density to organic mulch.</p>"""
     if calc.get("slug") == "gravel-calculator":
         return """
 <h2>How much gravel do I need?</h2><p>Enter the measured length and width or an independently measured area, then the loose layer depth. The calculator returns cubic feet, cubic yards and cubic meters. Use the <a href="/square-footage-calculator/">square footage calculator</a> for measured sections or the <a href="/area-calculator/">area calculator</a> for non-overlapping shapes, then enter their sum in Measured area mode. Dimension units can switch between feet/inches and meters/centimeters; this converts the values, not just their labels.</p>
@@ -4137,6 +4173,11 @@ def default_calculator_copy(calc):
 
 
 def analysis_extra_html(calc):
+    if calc.get("slug") == "mulch-calculator":
+        return """<section class="mortgage-dashboard generic-dashboard mulch-dashboard" aria-label="Mulch quantity results">
+<div class="section-head stack"><h2>Mulch Volume and Bags</h2><p>Entered net area and added depth, whole-bag rounding and separate material cost scenarios.</p></div><div class="summary-grid" id="genericSummary"></div>
+<div class="chart-grid"><div class="chart-card compact-chart"><h3>Volume Breakdown (Cubic Feet)</h3><canvas id="genericChart" width="620" height="220" aria-label="Base mulch volume, allowance and bag-rounding excess in cubic feet" data-chart-type="bars"></canvas></div></div>
+<div class="table-card"><h3>Quantity and Cost Details</h3><div class="table-scroll"><table class="data-table" id="genericTable"><thead><tr><th>Metric</th><th>Value</th><th>Basis</th></tr></thead><tbody></tbody></table></div></div></section>"""
     if calc.get("slug") == "gravel-calculator":
         return """<section class="mortgage-dashboard generic-dashboard gravel-dashboard" aria-label="Gravel quantity results">
 <div class="section-head stack"><h2>Gravel Volume and Weight</h2><p>Measured loose volume, entered allowance and optional supplier-based weight and cost.</p></div>
@@ -5027,6 +5068,9 @@ def calculator_page(site, calc, related):
     elif calc.get("slug") == "gravel-calculator":
         fields = gravel_input_html()
         page_engine = "gravel_advanced"
+    elif calc.get("slug") == "mulch-calculator":
+        fields = mulch_input_html()
+        page_engine = "mulch_advanced"
     elif calc.get("slug") == "roof-pitch-calculator":
         fields = roof_pitch_input_html()
         page_engine = "roof_pitch_advanced"
@@ -5103,6 +5147,8 @@ def calculator_page(site, calc, related):
         content = content.replace('<h2>Frequently asked questions</h2>', guide_link + '<h2>Frequently asked questions</h2>', 1)
     if calc.get("slug") in ("concrete-volume-calculator", "square-footage-calculator"):
         content = content.replace('<h2>Frequently asked questions</h2>', '<p>Estimating loose aggregate instead? The <a href="/gravel-calculator/">gravel calculator</a> separates measured volume from supplier-density weight and optional material cost.</p><h2>Frequently asked questions</h2>', 1)
+    if calc.get("slug") in ("gravel-calculator", "square-footage-calculator"):
+        content = content.replace('<h2>Frequently asked questions</h2>', '<p>Buying mulch by volume? The <a href="/mulch-calculator/">mulch calculator</a> estimates bulk yards and whole bags from entered area, added depth and the bag label, with separate material-price scenarios.</p><h2>Frequently asked questions</h2>', 1)
     extra = analysis_extra_html(calc)
     calculator_asset_version = calculator_assets()[1]
     if calc.get("engine") == "loan_page":
@@ -5329,6 +5375,7 @@ def info_pages(site):
 
 
 CSS = r'''
+.mulch-dashboard .summary-card{min-width:0}.mulch-dashboard .summary-card strong{overflow-wrap:anywhere}
 .gravel-dashboard .summary-card{min-width:0}.gravel-dashboard .summary-card strong{overflow-wrap:anywhere}
 @media(max-width:560px){.calculator-article .gravel-fields .more-options .fields{grid-template-columns:1fr}}
 .calculator-article:has(#floor_mode) .summary-card{min-width:0}.calculator-article:has(#floor_mode) .summary-card strong{overflow-wrap:anywhere}
@@ -6400,7 +6447,7 @@ function tireComparison(){const mode=syncTireFields(),original=parseTireSize(doc
 function wheelOffsetComparison(){const currentWidth=V('current_width'),currentOffset=V('current_offset'),newWidth=V('new_wheel_width'),newOffset=V('new_offset'),spacer=V('spacer'),currentTireWidth=V('current_tire_width'),newTireWidth=V('new_tire_width'),outerClearance=V('outer_clearance'),innerClearanceAvailable=V('inner_clearance_available');if(!(currentWidth>=1&&currentWidth<=30&&newWidth>=1&&newWidth<=30&&currentOffset>=-200&&currentOffset<=200&&newOffset>=-200&&newOffset<=200&&spacer>=0&&spacer<=100))return{valid:false,message:'Enter wheel widths from 1 to 30 inches, offsets from -200 to 200 mm, and a spacer from 0 to 100 mm.'};if(!((currentTireWidth===0||currentTireWidth>=100&&currentTireWidth<=500)&&(newTireWidth===0||newTireWidth>=100&&newTireWidth<=500)&&outerClearance>=0&&outerClearance<=250&&innerClearanceAvailable>=0&&innerClearanceAvailable<=250))return{valid:false,message:'Enter tire widths from 100 to 500 mm and measured clearances from 0 to 250 mm, or leave optional fields blank.'};const effectiveOffset=newOffset-spacer,currentHalf=currentWidth*25.4/2,newHalf=newWidth*25.4/2,currentInner=currentHalf+currentOffset,currentOuter=currentHalf-currentOffset,newInner=newHalf+effectiveOffset,newOuter=newHalf-effectiveOffset,innerClearance=currentInner-newInner,outerPoke=newOuter-currentOuter,trackChange=(currentOffset-effectiveOffset)*2,currentBackspacing=(currentWidth+1)/2+currentOffset/25.4,newBackspacing=(newWidth+1)/2+effectiveOffset/25.4,currentFrontspacing=(currentWidth+1)-currentBackspacing,newFrontspacing=(newWidth+1)-newBackspacing,hasTires=currentTireWidth>0&&newTireWidth>0,hasClearances=document.getElementById('outer_clearance')?.value!==''&&document.getElementById('inner_clearance_available')?.value!=='',hasTireClearance=hasTires&&hasClearances,currentTireHalf=hasTires?currentTireWidth/2:currentHalf,newTireHalf=hasTires?newTireWidth/2:newHalf,tireOuterChange=newTireHalf-effectiveOffset-(currentTireHalf-currentOffset),tireInnerClearance=currentTireHalf+currentOffset-(newTireHalf+effectiveOffset),remainingOuter=hasTireClearance?outerClearance-tireOuterChange:null,remainingInner=hasTireClearance?innerClearanceAvailable+tireInnerClearance:null,minRemaining=hasTireClearance?Math.min(remainingOuter,remainingInner):null,verdict=hasTireClearance?(minRemaining<0?'Estimated interference':minRemaining<5?'Very tight estimated clearance':minRemaining<10?'Limited estimated clearance':'Positive estimated clearance'):'Add tire widths and both measured gaps for a clearance screen.';return{valid:true,currentWidth,currentOffset,newWidth,newOffset,spacer,effectiveOffset,currentInner,currentOuter,newInner,newOuter,innerClearance,outerPoke,trackChange,currentBackspacing,newBackspacing,currentFrontspacing,newFrontspacing,currentTireWidth,newTireWidth,hasTires,hasClearances,hasTireClearance,tireOuterChange,tireInnerClearance,outerClearance,innerClearanceAvailable,remainingOuter,remainingInner,verdict}}
 let gravelPreviousUnits=null;
 function syncGravelFields(){const units=document.getElementById('gravel_units')?.value||'us',mode=document.getElementById('gravel_mode')?.value||'dimensions';for(const [selector,active] of [['[data-gravel-dimensions]',mode==='dimensions'],['[data-gravel-area]',mode==='area']])document.querySelectorAll(selector).forEach(el=>{el.classList.toggle('is-hidden',!active);el.querySelectorAll('input').forEach(input=>input.disabled=!active)});for(const [selector,label] of [['[data-gravel-length-unit]',units==='metric'?'m':'ft'],['[data-gravel-area-unit]',units==='metric'?'m²':'ft²'],['[data-gravel-depth-unit]',units==='metric'?'cm':'in']])document.querySelectorAll(selector).forEach(el=>el.textContent=label);if(['us','metric'].includes(units))gravelPreviousUnits=units;return{mode,units}}
-function gravelDimensionConversion(value,kind,from,to){const factors={length:.3048,area:.09290304,depth:2.54};if(!Number.isFinite(value)||!Object.hasOwn(factors,kind)||!['us','metric'].includes(from)||!['us','metric'].includes(to))return null;if(from===to)return value;const converted=to==='metric'?value*factors[kind]:value/factors[kind];return Number.isFinite(converted)&&!(value!==0&&converted===0)?Number(converted.toPrecision(15)):null}
+function gravelDimensionConversion(value,kind,from,to,preservePrecision=false){const factors={length:.3048,area:.09290304,depth:2.54};if(!Number.isFinite(value)||!Object.hasOwn(factors,kind)||!['us','metric'].includes(from)||!['us','metric'].includes(to))return null;if(from===to)return value;const converted=to==='metric'?value*factors[kind]:value/factors[kind];return Number.isFinite(converted)&&!(value!==0&&converted===0)?preservePrecision?converted:Number(converted.toPrecision(15)):null}
 function changeGravelUnits(){const to=document.getElementById('gravel_units')?.value,from=gravelPreviousUnits;if(from&&from!==to)for(const [id,kind] of [['gravel_length','length'],['gravel_width','length'],['gravel_area','area'],['gravel_depth','depth']]){const el=document.getElementById(id);if(el&&el.value.trim()!==''){const converted=gravelDimensionConversion(Number(el.value),kind,from,to);el.value=converted===null?'':String(converted)}}syncGravelFields()}
 function gravelNumber(value,digits=3){return value>0&&(value<.5*10**(-digits)||value>=1e9)?value.toExponential(3):F(value,digits)}
 function gravelMoney(value){return value===null?'Not calculated':value>0&&(value<.005||value>=1e12)?`$${value.toExponential(3)}`:USD(value)}
@@ -6424,6 +6471,25 @@ function gravelAmounts({mode,units,length,width,area,depth,allowance,density,den
   return{valid:true,mode,units,areaFt2,depthFt,baseFt3,allowance,allowanceFt3,adjustedFt3,yards,cubicMeters,density,densityUnit,densityLbFt3,pounds,kg,usTons,tonnes,price,priceUnit,cost};
 }
 function gravelProjection(){const {mode,units}=syncGravelFields(),read=id=>{const raw=document.getElementById(id)?.value;return typeof raw==='string'&&raw.trim()!==''?Number(raw):NaN},optional=id=>document.getElementById(id)?.value?.trim()===''?null:read(id);return gravelAmounts({mode,units,length:read('gravel_length'),width:read('gravel_width'),area:read('gravel_area'),depth:read('gravel_depth'),allowance:read('gravel_allowance'),density:optional('gravel_density'),densityUnit:document.getElementById('gravel_density_unit')?.value,price:optional('gravel_price'),priceUnit:document.getElementById('gravel_price_unit')?.value})}
+let mulchPreviousUnits=null,mulchPreviousBagUnit=null;
+function syncMulchFields(){const units=document.getElementById('mulch_units')?.value||'us',mode=document.getElementById('mulch_mode')?.value||'dimensions',bagUnit=document.getElementById('mulch_bag_unit')?.value;for(const [selector,active] of [['[data-mulch-dimensions]',mode==='dimensions'],['[data-mulch-area]',mode==='area']])document.querySelectorAll(selector).forEach(el=>{el.classList.toggle('is-hidden',!active);el.querySelectorAll('input').forEach(input=>input.disabled=!active)});for(const [selector,label] of [['[data-mulch-length-unit]',units==='metric'?'m':'ft'],['[data-mulch-area-unit]',units==='metric'?'m²':'ft²'],['[data-mulch-depth-unit]',units==='metric'?'cm':'in']])document.querySelectorAll(selector).forEach(el=>el.textContent=label);if(['us','metric'].includes(units))mulchPreviousUnits=units;if(['ft3','liters','m3'].includes(bagUnit))mulchPreviousBagUnit=bagUnit;return{mode,units}}
+function mulchBagConversion(value,from,to){const factors={ft3:1,liters:28.316846592,m3:.028316846592};if(!Number.isFinite(value)||!Object.hasOwn(factors,from)||!Object.hasOwn(factors,to))return null;if(from===to)return value;const converted=(value/factors[from])*factors[to];return Number.isFinite(converted)&&!(value!==0&&converted===0)?converted:null}
+function changeMulchBagUnit(){const to=document.getElementById('mulch_bag_unit')?.value,from=mulchPreviousBagUnit,el=document.getElementById('mulch_bag_volume');if(from&&from!==to&&el&&el.value.trim()!==''){const converted=mulchBagConversion(Number(el.value),from,to);el.value=converted===null?'':String(converted)}syncMulchFields()}
+function changeMulchUnits(){const to=document.getElementById('mulch_units')?.value,from=mulchPreviousUnits;if(from&&from!==to)for(const [id,kind] of [['mulch_length','length'],['mulch_width','length'],['mulch_area','area'],['mulch_depth','depth']]){const el=document.getElementById(id);if(el&&el.value.trim()!==''){const converted=gravelDimensionConversion(Number(el.value),kind,from,to,true);el.value=converted===null?'':String(converted)}}syncMulchFields()}
+function mulchAmounts({mode,units,length,width,area,depth,allowance,bagVolume,bagUnit,bagPrice,bulkPrice,bulkUnit}){
+  const p=gravelAmounts({mode,units,length,width,area,depth,allowance,density:null,densityUnit:'lb_ft3',price:null,priceUnit:'yd3'}),finite=x=>typeof x==='number'&&Number.isFinite(x),fail=message=>({valid:false,message});if(!p.valid)return p;
+  if(!['ft3','liters','m3'].includes(bagUnit))return fail('Choose cubic feet, liters or cubic meters for the bag label.');
+  if(bagVolume!==null&&(!finite(bagVolume)||bagVolume<=0))return fail('Enter positive volume per bag, or leave it blank for bulk volume only.');
+  if(![bagPrice,bulkPrice].every(x=>x===null||finite(x)&&x>=0))return fail('Enter nonnegative prices, or leave unknown prices blank.');
+  if(!['yd3','m3'].includes(bulkUnit))return fail('Choose cubic yards or cubic meters for the bulk quote.');
+  const bagVolumeFt3=bagVolume===null?null:bagUnit==='ft3'?bagVolume:bagUnit==='liters'?bagVolume/28.316846592:bagVolume/.028316846592;
+  if(bagVolumeFt3!==null&&(!finite(bagVolumeFt3)||bagVolumeFt3<=0))return fail('The bag volume exceeds the supported numerical range.');
+  let bagCount=null;if(bagVolumeFt3!==null){const ratio=p.adjustedFt3/bagVolumeFt3,nearest=Math.round(ratio),near=nearest>0&&Math.abs(ratio-nearest)<=Number.EPSILON*Math.max(1,Math.abs(ratio))*4;bagCount=Math.ceil(near?nearest:ratio);if(!Number.isSafeInteger(bagCount)||bagCount<1||bagCount>1e9)return fail('The bag estimate must be from 1 through 1 billion whole bags.');}
+  const purchasedFt3=bagCount===null?null:bagCount*bagVolumeFt3,bagExcessFt3=purchasedFt3===null?null:Math.max(0,purchasedFt3-p.adjustedFt3),bagCost=bagCount===null||bagPrice===null?null:bagCount*bagPrice,bulkCost=bulkPrice===null?null:(bulkUnit==='yd3'?p.yards:p.cubicMeters)*bulkPrice;
+  if(![purchasedFt3,bagExcessFt3,bagCost,bulkCost].every(x=>x===null||finite(x))||bagPrice>0&&bagCost===0||bulkPrice>0&&bulkCost===0)return fail('The purchased volume or cost exceeds the supported numerical range.');
+  return{...p,bagVolume,bagUnit,bagVolumeFt3,bagCount,purchasedFt3,bagExcessFt3,bagPrice,bulkPrice,bulkUnit,bagCost,bulkCost};
+}
+function mulchProjection(){const {mode,units}=syncMulchFields(),read=id=>{const raw=document.getElementById(id)?.value;return typeof raw==='string'&&raw.trim()!==''?Number(raw):NaN},optional=id=>document.getElementById(id)?.value?.trim()===''?null:read(id);return mulchAmounts({mode,units,length:read('mulch_length'),width:read('mulch_width'),area:read('mulch_area'),depth:read('mulch_depth'),allowance:read('mulch_allowance'),bagVolume:optional('mulch_bag_volume'),bagUnit:document.getElementById('mulch_bag_unit')?.value,bagPrice:optional('mulch_bag_price'),bulkPrice:optional('mulch_bulk_price'),bulkUnit:document.getElementById('mulch_bulk_unit')?.value})}
 let concretePreviousUnits=null;
 function syncConcreteFields(){
   const shape=document.getElementById('concrete_shape')?.value||'slab',units=document.getElementById('concrete_units')?.value||'us',round=shape!=='slab',custom=document.getElementById('concrete_bag_size')?.value==='custom';
@@ -6787,6 +6853,7 @@ function calc(e){
   case'tire_compare':{const p=tireComparison();if(!p.valid)show(`<strong>Unable to compare</strong><br>${p.message}`);else{const direction=p.differencePct>=0?'larger':'smaller',lead=p.mode==='alternatives'?`${p.next.label} closest candidate`:`${F(Math.abs(p.differencePct),2)}% ${direction} diameter`;show(`<strong>${lead}</strong><br>${p.verdict}; actual speed at ${F(p.indicated,0)} ${p.speedUnit} indicated: ${F(p.actualSpeed,2)} ${p.speedUnit}; clearance ${p.clearance>=0?'+':''}${F(p.clearance,2)} in.`)}break}
   case'wheel_offset_compare':{const p=wheelOffsetComparison();if(!p.valid)show(`<strong>${p.message}</strong>`);else show(`<strong>${p.outerPoke>=0?'+':''}${F(p.outerPoke,1)} mm outer rim movement</strong><br>${p.innerClearance>=0?'+':''}${F(p.innerClearance,1)} mm inner rim clearance; ${p.trackChange>=0?'+':''}${F(p.trackChange,1)} mm track.`);break}
   case'concrete_advanced':{const p=concreteProjection();show(p.valid?`<strong>${concreteNumber(p.yards,2)} cubic yards</strong><br>${concreteNumber(p.withWaste,2)} cubic feet including allowance; ${F(p.bags,0)} bags; ${p.bagCost===null?'bag price not entered':`estimated bag cost ${USD(p.bagCost)}`}.`:`<strong>Check the concrete inputs</strong><br>${H(p.message)}`);break}
+  case'mulch_advanced':{const p=mulchProjection();if(!p.valid)show(`<strong>Check the mulch inputs</strong><br>${p.message}`);else show(`<strong>${gravelNumber(p.yards)} cubic yards</strong><br>${gravelNumber(p.adjustedFt3)} cubic feet target. ${p.bagCount===null?'Enter bag-label volume for whole bags.':`${F(p.bagCount,0)} whole bags at ${gravelNumber(p.bagVolumeFt3)} ft³ per bag.`} Bagged material: ${gravelMoney(p.bagCost)}; bulk material: ${gravelMoney(p.bulkCost)}.`);break}
   case'gravel_advanced':{const p=gravelProjection();if(!p.valid)show(`<strong>Check the gravel inputs</strong><br>${p.message}`);else show(`<strong>${gravelNumber(p.yards)} cubic yards</strong><br>${gravelNumber(p.adjustedFt3)} cubic feet of estimated loose volume. ${p.usTons===null?'Enter density for weight.':`${gravelNumber(p.usTons)} US short tons.`} ${p.cost===null?'Cost not calculated: enter price and any required density.':`Material cost: ${gravelMoney(p.cost)}.`}`);break}
   case'roof_pitch_advanced':{const p=roofPitchProjection();if(!p.valid)show(`<strong>Check the roof inputs</strong><br>${p.message}`);else show(`<strong>${roofNumber(p.pitch,2)}:12 roof pitch</strong><br>${roofAngleNumber(p.angle)}° angle; ${roofNumber(p.percent,1)}% slope; ${roofNumber(p.rafter,2)} ft estimated rafter length.`);break}
   case'rafter_advanced':{const p=rafterProjection();show(`<strong>${F(p.totalLength,2)} ft per rafter</strong><br>${F(p.baseLength,2)} ft to wall line plus ${F(p.tailLength,2)} ft sloped tail; ${F(p.totalLinear,1)} total linear feet.`);break}
@@ -6921,10 +6988,14 @@ document.addEventListener('input',e=>{if(e.target.id==='concrete_units')changeCo
 document.addEventListener('change',e=>{if(e.target.id==='concrete_units')changeConcreteUnits()});
 document.addEventListener('input',e=>{if(e.target.id==='gravel_units')changeGravelUnits()});
 document.addEventListener('change',e=>{if(e.target.id==='gravel_units')changeGravelUnits()});
+document.addEventListener('input',e=>{if(e.target.id==='mulch_units')changeMulchUnits()});
+document.addEventListener('change',e=>{if(e.target.id==='mulch_units')changeMulchUnits()});
+document.addEventListener('input',e=>{if(e.target.id==='mulch_bag_unit')changeMulchBagUnit()});
+document.addEventListener('change',e=>{if(e.target.id==='mulch_bag_unit')changeMulchBagUnit()});
 document.addEventListener('click',e=>{const link=e.target.closest('a[href]');if(!link)return;try{const destination=new URL(link.href,location.href);if(/^https?:$/.test(destination.protocol)&&destination.hostname!==location.hostname)trackGA4Event('outbound_reference_click',{destination_host:destination.hostname,source_path:location.pathname})}catch{}});
 document.addEventListener('click',e=>{if(e.target.closest('[data-clear]')){if(currentEngine()==='time_duration')clearTimeDurationForm();else clearCalcForm()}});
 document.addEventListener('click',e=>{if(e.target.closest('[data-clear]')&&currentEngine()==='used_car_estimate')renderGenericFromEngine('used_car_estimate')});
-document.addEventListener('click',e=>{if(e.target.closest('[data-clear]')&&['cn_date','new_used_cost','personal_loan_advanced','boat_loan_advanced','bottleneck_advanced','loan','concrete_advanced','roof_pitch_advanced','flooring_advanced','gravel_advanced'].includes(currentEngine()))calc(currentEngine())});
+document.addEventListener('click',e=>{if(e.target.closest('[data-clear]')&&['cn_date','new_used_cost','personal_loan_advanced','boat_loan_advanced','bottleneck_advanced','loan','concrete_advanced','roof_pitch_advanced','flooring_advanced','gravel_advanced','mulch_advanced'].includes(currentEngine()))calc(currentEngine())});
 document.addEventListener('click',e=>{
   if(!e.target.closest('[data-clear]'))return;
   const engine=currentEngine();
@@ -7594,6 +7665,12 @@ function renderGenericFromEngine(engine) {
       bars=[{label:"Measured volume",value:p.baseFt3,display:`${F(p.baseFt3,3)} ft³`},{label:"Planning allowance",value:p.allowanceFt3,display:`${F(p.allowanceFt3,3)} ft³`}];
       rows=[["Project shape",shapeLabel,p.shape==='post_hole'?"Full cylindrical holes; no post displacement deducted.":"Selected geometry."],["Dimension units",p.units==='metric'?'Meters and millimeters':'Feet and inches',"Changing systems converts entered dimensions."],["Quantity",String(p.quantity),"Whole columns or holes; one slab."],["Measured volume",`${F(p.baseFt3,6)} ft³`,"Before the planning allowance."],["Planning allowance",`${F(p.waste,3)}%`,`${F(p.allowanceFt3,6)} additional ft³.`],["Ordering volume",`${F(p.withWaste,6)} ft³`,`${F(p.yards,6)} cubic yards.`],["Ordering volume in SI",`${F(p.cubicMeters,6)} m³`,"1 ft³ = 0.028316846592 m³."],["Selected bag yield",`${F(p.yieldPerBag,6)} ft³ / bag`,"Product-specific label assumption, not inferred from weight alone."],["Bags required",F(p.bags,0),"Final volume divided by yield, rounded up once."],["Purchased bag coverage",`${F(p.purchasedFt3,6)} ft³`,"Whole bags times selected yield."],["Coverage beyond ordering volume",`${F(p.surplusFt3,6)} ft³`,"Packaging excess, separate from the planning allowance."],["Estimated bag cost",p.bagCost===null?'Not entered':USD(p.bagCost),p.bagPrice===null?'No bag price assumed.':`${USD(p.bagPrice)} per bag; excludes tax, labor and delivery.`],["Estimated ready-mix material",p.readyCost===null?'Not entered':USD(p.readyCost),p.yardPrice===null?'No ready-mix price assumed.':`${USD(p.yardPrice)} per cubic yard; excludes delivery, short-load and other fees.`]];
     }
+  } else if (engine === "mulch_advanced") {
+    const p=mulchProjection();
+    if(!p.valid){renderGeneric([["Check the mulch inputs","Not calculated",p.message]],[],[["Validation","Not calculated",p.message]]);return;}
+    cards=[["Bulk volume target",`${gravelNumber(p.yards)} yd³`,"Unrounded volume for the entered layer."],["Whole bags",p.bagCount===null?'Not calculated':F(p.bagCount,0),"Based on the entered volume label."],["Bagged material",gravelMoney(p.bagCost),"Whole bags times price; separate scenario."],["Bulk material",gravelMoney(p.bulkCost),"Target volume times quote; separate scenario."]];
+    bars=[{label:'Measured volume',value:p.baseFt3,display:`${gravelNumber(p.baseFt3)} ft³`},{label:'Volume allowance',value:p.allowanceFt3,display:`${gravelNumber(p.allowanceFt3)} ft³`}];if(p.bagExcessFt3!==null)bars.push({label:'Bag-rounding excess',value:p.bagExcessFt3,display:`${gravelNumber(p.bagExcessFt3)} ft³`});
+    rows=[["Net measured area",`${gravelNumber(p.areaFt2)} ft²`,p.mode==='area'?'Entered net area; rectangle excluded.':'Entered rectangle; no automatic deductions.'],["Added depth",`${gravelNumber(p.depthFt*12)} in`,'Entered layer to add, not a universal recommendation.'],["Base volume",`${gravelNumber(p.baseFt3)} ft³`,'Area times added depth.'],["Volume allowance",`${gravelNumber(p.allowanceFt3)} ft³`,`${gravelNumber(p.allowance)}% added once; not a settling rate.`],["Volume target",`${gravelNumber(p.adjustedFt3)} ft³`,'Base plus entered allowance.'],["Bulk cubic yards",`${gravelNumber(p.yards,6)} yd³`,'Target divided by 27; no supplier minimum applied.'],["Bulk cubic meters",`${gravelNumber(p.cubicMeters,6)} m³`,'Same target converted.'],["Bag-label volume",p.bagVolume===null?'Not entered':`${gravelNumber(p.bagVolume)} ${p.bagUnit==='liters'?'liters':p.bagUnit==='m3'?'m³':'ft³'}`,'Volume label only; not bag weight.'],["Whole bags",p.bagCount===null?'Not calculated':F(p.bagCount,0),'Round final quantity up once.'],["Purchased bag volume",p.purchasedFt3===null?'Not calculated':`${gravelNumber(p.purchasedFt3)} ft³`,'Whole bags times label volume.'],["Bag-rounding excess",p.bagExcessFt3===null?'Not calculated':`${gravelNumber(p.bagExcessFt3)} ft³`,'Purchased volume minus target; excludes planned allowance.'],["Bagged material cost",gravelMoney(p.bagCost),'Requires bag volume and bag price.'],["Bulk material cost",gravelMoney(p.bulkCost),`Requires quote per ${p.bulkUnit==='yd3'?'cubic yard':'cubic meter'}; excludes order increments.`],["Comparison basis","Separate material-only scenarios","Do not add bagged and bulk costs; excludes delivery, tax and labor."]];
   } else if (engine === "gravel_advanced") {
     const p=gravelProjection();
     if(!p.valid){renderGeneric([["Check the gravel inputs","Not calculated",p.message]],[],[["Validation","Not calculated",p.message]]);return;}

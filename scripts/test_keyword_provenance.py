@@ -84,7 +84,7 @@ class KeywordProvenanceTests(unittest.TestCase):
     def test_reviewed_index_scope_is_not_driven_by_china_metrics(self):
         # FHA remains withheld; dedicated down-payment and rebate-comparison tools are restored.
         # Explicitly reviewed restorations expand this baseline, not imported CN volume.
-        reviewed = {'new-vs-used-car-calculator', 'gravel-calculator'}
+        reviewed = {'new-vs-used-car-calculator', 'gravel-calculator', 'mulch-calculator'}
         baseline = [c for c in self.calculators.values() if c['slug'] not in reviewed]
         self.assertEqual(sum(build.is_indexable_calculator(c) for c in baseline), 284)
         comparison = self.calculators['new-vs-used-car-calculator']
@@ -95,6 +95,10 @@ class KeywordProvenanceTests(unittest.TestCase):
         self.assertTrue(build.is_indexable_calculator(gravel))
         self.assertEqual(gravel['engine'], 'gravel_advanced')
         self.assertFalse(gravel['keyword_data'])
+        mulch = self.calculators['mulch-calculator']
+        self.assertTrue(build.is_indexable_calculator(mulch))
+        self.assertEqual(mulch['engine'], 'mulch_advanced')
+        self.assertFalse(mulch['keyword_data'])
 
     def test_fingerprint_ignores_json_object_key_formatting(self):
         self.assertEqual(build.keyword_data_fingerprint([{"keyword": "a", "volume": 50}]),

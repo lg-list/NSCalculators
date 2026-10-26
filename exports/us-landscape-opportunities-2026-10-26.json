@@ -20,7 +20,7 @@
     "note": "In-app tab opened but reading timed out; public Playwright then confirmed rate limiting. No private endpoint, CAPTCHA bypass or invented trend values."
   },
   "site_observations": {
-    "observation_phase": "Before the purpose-built Gravel restoration; historical availability findings, not the current release state.",
+      "observation_phase": "Before the purpose-built Gravel and Mulch restorations; historical availability findings, not the current release state.",
     "gsc_source": "us-search-baseline-2026-10-24.json",
     "gsc_original_zip_sha256": "c5a2ec4c2e7132624cf60b78d7cbbe5aa7e08af221d3765e25129a59dd4b791e",
     "gsc_period": ["2026-09-24", "2026-10-21"],
@@ -94,7 +94,10 @@
       "new_url": false,
       "verified_us_monthly_search_volume": null,
       "organic_difficulty": null,
-      "action": "Audit restoration of the existing measured-area/depth and label-volume bag workflow; validate US demand before treating this as a high-volume expansion.",
+      "action": "Purpose-built measured-area/depth, bag-label volume and independent material-cost workflow implemented and locally release-audited; monitor settled US performance rather than claiming high-volume demand.",
+      "implementation_date": "2026-10-26",
+      "implementation_report": "reports/seo/mulch-restoration-2026-10-26.md",
+      "implementation_primary_references": ["https://yardandgarden.extension.iastate.edu/how-to/how-determine-amount-mulch-needed-garden-bed", "https://ucanr.edu/site/uc-marin-master-gardeners/applying-mulch"],
       "acceptance_example": {"measured_area_ft2": 200, "entered_depth_in": 3, "allowance_percent": 0, "expected_ft3": 50, "expected_yd3": "50/27", "bag_label_ft3": 2, "expected_whole_bags": 25},
       "content_requirements": ["Use entered net area and depth; no universal horticultural depth recommendation", "Separate bulk volume, bag rounding and optional prices", "Material sold by weight needs appropriate separate conversion evidence", "No retailer affiliation or copied retailer text"],
       "primary_reference": "https://www.homedepot.com/calculator/mulch",
