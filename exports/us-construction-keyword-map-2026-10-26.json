@@ -1,0 +1,64 @@
+{
+  "version": 1,
+  "created_date": "2026-10-26",
+  "market": "United States",
+  "evidence_file": "us-construction-trends-2026-10-26.json",
+  "us_monthly_search_volume_source": null,
+  "auto_publish": false,
+  "priority_method": "Keep observed site-level quick wins separate from broader relative market interest; audit and improve existing URLs before considering any new page.",
+  "items": [
+    {
+      "priority": 1,
+      "target_path": "/area-calculator/",
+      "primary_keyword": "area calculator",
+      "secondary_candidate_keywords": ["rhombus area formula", "lawn area calculator"],
+      "action": "Preserve recent title and tested calculations; retain as the leading site-level observation queue.",
+      "evidence": "Existing US GSC exact-query aggregate has 590 impressions at position 8.29 for September 24-October 21. The quoted Trends comparison average is 11, not monthly volume.",
+      "content_brief": "Check whether the existing parallelogram/base-height explanation adequately serves rhombus formula intent. For lawn measurements, distinguish measured geometry from map/satellite boundary drawing before treating the intent as served.",
+      "publish_gate": "Review the October 25-31 US GSC/GA4 window only after available and processed; verify any functional/content gap before editing.",
+      "new_url": false,
+      "us_monthly_search_volume": null,
+      "organic_difficulty": null
+    },
+    {
+      "priority": 2,
+      "target_path": "/concrete-volume-calculator/",
+      "primary_keyword": "concrete calculator",
+      "secondary_candidate_keywords": ["80lb bag of concrete", "80lb concrete bag", "concrete calculator app"],
+      "action": "Next demand-backed functionality/content audit on the existing concrete tool.",
+      "evidence": "Highest quoted-phrase comparison average of the four at 77; associated 80lb bag query has Rising +190%. Neither number is monthly volume or ranking opportunity size.",
+      "content_brief": "Verify slab, column and post-hole volume/unit handling, positive-input validation, waste application and full-bag rounding. Check a named manufacturer's stated yield before publishing an 80-lb worked example. Keep concrete volume versus bag yield and ordering allowance distinct; no structural mix-design or strength advice.",
+      "publish_gate": "Reproduce a meaningful gap, verify primary product evidence, add independent calculations and mobile tests. No weight-specific clone pages or unverified manufacturer equivalence.",
+      "new_url": false,
+      "us_monthly_search_volume": null,
+      "organic_difficulty": null
+    },
+    {
+      "priority": 3,
+      "target_path": "/square-footage-calculator/",
+      "related_existing_paths": ["/roof-pitch-calculator/", "/guides/calculate-square-footage-irregular-room/"],
+      "primary_keyword": "square footage calculator",
+      "secondary_candidate_keywords": ["roof square footage calculator", "roofing square footage calculator", "lawn square footage calculator"],
+      "action": "Audit task routing between planar area and roof-slope tools, without making a duplicate roof-area URL.",
+      "evidence": "Quoted-phrase comparison average 15; roof-related associated searches show Rising +50% and +40%, not absolute demand.",
+      "content_brief": "Distinguish floor/plan area, sloped roof area, eaves, complex roof planes and roofing squares. Verify actual rendered tool capabilities before adding contextual links or claiming a roof workflow is supported. Preserve the existing original room guide.",
+      "publish_gate": "Demonstrate the routed calculator answers the user's actual measurement task, with original example and no unsupported roof/material recommendation.",
+      "new_url": false,
+      "us_monthly_search_volume": null,
+      "organic_difficulty": null
+    },
+    {
+      "priority": 4,
+      "target_path": "/flooring-calculator/",
+      "primary_keyword": "flooring calculator",
+      "secondary_candidate_keywords": ["flooring calculator square feet", "vinyl flooring calculator", "flooring calculator cost", "laminate flooring calculator"],
+      "action": "Retain a single existing coverage/boxes/cost workflow; hold material-specific expansion pending validated demand and need.",
+      "evidence": "Quoted-phrase comparison average is 1 in this four-term scale. Associated Top widget indexes are 100/96/80/71 on a separate scale, not growth percentages or counts.",
+      "content_brief": "Verify coverage per box, waste, whole-package rounding, leftover material and entered cost. State that vinyl and laminate depend on actual package/installation assumptions. Do not claim manufacturer or retailer affiliation.",
+      "publish_gate": "Receive and validate US historical Keyword Planner targeting; establish distinct task benefit before any new material-specific content/page.",
+      "new_url": false,
+      "us_monthly_search_volume": null,
+      "organic_difficulty": null
+    }
+  ]
+}

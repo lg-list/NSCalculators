@@ -8,6 +8,8 @@ On 2026-10-24 a free signed-in Search Console browser export restored current me
 
 | File | Meaning and permitted use |
 | --- | --- |
+| `us-construction-trends-2026-10-26.json` | US Google Trends public UI snapshot: 53 weekly normalized-index rows, quoted-phrase matching, partial-week exclusion and separate Top/Rising signals. Not Keyword Planner monthly volume, CPC or organic difficulty. |
+| `us-construction-keyword-map-2026-10-26.json` | Four existing-URL research/audit briefs. Monthly volumes and difficulty remain null; no new URLs or automatic publishing. Keeps GSC quick-win priority separate from relative broader demand. |
 | `us-query-page-observations-2026-10-24.json` | Browser-observed exact-query Pages breakdowns for two US car-value intents. Genuine scoped pairs, not a join of separate exports. Page impression counts are not unique searches. |
 | `keyword-stats-positive.json` | Historical China averages, August 2025-July 2026; preserved unchanged. Not US volume. |
 | `keyword-stats-provenance.json` | Verified source geography, periods, original-file hashes and a canonical-JSON fingerprint of the derived rows. |
@@ -45,3 +47,10 @@ Ads competition measures advertiser activity; it is not organic SEO difficulty.
 Homepage featured tools are editorial selections, not a claim about measured
 popularity. Existing indexable routes are deliberately preserved in this
 correction rather than deindexed because US volume is unknown.
+
+The owner agreed on October 26 to provide a US historical Keyword Planner CSV;
+it has not yet been received or validated. The new Trends snapshot is a distinct
+relative-interest source and must not fill that missing monthly-volume field.
+Quoted phrases can include surrounding words; related-query widgets can contain
+other intents. Do not combine their Top indexes, Rising percentages and common
+time-series indexes as one score or publish associated terms without task review.
