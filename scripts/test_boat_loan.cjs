@@ -11,6 +11,7 @@ p=run({...base(),addCosts:true,feeMethod:'upfront'});near(p.principal,40000);nea
 p=run({...base(),downUnit:'dollars',down:10000,insurance:1200,storage:2400,operating:600});near(p.monthlyReserve,350);near(p.periodReserve,42000);near(p.monthlyBudget,p.payment+350);
 p=run({...base(),down:100,rate:NaN,insurance:1200});assert.equal(p.rate,null);near(p.payment,0);near(p.cashDue,50000);near(p.monthlyBudget,100);near(p.totalCash,62000);
 p=run({...base(),down:100,addCosts:true});near(p.principal,3000);assert.ok(p.payment>0);
+for(const price of [0.051094890510948905,0.0948905109489051,0.10218978102189781]){p=run({...base(),price,down:100});assert.equal(p.principal,0);assert.equal(p.cashDown,price);}
 run({...base(),addCosts:false,fees:NaN,feeMethod:'unknown'});
 for(const price of [.01,50000,1e9])for(const rate of [0,1e-10,7.5,100])for(const term of [1,12,120,600])for(const down of [0,20,100]){const input={...base(),price,rate,down,years:Math.floor(term/12),months:term%12};if(price===.01&&down===20){assert.equal(c.boatLoanAmounts(input).valid,false);count++;}else run(input);}
 for(const startMonth of ['0001-01','0099-12','9999-12'])run({...base(),years:0,months:1,startMonth});

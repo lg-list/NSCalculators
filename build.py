@@ -5706,7 +5706,7 @@ function boatLoanAmounts({price,down,downUnit,rate,years,months,startMonth,addCo
   const fail=message=>({valid:false,message}),finite=x=>typeof x==='number'&&Number.isFinite(x),term=years*12+months;
   if(!finite(price)||price<.01||price>1e9)return fail('Enter a boat price from $0.01 through $1 billion.');
   if(!['percent','dollars'].includes(downUnit)||!finite(down)||down<0)return fail('Enter a nonnegative down payment and choose dollars or percent.');
-  const cashDown=downUnit==='percent'?price*down/100:down;
+  const cashDown=downUnit==='percent'?price*(down/100):down;
   if(!Number.isFinite(cashDown)||cashDown>price)return fail('Cash down cannot exceed the boat price.');
   if(!Number.isInteger(years)||years<0||!Number.isInteger(months)||months<0||months>11||term<1||term>600)return fail('Enter whole years and 0-11 additional months, totaling 1-600 months.');
   if(typeof startMonth!=='string'||!/^\d{4}-\d{2}$/.test(startMonth)||calendarDayValue(startMonth+'-01')===null)return fail('Enter a valid first payment month from year 0001 through 9999.');
