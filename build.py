@@ -987,6 +987,8 @@ def base_and_supplemental(data):
             calc.update({"engine": "personal_loan_advanced", "desc": "Calculate personal loan payments, origination fees, net cash available, insurance costs and a monthly repayment schedule.", "inputs": []})
         if calc["slug"] == "boat-loan-calculator":
             calc.update({"engine": "boat_loan_advanced", "desc": "Estimate boat loan payments from price, down payment and note rate, with optional purchase costs, a separate boating budget and an amortization schedule.", "inputs": []})
+        if calc["slug"] == "gravel-calculator":
+            calc.update({"cat": "Construction", "engine": "gravel_advanced", "desc": "Estimate gravel volume, supplier-based weight and optional material cost.", "formula": "Volume = measured area x loose layer depth; weight = volume x supplier bulk density.", "example": "20 ft x 10 ft x 3 in = 50 cubic feet, or 50/27 cubic yards, before any allowance.", "inputs": []})
         if calc["slug"] in ("repayment-calculator", "student-loan-calculator", "business-loan-calculator", "home-equity-loan-calculator"):
             calc["desc"] = "Estimate fixed monthly loan payments, total repayments and interest from principal, a nominal annual note rate and a whole-month term."
         if calc["slug"] == "time-duration-calculator":
@@ -1142,6 +1144,8 @@ def is_indexable_calculator(calc):
 
 
 def seo_keywords(calc):
+    if calc.get("slug") == "gravel-calculator":
+        return ["gravel calculator", "gravel calculator yards", "gravel calculator tons", "how much gravel do i need", "driveway gravel calculator", "pea gravel calculator"]
     if calc.get("slug") == "time-duration-calculator":
         return ["time duration calculator", "time difference calculator", "time between two dates", "elapsed time calculator", "hours minutes seconds between times"]
     if calc.get("slug") == "payback-period-calculator":
@@ -1217,6 +1221,8 @@ def seo_keywords(calc):
 
 
 def seo_title(calc):
+    if calc.get("slug") == "gravel-calculator":
+        return "Gravel Calculator: Cubic Yards, US Tons & Material Cost"
     if calc.get("slug") == "boat-loan-calculator":
         return "Boat Loan Calculator: Payments, Down Payment & Costs"
     if calc.get("slug") == "personal-loan-calculator":
@@ -1357,6 +1363,8 @@ def seo_title(calc):
 
 
 def seo_description(calc):
+    if calc.get("slug") == "gravel-calculator":
+        return "Calculate gravel cubic yards, feet and meters from area and depth. Enter supplier density for US short tons and metric tonnes, plus optional material cost."
     if calc.get("slug") == "boat-loan-calculator":
         return "Calculate boat loan payments with down payment, optional tax and fees, a separate boating budget, interest breakdown and monthly amortization schedule."
     if calc.get("slug") == "personal-loan-calculator":
@@ -2438,6 +2446,24 @@ def square_footage_input_html():
 </div>"""
 
 
+def gravel_input_html():
+    return """<div class="fields project-fields gravel-fields">
+<div class="field"><label for="gravel_units">Dimensions</label><select id="gravel_units"><option value="us">US (ft / in)</option><option value="metric">Metric (m / cm)</option></select></div>
+<div class="field"><label for="gravel_mode">Area from</label><select id="gravel_mode"><option value="dimensions">Rectangle</option><option value="area">Total area</option></select></div>
+<div class="field" data-gravel-dimensions><label for="gravel_length">Length</label><div class="input-unit"><input id="gravel_length" type="number" step="any" min="0" value="20"><span data-gravel-length-unit>ft</span></div></div>
+<div class="field" data-gravel-dimensions><label for="gravel_width">Width</label><div class="input-unit"><input id="gravel_width" type="number" step="any" min="0" value="10"><span data-gravel-length-unit>ft</span></div></div>
+<div class="field field-wide is-hidden" data-gravel-area><label for="gravel_area">Measured area</label><div class="input-unit"><input id="gravel_area" type="number" step="any" min="0" value="200"><span data-gravel-area-unit>ft²</span></div></div>
+<div class="field"><label for="gravel_depth">Loose layer depth</label><div class="input-unit"><input id="gravel_depth" type="number" step="any" min="0" value="3"><span data-gravel-depth-unit>in</span></div></div>
+<div class="field"><label for="gravel_allowance">Volume allowance</label><div class="input-unit"><input id="gravel_allowance" type="number" step="any" min="0" max="100" value="0"><span>%</span></div></div>
+<details class="more-options field-wide"><summary>Density and cost options</summary><div class="fields concrete-cost-fields">
+<div class="field"><label for="gravel_density">Bulk density (optional)</label><input id="gravel_density" type="number" step="any" min="0" placeholder="Supplier value"></div>
+<div class="field"><label for="gravel_density_unit">Density unit</label><select id="gravel_density_unit"><option value="lb_ft3">lb / ft³</option><option value="us_ton_yd3">US tons / yd³</option><option value="kg_m3">kg / m³</option></select></div>
+<div class="field"><label for="gravel_price">Price (optional)</label><div class="input-unit"><input id="gravel_price" type="number" step="any" min="0" placeholder="Supplier quote"><span>$</span></div></div>
+<div class="field"><label for="gravel_price_unit">Price per</label><select id="gravel_price_unit"><option value="yd3">Cubic yard</option><option value="m3">Cubic meter</option><option value="us_ton">US short ton</option><option value="tonne">Metric tonne</option></select></div>
+</div><p class="table-note">Use loose/as-supplied bulk density. The allowance is not an automatic compaction conversion. Costs exclude delivery, tax and installation.</p></details>
+</div>"""
+
+
 def flooring_input_html():
     return """<div class="fields project-fields flooring-fields">
 <div class="field field-wide"><label for="floor_mode">Measured area from</label><select id="floor_mode"><option value="dimensions">Room dimensions</option><option value="area">Total square feet</option></select></div>
@@ -3098,6 +3124,15 @@ def conversion_copy(calc):
 
 
 def high_value_calculator_copy(calc):
+    if calc.get("slug") == "gravel-calculator":
+        return """
+<h2>How much gravel do I need?</h2><p>Enter the measured length and width or an independently measured area, then the loose layer depth. The calculator returns cubic feet, cubic yards and cubic meters. Use the <a href="/square-footage-calculator/">square footage calculator</a> for measured sections or the <a href="/area-calculator/">area calculator</a> for non-overlapping shapes, then enter their sum in Measured area mode. Dimension units can switch between feet/inches and meters/centimeters; this converts the values, not just their labels.</p>
+<p class="formula">cubic feet = area in ft² x depth in inches / 12; cubic yards = cubic feet / 27; pounds = loose cubic feet x bulk density in lb/ft³</p>
+<h2>Gravel volume example</h2><p>A 20 ft by 10 ft measured area with a 3 in loose layer contains 20 x 10 x (3/12) = <strong>50 ft³</strong>, or 50/27 = about <strong>1.852 yd³</strong>. A user-selected 10% volume allowance adds 5 ft³, making 55 ft³ or about 2.037 yd³. This allowance is an assumption for the estimate, not a recommended compaction rate.</p>
+<h2>Cubic yards versus tons</h2><p>A cubic yard measures volume; a ton measures mass. Enter the supplier's loose bulk density to calculate weight. For an illustration only, 55 ft³ at an entered 100 lb/ft³ weighs 5,500 lb, or 2.75 US short tons. This density is not a specification for pea gravel, crushed stone or any other product. Moisture, grading and how material is handled affect bulk density.</p><p>One US short ton is 2,000 lb. One metric tonne is 1,000 kg, so these are different units. The calculator labels them separately and uses 1 lb = 0.45359237 kg. <a href="https://www.nist.gov/pml/special-publication-811/nist-guide-si-appendix-b-conversion-factors/nist-guide-si-appendix-b9" rel="external noopener">NIST's conversion factors</a> document these unit relationships. Blank density leaves weight unknown; entering zero or a negative density is an error rather than a zero-weight answer.</p>
+<h2>Loose volume and compacted depth</h2><p>This tool estimates the loose volume represented by the dimensions you enter. It does not convert a finished compacted layer to a delivery quantity automatically. Ask the supplier or project designer for a conversion appropriate to the specified material and site. A simple added allowance and a percentage loss of loose volume are different calculations: adding 25% gives 1.25 times the base, whereas replacing a 25% volume reduction would require dividing by 0.75.</p><p><a href="https://dirtandgravel.psu.edu/general-resources/dglvr-materials-calculator/" rel="external noopener">Penn State's materials calculator guidance</a> distinguishes loose and compacted inputs and explains why conversion factors vary by region and supplier. Its regional material factors are not universal nationwide density presets.</p>
+<h2>Gravel cost estimate</h2><p>Choose the supplier's price basis: cubic yard, cubic meter, US short ton or metric tonne. With the 55 ft³ example and an entered $50/yd³, material cost is about $101.85. At the illustrative density above and $40 per US short ton, it is $110. These are separate quote scenarios, not current market prices. Blank price means unknown; an explicit $0 is a zero-price scenario. A weight-based price also needs density. Delivery, tax, installation, minimum orders, supplier rounding, truck capacity and return terms are excluded.</p>
+<h2>Frequently asked questions</h2><h3>Can I use this for pea gravel or a driveway?</h3><p>Yes, for measured-volume arithmetic using the product information you supply. It does not choose a gravel grade, required layer depth, compaction method or structural design. <a href="https://www.vulcanmaterials.com/construction-materials/product-calculators" rel="external noopener">Vulcan's quantity-estimation guidance</a> also recommends reviewing project conditions and estimates with a local supplier. No supplier affiliation is claimed.</p><h3>Why is weight or cost not calculated?</h3><p>Weight needs a positive density. Cost needs a price; prices per ton or tonne also need density. Missing information is kept unknown rather than treated as free or weightless.</p><h3>Does this include bags or truckloads?</h3><p>No. It reports unrounded bulk volume and, when density is supplied, mass. Bag coverage, delivery increments and legal vehicle loads require additional product and supplier information.</p>"""
     if calc.get("slug") == "boat-loan-calculator":
         return """
 <h2>Boat loan payment and purchase budget</h2><p>Start with the negotiated boat price and your cash down payment. The amount financed is price minus down payment, plus purchase tax and fees only when you choose to finance them. A dollar down payment and a percentage of the boat price are alternative inputs, not two deposits. Initial amounts and rates are examples, not current offers, required down payments or approval criteria.</p>
@@ -4102,6 +4137,13 @@ def default_calculator_copy(calc):
 
 
 def analysis_extra_html(calc):
+    if calc.get("slug") == "gravel-calculator":
+        return """<section class="mortgage-dashboard generic-dashboard gravel-dashboard" aria-label="Gravel quantity results">
+<div class="section-head stack"><h2>Gravel Volume and Weight</h2><p>Measured loose volume, entered allowance and optional supplier-based weight and cost.</p></div>
+<div class="summary-grid" id="genericSummary"></div>
+<div class="chart-grid"><div class="chart-card compact-chart"><h3>Volume Breakdown (Cubic Feet)</h3><canvas id="genericChart" width="620" height="220" aria-label="Base volume and added volume allowance in cubic feet" data-chart-type="bars"></canvas></div></div>
+<div class="table-card"><h3>Quantity and Cost Details</h3><div class="table-scroll"><table class="data-table" id="genericTable"><thead><tr><th>Metric</th><th>Value</th><th>Basis</th></tr></thead><tbody></tbody></table></div></div>
+</section>"""
     if calc.get("slug") == "boat-loan-calculator":
         return """<section class="mortgage-dashboard generic-dashboard personal-loan-dashboard" aria-label="Boat loan payment and budget analysis"><div class="section-head stack"><h2>Boat Loan Results</h2></div><div class="summary-grid" id="genericSummary"></div><div class="chart-card compact-chart"><h3>Loan Repayment Breakdown</h3><canvas id="genericChart" width="360" height="240" data-chart-type="pie" data-center-label="loan payments" aria-label="Loan principal and interest in US dollars"></canvas></div><div class="table-card"><h3>Purchase and Budget Details</h3><div class="table-scroll"><table class="data-table" id="genericTable"><thead><tr><th>Measure</th><th>Value</th><th>Basis</th></tr></thead><tbody></tbody></table></div></div><details class="schedule-details"><summary>Monthly loan repayment schedule</summary><div class="table-scroll"><table class="data-table" id="boatSchedule"><thead><tr><th>Payment</th><th>Month</th><th>Loan payment</th><th>Interest</th><th>Principal</th><th>Balance</th></tr></thead><tbody></tbody></table></div></details></section>"""
     if calc.get("slug") == "personal-loan-calculator":
@@ -4982,6 +5024,9 @@ def calculator_page(site, calc, related):
     elif calc.get("slug") == "concrete-volume-calculator":
         fields = concrete_volume_input_html()
         page_engine = "concrete_advanced"
+    elif calc.get("slug") == "gravel-calculator":
+        fields = gravel_input_html()
+        page_engine = "gravel_advanced"
     elif calc.get("slug") == "roof-pitch-calculator":
         fields = roof_pitch_input_html()
         page_engine = "roof_pitch_advanced"
@@ -5056,6 +5101,8 @@ def calculator_page(site, calc, related):
     if calc.get("slug") in ("area-calculator", "square-footage-calculator", "flooring-calculator", "tile-calculator"):
         guide_link = '<p>For a measured walkthrough of L-shaped and other irregular rooms, including a worked square-footage example and ordering checks, read <a href="/guides/calculate-square-footage-irregular-room/">how to calculate square footage for an irregular room</a>.</p>'
         content = content.replace('<h2>Frequently asked questions</h2>', guide_link + '<h2>Frequently asked questions</h2>', 1)
+    if calc.get("slug") in ("concrete-volume-calculator", "square-footage-calculator"):
+        content = content.replace('<h2>Frequently asked questions</h2>', '<p>Estimating loose aggregate instead? The <a href="/gravel-calculator/">gravel calculator</a> separates measured volume from supplier-density weight and optional material cost.</p><h2>Frequently asked questions</h2>', 1)
     extra = analysis_extra_html(calc)
     calculator_asset_version = calculator_assets()[1]
     if calc.get("engine") == "loan_page":
@@ -5282,6 +5329,8 @@ def info_pages(site):
 
 
 CSS = r'''
+.gravel-dashboard .summary-card{min-width:0}.gravel-dashboard .summary-card strong{overflow-wrap:anywhere}
+@media(max-width:560px){.calculator-article .gravel-fields .more-options .fields{grid-template-columns:1fr}}
 .calculator-article:has(#floor_mode) .summary-card{min-width:0}.calculator-article:has(#floor_mode) .summary-card strong{overflow-wrap:anywhere}
 .calculator-article:has(#roof_input_mode) .summary-card{min-width:0}.calculator-article:has(#roof_input_mode) .summary-card strong{overflow-wrap:anywhere}
 .room-area-figure{margin:20px 0;max-width:460px}
@@ -6349,6 +6398,32 @@ function parseTireSize(raw){const text=String(raw||'').toUpperCase().replace(/\s
 function similarTireSizes(original,targetRim,tolerance){const center=Math.round((original.width-5)/10)*10+5,candidates=[];for(let width=Math.max(125,center-70);width<=Math.min(445,center+70);width+=10){for(let aspect=25;aspect<=85;aspect+=5){const spec=metricTireSpec(width,aspect,targetRim),differencePct=(spec.diameter/original.diameter-1)*100;if(Math.abs(differencePct)<=tolerance&&spec.label!==original.label)candidates.push({...spec,differencePct,clearance:(spec.diameter-original.diameter)/2})}}return candidates.sort((a,b)=>Math.abs(a.differencePct)-Math.abs(b.differencePct)||Math.abs(a.width-original.width)-Math.abs(b.width-original.width)).slice(0,12)}
 function tireComparison(){const mode=syncTireFields(),original=parseTireSize(document.getElementById('original_tire_size')?.value);if(!original)return{valid:false,mode,message:'Enter an original size such as 225/65R17 or 33x12.50R15.'};let next=null,candidates=[];if(mode==='alternatives'){const targetRim=V('tire_target_rim'),tolerance=V('tire_tolerance');if(!(targetRim>=10&&targetRim<=30&&tolerance>=.1&&tolerance<=5))return{valid:false,mode,message:'Enter a target wheel diameter from 10 to 30 inches and a tolerance from 0.1% to 5%.'};candidates=similarTireSizes(original,targetRim,tolerance);if(!candidates.length)return{valid:false,mode,message:'No nominal metric candidates were found inside that tolerance. Increase the tolerance or change wheel diameter.'};next=candidates[0]}else{next=parseTireSize(document.getElementById('new_tire_size')?.value);if(!next)return{valid:false,mode,message:'Enter a new size such as 235/60R18 or 35x12.50R17.'}}const ratio=next.diameter/original.diameter,differencePct=(ratio-1)*100,indicated=Math.max(0,V('indicated_speed')),actualSpeed=indicated*ratio,indicatedDistance=Math.max(0,V('indicated_distance')),actualDistance=indicatedDistance*ratio,clearance=(next.diameter-original.diameter)/2,widthDifference=next.width-original.width,widthPct=widthDifference/original.width*100,metricUnits=(document.getElementById('tire_speed_unit')?.value||'mph')==='kmh',speedUnit=metricUnits?'km/h':'mph',abs=Math.abs(differencePct),verdict=abs<=1?'Very close nominal diameter':abs<=2?'Close nominal diameter':abs<=3?'Noticeable diameter change':'Large diameter change',speedSteps=metricUnits?[50,80,100,120,130]:[30,45,60,70,80],speedRows=speedSteps.map(speed=>({indicated:speed,actual:speed*ratio,difference:speed*(ratio-1)}));return{valid:true,mode,original,next,candidates,ratio,differencePct,indicated,actualSpeed,indicatedDistance,actualDistance,clearance,widthDifference,widthPct,speedUnit,distanceUnit:metricUnits?'km':'mi',verdict,speedRows}}
 function wheelOffsetComparison(){const currentWidth=V('current_width'),currentOffset=V('current_offset'),newWidth=V('new_wheel_width'),newOffset=V('new_offset'),spacer=V('spacer'),currentTireWidth=V('current_tire_width'),newTireWidth=V('new_tire_width'),outerClearance=V('outer_clearance'),innerClearanceAvailable=V('inner_clearance_available');if(!(currentWidth>=1&&currentWidth<=30&&newWidth>=1&&newWidth<=30&&currentOffset>=-200&&currentOffset<=200&&newOffset>=-200&&newOffset<=200&&spacer>=0&&spacer<=100))return{valid:false,message:'Enter wheel widths from 1 to 30 inches, offsets from -200 to 200 mm, and a spacer from 0 to 100 mm.'};if(!((currentTireWidth===0||currentTireWidth>=100&&currentTireWidth<=500)&&(newTireWidth===0||newTireWidth>=100&&newTireWidth<=500)&&outerClearance>=0&&outerClearance<=250&&innerClearanceAvailable>=0&&innerClearanceAvailable<=250))return{valid:false,message:'Enter tire widths from 100 to 500 mm and measured clearances from 0 to 250 mm, or leave optional fields blank.'};const effectiveOffset=newOffset-spacer,currentHalf=currentWidth*25.4/2,newHalf=newWidth*25.4/2,currentInner=currentHalf+currentOffset,currentOuter=currentHalf-currentOffset,newInner=newHalf+effectiveOffset,newOuter=newHalf-effectiveOffset,innerClearance=currentInner-newInner,outerPoke=newOuter-currentOuter,trackChange=(currentOffset-effectiveOffset)*2,currentBackspacing=(currentWidth+1)/2+currentOffset/25.4,newBackspacing=(newWidth+1)/2+effectiveOffset/25.4,currentFrontspacing=(currentWidth+1)-currentBackspacing,newFrontspacing=(newWidth+1)-newBackspacing,hasTires=currentTireWidth>0&&newTireWidth>0,hasClearances=document.getElementById('outer_clearance')?.value!==''&&document.getElementById('inner_clearance_available')?.value!=='',hasTireClearance=hasTires&&hasClearances,currentTireHalf=hasTires?currentTireWidth/2:currentHalf,newTireHalf=hasTires?newTireWidth/2:newHalf,tireOuterChange=newTireHalf-effectiveOffset-(currentTireHalf-currentOffset),tireInnerClearance=currentTireHalf+currentOffset-(newTireHalf+effectiveOffset),remainingOuter=hasTireClearance?outerClearance-tireOuterChange:null,remainingInner=hasTireClearance?innerClearanceAvailable+tireInnerClearance:null,minRemaining=hasTireClearance?Math.min(remainingOuter,remainingInner):null,verdict=hasTireClearance?(minRemaining<0?'Estimated interference':minRemaining<5?'Very tight estimated clearance':minRemaining<10?'Limited estimated clearance':'Positive estimated clearance'):'Add tire widths and both measured gaps for a clearance screen.';return{valid:true,currentWidth,currentOffset,newWidth,newOffset,spacer,effectiveOffset,currentInner,currentOuter,newInner,newOuter,innerClearance,outerPoke,trackChange,currentBackspacing,newBackspacing,currentFrontspacing,newFrontspacing,currentTireWidth,newTireWidth,hasTires,hasClearances,hasTireClearance,tireOuterChange,tireInnerClearance,outerClearance,innerClearanceAvailable,remainingOuter,remainingInner,verdict}}
+let gravelPreviousUnits=null;
+function syncGravelFields(){const units=document.getElementById('gravel_units')?.value||'us',mode=document.getElementById('gravel_mode')?.value||'dimensions';for(const [selector,active] of [['[data-gravel-dimensions]',mode==='dimensions'],['[data-gravel-area]',mode==='area']])document.querySelectorAll(selector).forEach(el=>{el.classList.toggle('is-hidden',!active);el.querySelectorAll('input').forEach(input=>input.disabled=!active)});for(const [selector,label] of [['[data-gravel-length-unit]',units==='metric'?'m':'ft'],['[data-gravel-area-unit]',units==='metric'?'m²':'ft²'],['[data-gravel-depth-unit]',units==='metric'?'cm':'in']])document.querySelectorAll(selector).forEach(el=>el.textContent=label);if(['us','metric'].includes(units))gravelPreviousUnits=units;return{mode,units}}
+function gravelDimensionConversion(value,kind,from,to){const factors={length:.3048,area:.09290304,depth:2.54};if(!Number.isFinite(value)||!Object.hasOwn(factors,kind)||!['us','metric'].includes(from)||!['us','metric'].includes(to))return null;if(from===to)return value;const converted=to==='metric'?value*factors[kind]:value/factors[kind];return Number.isFinite(converted)&&!(value!==0&&converted===0)?Number(converted.toPrecision(15)):null}
+function changeGravelUnits(){const to=document.getElementById('gravel_units')?.value,from=gravelPreviousUnits;if(from&&from!==to)for(const [id,kind] of [['gravel_length','length'],['gravel_width','length'],['gravel_area','area'],['gravel_depth','depth']]){const el=document.getElementById(id);if(el&&el.value.trim()!==''){const converted=gravelDimensionConversion(Number(el.value),kind,from,to);el.value=converted===null?'':String(converted)}}syncGravelFields()}
+function gravelNumber(value,digits=3){return value>0&&(value<.5*10**(-digits)||value>=1e9)?value.toExponential(3):F(value,digits)}
+function gravelMoney(value){return value===null?'Not calculated':value>0&&(value<.005||value>=1e12)?`$${value.toExponential(3)}`:USD(value)}
+function gravelAmounts({mode,units,length,width,area,depth,allowance,density,densityUnit,price,priceUnit}){
+  const finite=x=>typeof x==='number'&&Number.isFinite(x),positive=x=>finite(x)&&x>0,fail=message=>({valid:false,message});
+  if(!['dimensions','area'].includes(mode)||!['us','metric'].includes(units))return fail('Choose a supported area method and dimension unit.');
+  if(mode==='dimensions'&&(!positive(length)||!positive(width)))return fail('Enter a positive length and width.');
+  if(mode==='area'&&!positive(area))return fail('Enter a positive measured area.');
+  if(!positive(depth))return fail('Enter a positive loose layer depth.');
+  if(!finite(allowance)||allowance<0||allowance>100)return fail('Enter a volume allowance from 0% through 100%.');
+  if(density!==null&&!positive(density))return fail('Enter a positive bulk density, or leave it blank when unknown.');
+  if(!['lb_ft3','us_ton_yd3','kg_m3'].includes(densityUnit))return fail('Choose a supported density unit.');
+  if(price!==null&&(!finite(price)||price<0))return fail('Enter a nonnegative price, or leave it blank when unknown.');
+  if(!['yd3','m3','us_ton','tonne'].includes(priceUnit))return fail('Choose a supported price basis.');
+  const areaFt2=(mode==='area'?area:length*width)/(units==='metric'?.09290304:1),depthFt=depth/(units==='metric'?30.48:12),baseFt3=areaFt2*depthFt,allowanceFt3=baseFt3*(allowance/100),adjustedFt3=baseFt3+allowanceFt3,yards=adjustedFt3/27,cubicMeters=adjustedFt3*.028316846592;
+  if(![areaFt2,depthFt,baseFt3,adjustedFt3,yards,cubicMeters].every(positive)||!finite(allowanceFt3)||allowance>0&&allowanceFt3===0)return fail('The entered volume exceeds the supported numerical range or precision.');
+  const densityLbFt3=density===null?null:densityUnit==='lb_ft3'?density:densityUnit==='us_ton_yd3'?density*(2000/27):density*(.028316846592/.45359237),pounds=density===null?null:adjustedFt3*densityLbFt3,kg=pounds===null?null:pounds*.45359237,usTons=pounds===null?null:pounds/2000,tonnes=kg===null?null:kg/1000;
+  if(![densityLbFt3,pounds,kg,usTons,tonnes].every(x=>x===null||positive(x)))return fail('The density and volume exceed the supported weight range or precision.');
+  const pricedQuantity=priceUnit==='yd3'?yards:priceUnit==='m3'?cubicMeters:priceUnit==='us_ton'?usTons:tonnes,cost=price===null||pricedQuantity===null?null:pricedQuantity*price;
+  if(cost!==null&&(!finite(cost)||price>0&&cost===0))return fail('The material cost exceeds the supported numerical range or precision.');
+  return{valid:true,mode,units,areaFt2,depthFt,baseFt3,allowance,allowanceFt3,adjustedFt3,yards,cubicMeters,density,densityUnit,densityLbFt3,pounds,kg,usTons,tonnes,price,priceUnit,cost};
+}
+function gravelProjection(){const {mode,units}=syncGravelFields(),read=id=>{const raw=document.getElementById(id)?.value;return typeof raw==='string'&&raw.trim()!==''?Number(raw):NaN},optional=id=>document.getElementById(id)?.value?.trim()===''?null:read(id);return gravelAmounts({mode,units,length:read('gravel_length'),width:read('gravel_width'),area:read('gravel_area'),depth:read('gravel_depth'),allowance:read('gravel_allowance'),density:optional('gravel_density'),densityUnit:document.getElementById('gravel_density_unit')?.value,price:optional('gravel_price'),priceUnit:document.getElementById('gravel_price_unit')?.value})}
 let concretePreviousUnits=null;
 function syncConcreteFields(){
   const shape=document.getElementById('concrete_shape')?.value||'slab',units=document.getElementById('concrete_units')?.value||'us',round=shape!=='slab',custom=document.getElementById('concrete_bag_size')?.value==='custom';
@@ -6712,6 +6787,7 @@ function calc(e){
   case'tire_compare':{const p=tireComparison();if(!p.valid)show(`<strong>Unable to compare</strong><br>${p.message}`);else{const direction=p.differencePct>=0?'larger':'smaller',lead=p.mode==='alternatives'?`${p.next.label} closest candidate`:`${F(Math.abs(p.differencePct),2)}% ${direction} diameter`;show(`<strong>${lead}</strong><br>${p.verdict}; actual speed at ${F(p.indicated,0)} ${p.speedUnit} indicated: ${F(p.actualSpeed,2)} ${p.speedUnit}; clearance ${p.clearance>=0?'+':''}${F(p.clearance,2)} in.`)}break}
   case'wheel_offset_compare':{const p=wheelOffsetComparison();if(!p.valid)show(`<strong>${p.message}</strong>`);else show(`<strong>${p.outerPoke>=0?'+':''}${F(p.outerPoke,1)} mm outer rim movement</strong><br>${p.innerClearance>=0?'+':''}${F(p.innerClearance,1)} mm inner rim clearance; ${p.trackChange>=0?'+':''}${F(p.trackChange,1)} mm track.`);break}
   case'concrete_advanced':{const p=concreteProjection();show(p.valid?`<strong>${concreteNumber(p.yards,2)} cubic yards</strong><br>${concreteNumber(p.withWaste,2)} cubic feet including allowance; ${F(p.bags,0)} bags; ${p.bagCost===null?'bag price not entered':`estimated bag cost ${USD(p.bagCost)}`}.`:`<strong>Check the concrete inputs</strong><br>${H(p.message)}`);break}
+  case'gravel_advanced':{const p=gravelProjection();if(!p.valid)show(`<strong>Check the gravel inputs</strong><br>${p.message}`);else show(`<strong>${gravelNumber(p.yards)} cubic yards</strong><br>${gravelNumber(p.adjustedFt3)} cubic feet of estimated loose volume. ${p.usTons===null?'Enter density for weight.':`${gravelNumber(p.usTons)} US short tons.`} ${p.cost===null?'Cost not calculated: enter price and any required density.':`Material cost: ${gravelMoney(p.cost)}.`}`);break}
   case'roof_pitch_advanced':{const p=roofPitchProjection();if(!p.valid)show(`<strong>Check the roof inputs</strong><br>${p.message}`);else show(`<strong>${roofNumber(p.pitch,2)}:12 roof pitch</strong><br>${roofAngleNumber(p.angle)}° angle; ${roofNumber(p.percent,1)}% slope; ${roofNumber(p.rafter,2)} ft estimated rafter length.`);break}
   case'rafter_advanced':{const p=rafterProjection();show(`<strong>${F(p.totalLength,2)} ft per rafter</strong><br>${F(p.baseLength,2)} ft to wall line plus ${F(p.tailLength,2)} ft sloped tail; ${F(p.totalLinear,1)} total linear feet.`);break}
   case'square_footage_advanced':{const p=squareFootageProjection();show(`<strong>${F(p.area,2)} square feet</strong><br>${F(p.orderArea,2)} sq ft with overage; estimated material cost ${USD(p.cost)}${p.perimeter!==null?`; ${F(p.perimeter,1)} ft perimeter`:''}.`);break}
@@ -6843,10 +6919,12 @@ document.addEventListener('click',e=>{
  document.addEventListener('change',e=>{if(e.target.closest('.geometry-area-fields')){calc('area_advanced');renderGeometryAreaTotal()}});
 document.addEventListener('input',e=>{if(e.target.id==='concrete_units')changeConcreteUnits()});
 document.addEventListener('change',e=>{if(e.target.id==='concrete_units')changeConcreteUnits()});
+document.addEventListener('input',e=>{if(e.target.id==='gravel_units')changeGravelUnits()});
+document.addEventListener('change',e=>{if(e.target.id==='gravel_units')changeGravelUnits()});
 document.addEventListener('click',e=>{const link=e.target.closest('a[href]');if(!link)return;try{const destination=new URL(link.href,location.href);if(/^https?:$/.test(destination.protocol)&&destination.hostname!==location.hostname)trackGA4Event('outbound_reference_click',{destination_host:destination.hostname,source_path:location.pathname})}catch{}});
 document.addEventListener('click',e=>{if(e.target.closest('[data-clear]')){if(currentEngine()==='time_duration')clearTimeDurationForm();else clearCalcForm()}});
 document.addEventListener('click',e=>{if(e.target.closest('[data-clear]')&&currentEngine()==='used_car_estimate')renderGenericFromEngine('used_car_estimate')});
-document.addEventListener('click',e=>{if(e.target.closest('[data-clear]')&&['cn_date','new_used_cost','personal_loan_advanced','boat_loan_advanced','bottleneck_advanced','loan','concrete_advanced','roof_pitch_advanced','flooring_advanced'].includes(currentEngine()))calc(currentEngine())});
+document.addEventListener('click',e=>{if(e.target.closest('[data-clear]')&&['cn_date','new_used_cost','personal_loan_advanced','boat_loan_advanced','bottleneck_advanced','loan','concrete_advanced','roof_pitch_advanced','flooring_advanced','gravel_advanced'].includes(currentEngine()))calc(currentEngine())});
 document.addEventListener('click',e=>{
   if(!e.target.closest('[data-clear]'))return;
   const engine=currentEngine();
@@ -7516,6 +7594,13 @@ function renderGenericFromEngine(engine) {
       bars=[{label:"Measured volume",value:p.baseFt3,display:`${F(p.baseFt3,3)} ft³`},{label:"Planning allowance",value:p.allowanceFt3,display:`${F(p.allowanceFt3,3)} ft³`}];
       rows=[["Project shape",shapeLabel,p.shape==='post_hole'?"Full cylindrical holes; no post displacement deducted.":"Selected geometry."],["Dimension units",p.units==='metric'?'Meters and millimeters':'Feet and inches',"Changing systems converts entered dimensions."],["Quantity",String(p.quantity),"Whole columns or holes; one slab."],["Measured volume",`${F(p.baseFt3,6)} ft³`,"Before the planning allowance."],["Planning allowance",`${F(p.waste,3)}%`,`${F(p.allowanceFt3,6)} additional ft³.`],["Ordering volume",`${F(p.withWaste,6)} ft³`,`${F(p.yards,6)} cubic yards.`],["Ordering volume in SI",`${F(p.cubicMeters,6)} m³`,"1 ft³ = 0.028316846592 m³."],["Selected bag yield",`${F(p.yieldPerBag,6)} ft³ / bag`,"Product-specific label assumption, not inferred from weight alone."],["Bags required",F(p.bags,0),"Final volume divided by yield, rounded up once."],["Purchased bag coverage",`${F(p.purchasedFt3,6)} ft³`,"Whole bags times selected yield."],["Coverage beyond ordering volume",`${F(p.surplusFt3,6)} ft³`,"Packaging excess, separate from the planning allowance."],["Estimated bag cost",p.bagCost===null?'Not entered':USD(p.bagCost),p.bagPrice===null?'No bag price assumed.':`${USD(p.bagPrice)} per bag; excludes tax, labor and delivery.`],["Estimated ready-mix material",p.readyCost===null?'Not entered':USD(p.readyCost),p.yardPrice===null?'No ready-mix price assumed.':`${USD(p.yardPrice)} per cubic yard; excludes delivery, short-load and other fees.`]];
     }
+  } else if (engine === "gravel_advanced") {
+    const p=gravelProjection();
+    if(!p.valid){renderGeneric([["Check the gravel inputs","Not calculated",p.message]],[],[["Validation","Not calculated",p.message]]);return;}
+    const densityLabels={lb_ft3:'lb/ft³',us_ton_yd3:'US tons/yd³',kg_m3:'kg/m³'},priceLabels={yd3:'$/yd³',m3:'$/m³',us_ton:'$/US short ton',tonne:'$/metric tonne'};
+    cards=[["Loose volume",`${gravelNumber(p.yards)} yd³`,"Includes entered volume allowance."],["Cubic feet",`${gravelNumber(p.adjustedFt3)} ft³`,"Same adjusted volume."],["US short tons",p.usTons===null?'Not entered':gravelNumber(p.usTons),"Requires supplier density; 2,000 lb/ton."],["Material cost",gravelMoney(p.cost),"Requires price and any weight conversion."]];
+    bars=[{label:'Measured volume',value:p.baseFt3,display:`${gravelNumber(p.baseFt3)} ft³`},{label:'Volume allowance',value:p.allowanceFt3,display:`${gravelNumber(p.allowanceFt3)} ft³`}];
+    rows=[["Measured area",`${gravelNumber(p.areaFt2)} ft²`,p.mode==='area'?'Entered area; dimensions excluded.':'Length times width.'],["Loose depth",`${gravelNumber(p.depthFt*12)} in`,'No automatic compacted-to-loose conversion.'],["Base loose volume",`${gravelNumber(p.baseFt3)} ft³`,'Measured area times depth.'],["Volume allowance",`${gravelNumber(p.allowanceFt3)} ft³`,`${gravelNumber(p.allowance)}% added to base; not a compaction factor.`],["Adjusted cubic feet",`${gravelNumber(p.adjustedFt3)} ft³`,'Base plus entered allowance.'],["Adjusted cubic yards",`${gravelNumber(p.yards,6)} yd³`,'Cubic feet divided by 27.'],["Adjusted cubic meters",`${gravelNumber(p.cubicMeters,6)} m³`,'Cubic feet times 0.028316846592.'],["Entered bulk density",p.density===null?'Not entered':`${gravelNumber(p.density)} ${densityLabels[p.densityUnit]}`,'Use supplier loose/as-supplied bulk density.'],["Pounds",p.pounds===null?'Not calculated':`${gravelNumber(p.pounds)} lb`,'Adjusted loose volume times density.'],["US short tons",p.usTons===null?'Not calculated':`${gravelNumber(p.usTons,6)} US tons`,'2,000 lb per US short ton.'],["Kilograms",p.kg===null?'Not calculated':`${gravelNumber(p.kg)} kg`,'0.45359237 kg per pound.'],["Metric tonnes",p.tonnes===null?'Not calculated':`${gravelNumber(p.tonnes,6)} t`,'1,000 kg per metric tonne.'],["Entered price",p.price===null?'Not entered':`${gravelNumber(p.price)} ${priceLabels[p.priceUnit]}`,'Separate supplier quote scenario.'],["Material cost",gravelMoney(p.cost),p.price===null?'Enter price to estimate cost.':p.cost===null?'Weight-based price also needs density.':'Excludes delivery, tax, installation and supplier rounding.']];
   } else if (engine === "roof_pitch_advanced") {
     const p=roofPitchProjection();
     if(!p.valid){renderGeneric([["Check the roof inputs","Not calculated",p.message]],[],[["Validation","Not calculated",p.message]]);return;}

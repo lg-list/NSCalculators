@@ -20,6 +20,7 @@
     "note": "In-app tab opened but reading timed out; public Playwright then confirmed rate limiting. No private endpoint, CAPTCHA bypass or invented trend values."
   },
   "site_observations": {
+    "observation_phase": "Before the purpose-built Gravel restoration; historical availability findings, not the current release state.",
     "gsc_source": "us-search-baseline-2026-10-24.json",
     "gsc_original_zip_sha256": "c5a2ec4c2e7132624cf60b78d7cbbe5aa7e08af221d3765e25129a59dd4b791e",
     "gsc_period": ["2026-09-24", "2026-10-21"],
@@ -69,7 +70,9 @@
       "primary_keyword": "gravel calculator",
       "secondary_intents": ["gravel calculator yards", "gravel calculator tons", "how much gravel do i need", "driveway gravel calculator", "pea gravel calculator"],
       "new_url": false,
-      "action": "Restore a purpose-built existing tool before any public promotion or indexability change.",
+      "action": "Purpose-built existing tool implemented and locally release-audited; verify deployment and monitor settled US search performance before further gravel expansion.",
+      "implementation_date": "2026-10-26",
+      "implementation_report": "reports/seo/gravel-restoration-2026-10-26.md",
       "priority_reason": "A confirmed unavailable existing route plus a dated third-party US demand lead and primary evidence of a real volume/weight task; this is implementation order, not validated traffic upside.",
       "verified_us_monthly_search_volume": null,
       "organic_difficulty": null,
