@@ -1,0 +1,9 @@
+{
+  "name": "ns-calculators-asset-optimizer",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Build-time tooling only; no browser dependency.",
+  "devDependencies": {
+    "terser": "5.51.2"
+  }
+}

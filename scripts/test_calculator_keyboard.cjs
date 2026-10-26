@@ -2,10 +2,11 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const vm = require('node:vm');
 const source = fs.readFileSync(process.argv[2] || 'dist/assets/calculator.js', 'utf8');
-const match = source.match(/function calculateOnEnter\(event\)\{[\s\S]*?\n\}/);
-assert.ok(match, 'Keyboard handler exists in the shipped bundle');
-const context = {};
-vm.runInNewContext(match[0], context);
+const listeners = [];
+const context = {document: {addEventListener: (type, handler) => listeners.push({type, handler}),
+  getElementById: () => null, querySelector: () => null, querySelectorAll: () => []}, window: {addEventListener() {}}};
+vm.runInNewContext(source, context);
+assert.equal(typeof context.calculateOnEnter, 'function', 'Keyboard handler exists in the shipped bundle');
 let checks = 0;
 function run(overrides = {}, inputOverrides = {}, buttonOverrides = {}, panel = false) {
   let clicks = 0, prevented = 0;
@@ -36,5 +37,5 @@ assert.deepEqual(run({}, {}, {disabled: true}), ignored);
 assert.deepEqual(run({}, {closest: () => null}), ignored);
 assert.deepEqual(run({}, {closest: () => ({})}), ignored);
 assert.deepEqual(run({target: null}), ignored);
-assert.ok(source.includes("document.addEventListener('keydown',calculateOnEnter)"));
+assert.ok(listeners.some(item => item.type === 'keydown' && item.handler === context.calculateOnEnter), 'The tested handler is registered for keydown');
 console.log(`${checks} calculator keyboard cases passed`);
