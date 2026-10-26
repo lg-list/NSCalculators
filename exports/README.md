@@ -48,8 +48,8 @@ Homepage featured tools are editorial selections, not a claim about measured
 popularity. Existing indexable routes are deliberately preserved in this
 correction rather than deindexed because US volume is unknown.
 
-The owner agreed on October 26 to provide a US historical Keyword Planner CSV;
-it has not yet been received or validated. The new Trends snapshot is a distinct
+The owner has agreed to provide a US historical Keyword Planner CSV; as of
+October 26 it has not been received or validated. The Trends snapshot is a distinct
 relative-interest source and must not fill that missing monthly-volume field.
 Quoted phrases can include surrounding words; related-query widgets can contain
 other intents. Do not combine their Top indexes, Rising percentages and common
