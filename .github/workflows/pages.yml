@@ -110,6 +110,9 @@ jobs:
       - name: Check concrete volume, product yields and whole-bag estimates
         run: node scripts/test_concrete.cjs dist/assets/calculator.js
 
+      - name: Check positive roof-area examples and measurement-mode equivalence
+        run: node scripts/test_roof_area_intent.cjs dist/assets/calculator.js
+
       - name: Check exact-cent tips and bill splitting
         run: node scripts/test_tip.cjs dist/assets/calculator.js
 
