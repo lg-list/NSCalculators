@@ -54,3 +54,12 @@ relative-interest source and must not fill that missing monthly-volume field.
 Quoted phrases can include surrounding words; related-query widgets can contain
 other intents. Do not combine their Top indexes, Rising percentages and common
 time-series indexes as one score or publish associated terms without task review.
+
+`us-landscape-opportunities-2026-10-26.json` records a confirmed unavailable
+Gravel/Mulch workflow gap and a held implementation queue. The attempted current
+Trends comparison returned 429, so its metrics remain null. Its separate
+seodata.dev object contains dated, publisher-reported US estimates with upstream,
+period, language/network and close-variant limitations; those values do not
+replace verified US Keyword Planner metrics. Do not sum related variants or
+auto-publish/index the briefs. Supplier/university sources establish task details,
+not market volume or nationwide density/compaction recommendations.

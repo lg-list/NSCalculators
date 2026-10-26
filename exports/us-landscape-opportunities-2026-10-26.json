@@ -1,0 +1,107 @@
+{
+  "version": 1,
+  "observed_date": "2026-10-26",
+  "market": "United States",
+  "auto_publish": false,
+  "primary_us_keyword_planner_source": null,
+  "current_us_seasonality": null,
+  "source_separation": "Publisher-reported estimates, first-party site observations, supplier/university task evidence and unavailable Trends data are distinct; do not combine into a traffic forecast.",
+  "trends_attempt": {
+    "url": "https://trends.google.com/trends/explore?geo=US&q=%22gravel%20calculator%22,%22mulch%20calculator%22,%22soil%20calculator%22,%22sand%20calculator%22,%22concrete%20calculator%22&hl=en",
+    "intended_period": "Past 12 months",
+    "intended_search_property": "Web Search",
+    "interface_language": "en",
+    "search_language_filter": null,
+    "status": "unavailable",
+    "http_status_observed_in_public_playwright": 429,
+    "weekly_rows": null,
+    "average_indexes": null,
+    "related_queries": null,
+    "note": "In-app tab opened but reading timed out; public Playwright then confirmed rate limiting. No private endpoint, CAPTCHA bypass or invented trend values."
+  },
+  "site_observations": {
+    "gsc_source": "us-search-baseline-2026-10-24.json",
+    "gsc_original_zip_sha256": "c5a2ec4c2e7132624cf60b78d7cbbe5aa7e08af221d3765e25129a59dd4b791e",
+    "gsc_period": ["2026-09-24", "2026-10-21"],
+    "gsc_country": "usa",
+    "gsc_search_type": "web_text_based",
+    "matching_named_query_rows": [],
+    "matching_named_page_rows": [],
+    "gsc_matching_terms": ["gravel", "mulch", "soil", "sand"],
+    "absence_means": "Not observed in these separate, incomplete exported tables; not proof of zero demand or zero impressions.",
+    "public_pages": [
+      {"path": "/gravel-calculator/", "http_status": 200, "robots": "noindex,follow", "calculator_input_count": 0, "availability": "currently unavailable", "engine": "cn_generic", "indexable": false},
+      {"path": "/mulch-calculator/", "http_status": 200, "robots": "noindex,follow", "calculator_input_count": 0, "availability": "currently unavailable", "engine": "cn_generic", "indexable": false}
+    ],
+    "missing_exact_routes_in_dataset": ["/soil-calculator/", "/sand-calculator/"]
+  },
+  "third_party_estimate": {
+    "publisher": "seodata.dev",
+    "source_url": "https://www.seodata.dev/keyword/gravel-calculator",
+    "publisher_updated_date": "2026-06-02",
+    "publisher_country_label": "US",
+    "publisher_claimed_upstream": "Google Ads API",
+    "independently_verified_upstream": false,
+    "historical_period": null,
+    "network_targeting_verified": false,
+    "language_targeting_verified": false,
+    "close_variant_grouping_known": false,
+    "do_not_sum_related_variants": true,
+    "organic_difficulty": null,
+    "keywords": [
+      {"keyword": "gravel calculator", "publisher_reported_monthly_searches": 49500},
+      {"keyword": "calculator for gravel", "publisher_reported_monthly_searches": 60500},
+      {"keyword": "calculator gravel", "publisher_reported_monthly_searches": 60500},
+      {"keyword": "pea gravel calculator", "publisher_reported_monthly_searches": 5400},
+      {"keyword": "how much gravel do i need", "publisher_reported_monthly_searches": 2900},
+      {"keyword": "gravel calculator yards", "publisher_reported_monthly_searches": 2400},
+      {"keyword": "driveway gravel calculator", "publisher_reported_monthly_searches": 1900},
+      {"keyword": "gravel for driveway calculator", "publisher_reported_monthly_searches": 1900},
+      {"keyword": "gravel calculator tons", "publisher_reported_monthly_searches": 1600},
+      {"keyword": "gravel tonnage calculator", "publisher_reported_monthly_searches": 1600},
+      {"keyword": "how much gravel calculator", "publisher_reported_monthly_searches": 140}
+    ]
+  },
+  "implementation_queue": [
+    {
+      "audit_priority": 1,
+      "target_path": "/gravel-calculator/",
+      "primary_keyword": "gravel calculator",
+      "secondary_intents": ["gravel calculator yards", "gravel calculator tons", "how much gravel do i need", "driveway gravel calculator", "pea gravel calculator"],
+      "new_url": false,
+      "action": "Restore a purpose-built existing tool before any public promotion or indexability change.",
+      "priority_reason": "A confirmed unavailable existing route plus a dated third-party US demand lead and primary evidence of a real volume/weight task; this is implementation order, not validated traffic upside.",
+      "verified_us_monthly_search_volume": null,
+      "organic_difficulty": null,
+      "input_contract": ["Rectangle dimensions or independently measured area plus entered layer depth", "Clearly labeled US units with verified conversions", "Optional supplier-specific loose bulk density with explicit mass/volume units", "Optional user allowance whose volume basis is stated; no universal compaction default", "Optional entered price with explicit per-yard or per-US-short-ton basis"],
+      "output_contract": ["Measured versus allowance-adjusted cubic feet and cubic yards", "Weight unknown until density is supplied; US short tons explicitly 2,000 lb", "Costs unknown until all required quantity and price inputs exist; blank is not zero", "Charts compare matching units only", "Validation and Clear remove stale results"],
+      "acceptance_examples": [
+        {"length_ft": 20, "width_ft": 10, "depth_in": 3, "allowance_percent": 0, "expected_ft3": 50, "expected_yd3": "50/27", "density_lb_per_ft3": null, "expected_weight": "unknown"},
+        {"length_ft": 20, "width_ft": 10, "depth_in": 3, "allowance_percent": 10, "expected_adjusted_ft3": 55, "example_only_density_lb_per_ft3": 100, "expected_lb": 5500, "expected_us_short_tons": 2.75, "note": "User-entered example density; not a gravel-type specification or recommended allowance."}
+      ],
+      "content_requirements": ["Original yard-versus-ton explanation and reproducible example", "Supplier density and loose-versus-compacted basis must match", "No universal pea-gravel or driveway layer depth, strength, truck payload or structural adequacy claim", "Contextual links to existing area/volume tools only after routing is verified"],
+      "primary_references": ["https://www.vulcanmaterials.com/construction-materials/product-calculators", "https://dirtandgravel.psu.edu/general-resources/dglvr-materials-calculator/"],
+      "release_gate": "Independently test quantities, optional density/prices, numerical limits, input modes, Clear/keyboard, responsive layout and complete original content; explicitly review discovery/schema/sitemap eligibility before restoring indexability. Do not auto-publish from this brief."
+    },
+    {
+      "audit_priority": 2,
+      "target_path": "/mulch-calculator/",
+      "primary_keyword": "mulch calculator",
+      "secondary_intents": ["how much mulch do i need", "mulch calculator cubic yards", "mulch calculator bags"],
+      "new_url": false,
+      "verified_us_monthly_search_volume": null,
+      "organic_difficulty": null,
+      "action": "Audit restoration of the existing measured-area/depth and label-volume bag workflow; validate US demand before treating this as a high-volume expansion.",
+      "acceptance_example": {"measured_area_ft2": 200, "entered_depth_in": 3, "allowance_percent": 0, "expected_ft3": 50, "expected_yd3": "50/27", "bag_label_ft3": 2, "expected_whole_bags": 25},
+      "content_requirements": ["Use entered net area and depth; no universal horticultural depth recommendation", "Separate bulk volume, bag rounding and optional prices", "Material sold by weight needs appropriate separate conversion evidence", "No retailer affiliation or copied retailer text"],
+      "primary_reference": "https://www.homedepot.com/calculator/mulch",
+      "reference_access_note": "Search result exposes dimensions and area modes, but direct open returned 403; full interactive behavior is not verified.",
+      "release_gate": "Primary quantity evidence, tested purpose-built workflow, useful original copy, mobile checks and explicit discovery/indexation audit before restoring the route."
+    }
+  ],
+  "held_candidates": [
+    {"keyword": "soil calculator", "reason": "No exact existing route, current comparative demand unavailable, distinct scope versus mulch/topsoil unverified; no new URL planned."},
+    {"keyword": "sand calculator", "reason": "No exact existing route, current comparative demand unavailable, product density and distinct task need unverified; no new URL planned."}
+  ],
+  "external_actions": {"account_created": false, "subscription_or_payment": false, "plugin_connection": false, "outreach": false, "search_console_submission": false}
+}
