@@ -1,0 +1,30 @@
+{
+  "prepared_date": "2026-10-26",
+  "status": "unsent_owner_review_required",
+  "candidate": "Iowa State University Yard and Garden",
+  "recipient_name": "Aaron Steil",
+  "public_professional_email": "ajsteil@iastate.edu",
+  "contact_sources": [
+    "https://www.hort.iastate.edu/directory/aaron-steil/",
+    "https://www.hort.iastate.edu/extension-and-outreach/faculty/"
+  ],
+  "author_source": "https://yardandgarden.extension.iastate.edu/people/aaron-steil",
+  "editorial_page": "https://yardandgarden.extension.iastate.edu/how-to/how-determine-amount-mulch-needed-garden-bed",
+  "fit_evidence": "The guide names Aaron Steil as author and currently lists external mulch calculators under More Information. Two official department pages publish the same professional email.",
+  "uncertainty": "A published contact and existing resource links do not establish editorial acceptance, submission permission, inbox deliverability, response likelihood or link placement.",
+  "target_url": "https://nscalculators.com/mulch-calculator/",
+  "subject": "mulch quantity tool",
+  "body_file": "email.txt",
+  "sender_name": null,
+  "sender_email": null,
+  "owner_approved_recipient_and_body": false,
+  "sender_route_verified": false,
+  "gmail_profile_attempt": "Connected tool returned Unknown tool; no sender account was obtained, no account change or draft created.",
+  "send_limit_if_later_approved": "One personalized plain-text email to this recipient only; no attachments, CC, BCC, tracking parameters, automatic follow-ups or other contacts.",
+  "approval_scope_needed": ["This recipient", "Exact subject and email.txt body", "Real owner-controlled sender mailbox and display identity"],
+  "external_messages_sent": 0,
+  "external_drafts_created": 0,
+  "paid_placements": false,
+  "reciprocal_link_request": false,
+  "ready_to_send": false
+}

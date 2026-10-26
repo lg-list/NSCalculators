@@ -1,0 +1,58 @@
+{
+  "capturedAt": "2026-10-26T15:20:42.456Z",
+  "source": "Public live NS Calculators UI, synthetic example inputs",
+  "sourceUrl": "https://nscalculators.com/mulch-calculator/",
+  "emailBodySha256": "c0c47d39d19bd00e08f3020ad0cdc508507378b72b0b0bee51d87c586aecbd76",
+  "emailHashNormalization": "UTF-8, CRLF normalized to LF",
+  "screenshotsAreUnedited": true,
+  "screenshotsAreNotPublisherEndorsements": true,
+  "externalMessagesSent": 0,
+  "observations": [
+    {
+      "width": 1366,
+      "reference": {
+        "inputs": {
+          "areaFt2": 265,
+          "depthIn": 1.5,
+          "allowancePercent": 0,
+          "bagLabelFt3": 2
+        },
+        "expectedFt3": 33.125,
+        "expectedBags": 17,
+        "resultText": "1.227 cubic yards\n\n33.125 cubic feet target. 17 whole bags at 2 ft³ per bag. Bagged material: Not calculated; bulk material: Not calculated."
+      },
+      "unitRoundTripBags": 17,
+      "enteredAllowancePercent": 10,
+      "wholeBags": 28,
+      "baggedMaterialCost": 112,
+      "bulkMaterialCost": 101.85185185185186,
+      "separateScenarios": "2.037 cubic yards\n\n55 cubic feet target. 28 whole bags at 2 ft³ per bag. Bagged material: $112.00; bulk material: $101.85.",
+      "blankPriceIsUnknown": true,
+      "screenshot": "mulch-demo-desktop.png",
+      "errors": []
+    },
+    {
+      "width": 390,
+      "reference": {
+        "inputs": {
+          "areaFt2": 265,
+          "depthIn": 1.5,
+          "allowancePercent": 0,
+          "bagLabelFt3": 2
+        },
+        "expectedFt3": 33.125,
+        "expectedBags": 17,
+        "resultText": "1.227 cubic yards\n\n33.125 cubic feet target. 17 whole bags at 2 ft³ per bag. Bagged material: Not calculated; bulk material: Not calculated."
+      },
+      "unitRoundTripBags": 17,
+      "enteredAllowancePercent": 10,
+      "wholeBags": 28,
+      "baggedMaterialCost": 112,
+      "bulkMaterialCost": 101.85185185185186,
+      "separateScenarios": "2.037 cubic yards\n\n55 cubic feet target. 28 whole bags at 2 ft³ per bag. Bagged material: $112.00; bulk material: $101.85.",
+      "blankPriceIsUnknown": true,
+      "screenshot": "mulch-demo-mobile.png",
+      "errors": []
+    }
+  ]
+}

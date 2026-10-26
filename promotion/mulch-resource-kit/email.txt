@@ -1,0 +1,12 @@
+Hi Aaron,
+
+Your mulch-quantity guide walks readers through 265 square feet at 1.5 inches and rounds the two-cubic-foot bags up to 17.
+
+Our free Mulch Calculator at NS Calculators reproduces that check as 33.125 cubic feet and 17 whole bags. Readers can switch project and bag-label units, leave unknown prices blank, and see bag-rounding excess separately from any allowance they enter.
+
+https://nscalculators.com/mulch-calculator/
+
+Would this be useful as an additional optional calculation check in your More Information section? The tool calculates entered quantities; it doesn't prescribe mulch depth or product suitability.
+
+Best,
+NS Calculators
