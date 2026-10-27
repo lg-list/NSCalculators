@@ -148,6 +148,9 @@ jobs:
       - name: Check RMD factors, birth cohorts and projection validation
         run: node scripts/test_rmd.cjs dist/assets/calculator.js
 
+      - name: Check towing constraints, load accounting and validation
+        run: node scripts/test_towing.cjs dist/assets/calculator.js
+
       - name: Check exact-cent tips and bill splitting
         run: node scripts/test_tip.cjs dist/assets/calculator.js
 
