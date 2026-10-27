@@ -989,6 +989,8 @@ def base_and_supplemental(data):
             calc.update({"engine": "boat_loan_advanced", "desc": "Estimate boat loan payments from price, down payment and note rate, with optional purchase costs, a separate boating budget and an amortization schedule.", "inputs": []})
         if calc["slug"] == "gravel-calculator":
             calc.update({"cat": "Construction", "engine": "gravel_advanced", "desc": "Estimate gravel volume, supplier-based weight and optional material cost.", "formula": "Volume = measured area x loose layer depth; weight = volume x supplier bulk density.", "example": "20 ft x 10 ft x 3 in = 50 cubic feet, or 50/27 cubic yards, before any allowance.", "inputs": []})
+        if calc["slug"] == "pension-calculator":
+            calc.update({"engine": "pension_advanced", "desc": "Compare pension lump sum and monthly income, survivor benefits and retirement ages using your plan quotes.", "formula": "Present value = sum of annualized pension payments / (1 + annual return)^years from the comparison date.", "example": "An $800,000 lump sum and $5,000 monthly pension with 5% return and 3.5% annual COLA cross at modeled age 81 under the annual age-year convention.", "inputs": []})
         if calc["slug"] == "mulch-calculator":
             calc.update({"cat": "Construction", "engine": "mulch_advanced", "desc": "Estimate mulch cubic yards, whole bags and separate bagged or bulk material costs.", "formula": "Volume = net area x entered depth; bags = round up(adjusted volume / labeled volume per bag).", "example": "200 square feet at 3 inches contains 50 cubic feet, requiring 25 bags labeled 2 cubic feet before any allowance.", "inputs": []})
         if calc["slug"] in ("repayment-calculator", "student-loan-calculator", "business-loan-calculator", "home-equity-loan-calculator"):
@@ -1146,6 +1148,8 @@ def is_indexable_calculator(calc):
 
 
 def seo_keywords(calc):
+    if calc.get("slug") == "pension-calculator":
+        return ["pension calculator", "pension payout calculator", "pension payment calculator", "lump sum vs monthly pension", "single life vs joint survivor pension"]
     if calc.get("slug") == "mulch-calculator":
         return ["mulch calculator", "how much mulch do i need", "mulch calculator cubic yards", "mulch calculator bags", "mulch cost calculator"]
     if calc.get("slug") == "gravel-calculator":
@@ -1225,6 +1229,8 @@ def seo_keywords(calc):
 
 
 def seo_title(calc):
+    if calc.get("slug") == "pension-calculator":
+        return "Pension Calculator: Lump Sum, Survivor & Retirement Age"
     if calc.get("slug") == "mulch-calculator":
         return "Mulch Calculator: Cubic Yards, Bags & Material Cost"
     if calc.get("slug") == "gravel-calculator":
@@ -1369,6 +1375,8 @@ def seo_title(calc):
 
 
 def seo_description(calc):
+    if calc.get("slug") == "pension-calculator":
+        return "Use this pension payout calculator to compare lump sum and monthly income, survivor benefits and retirement ages, with present values and annual tables."
     if calc.get("slug") == "mulch-calculator":
         return "Calculate mulch cubic yards and whole bags from area and depth. Enter bag-label volume, optional allowance and prices to estimate bagged or bulk material costs."
     if calc.get("slug") == "gravel-calculator":
@@ -2454,6 +2462,27 @@ def square_footage_input_html():
 </div>"""
 
 
+def pension_input_html():
+    def number(key, label, value, unit="", maximum="", minimum="0"):
+        limit = f' max="{maximum}"' if maximum else ""
+        return f'<div class="field"><label for="pen_{key}">{label}</label><div class="input-unit"><input id="pen_{key}" type="number" step="any" min="{minimum}"{limit} value="{value}"><span>{unit}</span></div></div>'
+    return ('<div class="fields project-fields pension-fields"><div class="field field-wide"><label for="pen_mode">Pension comparison</label><select id="pen_mode"><option value="lump">Lump sum vs monthly income</option><option value="survivor">Single life vs joint survivor</option><option value="later">Retire now vs work longer</option></select></div>'
+        + '<div class="fields field-wide" data-pension-mode="lump survivor">'
+        + number("age", "Retirement age", 65, "years", "119") + '</div>'
+        + '<div class="fields field-wide" data-pension-mode="lump">'
+        + number("lump", "Lump sum quote", 800000, "$") + number("monthly", "Monthly pension quote", 5000, "$/mo") + '</div>'
+        + '<div class="fields field-wide is-hidden" data-pension-mode="survivor">'
+        + number("life", "Your modeled death age", 77, "years", "120") + number("spouse", "Spouse age at retirement", 62, "years", "119")
+        + number("spouse_life", "Spouse modeled death age", 82, "years", "120") + number("single", "Single-life monthly quote", 5000, "$/mo")
+        + number("joint", "Joint-survivor monthly quote", 3000, "$/mo")
+        + '<div class="field"><label for="pen_survivor">Survivor continuation</label><select id="pen_survivor"><option value="100">100%</option><option value="75">75%</option><option value="50">50%</option></select></div></div>'
+        + '<div class="fields field-wide is-hidden" data-pension-mode="later">'
+        + number("early_age", "Earlier retirement age", 60, "years", "119") + number("early_pay", "Earlier monthly quote", 2500, "$/mo")
+        + number("late_age", "Later retirement age", 65, "years", "119") + number("late_pay", "Later monthly quote", 3800, "$/mo") + '</div>'
+        + number("return", "Annual comparison return", 5, "%", "100", "-99") + number("cola", "Annual pension COLA", 3.5, "%", "100")
+        + '<p class="field-wide table-note">Example assumptions only. Use your plan quotes; enter 0% COLA for a fixed pension. Payout and retirement-age comparisons use midyear payments; survivor comparisons include each entered death age-year.</p></div>')
+
+
 def mulch_input_html():
     return """<div class="fields project-fields mulch-fields">
 <div class="field"><label for="mulch_units">Dimensions</label><select id="mulch_units"><option value="us">US (ft / in)</option><option value="metric">Metric (m / cm)</option></select></div>
@@ -3151,6 +3180,17 @@ def conversion_copy(calc):
 
 
 def high_value_calculator_copy(calc):
+    if calc.get("slug") == "pension-calculator":
+        return """<h2>Compare pension payout options using your plan quotes</h2>
+<p>This pension payout calculator compares three defined-benefit scenarios. It does not derive a pension entitlement from salary or years of service. Ask your plan administrator for quotes for the same start date, payment form and beneficiary before comparing them. For a savings account with contributions, use the <a href="/retirement-calculator/">retirement savings calculator</a> instead.</p>
+<h3>Lump sum vs monthly pension</h3><p>The chart compares the lump sum with the present value of pension income through each modeled final age. The crossover is the first whole age-year whose pension present value meets or exceeds the lump sum. It is not a prediction of how long you will live, a withdrawal account balance or a recommendation to elect either payment form.</p>
+<h3>Single life vs joint-and-survivor</h3><p>Enter separate monthly quotes and a survivor continuation percentage. The single-life stream ends after your modeled death age-year. The joint stream pays the full quote while you are alive, then the selected percentage while your spouse survives. If your spouse dies first, your joint payment stays unchanged; a pop-up provision is not modeled. The comparison also shows a hypothetical investment of the payment difference and capital to replace survivor payments, not a life-insurance quote.</p>
+<h3>Retire earlier vs work longer</h3><p>Each monthly quote starts at its own retirement age, with COLA starting from that date. Both streams are discounted to the earlier retirement age. Salary earned while working longer, contributions, employment benefits, taxes and time away from work are excluded. There is no universal pension increase for delaying retirement: enter actual plan quotes.</p>
+<h2>Calculation method and timing</h2><p>For annual return r, COLA c, starting monthly quote M and offset t from that option's start, annualized income is 12 × M × (1+c)^t. Lump-sum and retirement-age comparisons discount that income at the midpoint of each year and report the completed age after those payments. For example, the first year's payments from age 65 to 66 are valued at age 65.5. Survivor comparisons instead include the entered death age-year and discount annualized income at each age-year's start; the invested payment difference is accumulated to its end. These are explicit annual approximations, not a valuation of individual monthly check dates.</p>
+<p>For example, an $800,000 lump sum versus $5,000 per month, with 5% annual return and 3.5% COLA starting at 65, first crosses at completed age 81. With zero return and zero COLA, a $120,000 lump sum and $1,000 monthly pension starting at 65 are equal after 10 payment years, at completed age 75. These examples use the stated timing convention, not a mortality table.</p>
+<h2>Plan rules and limitations</h2><p>All values are nominal US dollars before taxes, fees and inflation. The return is a constant comparison assumption, not a promised investment yield. No survival probabilities, insurer pricing, pension funding guarantees, eligibility rules, tax withholding or rollover determination are calculated. The 3.5% example COLA is not a standard pension benefit. PBGC states that its pension payments have no statutory COLA.</p>
+<p>PBGC's <a href="https://www.pbgc.gov/workers-retirees/learn/pension-benefits-overview" rel="external noopener">pension benefits overview</a> describes payment forms, survivor percentages and PBGC-specific rules. Its <a href="https://www.pbgc.gov/workers-retirees/learn/annuity-lump-sum" rel="external noopener">annuity or lump sum guide</a> discusses factors beyond arithmetic. Those rules do not establish the options available under your plan. Sources explain the context; they do not endorse this calculator.</p>
+<h2>Frequently asked questions</h2><h3>Does every plan offer a lump sum or COLA?</h3><p>No option is assumed to be available to you. Use the plan's written offer; enter zero COLA when there is no increase.</p><h3>Does the crossover identify the best choice?</h3><p>No. It compares modeled cash flows only. Spouse protection, longevity, taxes, investment risk and plan terms can change a household's decision.</p><h3>Why can crossover ages differ between calculators?</h3><p>Payment timing, partial years and age rounding matter. This tool reports the first completed whole payment year whose present value meets the comparison option, rather than rounding a partial-year crossing down. Survivor death ages use the separate inclusive convention stated above.</p><h3>Where can I estimate other retirement income?</h3><p>Use the <a href="/401k-calculator/">401(k) calculator</a> for contribution scenarios and the <a href="/social-security-calculator/">Social Security calculator</a> for that separate benefit estimate.</p>"""
     if calc.get("slug") == "mulch-calculator":
         return """
 <h2>How much mulch do I need?</h2><p>Measure the net area you intend to cover and enter the depth of material to add. Choose rectangle dimensions or enter net square feet directly; metric dimensions use meters and centimeters. Unit changes convert the dimension values. Use the <a href="/area-calculator/">area calculator</a> or <a href="/square-footage-calculator/">square footage calculator</a> for irregular sections, then add only non-overlapping areas. Exclude surfaces and locations you will not mulch before entering net area.</p>
@@ -3813,6 +3853,7 @@ def high_value_calculator_copy(calc):
     if calc.get("slug") == "retirement-calculator":
         return """
 <h2>Four retirement planning questions</h2><p>This calculator separates retirement planning into four useful questions: the nest egg needed to support an income goal, the monthly savings required to reach a target, the inflation-adjusted withdrawal supported by projected savings, and how long an existing balance may last. Use the mode that matches the decision you are making.</p>
+<p>Have defined-benefit plan quotes instead of a savings target? The <a href="/pension-calculator/">pension payout calculator</a> compares a lump sum with monthly payments, survivor benefits and two retirement ages. Those comparisons use separate payment-timing assumptions rather than this savings-growth model.</p>
 <h2>How much money do you need to retire?</h2><p>The first mode projects current income to retirement, applies the replacement percentage you enter, subtracts Social Security, pension, or other monthly income, and estimates the savings needed to fund the remaining gap through life expectancy. It then compares that target with the future value of current savings and contributions.</p>
 <p class="formula">retirement income gap = desired annual income - annual Social Security, pension, and other income</p>
 <p class="formula">savings gap = required nest egg - projected savings at retirement</p>
@@ -4173,6 +4214,8 @@ def default_calculator_copy(calc):
 
 
 def analysis_extra_html(calc):
+    if calc.get("slug") == "pension-calculator":
+        return """<section class="mortgage-dashboard generic-dashboard pension-dashboard" aria-label="Pension comparison results"><div class="section-head stack"><h2>Pension Comparison</h2><p id="pensionBasis">Annual age-year approximation; nominal US dollars.</p></div><div class="summary-grid" id="genericSummary"></div><div class="chart-card compact-chart" id="pensionChartCard"><h3>Present Value by Modeled Final Age</h3><p class="table-note" id="pensionLegend"></p><canvas id="pensionChart" width="620" height="240" aria-label="Two pension scenarios compared in present-value US dollars"></canvas></div><details class="schedule-details"><summary>Annual comparison table</summary><div class="table-scroll"><table class="data-table" id="pensionSchedule"><thead><tr><th>Final age</th><th>Option 1 PV ($)</th><th>Option 2 PV ($)</th></tr></thead><tbody></tbody></table></div></details><div class="table-card"><h3>Assumptions and Details</h3><div class="table-scroll"><table class="data-table" id="genericTable"><thead><tr><th>Measure</th><th>Value</th><th>Basis</th></tr></thead><tbody></tbody></table></div></div></section>"""
     if calc.get("slug") == "mulch-calculator":
         return """<section class="mortgage-dashboard generic-dashboard mulch-dashboard" aria-label="Mulch quantity results">
 <div class="section-head stack"><h2>Mulch Volume and Bags</h2><p>Entered net area and added depth, whole-bag rounding and separate material cost scenarios.</p></div><div class="summary-grid" id="genericSummary"></div>
@@ -5068,6 +5111,9 @@ def calculator_page(site, calc, related):
     elif calc.get("slug") == "gravel-calculator":
         fields = gravel_input_html()
         page_engine = "gravel_advanced"
+    elif calc.get("slug") == "pension-calculator":
+        fields = pension_input_html()
+        page_engine = "pension_advanced"
     elif calc.get("slug") == "mulch-calculator":
         fields = mulch_input_html()
         page_engine = "mulch_advanced"
@@ -5690,6 +5736,11 @@ HOME_JS = r'''
     input.focus();
   });
 })();
+'''
+
+CSS += r'''
+.pension-fields>.field-wide{grid-column:1/-1}.pension-fields>[data-pension-mode]{gap:8px;margin:0}.pension-dashboard .summary-card{min-width:0}.pension-dashboard .summary-card strong{overflow-wrap:anywhere}.pension-dashboard canvas{max-height:240px}.pension-dashboard .table-note{font-size:14px}.pension-fields .table-note{margin:0;line-height:1.4}
+@media(max-width:560px){.pension-fields>[data-pension-mode]{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.pension-fields .field label{font-size:14px!important;min-height:34px}.pension-fields .table-note{font-size:12px}.pension-dashboard .summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 '''
 
 CALC_JS = r'''
@@ -6820,6 +6871,7 @@ function clearCalcForm(){const form=document.querySelector('.calc');if(!form)ret
 function armyWhtRatioProjection(){const waist=V('waist'),height=V('height');if(!(waist>0&&height>0))return{valid:false,message:'Enter waist and height values greater than zero.'};return{valid:true,waist,height,ratio:waist/height}}
 function calc(e){
  switch(e){
+  case'pension_advanced':break;
   case'body_fat_advanced':{const p=bodyFatProjection();if(!p.valid)show(`<strong>Check the measurements</strong><br>${H(p.message)}`);else show(`<strong>${F(p.percent,1)}% estimated body fat</strong><br>${p.method==='tape'?'Historical circumference':'BMI-based'} equation. Fat mass: ${F(p.fat,1)} ${p.massUnit}; fat-free mass: ${F(p.lean,1)} ${p.massUnit}.<br>Estimate only, not a diagnosis.`);break}
   case'cash_back_compare':{const p=cashBackProjection();if(!p.valid)show(`<strong>Check the offers</strong><br>${H(p.message)}`);else{const answer=p.winner==='tie'?'Same modeled purchase cost':`${p.winner==='cash'?'Cash rebate':'Low-rate'} offer saves ${USD(p.savings)}`;show(`<strong>${answer}</strong><br>Monthly payment: ${USD(p.cash.payment)} with rebate / ${USD(p.low.payment)} at low rate.<br>Comparison includes the rebate, modeled interest, tax and fees.`)}break}
   case'down_payment_advanced':{const p=downPaymentProjection();if(!p.valid)show(`<strong>Check the inputs</strong><br>${H(p.message)}`);else{const answer=p.mode==='cash'?`${USD(p.price)} home price`:p.mode==='price'?`${USD(p.cashNeeded)} purchase cash needed`:`${F(p.downPercent,2)}% down payment`;show(`<strong>${answer}</strong><br>${USD(p.down)} down payment; ${USD(p.closing)} closing costs.<br>${USD(p.payment)} / month principal and interest only.${p.unusedCash?`<br>${USD(p.unusedCash)} unused cash.`:''}`)}break}
@@ -7075,6 +7127,7 @@ function drawGenericBars(canvas, bars) {
 
 let barResizeFrame = 0;
 function resizeGenericBars(){
+  if(currentEngine()==='pension_advanced'){if(!document.getElementById('pensionChartCard')?.hidden)renderPension();return}
   const canvas=document.querySelector('#genericChart[data-chart-type="bars"]');
   if(!canvas||canvas.closest('.chart-card')?.hidden||!canvas.clientWidth)return;
   const previous=genericBarSizes.get(canvas),dpr=Math.max(1,window.devicePixelRatio||1);
@@ -7102,6 +7155,97 @@ function renderCompound(projection) {
   const low=compoundProjection({annualOverride:projection.annual-projection.rateVariance}),high=compoundProjection({annualOverride:projection.annual+projection.rateVariance});
   scenarios.innerHTML=[["Lower",low],["Entered",projection],["Higher",high]].map(([label,item])=>`<tr><td>${label}</td><td>${F(item.annual*100,2)}%</td><td>${USD(item.balance)}</td><td>${USD(item.totalInterest)}</td><td>${USD(item.buyingPower)}</td></tr>`).join('');
   table.innerHTML=projection.schedule.map(row=>`<tr><td>${row.period}</td><td>${USD(row.deposits)}</td><td>${USD(row.grossInterest)}</td><td>${USD(row.tax)}</td><td>${USD(row.balance)}</td></tr>`).join('');
+}
+
+document.addEventListener('click',e=>{if(e.target.closest('[data-clear]')&&currentEngine()==='pension_advanced')calc('pension_advanced')});
+function syncPensionFields(){
+  const mode=document.getElementById('pen_mode')?.value||'lump';
+  document.querySelectorAll('[data-pension-mode]').forEach(el=>{const active=el.dataset.pensionMode.split(' ').includes(mode);el.classList.toggle('is-hidden',!active);el.querySelectorAll('input,select').forEach(input=>input.disabled=!active)});return mode;
+}
+function pensionAmounts(x){
+  const fail=message=>({valid:false,message}),age=v=>Number.isInteger(v)&&v>=0&&v<=120,money=v=>Number.isFinite(v)&&v>0&&v<=1e12;
+  if(!['lump','survivor','later'].includes(x.mode))return fail('Choose a pension comparison.');
+  if(!Number.isFinite(x.rate)||x.rate< -99||x.rate>100||!Number.isFinite(x.cola)||x.cola<0||x.cola>100)return fail('Enter an annual return from -99% to 100% and a COLA from 0% to 100%.');
+  const r=x.rate/100,c=x.cola/100;
+  let start,stop=120,label1,label2,first,second;
+  if(x.mode==='later'){
+    if(!age(x.earlyAge)||!age(x.lateAge)||x.earlyAge>=x.lateAge||x.lateAge>=120)return fail('Enter whole retirement ages with the later age greater than the earlier age and below 120.');
+    if(!money(x.earlyPay)||!money(x.latePay))return fail('Enter both positive monthly pension quotes, up to $1 trillion.');
+    start=x.earlyAge;label1=`Retire at ${x.earlyAge}`;label2=`Retire at ${x.lateAge}`;
+    first=t=>12*x.earlyPay*(1+c)**t;second=t=>t<x.lateAge-start?0:12*x.latePay*(1+c)**(t-(x.lateAge-start));
+  }else{
+    if(!age(x.age)||x.age>=120)return fail('Enter a whole retirement age from 0 through 119.');
+    start=x.age;
+    if(x.mode==='lump'){
+      if(!money(x.lump)||!money(x.monthly))return fail('Enter a positive lump sum and monthly pension quote, up to $1 trillion each.');
+      label1='Lump sum';label2='Monthly pension';first=()=>0;second=t=>12*x.monthly*(1+c)**t;
+    }else{
+      if(!age(x.life)||x.life<x.age||!age(x.spouse)||x.spouse>=120||!age(x.spouseLife)||x.spouseLife<x.spouse||x.age+x.spouseLife-x.spouse>120)return fail('Enter whole ages with each modeled death age at or after retirement, and the household horizon at or before your age 120.');
+      if(!money(x.single)||!money(x.joint)||![50,75,100].includes(x.survivor))return fail('Enter positive single-life and joint quotes and choose 50%, 75% or 100% survivor continuation.');
+      stop=Math.max(x.life,x.age+x.spouseLife-x.spouse);label1='Single life';label2=`Joint + ${x.survivor}% survivor`;
+      first=t=>start+t<=x.life?12*x.single*(1+c)**t:0;
+      second=t=>start+t<=x.life?12*x.joint*(1+c)**t:(t<=x.spouseLife-x.spouse?12*x.joint*(1+c)**t*x.survivor/100:0);
+    }
+  }
+  let pv1=x.mode==='lump'?x.lump:0,pv2=0,nominal1=pv1,nominal2=0,crossover=null;
+  const schedule=[];
+  for(let a=start+(x.mode==='survivor'?0:1);a<=stop;a++){
+    const t=a-start-(x.mode==='survivor'?0:1),pay1=first(t),pay2=second(t),discount=(1+r)**(t+(x.mode==='survivor'?0:.5));
+    pv1+=pay1/discount;pv2+=pay2/discount;nominal1+=pay1;nominal2+=pay2;
+    if(![pv1,pv2,nominal1,nominal2].every(v=>Number.isFinite(v)&&Math.abs(v)<=1e15))return fail('These assumptions exceed the supported $1 quadrillion projection range. Reduce the quotes, COLA or return magnitude.');
+    if(x.mode!=='survivor'&&crossover===null&&pv2>=pv1-Math.max(pv1,pv2)*Number.EPSILON*16)crossover=a;
+    schedule.push({age:a,pay1,pay2,pv1,pv2});
+  }
+  const p={valid:true,...x,start,stop,label1,label2,schedule,pv1,pv2,nominal1,nominal2,crossover};
+  if(x.mode==='survivor'){
+    let accumulated=0,replacement=0,immediate=0;
+    for(let t=0;t<=stop-start;t++){
+      if(start+t<=x.life)accumulated=accumulated*(1+r)+first(t)-second(t);
+      else replacement+=second(t)/(1+r)**(start+t-x.life-1);
+      if(t<=x.spouseLife-x.spouse)immediate+=12*x.joint*x.survivor/100*(1+c)**t/(1+r)**t;
+    }
+    if(![accumulated,replacement,immediate].every(v=>Number.isFinite(v)&&Math.abs(v)<=1e15))return fail('The survivor projection exceeds the supported range. Review rates and quotes.');
+    Object.assign(p,{accumulated,replacement,immediate,monthlyDifference:x.single-x.joint});
+  }
+  return p;
+}
+function pensionProjection(){
+  const read=key=>{const raw=document.getElementById('pen_'+key)?.value;return raw===undefined||raw.trim()===''?NaN:Number(raw)};
+  return pensionAmounts({mode:syncPensionFields(),age:read('age'),lump:read('lump'),monthly:read('monthly'),rate:read('return'),cola:read('cola'),life:read('life'),spouse:read('spouse'),spouseLife:read('spouse_life'),single:read('single'),joint:read('joint'),survivor:read('survivor'),earlyAge:read('early_age'),lateAge:read('late_age'),earlyPay:read('early_pay'),latePay:read('late_pay')});
+}
+function drawPensionLine(canvas,p){
+  if(!canvas)return;
+  const logicalWidth=Math.max(180,canvas.clientWidth||620),logicalHeight=220,dpr=Math.max(1,window.devicePixelRatio||1);
+  canvas.width=Math.round(logicalWidth*dpr);canvas.height=Math.round(logicalHeight*dpr);canvas.style.width='100%';canvas.style.height=logicalHeight+'px';
+  const ctx=canvas.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,logicalWidth,logicalHeight);
+  const pad={left:58,right:12,top:16,bottom:32},w=logicalWidth-pad.left-pad.right,h=logicalHeight-pad.top-pad.bottom,max=Math.max(p.pv1,p.pv2,1);
+  ctx.font='12px system-ui';ctx.fillStyle='#52647b';
+  for(let i=0;i<=4;i++){const y=pad.top+h*i/4;ctx.strokeStyle='#d8e4f1';ctx.beginPath();ctx.moveTo(pad.left,y);ctx.lineTo(pad.left+w,y);ctx.stroke();ctx.textAlign='right';ctx.fillText(new Intl.NumberFormat('en-US',{notation:'compact',maximumFractionDigits:1}).format(max*(1-i/4)),pad.left-6,y+4)}
+  ['pv1','pv2'].forEach((key,index)=>{ctx.beginPath();p.schedule.forEach((row,i)=>{const x=pad.left+w*i/Math.max(1,p.schedule.length-1),y=pad.top+h*(1-row[key]/max);if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y)});ctx.strokeStyle=index?'#b45309':'#2563eb';ctx.lineWidth=3;ctx.stroke()});
+  ctx.fillStyle='#52647b';ctx.textAlign='left';ctx.fillText(`Age ${p.schedule[0].age}`,pad.left,logicalHeight-8);ctx.textAlign='right';ctx.fillText(`Age ${p.stop}`,logicalWidth-pad.right,logicalHeight-8);
+}
+function renderPension(){
+  const p=pensionProjection(),schedule=document.querySelector('#pensionSchedule tbody'),chart=document.getElementById('pensionChartCard'),legend=document.getElementById('pensionLegend');
+  if(!p.valid){show(`<strong>Check the pension inputs</strong><br>${H(p.message)}`);renderGeneric([['Pension comparison','Not calculated',H(p.message)]],[],[['Validation','Not calculated',H(p.message)]]);if(schedule)schedule.innerHTML='';if(chart)chart.hidden=true;if(legend)legend.textContent='';return}
+  if(chart)chart.hidden=false;
+  let cards,rows=[['Annual comparison return',F(p.rate,3)+'%','Constant hypothetical return; no taxes or fees.'],['Annual COLA',F(p.cola,3)+'%','User assumption, not a standard plan entitlement.'],['Comparison date','Start of age '+p.start,'All present values use this date.'],['Payment timing',p.mode==='survivor'?'Start of each age-year':'Midpoint of each payment year',p.mode==='survivor'?'Entered death age-year included.':'Table age marks the end of that payment year.']];
+  if(p.mode==='survivor'){
+    show(`<strong>${USD(p.pv1)} single-life present value</strong><br>${USD(p.pv2)} joint-survivor present value through the entered death ages. Scenario comparison only.`);
+    cards=[['Single-life PV',USD(p.pv1),'Stops after your modeled death age-year.'],['Joint-survivor PV',USD(p.pv2),'Includes selected survivor continuation.'],['Invested payment difference',USD(p.accumulated),'At end of your modeled death age-year.'],['Remaining survivor capital',USD(p.replacement),'At start of the next age-year.']];
+    rows.push(['Your modeled death age',String(p.life),'Not a prediction or mortality probability.'],['Spouse modeled death age',String(p.spouseLife),`Spouse age at retirement: ${p.spouse}.`],['Survivor continuation',p.survivor+'%','Joint quote continues at this fraction after your death.'],['Initial monthly difference',USD(p.monthlyDifference),'Single-life quote minus joint quote; not an insurance premium.'],['Replacement capital if death at retirement',USD(p.immediate),'Selected survivor payments through spouse final age, valued at retirement.'],['Invested difference minus remaining capital',USD(p.accumulated-p.replacement),'Hypothetical comparison at the end of your death age-year; not coverage or underwriting.']);
+  }else{
+    const cross=p.crossover===null?'No crossover through age 120':`Modeled crossover: age ${p.crossover}`;
+    show(`<strong>${cross}</strong><br>${p.crossover===null?'Option 2 does not reach option 1 present value within the modeled range.':'Option 2 first meets or exceeds option 1 present value at this age-year.'} Scenario comparison only.`);
+    cards=[['Modeled crossover',p.crossover===null?'Not reached':'Age '+p.crossover,'First completed whole payment year.'],[p.label1+' PV',USD(p.pv1),'Through modeled age 120.'],[p.label2+' PV',USD(p.pv2),'Through modeled age 120.']];
+    if(p.crossover!==null){const row=p.schedule.find(s=>s.age===p.crossover);rows.push(['Option 1 PV at crossover',USD(row.pv1),'Valued at comparison date.'],['Option 2 PV at crossover',USD(row.pv2),'First age-year meeting or exceeding option 1.'])}
+    if(p.mode==='lump')rows.push(['Lump sum quote',USD(p.lump),'No upfront tax deduction modeled.'],['Starting monthly pension',USD(p.monthly),'COLA begins with the next age-year.']);
+    else rows.push(['Earlier monthly quote',USD(p.earlyPay),'Starts at age '+p.earlyAge+'.'],['Later monthly quote',USD(p.latePay),'Starts at age '+p.lateAge+'. No salary included.']);
+  }
+  rows.push(['Excluded','Taxes, fees, salary, mortality risk','No eligibility, legal, tax or insurance advice.']);
+  renderGeneric(cards,[],rows);
+  if(legend)legend.textContent=`Blue: ${p.label1}. Amber: ${p.label2}. Present value in US dollars; not an account balance.`;
+  if(schedule)schedule.innerHTML=p.schedule.map(row=>`<tr><td>${row.age}</td><td>${USD(row.pv1)}</td><td>${USD(row.pv2)}</td></tr>`).join('');
+  drawPensionLine(document.getElementById('pensionChart'),p);
 }
 
 function renderGeneric(cards, bars, rows) {
@@ -7169,6 +7313,7 @@ function paybackProjection(){
 }
 
 function renderGenericFromEngine(engine) {
+  if(engine==='pension_advanced'){renderPension();return}
   if (!document.getElementById("genericSummary")) return;
   let cards=[], bars=[], rows=[];
   if(engine==="boat_loan_advanced"){

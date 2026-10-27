@@ -1,0 +1,184 @@
+{
+  "capturedAt": "2026-10-27T07:48:28.668Z",
+  "source": "https://www.calculator.net/pension-calculator.html",
+  "method": "Public rendered Playwright UI: result numbers and SVG tooltip values only. No private endpoints.",
+  "cases": [
+    {
+      "inputs": {
+        "ctype": "1",
+        "cretirementage": "65",
+        "clumpsumamount": "800000",
+        "creturn": "5",
+        "cmonthlyincome": "5000",
+        "ccola": "3.5"
+      },
+      "url": "https://www.calculator.net/pension-calculator.html?ctype=1&cretirementage=65&clumpsumamount=800000&creturn=5&cmonthlyincome=5000&ccola=3.5&x=Calculate",
+      "status": 200,
+      "narrativeCrossoverAge": 81,
+      "survivorDollarFigures": null,
+      "chartPoints": [
+        {
+          "series": 1,
+          "age": 66,
+          "pvDollars": 800000
+        },
+        {
+          "series": 1,
+          "age": 80,
+          "pvDollars": 800000
+        },
+        {
+          "series": 1,
+          "age": 81,
+          "pvDollars": 800000
+        },
+        {
+          "series": 1,
+          "age": 85,
+          "pvDollars": 800000
+        },
+        {
+          "series": 1,
+          "age": 86,
+          "pvDollars": 800000
+        },
+        {
+          "series": 1,
+          "age": 87,
+          "pvDollars": 800000
+        },
+        {
+          "series": 2,
+          "age": 66,
+          "pvDollars": 58554
+        },
+        {
+          "series": 2,
+          "age": 80,
+          "pvDollars": 795690
+        },
+        {
+          "series": 2,
+          "age": 81,
+          "pvDollars": 842877
+        },
+        {
+          "series": 2,
+          "age": 85,
+          "pvDollars": 1024980
+        },
+        {
+          "series": 2,
+          "age": 86,
+          "pvDollars": 1068891
+        },
+        {
+          "series": 2,
+          "age": 87,
+          "pvDollars": 1112176
+        }
+      ]
+    },
+    {
+      "inputs": {
+        "ctype": "2",
+        "cretirementage": "65",
+        "clifeexpectancy": "77",
+        "cspousesage": "62",
+        "cSpouseslifeexpectancy": "82",
+        "csinglelifepension": "5000",
+        "cjointsurvivorpension": "3000",
+        "creturn": "5",
+        "ccola": "3.5"
+      },
+      "url": "https://www.calculator.net/pension-calculator.html?ctype=2&cretirementage=65&clifeexpectancy=77&cspousesage=62&cSpouseslifeexpectancy=82&csinglelifepension=5000&cjointsurvivorpension=3000&creturn=5&ccola=3.5&x=Calculate",
+      "status": 200,
+      "narrativeCrossoverAge": null,
+      "survivorDollarFigures": {
+        "replacementAtRetirement": 657173,
+        "accumulatedDifference": 514709,
+        "remainingCapital": 428530
+      },
+      "chartPoints": [],
+      "survivorCapturedAt": "2026-10-27T07:51:11.202Z"
+    },
+    {
+      "inputs": {
+        "ctype": "3",
+        "cretirementage1": "60",
+        "cretirementage2": "65",
+        "cmonthlyincome1": "2500",
+        "cmonthlyincome2": "3800",
+        "creturn": "5",
+        "ccola": "3.5"
+      },
+      "url": "https://www.calculator.net/pension-calculator.html?ctype=3&cretirementage1=60&cretirementage2=65&cmonthlyincome1=2500&cmonthlyincome2=3800&creturn=5&ccola=3.5&x=Calculate",
+      "status": 200,
+      "narrativeCrossoverAge": 86,
+      "survivorDollarFigures": null,
+      "chartPoints": [
+        {
+          "series": 1,
+          "age": 66,
+          "pvDollars": 169507
+        },
+        {
+          "series": 1,
+          "age": 80,
+          "pvDollars": 512490
+        },
+        {
+          "series": 1,
+          "age": 81,
+          "pvDollars": 534446
+        },
+        {
+          "series": 1,
+          "age": 85,
+          "pvDollars": 619177
+        },
+        {
+          "series": 1,
+          "age": 86,
+          "pvDollars": 639608
+        },
+        {
+          "series": 1,
+          "age": 87,
+          "pvDollars": 659748
+        },
+        {
+          "series": 2,
+          "age": 66,
+          "pvDollars": 34868
+        },
+        {
+          "series": 2,
+          "age": 80,
+          "pvDollars": 473818
+        },
+        {
+          "series": 2,
+          "age": 81,
+          "pvDollars": 501917
+        },
+        {
+          "series": 2,
+          "age": 85,
+          "pvDollars": 610355
+        },
+        {
+          "series": 2,
+          "age": 86,
+          "pvDollars": 636503
+        },
+        {
+          "series": 2,
+          "age": 87,
+          "pvDollars": 662278
+        }
+      ]
+    }
+  ],
+  "limitation": "Reference narrative for later retirement says age 86, while its rendered age-86 chart values remain 639608 vs 636503; age 87 is the first whole completed year where option 2 exceeds option 1. NS reports first completed payment year, not that inconsistent narrative."
+}

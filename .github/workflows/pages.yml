@@ -142,6 +142,9 @@ jobs:
       - name: Check mulch volume, bag rounding and independent cost scenarios
         run: node scripts/test_mulch.cjs dist/assets/calculator.js
 
+        - name: Check pension comparisons and annual cash-flow timing
+          run: node scripts/test_pension.cjs dist/assets/calculator.js
+
       - name: Check exact-cent tips and bill splitting
         run: node scripts/test_tip.cjs dist/assets/calculator.js
 
