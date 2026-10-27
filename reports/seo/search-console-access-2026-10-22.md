@@ -1,5 +1,9 @@
 # Search Console measurement access
 
+## Update: October 27
+
+The updated connector still refused `get_account_info` with `payment_required` / `subscription_required`. No subscription, reconnection or account change was performed. The browser inventory showed an existing signed-in NS Calculators performance tab, but binding that exact tab timed out after 40 seconds and reset the browser kernel. No report contents, current totals or new export were obtained in this attempt. This is not evidence of lost Search Console ownership or an indexing failure. Do not retry the paid connector without an access-state change; the free Google report remains an alternative when its browser binding works. The September 24–October 21 export remains the last validated search baseline used for the subsequent IRA repair.
+
 ## Update: October 24
 
 The existing signed-in in-app browser now provides a working free path. Selected a completed September 24-October 21 daily interval, United States and Web (text-based), and downloaded/validated the original Google CSV export. The new baseline is 4 clicks / 5,933 impressions, with incomplete query/page detail. See `us-measurement-recovery-2026-10-24.md` and `exports/us-search-baseline-2026-10-24.json`. The limitation below remains historical evidence about the paid connector and the earlier failed browser attempt, not a current claim that all Search Console access is blocked. No paid subscription or account change was made.

@@ -1,0 +1,29 @@
+{
+  "source": "https://www.calculator.net/ira-calculator.html",
+  "observed_date": "2026-10-27",
+  "method": "Public page result and annual-schedule numeric observations via web browser text. Form values were not independently read.",
+  "parameters_inferred_under_end_of_year_model": {
+    "age": 30,
+    "retire": 65,
+    "balance": 30000,
+    "annual": 7500,
+    "rate": 6,
+    "currentTax": 25,
+    "retireTax": 15
+  },
+  "inference": "First two pre-tax annual changes imply 6% annual growth and a $7500 year-end contribution. Initial after-tax ratios imply 25% current and 15% retirement tax assumptions; visible ages imply 35 years. This is a model inference, not an independent reading of form controls.",
+  "display_rounding": "whole US dollars",
+  "retirement_balances": {
+    "pretax": 1066343,
+    "pretaxNet": 906392,
+    "roth": 799758,
+    "taxable": 563434
+  },
+  "annual_rows": [
+    {"age":30,"pretaxStart":30000,"pretaxEnd":39300,"netStart":25500,"netEnd":33405,"rothStart":22500,"rothEnd":29475,"taxableStart":22500,"taxableEnd":29138},
+    {"age":31,"pretaxStart":39300,"pretaxEnd":49158,"netStart":33405,"netEnd":41784,"rothStart":29475,"rothEnd":36869,"taxableStart":29138,"taxableEnd":36074},
+    {"age":40,"pretaxStart":152581,"pretaxEnd":169236,"netStart":129694,"netEnd":143851,"rothStart":114436,"rothEnd":126927,"taxableStart":104063,"taxableEnd":114371},
+    {"age":64,"pretaxStart":998909,"pretaxEnd":1066343,"netStart":849073,"netEnd":906392,"rothStart":749182,"rothEnd":799758,"taxableStart":533788,"taxableEnd":563434}
+  ],
+  "scope": "Selected default-result numeric checkpoints only. No parity claim for negative-return loss credits, account eligibility, annual limits, conversion taxes or every reference scenario."
+}

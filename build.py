@@ -992,6 +992,8 @@ def base_and_supplemental(data):
             calc.update({"engine": "boat_loan_advanced", "desc": "Estimate boat loan payments from price, down payment and note rate, with optional purchase costs, a separate boating budget and an amortization schedule.", "inputs": []})
         if calc["slug"] == "gravel-calculator":
             calc.update({"cat": "Construction", "engine": "gravel_advanced", "desc": "Estimate gravel volume, supplier-based weight and optional material cost.", "formula": "Volume = measured area x loose layer depth; weight = volume x supplier bulk density.", "example": "20 ft x 10 ft x 3 in = 50 cubic feet, or 50/27 cubic yards, before any allowance.", "inputs": []})
+        if calc["slug"] == "ira-calculator":
+            calc.update({"engine": "ira_compare", "desc": "Compare pre-tax IRA, Roth IRA and taxable savings using an equal pre-tax budget and your tax assumptions.", "formula": "Each year: IRA balance = prior balance x (1 + return) + year-end contribution; compare after modeled taxes.", "example": "$30,000 pre-tax equivalent balance and $7,500 annual budget for 35 years at 6%, with 25% current and 15% retirement tax assumptions.", "inputs": []})
         if calc["slug"] == "pension-calculator":
             calc.update({"engine": "pension_advanced", "desc": "Compare pension lump sum and monthly income, survivor benefits and retirement ages using your plan quotes.", "formula": "Present value = sum of annualized pension payments / (1 + annual return)^years from the comparison date.", "example": "An $800,000 lump sum and $5,000 monthly pension with 5% return and 3.5% annual COLA cross at modeled age 81 under the annual age-year convention.", "inputs": []})
         if calc["slug"] == "mulch-calculator":
@@ -1151,6 +1153,8 @@ def is_indexable_calculator(calc):
 
 
 def seo_keywords(calc):
+    if calc.get("slug") == "ira-calculator":
+        return ["IRA calculator", "traditional vs Roth IRA calculator", "IRA growth calculator", "IRA tax comparison", "IRA vs taxable savings"]
     if calc.get("slug") == "rmd-calculator":
         return ["rmd calculator", "rmd calculator 2026", "rmd table 2026", "required minimum distribution calculator", "IRS Uniform Lifetime Table"]
     if calc.get("slug") == "pension-calculator":
@@ -1234,6 +1238,8 @@ def seo_keywords(calc):
 
 
 def seo_title(calc):
+    if calc.get("slug") == "ira-calculator":
+        return "IRA Calculator: Traditional vs Roth & Taxable Savings"
     if calc.get("slug") == "towing-capacity-calculator":
         return "Towing Capacity Calculator: GCWR, Payload & Hitch Limits"
     if calc.get("slug") == "pension-calculator":
@@ -1382,6 +1388,8 @@ def seo_title(calc):
 
 
 def seo_description(calc):
+    if calc.get("slug") == "ira-calculator":
+        return "Use this IRA calculator to compare Traditional vs Roth IRA and taxable savings on an equal pre-tax budget. View modeled after-tax balances and annual schedules."
     if calc.get("slug") == "pension-calculator":
         return "Use this pension payout calculator to compare lump sum and monthly income, survivor benefits and retirement ages, with present values and annual tables."
     if calc.get("slug") == "mulch-calculator":
@@ -2469,6 +2477,18 @@ def square_footage_input_html():
 </div>"""
 
 
+def ira_input_html():
+    return """<div class="fields project-fields ira-fields">
+<div class="field"><label for="ira_age">Current age</label><div class="input-unit"><input id="ira_age" type="number" step="1" min="0" max="119" value="30"><span>years</span></div></div>
+<div class="field"><label for="ira_retire">Retirement age</label><div class="input-unit"><input id="ira_retire" type="number" step="1" min="1" max="120" value="65"><span>years</span></div></div>
+<div class="field"><label for="ira_balance">Pre-tax starting balance</label><div class="input-unit"><input id="ira_balance" type="number" step="any" min="0" value="30000"><span>$</span></div></div>
+<div class="field"><label for="ira_annual">Annual pre-tax budget</label><div class="input-unit"><input id="ira_annual" type="number" step="any" min="0" value="7500"><span>$/yr</span></div></div>
+<div class="field"><label for="ira_return">Annual return</label><div class="input-unit"><input id="ira_return" type="number" step="any" min="-99" max="100" value="6"><span>%</span></div></div>
+<div class="field"><label for="ira_current_tax">Current tax rate</label><div class="input-unit"><input id="ira_current_tax" type="number" step="any" min="0" max="100" value="25"><span>%</span></div></div>
+<div class="field"><label for="ira_retire_tax">Retirement tax rate</label><div class="input-unit"><input id="ira_retire_tax" type="number" step="any" min="0" max="100" value="15"><span>%</span></div></div>
+<p class="field-note field-wide">Equal pre-tax budget comparison, not a conversion or eligibility calculation. Assumes deductible pre-tax contributions and qualified Roth withdrawals. Contributions occur at year end; limits and early-withdrawal taxes are not modeled.</p></div>"""
+
+
 def pension_input_html():
     def number(key, label, value, unit="", maximum="", minimum="0"):
         limit = f' max="{maximum}"' if maximum else ""
@@ -3194,6 +3214,15 @@ def conversion_copy(calc):
 
 
 def high_value_calculator_copy(calc):
+    if calc.get("slug") == "ira-calculator":
+        return """<h2>Compare Traditional IRA, Roth IRA and taxable savings</h2><p>This IRA calculator compares three ways to allocate the same pre-tax savings budget. It models fully deductible pre-tax IRA contributions, qualified Roth withdrawals and a simplified taxable account. The tax rates and investment return are your assumptions, not a forecast or a recommendation to choose one account.</p>
+<h3>Understand the starting balance</h3><p>Enter a <strong>pre-tax equivalent balance</strong>, not an already after-tax Roth balance. With a $30,000 starting budget and 25% current tax assumption, the comparison starts the pre-tax IRA at $30,000 and each after-tax alternative at $22,500. This normalizes the scenarios to an equal gross budget; it is not a Roth conversion transaction, an estimate of conversion tax due or a statement about the balances in your actual accounts.</p>
+<h3>How annual contributions and taxes work</h3><p>Contributions are added at year end. The full annual budget enters the pre-tax scenario; Roth and taxable contributions are reduced by the current tax assumption. The pre-tax IRA grows without annual tax in this model, then its entire balance receives the retirement-tax reduction for comparison. This assumes no nondeductible basis and does not simulate a multiyear withdrawal tax return.</p>
+<p>The taxable scenario taxes each year's positive investment return at the current rate, with no tax credit assumed for losses. It is an annual tax-drag illustration, not a capital-gains, dividend or tax-loss-harvesting model. It does not defer gains until sale. Actual investments and account tax treatment can differ substantially.</p>
+<h2>Worked equal-budget example</h2><p>Start at age 30 with a $30,000 pre-tax equivalent balance, add a $7,500 annual pre-tax budget and compare values at 65. With 6% annual return, 25% current tax and 15% retirement tax assumptions, the pre-tax IRA reaches about <strong>$1,066,343</strong>, or <strong>$906,392 after modeled tax</strong>. The Roth scenario reaches about <strong>$799,758</strong>, assuming qualified withdrawals, and simplified taxable savings about <strong>$563,434</strong>. The annual table preserves full precision internally; displayed amounts are rounded.</p>
+<h2>Check the rules separately</h2><p>Deductibility and contribution eligibility are not universal. Review the <a href="https://www.irs.gov/retirement-plans/traditional-and-roth-iras" rel="external noopener">IRS Traditional and Roth IRA overview</a> and <a href="https://www.irs.gov/publications/p590a" rel="external noopener">Publication 590-A</a> for contribution and deduction rules. This tool does not enforce annual limits, compensation limits, income phaseouts or plan coverage. The pre-tax growth model can illustrate a deductible Traditional, SEP or SIMPLE IRA budget, but does not make their different contribution rules interchangeable.</p>
+<p>Roth results assume qualified distributions. <a href="https://www.irs.gov/publications/p590b" rel="external noopener">IRS Publication 590-B</a> describes the five-year requirement and age 59½ or other qualifying conditions. Entering a retirement age alone does not establish qualification. Early distributions, conversions, nondeductible basis, RMDs, fees and changing tax rates are excluded. Sources explain the rules; they do not endorse this tool.</p>
+<h2>Frequently asked questions</h2><h3>Does the result tell me which IRA is best?</h3><p>No. It compares modeled balances under the rates you entered. Eligibility, employer benefits, actual investments, withdrawal timing and future taxes can change the decision. Tax assumptions are applied as constant percentages, not progressive brackets.</p><h3>Can I enter my existing after-tax savings balance?</h3><p>The comparison input is pre-tax equivalent. For standalone growth of an already after-tax balance, use the <a href="/compound-interest-calculator/">compound interest calculator</a> with appropriate tax assumptions; it does not establish Roth eligibility.</p><h3>Can I estimate monthly IRA payouts?</h3><p>This page compares accumulation, not withdrawals. Use the withdrawal or longevity mode in the <a href="/retirement-calculator/">retirement calculator</a> for a separate drawdown scenario. An investment-account withdrawal projection is not an insurer's lifetime annuity quote. Use the <a href="/rmd-calculator/">RMD calculator</a> for a separate minimum lifetime-distribution estimate where applicable.</p>"""
     if calc.get("slug") == "pension-calculator":
         return """<h2>Compare pension payout options using your plan quotes</h2>
 <p>This pension payout calculator compares three defined-benefit scenarios. It does not derive a pension entitlement from salary or years of service. Ask your plan administrator for quotes for the same start date, payment form and beneficiary before comparing them. For a savings account with contributions, use the <a href="/retirement-calculator/">retirement savings calculator</a> instead.</p>
@@ -3872,6 +3901,7 @@ def high_value_calculator_copy(calc):
 <h2>Four retirement planning questions</h2><p>This calculator separates retirement planning into four useful questions: the nest egg needed to support an income goal, the monthly savings required to reach a target, the inflation-adjusted withdrawal supported by projected savings, and how long an existing balance may last. Use the mode that matches the decision you are making.</p>
 <p>Have defined-benefit plan quotes instead of a savings target? The <a href="/pension-calculator/">pension payout calculator</a> compares a lump sum with monthly payments, survivor benefits and two retirement ages. Those comparisons use separate payment-timing assumptions rather than this savings-growth model.</p>
 <p>For minimum lifetime withdrawals from an eligible own-account retirement balance, use the <a href="/rmd-calculator/">RMD calculator and IRS factor table</a>. A retirement spending target does not replace the separate required-minimum-distribution calculation.</p>
+<p>To compare accumulation under different tax assumptions, the <a href="/ira-calculator/">Traditional vs Roth IRA calculator</a> models an equal pre-tax savings budget alongside taxable savings. It does not determine contribution eligibility or replace a withdrawal plan.</p>
 <h2>How much money do you need to retire?</h2><p>The first mode projects current income to retirement, applies the replacement percentage you enter, subtracts Social Security, pension, or other monthly income, and estimates the savings needed to fund the remaining gap through life expectancy. It then compares that target with the future value of current savings and contributions.</p>
 <p class="formula">retirement income gap = desired annual income - annual Social Security, pension, and other income</p>
 <p class="formula">savings gap = required nest egg - projected savings at retirement</p>
@@ -4234,6 +4264,8 @@ def default_calculator_copy(calc):
 
 
 def analysis_extra_html(calc):
+    if calc.get("slug") == "ira-calculator":
+        return """<section class="mortgage-dashboard generic-dashboard ira-dashboard" aria-label="IRA and taxable savings comparison"><div class="section-head stack"><h2>IRA Comparison Results</h2><p>Equal pre-tax budget; modeled after-tax values, not a withdrawal or conversion quote.</p></div><div class="summary-grid" id="genericSummary"></div><div class="chart-card compact-chart"><h3>Modeled After-Tax Balances at Retirement ($)</h3><canvas id="genericChart" width="620" height="190" data-chart-type="bars" aria-label="Three alternative after-tax retirement balances in US dollars"></canvas></div><div class="table-card"><h3>Comparison and Assumptions</h3><div class="table-scroll"><table class="data-table" id="genericTable"><thead><tr><th>Measure</th><th>Value</th><th>Basis</th></tr></thead><tbody></tbody></table></div></div><details class="schedule-details"><summary>Annual IRA and taxable savings schedule</summary><div class="table-scroll"><table class="data-table" id="iraSchedule"><thead><tr><th rowspan="2">Age at start</th><th colspan="2">Pre-tax IRA, before tax</th><th colspan="2">Pre-tax IRA, modeled after tax</th><th colspan="2">Roth, assuming qualified</th><th colspan="2">Taxable savings</th></tr><tr><th>Start</th><th>End</th><th>Start</th><th>End</th><th>Start</th><th>End</th><th>Start</th><th>End</th></tr></thead><tbody></tbody></table></div></details></section>"""
     if calc.get("slug") == "towing-capacity-calculator":
         return """<section class="mortgage-dashboard generic-dashboard towing-dashboard" aria-label="Modeled towing constraints"><div class="section-head stack"><h2>Towing Planning Results</h2><p>Compare independent weight ceilings, not shares of a total. All weights are pounds.</p></div><div class="summary-grid" id="genericSummary"></div><div class="chart-card compact-chart"><h3>Independent Trailer-Weight Limits (lb)</h3><canvas id="genericChart" width="620" height="250" aria-label="Independent vehicle, GCWR, hitch and payload trailer-weight limits in pounds" data-chart-type="bars"></canvas></div><div class="table-card"><h3>Weight and Constraint Details</h3><div class="table-scroll"><table class="data-table" id="genericTable"><thead><tr><th>Measure</th><th>Value</th><th>Basis</th></tr></thead><tbody></tbody></table></div></div></section>"""
     if calc.get("slug") == "pension-calculator":
@@ -5133,6 +5165,9 @@ def calculator_page(site, calc, related):
     elif calc.get("slug") == "gravel-calculator":
         fields = gravel_input_html()
         page_engine = "gravel_advanced"
+    elif calc.get("slug") == "ira-calculator":
+        fields = ira_input_html()
+        page_engine = "ira_compare"
     elif calc.get("slug") == "pension-calculator":
         fields = pension_input_html()
         page_engine = "pension_advanced"
@@ -5765,6 +5800,7 @@ CSS += r'''
 .rmd-fields>.field-wide{grid-column:1/-1}.rmd-dashboard .summary-card{min-width:0}.rmd-dashboard .summary-card strong{overflow-wrap:anywhere}
 .towing-fields>.field-wide{grid-column:1/-1}.towing-fields .more-options{margin:0}.towing-fields .more-options>.field{padding:8px 10px}.towing-dashboard .summary-card{min-width:0}.towing-dashboard .summary-card strong{overflow-wrap:anywhere}.towing-dashboard .summary-card:nth-child(2) strong{font-size:18px}
 .towing-fields .field-note{margin:0;line-height:1.4}.towing-fields .field input,.towing-fields .input-unit input,.towing-fields .input-unit span{height:38px!important}.calculator-article:has(.towing-fields) .calc-actions{margin-top:8px}
+.ira-fields>.field-wide{grid-column:1/-1}.ira-fields .field-note{margin:0;line-height:1.4}.ira-fields .field input,.ira-fields .input-unit input,.ira-fields .input-unit span{height:38px!important}.calculator-article:has(.ira-fields) .calc-actions{margin-top:8px}.ira-dashboard .summary-card{min-width:0}.ira-dashboard .summary-card strong{overflow-wrap:anywhere;font-size:21px}
 @media(max-width:560px){.pension-fields>[data-pension-mode]{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.pension-fields .field label{font-size:14px!important;min-height:34px}.pension-fields .table-note{font-size:12px}.pension-dashboard .summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 '''
 
@@ -6933,6 +6969,7 @@ function clearCalcForm(){const form=document.querySelector('.calc');if(!form)ret
 function armyWhtRatioProjection(){const waist=V('waist'),height=V('height');if(!(waist>0&&height>0))return{valid:false,message:'Enter waist and height values greater than zero.'};return{valid:true,waist,height,ratio:waist/height}}
 function calc(e){
  switch(e){
+  case'ira_compare':break;
   case'pension_advanced':break;
   case'body_fat_advanced':{const p=bodyFatProjection();if(!p.valid)show(`<strong>Check the measurements</strong><br>${H(p.message)}`);else show(`<strong>${F(p.percent,1)}% estimated body fat</strong><br>${p.method==='tape'?'Historical circumference':'BMI-based'} equation. Fat mass: ${F(p.fat,1)} ${p.massUnit}; fat-free mass: ${F(p.lean,1)} ${p.massUnit}.<br>Estimate only, not a diagnosis.`);break}
   case'cash_back_compare':{const p=cashBackProjection();if(!p.valid)show(`<strong>Check the offers</strong><br>${H(p.message)}`);else{const answer=p.winner==='tie'?'Same modeled purchase cost':`${p.winner==='cash'?'Cash rebate':'Low-rate'} offer saves ${USD(p.savings)}`;show(`<strong>${answer}</strong><br>Monthly payment: ${USD(p.cash.payment)} with rebate / ${USD(p.low.payment)} at low rate.<br>Comparison includes the rebate, modeled interest, tax and fees.`)}break}
@@ -7219,7 +7256,35 @@ function renderCompound(projection) {
   table.innerHTML=projection.schedule.map(row=>`<tr><td>${row.period}</td><td>${USD(row.deposits)}</td><td>${USD(row.grossInterest)}</td><td>${USD(row.tax)}</td><td>${USD(row.balance)}</td></tr>`).join('');
 }
 
-document.addEventListener('click',e=>{if(e.target.closest('[data-clear]')&&['pension_advanced','rmd_advanced','towing'].includes(currentEngine()))calc(currentEngine())});
+document.addEventListener('click',e=>{if(e.target.closest('[data-clear]')&&['pension_advanced','rmd_advanced','towing','ira_compare'].includes(currentEngine()))calc(currentEngine())});
+function iraAmounts({age,retire,balance,annual,rate,currentTax,retireTax}){
+  const fail=message=>({valid:false,message,schedule:[]});
+  if(!Number.isInteger(age)||age<0||!Number.isInteger(retire)||retire<=age||retire>120)return fail('Enter whole ages with retirement later than current age and no later than age 120.');
+  if(![balance,annual].every(v=>Number.isFinite(v)&&v>=0&&v<=1e12))return fail('Enter a nonnegative pre-tax equivalent balance and annual budget, no greater than $1 trillion each.');
+  if(!Number.isFinite(rate)||rate< -99||rate>100)return fail('Enter an assumed annual return from -99% through 100%.');
+  if(![currentTax,retireTax].every(v=>Number.isFinite(v)&&v>=0&&v<=100))return fail('Enter both assumed tax rates from 0% through 100%.');
+  const years=retire-age,r=rate/100,t=currentTax/100,rt=retireTax/100,afterTaxAnnual=annual*(1-t),schedule=[];
+  let pretax=balance,roth=balance*(1-t),taxable=roth,totalAnnualTax=0;
+  for(let i=0;i<years;i++){
+    const pretaxStart=pretax,rothStart=roth,taxableStart=taxable,taxableGrowth=taxable*r,annualTax=Math.max(0,taxableGrowth)*t;
+    pretax=pretax*(1+r)+annual;roth=roth*(1+r)+afterTaxAnnual;taxable=taxable+taxableGrowth-annualTax+afterTaxAnnual;totalAnnualTax+=annualTax;
+    if(![pretax,roth,taxable,totalAnnualTax].every(v=>Number.isFinite(v)&&v>=0&&v<=1e15))return fail('The projection exceeds the supported $1 quadrillion range. Reduce the amounts, return or years.');
+    schedule.push({age:age+i,pretaxStart,pretaxEnd:pretax,netStart:pretaxStart*(1-rt),netEnd:pretax*(1-rt),rothStart,rothEnd:roth,taxableStart,taxableEnd:taxable,annualTax});
+  }
+  const pretaxNet=pretax*(1-rt),terminalTax=pretax*rt,totalBudget=balance+annual*years;
+  return{valid:true,age,retire,years,balance,annual,rate,currentTax,retireTax,afterTaxAnnual,pretax,pretaxNet,terminalTax,roth,taxable,totalAnnualTax,totalBudget,afterTaxBudget:totalBudget*(1-t),difference:pretaxNet-roth,schedule};
+}
+function iraProjection(){const read=id=>{const raw=document.getElementById('ira_'+id)?.value;return raw===undefined||raw.trim()===''?NaN:Number(raw)};return iraAmounts({age:read('age'),retire:read('retire'),balance:read('balance'),annual:read('annual'),rate:read('return'),currentTax:read('current_tax'),retireTax:read('retire_tax')})}
+function renderIra(){
+  const p=iraProjection(),schedule=document.querySelector('#iraSchedule tbody');
+  if(!p.valid){show(`<strong>Check the IRA inputs</strong><br>${H(p.message)}`);renderGeneric([['IRA comparison','Not calculated',H(p.message)]],[],[['Validation','Not calculated',H(p.message)]]);if(schedule)schedule.innerHTML='';return}
+  show(`<strong>${USD(p.pretaxNet)} modeled pre-tax IRA after tax</strong><br>Roth: ${USD(p.roth)} assuming qualified withdrawals; taxable savings: ${USD(p.taxable)} at age ${p.retire}.<br>Equal pre-tax budget; eligibility and deductibility are not checked.${p.retire<60?'<br>Early-distribution taxes are excluded.':''}`);
+  const cards=[['Pre-tax IRA, modeled after tax',USD(p.pretaxNet),`${F(p.retireTax,2)}% terminal tax assumption.`],['Roth, assuming qualified',USD(p.roth),'After-tax equivalent starting amount and contributions.'],['Taxable savings',USD(p.taxable),'Positive returns taxed annually; no loss credits.'],['Pre-tax IRA minus Roth',USD(p.difference),'Modeled difference, not an account recommendation.']];
+  const bars=[{label:'Pre-tax IRA after tax',value:p.pretaxNet,display:USD(p.pretaxNet)},{label:'Roth, qualified scenario',value:p.roth,display:USD(p.roth)},{label:'Taxable savings',value:p.taxable,display:USD(p.taxable)}];
+  const rows=[['Growth period',`${p.years} years`,`Current age ${p.age} to retirement age ${p.retire}.`],['Pre-tax equivalent starting balance',USD(p.balance),'Not an already after-tax Roth account balance.'],['After-tax equivalent starting balance',USD(p.balance*(1-p.currentTax/100)),`${F(p.currentTax,2)}% current tax assumption applied for comparison.`],['Annual pre-tax savings budget',USD(p.annual),'Fully deductible contribution assumed; deposited at year end.'],['Annual after-tax contribution',USD(p.afterTaxAnnual),'Same pre-tax budget, reduced by current tax assumption.'],['Annual return',F(p.rate,3)+'%','Constant hypothetical annual growth rate.'],['Total pre-tax budget',USD(p.totalBudget),'Starting budget plus entered annual budgets; no investment growth.'],['Total after-tax budget',USD(p.afterTaxBudget),'Budget allocated to Roth and taxable alternatives.'],['Pre-tax IRA before terminal tax',USD(p.pretax),'No annual investment tax modeled in this account.'],['Modeled terminal tax',USD(p.terminalTax),'Full pre-tax balance times retirement tax assumption; not progressive brackets.'],['Pre-tax IRA after terminal tax',USD(p.pretaxNet),'Assumes fully deductible contributions and no nondeductible basis.'],['Taxable-account annual taxes',USD(p.totalAnnualTax),'Cumulative modeled tax on positive returns, not a tax return.'],['Scope','Accumulation only','No contribution-limit, eligibility, conversion, RMD, fee or early-distribution calculation.']];
+  renderGeneric(cards,bars,rows);
+  if(schedule)schedule.innerHTML=p.schedule.map(x=>`<tr><td>${x.age}</td><td>${USD(x.pretaxStart)}</td><td>${USD(x.pretaxEnd)}</td><td>${USD(x.netStart)}</td><td>${USD(x.netEnd)}</td><td>${USD(x.rothStart)}</td><td>${USD(x.rothEnd)}</td><td>${USD(x.taxableStart)}</td><td>${USD(x.taxableEnd)}</td></tr>`).join('');
+}
 function syncPensionFields(){
   const mode=document.getElementById('pen_mode')?.value||'lump';
   document.querySelectorAll('[data-pension-mode]').forEach(el=>{const active=el.dataset.pensionMode.split(' ').includes(mode);el.classList.toggle('is-hidden',!active);el.querySelectorAll('input,select').forEach(input=>input.disabled=!active)});return mode;
@@ -7375,6 +7440,7 @@ function paybackProjection(){
 }
 
 function renderGenericFromEngine(engine) {
+  if(engine==='ira_compare'){renderIra();return}
   if(engine==='pension_advanced'){renderPension();return}
   if (!document.getElementById("genericSummary")) return;
   let cards=[], bars=[], rows=[];
