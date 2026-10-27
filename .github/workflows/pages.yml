@@ -145,6 +145,9 @@ jobs:
       - name: Check pension comparisons and annual cash-flow timing
         run: node scripts/test_pension.cjs dist/assets/calculator.js
 
+      - name: Check RMD factors, birth cohorts and projection validation
+        run: node scripts/test_rmd.cjs dist/assets/calculator.js
+
       - name: Check exact-cent tips and bill splitting
         run: node scripts/test_tip.cjs dist/assets/calculator.js
 
