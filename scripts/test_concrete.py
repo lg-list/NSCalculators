@@ -7,6 +7,24 @@ import build
 
 
 class ConcreteTests(unittest.TestCase):
+    def test_reference_tables_are_server_rendered_and_match_label_yields(self):
+        from html.parser import HTMLParser
+        class Rows(HTMLParser):
+            def __init__(self):
+                super().__init__(); self.rows = []; self.row = None; self.cell = None
+            def handle_starttag(self, tag, attrs):
+                if tag == 'tr': self.row = []
+                if tag in ('th', 'td'): self.cell = ''
+            def handle_data(self, data):
+                if self.cell is not None: self.cell += data
+            def handle_endtag(self, tag):
+                if tag in ('th', 'td'): self.row.append(self.cell); self.cell = None
+                if tag == 'tr': self.rows.append(self.row); self.row = None
+        table = Rows(); table.feed(build.concrete_reference_html())
+        self.assertEqual([row[2:4] for row in table.rows[1:6]], [['90','99'],['72','80'],['60','66'],['45','50'],['40','44']])
+        self.assertEqual([row[1] for row in table.rows[7:]], ['3.6 ft²','2.4 ft²','1.8 ft²','1.2 ft²'])
+        self.assertEqual(build.concrete_reference_html().count('data-concrete-example='), 9)
+
     def test_existing_concrete_route_has_label_yield_units_and_original_examples(self):
         data = build.read_data()
         calc = next(c for c in build.base_and_supplemental(data) if c['slug'] == 'concrete-volume-calculator')

@@ -30,4 +30,9 @@ values.get('concrete_units').value='metric';c.changeConcreteUnits();c.calc('conc
 values.get('concrete_length').value='-20';c.calc('concrete_advanced');assert.match(result.innerHTML,/Check the concrete inputs/);assert.equal(captured.bars.length,0);count++;
 values.get('concrete_shape').value='post_hole';c.calc('concrete_advanced');assert.match(result.innerHTML,/24 bags/);assert.equal(flags.slabDisabled,true);values.get('concrete_qty').value='2.5';c.calc('concrete_advanced');assert.match(result.innerHTML,/whole quantity/);assert.equal(captured.bars.length,0);count++;
 values.get('concrete_shape').value='slab';values.get('concrete_length').value='20';values.get('concrete_bag_size').value='custom';values.get('concrete_custom_yield').value='.5';c.calc('concrete_advanced');assert.match(result.innerHTML,/147 bags/);assert.equal(flags.customDisabled,false);values.get('concrete_bag_price').value='';values.get('concrete_yard_price').value='';c.calc('concrete_advanced');assert.match(result.innerHTML,/price not entered/);assert.equal(captured.cards.at(-1)[1],'Not entered');count++;
-console.log(`${count} concrete volume, yield, bag rounding, units and validation scenarios passed.`);
+for(const [key,bags,extra] of [['0.30',90,99],['0.375',72,80],['0.45',60,66],['0.60',45,50],['0.675',40,44]]){
+  const example=c.concreteReferenceValues('yard',key);assert.ok(example);p=run(example);near(p.yards,1);assert.equal(p.bags,bags);assert.equal(p.bagCost,null);assert.equal(run({...example,waste:10}).bags,extra);
+}
+for(const [depth,area] of [[2,3.6],[3,2.4],[4,1.8],[6,1.2]]){const example=c.concreteReferenceValues('coverage','0.60',depth);near(example.length*example.width,area);p=run(example);near(p.baseFt3,.6);assert.equal(p.bags,1);assert.equal(p.readyCost,null)}
+for(const args of [['yard','__proto__'],['yard','0.6'],['coverage','0.30',4],['coverage','0.60',5],['coverage','0.60',NaN],['bad','0.60']]){assert.equal(c.concreteReferenceValues(...args),null);count++}
+console.log(`${count} concrete volume, reference examples, yield, bag rounding, units and validation scenarios passed.`);

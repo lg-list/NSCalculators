@@ -5,6 +5,7 @@ from hashlib import sha256
 from html import escape
 from html.parser import HTMLParser
 from pathlib import Path
+from decimal import Decimal, ROUND_CEILING
 import json
 import math
 import os
@@ -20,6 +21,7 @@ KEYWORD_STATS_PROVENANCE = ROOT / "exports" / "keyword-stats-provenance.json"
 SEO_STRATEGY = ROOT / "exports" / "seo-keyword-strategy-2026-09-05.json"
 RMD_JOINT_LIFE_TABLE = ROOT / "src" / "data" / "rmd-joint-life-table.json"
 RMD_UNIFORM_LIFE_TABLE = ROOT / "src" / "data" / "rmd-uniform-lifetime-table.json"
+CONCRETE_BAG_YIELDS = ((40, "0.30"), (50, "0.375"), (60, "0.45"), (80, "0.60"), (90, "0.675"))
 PUBLIC_BASE_PATH = os.environ.get("PUBLIC_BASE_PATH", "").strip().rstrip("/")
 PUBLIC_SITE_DOMAIN = os.environ.get("PUBLIC_SITE_DOMAIN", "").strip()
 GA4_MEASUREMENT_ID = os.environ.get("GA4_MEASUREMENT_ID", "G-19CY1VWHFM").strip()
@@ -188,7 +190,7 @@ def calculator_assets():
     rows = json.loads(RMD_JOINT_LIFE_TABLE.read_text(encoding="utf-8"))["rows"]
     uniform = json.loads(RMD_UNIFORM_LIFE_TABLE.read_text(encoding="utf-8"))["rows"]
     factors = [uniform[str(age)] for age in range(72, 121)]
-    bundle = CALC_JS.replace("__RMD_JOINT_TABLE__", json.dumps(rows, separators=(",", ":"))).replace("__RMD_UNIFORM_FACTORS__", json.dumps(factors, separators=(",", ":"))).strip() + "\n"
+    bundle = CALC_JS.replace("__RMD_JOINT_TABLE__", json.dumps(rows, separators=(",", ":"))).replace("__RMD_UNIFORM_FACTORS__", json.dumps(factors, separators=(",", ":"))).replace("__CONCRETE_YIELD_PRESETS__", json.dumps({key: float(key) for _, key in CONCRETE_BAG_YIELDS}, separators=(",", ":"))).strip() + "\n"
     return bundle, sha256(bundle.encode("utf-8")).hexdigest()[:16]
 
 
@@ -2423,8 +2425,27 @@ def wheel_offset_input_html():
 </div><p class="field-note">Nominal wheel widths; fitment is not guaranteed.</p>"""
 
 
+def concrete_bag_options():
+    return ''.join(f'<option value="{value}"{" selected" if weight == 80 else ""}>{weight} lb ({value} ft³)</option>' for weight, value in CONCRETE_BAG_YIELDS)
+
+
+def concrete_reference_html():
+    rows = []
+    for weight, value in CONCRETE_BAG_YIELDS:
+        y = Decimal(value)
+        base = int((Decimal(27) / y).to_integral_value(rounding=ROUND_CEILING))
+        extra = int((Decimal(27) * Decimal('1.10') / y).to_integral_value(rounding=ROUND_CEILING))
+        rows.append(f'<tr><th scope="row">{weight} lb</th><td>{value} ft³</td><td>{base}</td><td>{extra}</td><td><button type="button" class="concrete-reference-btn" data-concrete-example="yard" data-concrete-yield="{value}" aria-label="Load one cubic yard with {weight} lb yield example">Load example</button></td></tr>')
+    coverage = []
+    for depth in (2, 3, 4, 6):
+        area = Decimal('0.60') * 12 / depth
+        coverage.append(f'<tr><th scope="row">{depth} in</th><td>{area:.1f} ft²</td><td><button type="button" class="concrete-reference-btn" data-concrete-example="coverage" data-concrete-yield="0.60" data-concrete-depth="{depth}" aria-label="Load one 80 lb bag coverage example at {depth} inches">Load example</button></td></tr>')
+    return f'''<section class="concrete-reference" aria-labelledby="concrete-bag-table-title"><h2 id="concrete-bag-table-title">Concrete bags per cubic yard: 40, 50, 60, 80 and 90 lb</h2><p>These are QUIKRETE Concrete Mix No. 1101 yield examples, not universal bag-weight conversions. Whole bags are rounded up after the volume allowance. The 10% column is an illustrative allowance, not a project recommendation.</p><p class="table-note">Loading an example replaces calculator inputs, uses US dimensions and 0% allowance, and clears optional prices. A 9 × 9 ft rectangle at 4 in is a volume identity for 1 yd³, not a slab design.</p><div class="table-scroll"><table class="data-table" id="concreteBagReference"><thead><tr><th>Bag size</th><th>Approx. yield</th><th>1 yd³, no allowance</th><th>1 yd³ + 10%</th><th>Try 1 yd³</th></tr></thead><tbody>{''.join(rows)}</tbody></table></div>
+<h2 id="80-lb-bag-coverage">How much does an 80 lb bag of concrete cover?</h2><p>At a labeled 0.60 ft³ yield, one bag covers approximately <strong>1.8 ft² at 4 inches thick</strong> before allowance. Coverage is volume divided by thickness in feet; double the thickness and the same bag covers half the area.</p><div class="table-scroll"><table class="data-table" id="concreteCoverageReference"><thead><tr><th>Example thickness</th><th>Area per 0.60 ft³ bag</th><th>Try 1 bag</th></tr></thead><tbody>{''.join(coverage)}</tbody></table></div><p>Coverage = 0.60 / (thickness in inches / 12). These thicknesses are arithmetic examples, not structural specifications. Uneven depth, excavation and product-label differences change the quantity. Use the actual mix's finished-volume yield and the project's required thickness; do not add mixing-water volume to the label yield.</p></section>'''
+
+
 def concrete_volume_input_html():
-    return """<div class="fields project-fields concrete-fields">
+    return f"""<div class="fields project-fields concrete-fields">
 <div class="field"><label for="concrete_shape">Project shape</label><select id="concrete_shape"><option value="slab" selected>Slab, patio, or footing</option><option value="column">Round column</option><option value="post_hole">Round post holes</option></select></div>
 <div class="field"><label for="concrete_units">Dimension units</label><select id="concrete_units"><option value="us">US: ft and in</option><option value="metric">Metric: m and mm</option></select></div>
 <div class="field" data-concrete-rect><label for="concrete_length">Length</label><div class="input-unit"><input id="concrete_length" type="number" step="any" min="0" value="20"><span data-concrete-length-unit>ft</span></div></div>
@@ -2434,7 +2455,7 @@ def concrete_volume_input_html():
 <div class="field is-hidden" data-concrete-round><label for="concrete_height">Height or depth</label><div class="input-unit"><input id="concrete_height" type="number" step="any" min="0" value="4"><span data-concrete-length-unit>ft</span></div></div>
 <div class="field is-hidden" data-concrete-round><label for="concrete_qty">Quantity</label><input id="concrete_qty" type="number" step="1" min="1" value="4"></div>
 <div class="field"><label for="concrete_waste">Waste allowance</label><div class="input-unit"><input id="concrete_waste" type="number" step="any" min="0" value="10"><span>%</span></div></div>
-<div class="field field-wide"><label for="concrete_bag_size">QUIKRETE 1101 yield example</label><select id="concrete_bag_size"><option value="0.30">40 lb (0.30 ft³)</option><option value="0.375">50 lb (0.375 ft³)</option><option value="0.45">60 lb (0.45 ft³)</option><option value="0.60" selected>80 lb (0.60 ft³)</option><option value="0.675">90 lb (0.675 ft³)</option><option value="custom">Custom product label yield</option></select></div>
+<div class="field field-wide"><label for="concrete_bag_size">QUIKRETE 1101 yield example</label><select id="concrete_bag_size">{concrete_bag_options()}<option value="custom">Custom product label yield</option></select></div>
 <div class="field field-wide is-hidden" data-concrete-custom><label for="concrete_custom_yield">Yield per bag</label><div class="input-unit"><input id="concrete_custom_yield" type="number" step="any" min="0" value="0.60"><select id="concrete_yield_unit" aria-label="Concrete bag yield unit"><option value="ft3">ft³</option><option value="liters">liters</option><option value="m3">m³</option></select></div></div>
 <details class="more-options field-wide"><summary>Cost options</summary><div class="fields concrete-cost-fields"><div class="field"><label for="concrete_bag_price">Price per bag</label><div class="input-unit"><input id="concrete_bag_price" type="number" step="any" min="0" value="6.25"><span>$</span></div></div><div class="field"><label for="concrete_yard_price">Ready-mix price</label><div class="input-unit"><input id="concrete_yard_price" type="number" step="any" min="0" value="165"><span>$/yd³</span></div></div></div></details>
 </div>"""
@@ -4110,7 +4131,7 @@ def high_value_calculator_copy(calc):
 <h2>Fitment checks before ordering wheels</h2><p>Use the result to narrow the options, then verify the proposed wheel and tire against the vehicle and wheel manufacturers' specifications. Confirm bolt pattern, center bore, lug-seat type, hardware, load rating, tire load index and speed rating, approved wheel-width range, brake-caliper clearance, suspension clearance, fender clearance, alignment, and space through the full steering and suspension range. Tire Rack's <a href="https://www.tirerack.com/images/pdf/TW_OwnersManual.pdf" rel="external noopener">wheel and tire owner's manual</a> also calls for checking hub contact and bolt-circle compatibility during installation.</p><p>The clearance verdict is intentionally conservative: zero or negative estimated clearance means the entered geometry reaches or passes the measured static gap. Positive remaining clearance still does not guarantee fitment because tires flex, dimensions vary, and suspension and steering move.</p>
 <h2>Frequently asked questions</h2><h3>Does a lower offset add more poke?</h3><p>Usually yes when wheel width is unchanged. A wider wheel can extend both inward and outward, so compare width and offset together.</p><h3>Is ET35 the same on every wheel width?</h3><p>The offset location is the same distance from the wheel centerline, but the edge positions are not. A wider ET35 wheel extends farther on both sides than a narrower ET35 wheel.</p><h3>Does a spacer increase or decrease offset?</h3><p>A spacer decreases effective offset. Subtract the spacer thickness in millimeters from the labeled ET value.</p><h3>Is backspacing exact in this calculator?</h3><p>No. It uses nominal wheel width plus one inch to approximate both rim flanges. Use a manufacturer drawing or direct measurement when exact backspacing matters.</p><h3>Can this calculator guarantee wheel fitment?</h3><p>No. It compares geometry only. Vehicle-specific brake, hub, fender, suspension, steering, load, and hardware requirements must be checked separately.</p><h3>Should I compare tires too?</h3><p>Yes. A tire can extend beyond the rim, and different models with the same nominal size can have different measured dimensions. Use the optional tire-width comparison here and the <a href="/tire-size-calculator/">tire size calculator</a> for diameter, sidewall, and speedometer changes.</p>"""
     if calc.get("slug") == "concrete-volume-calculator":
-        return """
+        return concrete_reference_html() + """
 <h2>How much concrete do I need?</h2><p>Select a rectangular slab or footing, round column, or set of post holes. The calculator converts every measurement to feet, calculates volume, adds the entered waste allowance, and reports cubic feet, cubic yards, bags, and estimated material cost.</p>
 <p class="formula">rectangular volume = length x width x thickness; round volume = π x radius² x height x quantity</p>
 <h2>Concrete slab example</h2><p>A 20 ft by 10 ft slab at 4 inches thick contains 66.67 cubic feet before waste. Adding 10% gives 73.33 cubic feet, or about 2.72 cubic yards. At an approximate 0.60 cubic foot yield, that is 123 80 lb bags after rounding up.</p>
@@ -4145,6 +4166,7 @@ def high_value_calculator_copy(calc):
 <p class="formula">rectangle = length x width; circle = π x (diameter / 2)²; triangle = base x height / 2</p>
 <h2>Room floor example and ordering area</h2><p>A 20 ft by 12 ft rectangular floor contains 240 square feet and has a 64 ft perimeter. With 10% overage, the material target is 240 x 1.10 = 264 square feet. At an entered material price of $3.50 per square foot, the estimated material cost is 264 x $3.50 = $924. This is an area-based estimate; it does not round up to full cartons.</p>
 <h2>Gross wall area versus net wall area</h2><p>Gross wall area is room perimeter multiplied by wall height. Net wall area subtracts the combined square footage of openings. Whether to subtract small openings depends on the product, labor method, and estimator, so enter only the deductions appropriate to your project.</p>
+<h2>From slab area to concrete bags</h2><p>Square footage alone does not determine concrete quantity: multiply area by the required thickness in feet, then divide by the selected mix's finished-volume yield. For an arithmetic example, 90 sq ft at 4 in is 30 cubic feet; a product yielding 0.60 cubic foot per bag needs 50 bags before allowance. See the <a href="/concrete-volume-calculator/#80-lb-bag-coverage">80 lb concrete bag coverage table and calculator</a> to compare thicknesses. Bag weight alone does not establish yield, and the example thickness is not a structural specification.</p>
 <h2>Roof square footage versus floor area</h2><p>A room's floor area or a building's horizontal footprint is not automatically its sloped roof surface area. For a known, uniform roof pitch, use the <a href="/roof-pitch-calculator/">roof pitch calculator for roof square footage</a> to apply the slope multiplier to a measured horizontal roof projection. For example, 1,200 sq ft of projection at 6:12 becomes about 1,341.64 sq ft of sloped surface, before material allowance.</p><p>Include applicable eaves in the projection, do not substitute the sum of multiple interior floors, and do not count both a whole roof projection and its component projections. Mixed pitches and complex roof sections need separate calculations and a checked takeoff. The result is geometry, not a shingle-bundle order, installed cost or structural assessment.</p>
 <h2>Measure feet and inches consistently</h2><p>The calculator accepts decimal feet. Convert inches to a fraction of a foot before combining them with a measurement in feet: 12 ft 6 in = 12 + 6/12 = 12.5 ft. For example, a room 12 ft 6 in by 10 ft is 12.5 x 10 = 125 square feet. Do not enter 12.6 for 12 ft 6 in; the decimal portion of a foot is not inches.</p><p>The international foot is exactly 0.3048 meter, so one square foot is 0.09290304 square meter. NIST publishes the <a href="https://www.nist.gov/pml/us-surveyfoot/revised-unit-conversion-factors" rel="external noopener">current foot conversion factors</a>. This calculator is intended for ordinary project measurements, not legacy U.S. survey-foot mapping.</p>
 <h2>Measure irregular rooms without double counting</h2><p>For an L-shaped or stepped floor that the shape menu does not model directly, split the outline into non-overlapping rectangles. Calculate each section separately and add the results. For example, a 12 ft by 10 ft main section plus a 4 ft by 3 ft alcove gives 120 + 12 = 132 square feet. If a cutout is easier to measure, calculate it separately and subtract it from the enclosing rectangle. Keep each piece on the same scale and do not count overlapping space twice.</p>
@@ -5804,6 +5826,8 @@ CSS += r'''
 @media(max-width:560px){.pension-fields>[data-pension-mode]{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.pension-fields .field label{font-size:14px!important;min-height:34px}.pension-fields .table-note{font-size:12px}.pension-dashboard .summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 '''
 
+CSS += '.concrete-reference{min-width:0}.concrete-reference .table-scroll{max-width:100%;overflow-x:auto;margin:12px 0 20px}.concrete-reference .data-table{font-size:16px}.concrete-reference-btn{min-height:44px;padding:8px 12px;border:1px solid var(--line);border-radius:6px;background:#fff;color:var(--brand);font:600 16px/1.3 system-ui;cursor:pointer;white-space:nowrap}.concrete-reference-btn:hover{background:#f1f6fc}.concrete-reference-btn:focus-visible{outline:3px solid var(--brand);outline-offset:2px}'
+
 CALC_JS = r'''
 const $=s=>document.querySelector(s), V=id=>parseFloat(document.getElementById(id)?.value||0);
 const NUMBER_FORMATTERS=new Map();
@@ -6679,6 +6703,13 @@ function changeConcreteUnits(){
   concretePreviousUnits=next;
 }
 function concreteNumber(value,digits=3){return Number.isFinite(value)&&value!==0&&(Math.abs(value)<Math.pow(10,-digits)/2||Math.abs(value)>=1e12)?value.toExponential(3):F(value,digits)}
+const CONCRETE_YIELD_PRESETS=__CONCRETE_YIELD_PRESETS__;
+function concreteReferenceValues(kind,bagSize,depth){
+  if(!Object.hasOwn(CONCRETE_YIELD_PRESETS,bagSize))return null;
+  if(kind==='yard')return{shape:'slab',units:'us',length:9,width:9,thickness:4,waste:0,bagSize,bagPrice:null,yardPrice:null};
+  if(kind==='coverage'&&bagSize==='0.60'&&[2,3,4,6].includes(depth))return{shape:'slab',units:'us',length:.60*12/depth,width:1,thickness:depth,waste:0,bagSize,bagPrice:null,yardPrice:null};
+  return null;
+}
 function concreteAmounts({shape,units,length,width,thickness,diameter,height,quantity,waste,bagSize,customYield,yieldUnit,bagPrice,yardPrice}){
   const fail=message=>({valid:false,message}),finite=x=>typeof x==='number'&&Number.isFinite(x),positive=x=>finite(x)&&x>0;
   if(!['slab','column','post_hole'].includes(shape)||!['us','metric'].includes(units))return fail('Choose a supported project shape and dimension unit system.');
@@ -6698,7 +6729,7 @@ function concreteAmounts({shape,units,length,width,thickness,diameter,height,qua
     if(!positive(customYield)||!['ft3','liters','m3'].includes(yieldUnit))return fail('Enter a finite positive product-label yield and choose its volume unit.');
     yieldPerBag=customYield*(yieldUnit==='liters'?1/28.316846592:yieldUnit==='m3'?1/.028316846592:1);
   }else{
-    const presets={'0.30':.30,'0.375':.375,'0.45':.45,'0.60':.60,'0.675':.675};
+    const presets=CONCRETE_YIELD_PRESETS;
     if(!Object.hasOwn(presets,bagSize))return fail('Choose a listed yield example or enter a custom label yield.');
     yieldPerBag=presets[bagSize];
   }
@@ -6716,6 +6747,13 @@ function concreteProjection(){
   const price=id=>document.getElementById(id)?.value?.trim()===''?null:read(id);
   return concreteAmounts({shape,units,length:read('concrete_length'),width:read('concrete_width'),thickness:read('concrete_thickness'),diameter:read('concrete_diameter'),height:read('concrete_height'),quantity:read('concrete_qty'),waste:read('concrete_waste'),bagSize:document.getElementById('concrete_bag_size')?.value,customYield:read('concrete_custom_yield'),yieldUnit:document.getElementById('concrete_yield_unit')?.value,bagPrice:price('concrete_bag_price'),yardPrice:price('concrete_yard_price')});
 }
+document.addEventListener('click',event=>{
+  const button=event.target.closest('[data-concrete-example]');if(!button||currentEngine()!=='concrete_advanced')return;
+  const p=concreteReferenceValues(button.dataset.concreteExample,button.dataset.concreteYield,Number(button.dataset.concreteDepth));if(!p)return;
+  for(const [id,value] of Object.entries({shape:p.shape,units:p.units,length:p.length,width:p.width,thickness:p.thickness,diameter:12,height:4,qty:1,waste:0,bag_size:p.bagSize,custom_yield:.60,yield_unit:'ft3',bag_price:'',yard_price:''}))document.getElementById('concrete_'+id).value=String(value);
+  const details=document.querySelector('.concrete-fields details');if(details)details.open=false;
+  calc('concrete_advanced');document.querySelector('.calc').scrollIntoView({block:'start'});document.querySelector('.calc-btn').focus({preventScroll:true});
+});
 function syncRoofFields(){const mode=document.getElementById('roof_input_mode')?.value||'pitch';for(const [selector,active] of [['[data-roof-pitch]','pitch'],['[data-roof-rise-run]','rise_run'],['[data-roof-angle]','angle']])document.querySelectorAll(selector).forEach(el=>{const hidden=mode!==active;el.classList.toggle('is-hidden',hidden);el.querySelectorAll('input').forEach(input=>input.disabled=hidden)});return mode}
 function roofNumber(value,digits=2){if(value>0&&(value<.5*10**(-digits)||value>=1e9))return value.toExponential(3);return F(value,digits)}
 function roofAngleNumber(value,digits=2){return value<90&&Number(value.toFixed(digits))===90?String(value):roofNumber(value,digits)}
