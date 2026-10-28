@@ -1,0 +1,234 @@
+{
+  "observed_date": "2026-10-28",
+  "source": "Rendered public Calculator.net form values and result summaries",
+  "observations": [
+    {
+      "name": "baseline",
+      "url": "https://www.calculator.net/amortization-calculator.html?cloanamount=200000&cloanterm=15&cloantermmonth=0&cinterestrate=6&caddoptional=1&cstartmonth=10&cstartyear=2026&cexma=0&cexmsm=10&cexmsy=2026&cexya=0&cexysm=10&cexysy=2026&cexoa=0&cexosm=10&cexosy=2026&caot=0&x=Calculate",
+      "fields": {
+        "cloanamount": "200,000",
+        "cloanterm": "15",
+        "cloantermmonth": "0",
+        "cinterestrate": "6",
+        "cstartmonth": "10",
+        "cstartyear": "2026",
+        "cexma": "0",
+        "cexmsm": "10",
+        "cexmsy": "2026",
+        "cexya": "0",
+        "cexysm": "10",
+        "cexysy": "2026",
+        "cexoa": "0",
+        "cexosm": "10",
+        "cexosy": "2026",
+        "caot": "0",
+        "xa1": "0",
+        "xm1": "10",
+        "xy1": "2026"
+      },
+      "selectedMonthlyRows": [
+        [
+          "1",
+          "10/2026",
+          "$1,000.00",
+          "$687.71",
+          "$199,312.29"
+        ],
+        [
+          "2",
+          "11/2026",
+          "$996.56",
+          "$691.15",
+          "$198,621.13"
+        ],
+        [
+          "180",
+          "9/2041",
+          "$8.40",
+          "$1,679.32",
+          "$0.00"
+        ]
+      ],
+      "metrics": {
+        "payment": 1687.71,
+        "months": 180,
+        "scheduledTotalExcludingExtras": 303788.46,
+        "interest": 103788.46,
+        "extraPaid": 0,
+        "interestSaved": 0,
+        "payoffLabel": "Oct. 2041"
+      }
+    },
+    {
+      "name": "monthly",
+      "url": "https://www.calculator.net/amortization-calculator.html?cloanamount=200000&cloanterm=15&cloantermmonth=0&cinterestrate=6&caddoptional=1&cstartmonth=10&cstartyear=2026&cexma=100&cexmsm=11&cexmsy=2026&cexya=0&cexysm=10&cexysy=2026&cexoa=0&cexosm=10&cexosy=2026&caot=0&x=Calculate",
+      "fields": {
+        "cloanamount": "200,000",
+        "cloanterm": "15",
+        "cloantermmonth": "0",
+        "cinterestrate": "6",
+        "cstartmonth": "10",
+        "cstartyear": "2026",
+        "cexma": "100",
+        "cexmsm": "11",
+        "cexmsy": "2026",
+        "cexya": "0",
+        "cexysm": "10",
+        "cexysy": "2026",
+        "cexoa": "0",
+        "cexosm": "10",
+        "cexosy": "2026",
+        "caot": "0",
+        "xa1": "0",
+        "xm1": "10",
+        "xy1": "2026"
+      },
+      "selectedMonthlyRows": [
+        [
+          "1",
+          "10/2026",
+          "$1,000.00",
+          "$687.71",
+          "$199,312.29"
+        ],
+        [
+          "2",
+          "11/2026",
+          "$996.56",
+          "$791.15",
+          "$198,521.13"
+        ],
+        [
+          "165",
+          "6/2040",
+          "$3.99",
+          "$797.55",
+          "$0.00"
+        ]
+      ],
+      "metrics": {
+        "payment": 1687.71,
+        "months": 165,
+        "scheduledTotalExcludingExtras": 277586.58,
+        "interest": 93886.58,
+        "extraPaid": 16300,
+        "interestSaved": 9901.88,
+        "payoffLabel": "Jul. 2040"
+      }
+    },
+    {
+      "name": "yearly",
+      "url": "https://www.calculator.net/amortization-calculator.html?cloanamount=200000&cloanterm=15&cloantermmonth=0&cinterestrate=6&caddoptional=1&cstartmonth=10&cstartyear=2026&cexma=0&cexmsm=10&cexmsy=2026&cexya=1200&cexysm=11&cexysy=2026&cexoa=0&cexosm=10&cexosy=2026&caot=0&x=Calculate",
+      "fields": {
+        "cloanamount": "200,000",
+        "cloanterm": "15",
+        "cloantermmonth": "0",
+        "cinterestrate": "6",
+        "cstartmonth": "10",
+        "cstartyear": "2026",
+        "cexma": "0",
+        "cexmsm": "10",
+        "cexmsy": "2026",
+        "cexya": "1,200",
+        "cexysm": "11",
+        "cexysy": "2026",
+        "cexoa": "0",
+        "cexosm": "10",
+        "cexosy": "2026",
+        "caot": "0",
+        "xa1": "0",
+        "xm1": "10",
+        "xy1": "2026"
+      },
+      "selectedMonthlyRows": [
+        [
+          "1",
+          "10/2026",
+          "$1,000.00",
+          "$687.71",
+          "$199,312.29"
+        ],
+        [
+          "2",
+          "11/2026",
+          "$996.56",
+          "$1,891.15",
+          "$197,421.13"
+        ],
+        [
+          "164",
+          "5/2040",
+          "$6.39",
+          "$1,278.65",
+          "$0.00"
+        ]
+      ],
+      "metrics": {
+        "payment": 1687.71,
+        "months": 164,
+        "scheduledTotalExcludingExtras": 276382.37,
+        "interest": 93182.37,
+        "extraPaid": 16800,
+        "interestSaved": 10606.09,
+        "payoffLabel": "Jun. 2040"
+      }
+    },
+    {
+      "name": "combined",
+      "url": "https://www.calculator.net/amortization-calculator.html?cloanamount=200000&cloanterm=15&cloantermmonth=0&cinterestrate=6&caddoptional=1&cstartmonth=10&cstartyear=2026&cexma=100&cexmsm=11&cexmsy=2026&cexya=1200&cexysm=11&cexysy=2026&cexoa=10000&cexosm=11&cexosy=2027&caot=1&xa1=5000&xm1=11&xy1=2028&x=Calculate",
+      "fields": {
+        "cloanamount": "200,000",
+        "cloanterm": "15",
+        "cloantermmonth": "0",
+        "cinterestrate": "6",
+        "cstartmonth": "10",
+        "cstartyear": "2026",
+        "cexma": "100",
+        "cexmsm": "11",
+        "cexmsy": "2026",
+        "cexya": "1,200",
+        "cexysm": "11",
+        "cexysy": "2026",
+        "cexoa": "10,000",
+        "cexosm": "11",
+        "cexosy": "2027",
+        "caot": "1",
+        "xa1": "5,000",
+        "xm1": "11",
+        "xy1": "2028"
+      },
+      "selectedMonthlyRows": [
+        [
+          "1",
+          "10/2026",
+          "$1,000.00",
+          "$687.71",
+          "$199,312.29"
+        ],
+        [
+          "2",
+          "11/2026",
+          "$996.56",
+          "$1,991.15",
+          "$197,321.13"
+        ],
+        [
+          "136",
+          "1/2038",
+          "$6.98",
+          "$1,396.84",
+          "$0.00"
+        ]
+      ],
+      "metrics": {
+        "payment": 1687.71,
+        "months": 136,
+        "scheduledTotalExcludingExtras": 229245.17,
+        "interest": 72045.17,
+        "extraPaid": 42800,
+        "interestSaved": 31743.29,
+        "payoffLabel": "Feb. 2038"
+      }
+    }
+  ]
+}

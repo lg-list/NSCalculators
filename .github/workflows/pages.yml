@@ -154,6 +154,9 @@ jobs:
       - name: Check IRA equal-budget comparisons and annual cash flows
         run: node scripts/test_ira.cjs dist/assets/calculator.js
 
+      - name: Check amortization accounting, dates and extra payments
+        run: node scripts/test_amortization.cjs dist/assets/calculator.js
+
       - name: Check exact-cent tips and bill splitting
         run: node scripts/test_tip.cjs dist/assets/calculator.js
 
