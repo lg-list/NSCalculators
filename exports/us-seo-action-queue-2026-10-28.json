@@ -23,7 +23,8 @@
       "query_observation": {"impressions": 14, "clicks": 0, "average_position": 8.5},
       "query_page_pair_observed": true,
       "action": "Check the currently served title/snippet and US trip-cost task before proposing one focused change. Keep the existing calculator and redirects; gather more query impressions before treating CTR as a reliable response metric.",
-      "status": "next_ctr_diagnostic",
+      "status": "diagnostic_complete_observe_existing_treatment",
+      "diagnostic": "October 28 production title, description and US trip-cost flow already cover the task. Calculate is visible at 390x844 with no horizontal overflow. No title or URL change justified by fourteen query impressions.",
       "guardrail": "Fourteen impressions are a small sample. Do not create a competing fuel-cost URL, invent US gas prices or claim statistical significance."
     },
     {
@@ -34,7 +35,8 @@
       "separate_page_observation": {"impressions": 266, "clicks": 0, "average_position": 79.44},
       "query_page_pair_observed": false,
       "action": "Audit the full projection and withdrawal modes, invalid/Clear behavior and currently stated tax-year assumptions. Preserve the already tested employer-match work. Confirm exact-query/page evidence before changing targeting.",
-      "status": "next_functionality_audit",
+      "status": "functionality_repair_validated_pending_deployment",
+      "repair_report": "../reports/seo/k401-validation-2026-10-28.md",
       "guardrail": "The query and page counts are separate aggregates. Verify current IRS primary sources before tax-limit changes; do not add location clones from low-count place-name queries."
     },
     {

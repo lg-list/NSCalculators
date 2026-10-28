@@ -154,6 +154,9 @@ jobs:
       - name: Check IRA equal-budget comparisons and annual cash flows
         run: node scripts/test_ira.cjs dist/assets/calculator.js
 
+      - name: Check 401k projections, withdrawals and mode validation
+        run: node scripts/test_k401_projection.cjs dist/assets/calculator.js
+
       - name: Check amortization accounting, dates and extra payments
         run: node scripts/test_amortization.cjs dist/assets/calculator.js
 
