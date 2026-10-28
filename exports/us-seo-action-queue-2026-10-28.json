@@ -1,0 +1,49 @@
+{
+  "as_of": "2026-10-28",
+  "measurement_file": "us-search-comparison-2026-10-28.json",
+  "pair_evidence_file": "us-query-page-observations-2026-10-28.json",
+  "country": "usa",
+  "us_monthly_market_search_volume": null,
+  "items": [
+    {
+      "priority": 1,
+      "url": "https://nscalculators.com/area-calculator/",
+      "primary_query": "area calculator",
+      "query_observation": {"impressions": 587, "clicks": 0, "average_position": 8.19},
+      "query_page_pair_observed": true,
+      "action": "Hold the October 24-25 title/content treatment. Compare a completed post-change interval after a few weeks, including device and exact-query segmentation before considering a further snippet change.",
+      "status": "measured_observation_period",
+      "next_review_not_before": "2026-11-08",
+      "guardrail": "The current report ends October 25 and cannot assess most of the treatment. No duplicate area landing pages or promised CTR uplift."
+    },
+    {
+      "priority": 2,
+      "url": "https://nscalculators.com/trip-fuel-cost-calculator/",
+      "primary_query": "fuel cost calculator",
+      "query_observation": {"impressions": 14, "clicks": 0, "average_position": 8.5},
+      "query_page_pair_observed": true,
+      "action": "Check the currently served title/snippet and US trip-cost task before proposing one focused change. Keep the existing calculator and redirects; gather more query impressions before treating CTR as a reliable response metric.",
+      "status": "next_ctr_diagnostic",
+      "guardrail": "Fourteen impressions are a small sample. Do not create a competing fuel-cost URL, invent US gas prices or claim statistical significance."
+    },
+    {
+      "priority": 3,
+      "url": "https://nscalculators.com/401k-calculator/",
+      "primary_query": "401k calculator",
+      "query_observation": {"impressions": 123, "clicks": 0, "average_position": 83.09},
+      "separate_page_observation": {"impressions": 266, "clicks": 0, "average_position": 79.44},
+      "query_page_pair_observed": false,
+      "action": "Audit the full projection and withdrawal modes, invalid/Clear behavior and currently stated tax-year assumptions. Preserve the already tested employer-match work. Confirm exact-query/page evidence before changing targeting.",
+      "status": "next_functionality_audit",
+      "guardrail": "The query and page counts are separate aggregates. Verify current IRS primary sources before tax-limit changes; do not add location clones from low-count place-name queries."
+    },
+    {
+      "priority": 4,
+      "urls": ["https://nscalculators.com/boat-loan-calculator/", "https://nscalculators.com/personal-loan-calculator/", "https://nscalculators.com/amortization-calculator/", "https://nscalculators.com/rmd-calculator/", "https://nscalculators.com/pension-calculator/", "https://nscalculators.com/ira-calculator/", "https://nscalculators.com/concrete-volume-calculator/"],
+      "action": "Maintain deployed accuracy repairs and observe fresh completed windows. Fix reproducible new defects immediately; avoid further title churn or declaring gains from data ending before the repairs.",
+      "status": "deployed_changes_require_later_measurement",
+      "guardrail": "Display growth is not proof of repair impact or 1000 daily organic visitors."
+    }
+  ],
+  "global_constraints": ["No paid services or ads, outreach, account changes or new external submissions without owner approval.", "The US Keyword Planner CSV is still pending. GSC impressions are site demand evidence, not monthly market volume.", "The daily-1000-organic-visit objective remains active and unproven."]
+}

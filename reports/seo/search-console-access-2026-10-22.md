@@ -1,5 +1,11 @@
 # Search Console measurement access
 
+## Update: October 28
+
+The existing signed-in in-app tab is readable again through the supported browser UI. The US text-based Web report for September 28–October 25 and its August 31–September 27 comparison were downloaded as original CSV ZIPs and reconciled. Browser actions remain slow and a download observation timed out, but the actual downloaded comparison archive was found and its country, device, date headers and SHA-256 verified. Do not restart a completed download merely because its observation handle expired.
+
+The current exact total is 3 clicks / 7,275 impressions; the prior non-overlapping period is 2 / 1,663. The single-view headline displays rounded 7,280, while its title attribute gives 7,275, agreeing with all reconciled export totals. This is a display-rounding difference, not a new crawl failure. See `us-search-comparison-2026-10-28.md` and `exports/us-search-comparison-2026-10-28.json`. Raw archives and account-identifying UI content are not committed. The expired paid connector was not retried or purchased.
+
 ## Update: October 27
 
 The updated connector still refused `get_account_info` with `payment_required` / `subscription_required`. No subscription, reconnection or account change was performed. The browser inventory showed an existing signed-in NS Calculators performance tab, but binding that exact tab timed out after 40 seconds and reset the browser kernel. No report contents, current totals or new export were obtained in this attempt. This is not evidence of lost Search Console ownership or an indexing failure. Do not retry the paid connector without an access-state change; the free Google report remains an alternative when its browser binding works. The September 24–October 21 export remains the last validated search baseline used for the subsequent IRA repair.

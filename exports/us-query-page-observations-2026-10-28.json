@@ -1,0 +1,26 @@
+{
+  "source": "Rendered Google Search Console exact-query filter, Pages breakdown",
+  "observed_date": "2026-10-28",
+  "property": "sc-domain:nscalculators.com",
+  "country": "usa",
+  "search_type": "web_text_based",
+  "period_start": "2026-09-28",
+  "period_end": "2026-10-25",
+  "observations": [
+    {
+      "query": "fuel cost calculator",
+      "report_url": "https://search.google.com/u/1/search-console/performance/search-analytics?resource_id=sc-domain%3Anscalculators.com&time_granularity=DAY&start_date=20260928&end_date=20261025&country=usa&query=!fuel%20cost%20calculator&breakdown=page",
+      "query_aggregate": {"clicks": 0, "impressions": 14, "position_ui_rounded": 8.5},
+      "visible_page_rows": [{"url": "https://nscalculators.com/trip-fuel-cost-calculator/", "clicks": 0, "impressions": 14}],
+      "visible_page_count": 1
+    },
+    {
+      "query": "area calculator",
+      "report_url": "https://search.google.com/u/1/search-console/performance/search-analytics?resource_id=sc-domain%3Anscalculators.com&time_granularity=DAY&start_date=20260928&end_date=20261025&country=usa&query=!area%20calculator&breakdown=page",
+      "query_aggregate": {"clicks": 0, "impressions": 587, "position_ui_rounded": 8.2},
+      "visible_page_rows": [{"url": "https://nscalculators.com/area-calculator/", "clicks": 0, "impressions": 587}],
+      "visible_page_count": 1
+    }
+  ],
+  "limitations": ["Pairs are observed under exact query filters, not joined from separate tables.", "Query/site and page aggregation can differ. A single visible URL is not proof that no other URL ever appeared.", "Positions are query-level UI values, not an independent page-rank measurement.", "No new US monthly market search volume or causal release impact is established."]
+}

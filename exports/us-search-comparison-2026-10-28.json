@@ -1,0 +1,1382 @@
+{
+  "schema_version": 1,
+  "source": "Untouched Google Search Console browser CSV ZIP exports",
+  "property": "sc-domain:nscalculators.com",
+  "country": "usa",
+  "search_type": "web_text_based",
+  "current_period": {
+    "start": "2026-09-28",
+    "end": "2026-10-25",
+    "days": 28,
+    "clicks": 3,
+    "impressions": 7275,
+    "position_reported": 54.4,
+    "ctr_percent_calculated": 0.041237113402061855,
+    "daily_clicks_calculated": 0.10714285714285714
+  },
+  "prior_period": {
+    "start": "2026-08-31",
+    "end": "2026-09-27",
+    "days": 28,
+    "clicks": 2,
+    "impressions": 1663,
+    "position_reported": 64.59,
+    "ctr_percent_calculated": 0.12026458208057728,
+    "daily_clicks_calculated": 0.07142857142857142
+  },
+  "changes": {
+    "impressions_absolute": 5612,
+    "impressions_percent": 337.4624173180998,
+    "clicks_absolute": 1,
+    "ctr_percentage_points": -0.07902746867851543
+  },
+  "sources": {
+    "single": {
+      "filename": "nscalculators.com-Performance-on-Search-2026-10-28.zip",
+      "sha256": "a91036cffb73be6e46be5caf08b3fee57635927ceba329557109cdeb7ae87e89",
+      "tables": {
+        "dates": {
+          "filename": "\u56fe\u8868.csv",
+          "sha256": "10c222b40858a062e2610260f6626ea136e1bef5303a8ab8aee1aed365191898",
+          "rows": 28
+        },
+        "queries": {
+          "filename": "\u67e5\u8be2\u6570.csv",
+          "sha256": "21fe527b6eaaab8715a5442ab1288c476888320043cec6033129f3c363e77c08",
+          "rows": 1000
+        },
+        "pages": {
+          "filename": "\u7f51\u9875.csv",
+          "sha256": "5d22d6a2a3e4825e42fcbe7c34509de51bcf68a073a39f3f0313e721c6a313d9",
+          "rows": 121
+        },
+        "countries": {
+          "filename": "\u56fd\u5bb6_\u5730\u533a.csv",
+          "sha256": "e863db9f17719d5ec16211d11911b22a5c2ab05c0c704dd894c393caaeb12030",
+          "rows": 1
+        },
+        "devices": {
+          "filename": "\u8bbe\u5907.csv",
+          "sha256": "17cc0a795c5a67ba7659820699cb3a62f88a45e5344929a5c9d280d1660e61b5",
+          "rows": 3
+        },
+        "filters": {
+          "filename": "\u8fc7\u6ee4\u5668.csv",
+          "sha256": "52a1a66e6b0124eacdbf581d1609eb507f54399148ca406ceeb50f5afd56eb1f",
+          "rows": 3
+        }
+      }
+    },
+    "comparison": {
+      "filename": "nscalculators.com-Performance-on-Search-2026-10-28 (1).zip",
+      "sha256": "6f79c7cf26e1167b1ca60246da6df2ec51f757ded264217027b1bb808dce9f7e",
+      "tables": {
+        "queries": {
+          "filename": "\u67e5\u8be2\u6570.csv",
+          "sha256": "e3d525bb8e2688b650a8b8daf47dcd8ae2e8bc845d35f6de5f8df8aa00256fe0",
+          "rows": 1774
+        },
+        "pages": {
+          "filename": "\u7f51\u9875.csv",
+          "sha256": "42da22f6a7bad8168a8beef8a8ce07334ebee16643fc2917601456c4939a3847",
+          "rows": 243
+        },
+        "countries": {
+          "filename": "\u56fd\u5bb6_\u5730\u533a.csv",
+          "sha256": "c782f24346be5857f955af790c8307775132434a5c1fefcd35cfde1c81e073ad",
+          "rows": 1
+        },
+        "devices": {
+          "filename": "\u8bbe\u5907.csv",
+          "sha256": "8eaafe66aa9ab3320dabb951c23945da19f7e701ee615dcc301557dbb2c7fe54",
+          "rows": 3
+        },
+        "filters": {
+          "filename": "\u8fc7\u6ee4\u5668.csv",
+          "sha256": "52a1a66e6b0124eacdbf581d1609eb507f54399148ca406ceeb50f5afd56eb1f",
+          "rows": 3
+        }
+      }
+    }
+  },
+  "row_totals_not_site_totals": {
+    "queries": {
+      "clicks": 0,
+      "impressions": 4254,
+      "rows": 1000
+    },
+    "pages": {
+      "clicks": 0,
+      "impressions": 5139,
+      "rows": 121
+    }
+  },
+  "comparison_row_totals_not_site_totals": {
+    "queries": {
+      "current": {
+        "clicks": 0,
+        "impressions": 4276
+      },
+      "prior": {
+        "clicks": 1,
+        "impressions": 1315
+      },
+      "union_rows": 1774
+    },
+    "pages": {
+      "current": {
+        "clicks": 0,
+        "impressions": 5139
+      },
+      "prior": {
+        "clicks": 1,
+        "impressions": 1321
+      },
+      "union_rows": 243
+    }
+  },
+  "single_query_rows_at_1000": true,
+  "selected_query_comparisons": [
+    {
+      "query": "area calculator",
+      "current_clicks": 0,
+      "prior_clicks": 0,
+      "current_impressions": 587,
+      "prior_impressions_exported": 6,
+      "current_position": 8.19,
+      "prior_position": 51.5
+    },
+    {
+      "query": "trade-in calculator",
+      "current_clicks": 0,
+      "prior_clicks": 0,
+      "current_impressions": 161,
+      "prior_impressions_exported": 17,
+      "current_position": 84.04,
+      "prior_position": 88.24
+    },
+    {
+      "query": "401k calculator",
+      "current_clicks": 0,
+      "prior_clicks": 0,
+      "current_impressions": 123,
+      "prior_impressions_exported": 0,
+      "current_position": 83.09,
+      "prior_position": null
+    },
+    {
+      "query": "trade in value calculator",
+      "current_clicks": 0,
+      "prior_clicks": 0,
+      "current_impressions": 84,
+      "prior_impressions_exported": 15,
+      "current_position": 85.49,
+      "prior_position": 80.0
+    },
+    {
+      "query": "personal loan calculator",
+      "current_clicks": 0,
+      "prior_clicks": 0,
+      "current_impressions": 56,
+      "prior_impressions_exported": 0,
+      "current_position": 80.12,
+      "prior_position": null
+    },
+    {
+      "query": "trade in car values calculator",
+      "current_clicks": 0,
+      "prior_clicks": 0,
+      "current_impressions": 50,
+      "prior_impressions_exported": 11,
+      "current_position": 89.4,
+      "prior_position": 91.55
+    },
+    {
+      "query": "trade in car calculator",
+      "current_clicks": 0,
+      "prior_clicks": 0,
+      "current_impressions": 47,
+      "prior_impressions_exported": 12,
+      "current_position": 84.17,
+      "prior_position": 90.58
+    },
+    {
+      "query": "boat loan calculator",
+      "current_clicks": 0,
+      "prior_clicks": 0,
+      "current_impressions": 43,
+      "prior_impressions_exported": 0,
+      "current_position": 91.3,
+      "prior_position": null
+    },
+    {
+      "query": "new vs used car calculator",
+      "current_clicks": 0,
+      "prior_clicks": 0,
+      "current_impressions": 40,
+      "prior_impressions_exported": 0,
+      "current_position": 93.4,
+      "prior_position": null
+    },
+    {
+      "query": "calculate 401k",
+      "current_clicks": 0,
+      "prior_clicks": 0,
+      "current_impressions": 35,
+      "prior_impressions_exported": 0,
+      "current_position": 76.2,
+      "prior_position": null
+    },
+    {
+      "query": "car price estimate",
+      "current_clicks": 0,
+      "prior_clicks": 0,
+      "current_impressions": 25,
+      "prior_impressions_exported": 0,
+      "current_position": 11.72,
+      "prior_position": null
+    },
+    {
+      "query": "fuel cost calculator",
+      "current_clicks": 0,
+      "prior_clicks": 0,
+      "current_impressions": 14,
+      "prior_impressions_exported": 0,
+      "current_position": 8.5,
+      "prior_position": null
+    },
+    {
+      "query": "0.54 g to mcg",
+      "current_clicks": 0,
+      "prior_clicks": 0,
+      "current_impressions": 7,
+      "prior_impressions_exported": 0,
+      "current_position": 6.0,
+      "prior_position": null
+    },
+    {
+      "query": "356442 seconds to hours minutes and seconds",
+      "current_clicks": 0,
+      "prior_clicks": 0,
+      "current_impressions": 6,
+      "prior_impressions_exported": 0,
+      "current_position": 4.67,
+      "prior_position": null
+    },
+    {
+      "query": "401k matching calculator",
+      "current_clicks": 0,
+      "prior_clicks": 0,
+      "current_impressions": 3,
+      "prior_impressions_exported": 0,
+      "current_position": 56.67,
+      "prior_position": null
+    },
+    {
+      "query": "401 k employer match calculator",
+      "current_clicks": 0,
+      "prior_clicks": 0,
+      "current_impressions": 3,
+      "prior_impressions_exported": 0,
+      "current_position": 62.0,
+      "prior_position": null
+    },
+    {
+      "query": "401k calculator with match",
+      "current_clicks": 0,
+      "prior_clicks": 0,
+      "current_impressions": 3,
+      "prior_impressions_exported": 0,
+      "current_position": 63.67,
+      "prior_position": null
+    },
+    {
+      "query": "tiered 401k match calculator",
+      "current_clicks": 0,
+      "prior_clicks": 0,
+      "current_impressions": 2,
+      "prior_impressions_exported": 0,
+      "current_position": 51.0,
+      "prior_position": null
+    },
+    {
+      "query": "401k safe harbor match calculator",
+      "current_clicks": 0,
+      "prior_clicks": 0,
+      "current_impressions": 2,
+      "prior_impressions_exported": 0,
+      "current_position": 68.5,
+      "prior_position": null
+    },
+    {
+      "query": "401k cash out calculator",
+      "current_clicks": 0,
+      "prior_clicks": 0,
+      "current_impressions": 2,
+      "prior_impressions_exported": 0,
+      "current_position": 74.5,
+      "prior_position": null
+    },
+    {
+      "query": "401k early withdrawal calculator",
+      "current_clicks": 0,
+      "prior_clicks": 0,
+      "current_impressions": 1,
+      "prior_impressions_exported": 0,
+      "current_position": 69.0,
+      "prior_position": null
+    }
+  ],
+  "page_rows": [
+    {
+      "key": "https://nscalculators.com/car-trade-in-value-calculator/",
+      "clicks": 0,
+      "impressions": 599,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 82.41
+    },
+    {
+      "key": "https://nscalculators.com/boat-loan-calculator/",
+      "clicks": 0,
+      "impressions": 591,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 89.24
+    },
+    {
+      "key": "https://nscalculators.com/area-calculator/",
+      "clicks": 0,
+      "impressions": 588,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 8.19
+    },
+    {
+      "key": "https://nscalculators.com/personal-loan-calculator/",
+      "clicks": 0,
+      "impressions": 482,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 85.31
+    },
+    {
+      "key": "https://nscalculators.com/used-car-value-calculator/",
+      "clicks": 0,
+      "impressions": 348,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 60.62
+    },
+    {
+      "key": "https://nscalculators.com/401k-calculator/",
+      "clicks": 0,
+      "impressions": 266,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 79.44
+    },
+    {
+      "key": "https://nscalculators.com/rmd-calculator/",
+      "clicks": 0,
+      "impressions": 143,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 83.27
+    },
+    {
+      "key": "https://nscalculators.com/towing-capacity-calculator/",
+      "clicks": 0,
+      "impressions": 112,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 76.23
+    },
+    {
+      "key": "https://nscalculators.com/sq-feet-to-sq-meters-calculator/",
+      "clicks": 0,
+      "impressions": 103,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 66.26
+    },
+    {
+      "key": "https://nscalculators.com/miles-to-kilometers-calculator/",
+      "clicks": 0,
+      "impressions": 93,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 73.78
+    },
+    {
+      "key": "https://nscalculators.com/car-resale-value-calculator/",
+      "clicks": 0,
+      "impressions": 86,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 53.67
+    },
+    {
+      "key": "https://nscalculators.com/amortization-calculator/",
+      "clicks": 0,
+      "impressions": 83,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 71.14
+    },
+    {
+      "key": "https://nscalculators.com/kilometers-to-miles-calculator/",
+      "clicks": 0,
+      "impressions": 82,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 68.39
+    },
+    {
+      "key": "https://nscalculators.com/private-party-car-value-calculator/",
+      "clicks": 0,
+      "impressions": 80,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 63.24
+    },
+    {
+      "key": "https://nscalculators.com/wheel-offset-calculator/",
+      "clicks": 0,
+      "impressions": 77,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 80.14
+    },
+    {
+      "key": "https://nscalculators.com/grams-to-pounds-calculator/",
+      "clicks": 0,
+      "impressions": 62,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 69.4
+    },
+    {
+      "key": "https://nscalculators.com/business-loan-calculator/",
+      "clicks": 0,
+      "impressions": 61,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 87.82
+    },
+    {
+      "key": "https://nscalculators.com/pension-calculator/",
+      "clicks": 0,
+      "impressions": 56,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 46.25
+    },
+    {
+      "key": "https://nscalculators.com/knots-to-miles-per-hour-calculator/",
+      "clicks": 0,
+      "impressions": 56,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 51.09
+    },
+    {
+      "key": "https://nscalculators.com/seconds-to-hours-calculator/",
+      "clicks": 0,
+      "impressions": 50,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 61.02
+    },
+    {
+      "key": "https://nscalculators.com/trip-fuel-cost-calculator/",
+      "clicks": 0,
+      "impressions": 47,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 38.11
+    },
+    {
+      "key": "https://nscalculators.com/yards-to-meters-calculator/",
+      "clicks": 0,
+      "impressions": 43,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 62.81
+    },
+    {
+      "key": "https://nscalculators.com/sq-feet-to-sq-yards-calculator/",
+      "clicks": 0,
+      "impressions": 42,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 83.1
+    },
+    {
+      "key": "https://nscalculators.com/feet-to-inches-calculator/",
+      "clicks": 0,
+      "impressions": 41,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 79.27
+    },
+    {
+      "key": "https://nscalculators.com/ira-calculator/",
+      "clicks": 0,
+      "impressions": 41,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 83.0
+    },
+    {
+      "key": "https://nscalculators.com/tip-calculator/",
+      "clicks": 0,
+      "impressions": 39,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 41.95
+    },
+    {
+      "key": "https://nscalculators.com/social-security-calculator/",
+      "clicks": 0,
+      "impressions": 38,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 75.66
+    },
+    {
+      "key": "https://nscalculators.com/pounds-to-grams-calculator/",
+      "clicks": 0,
+      "impressions": 36,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 57.64
+    },
+    {
+      "key": "https://nscalculators.com/payment-calculator/",
+      "clicks": 0,
+      "impressions": 30,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 73.27
+    },
+    {
+      "key": "https://nscalculators.com/feet-to-meters-calculator/",
+      "clicks": 0,
+      "impressions": 29,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 58.07
+    },
+    {
+      "key": "https://nscalculators.com/inches-to-meters-calculator/",
+      "clicks": 0,
+      "impressions": 29,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 73.45
+    },
+    {
+      "key": "https://nscalculators.com/gallons-to-liters-calculator/",
+      "clicks": 0,
+      "impressions": 25,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 67.48
+    },
+    {
+      "key": "https://nscalculators.com/salary-increase-calculator/",
+      "clicks": 0,
+      "impressions": 23,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 59.57
+    },
+    {
+      "key": "https://nscalculators.com/days-to-months-calculator/",
+      "clicks": 0,
+      "impressions": 23,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 63.87
+    },
+    {
+      "key": "https://nscalculators.com/feet-to-miles-calculator/",
+      "clicks": 0,
+      "impressions": 22,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 62.91
+    },
+    {
+      "key": "https://nscalculators.com/inches-to-centimeters-calculator/",
+      "clicks": 0,
+      "impressions": 22,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 67.55
+    },
+    {
+      "key": "https://nscalculators.com/simple-interest-calculator/",
+      "clicks": 0,
+      "impressions": 22,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 81.09
+    },
+    {
+      "key": "https://nscalculators.com/troy-ounces-to-grams-calculator/",
+      "clicks": 0,
+      "impressions": 21,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 75.52
+    },
+    {
+      "key": "https://nscalculators.com/right-triangle-calculator/",
+      "clicks": 0,
+      "impressions": 21,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 82.86
+    },
+    {
+      "key": "https://nscalculators.com/day-counter/",
+      "clicks": 0,
+      "impressions": 20,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 50.2
+    },
+    {
+      "key": "https://nscalculators.com/days-to-hours-calculator/",
+      "clicks": 0,
+      "impressions": 19,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 71.42
+    },
+    {
+      "key": "https://nscalculators.com/flooring-calculator/",
+      "clicks": 0,
+      "impressions": 18,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 75.83
+    },
+    {
+      "key": "https://nscalculators.com/weight-watchers-points-calculator/",
+      "clicks": 0,
+      "impressions": 17,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 49.65
+    },
+    {
+      "key": "https://nscalculators.com/grams-to-micrograms-calculator/",
+      "clicks": 0,
+      "impressions": 16,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 39.44
+    },
+    {
+      "key": "https://nscalculators.com/meters-to-miles-calculator/",
+      "clicks": 0,
+      "impressions": 16,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 83.19
+    },
+    {
+      "key": "https://nscalculators.com/teaspoons-to-tablespoons-calculator/",
+      "clicks": 0,
+      "impressions": 15,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 90.6
+    },
+    {
+      "key": "https://nscalculators.com/construction-calculators/",
+      "clicks": 0,
+      "impressions": 14,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 80.0
+    },
+    {
+      "key": "https://nscalculators.com/nautical-miles-to-miles-calculator/",
+      "clicks": 0,
+      "impressions": 14,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 82.5
+    },
+    {
+      "key": "https://nscalculators.com/roth-ira-calculator/",
+      "clicks": 0,
+      "impressions": 13,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 66.0
+    },
+    {
+      "key": "https://nscalculators.com/meters-to-centimeters-calculator/",
+      "clicks": 0,
+      "impressions": 13,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 69.15
+    },
+    {
+      "key": "https://nscalculators.com/miles-per-hour-to-kilometers-per-hour-calculator/",
+      "clicks": 0,
+      "impressions": 13,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 78.38
+    },
+    {
+      "key": "https://nscalculators.com/gallons-to-cups-calculator/",
+      "clicks": 0,
+      "impressions": 13,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 79.0
+    },
+    {
+      "key": "https://nscalculators.com/mining-calculator/",
+      "clicks": 0,
+      "impressions": 13,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 85.23
+    },
+    {
+      "key": "https://nscalculators.com/psi-to-bar-calculator/",
+      "clicks": 0,
+      "impressions": 12,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 41.25
+    },
+    {
+      "key": "https://nscalculators.com/kilograms-to-pounds-calculator/",
+      "clicks": 0,
+      "impressions": 12,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 45.08
+    },
+    {
+      "key": "https://nscalculators.com/miles-to-meters-calculator/",
+      "clicks": 0,
+      "impressions": 12,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 77.67
+    },
+    {
+      "key": "https://nscalculators.com/meters-to-yards-calculator/",
+      "clicks": 0,
+      "impressions": 11,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 65.73
+    },
+    {
+      "key": "https://nscalculators.com/automotive-calculators/",
+      "clicks": 0,
+      "impressions": 11,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 72.82
+    },
+    {
+      "key": "https://nscalculators.com/kilometers-to-meters-calculator/",
+      "clicks": 0,
+      "impressions": 11,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 82.73
+    },
+    {
+      "key": "https://nscalculators.com/board-foot-calculator/",
+      "clicks": 0,
+      "impressions": 10,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 65.0
+    },
+    {
+      "key": "https://nscalculators.com/decimeters-to-meters-calculator/",
+      "clicks": 0,
+      "impressions": 10,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 83.7
+    },
+    {
+      "key": "https://nscalculators.com/nautical-miles-to-kilometers-calculator/",
+      "clicks": 0,
+      "impressions": 9,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 61.0
+    },
+    {
+      "key": "https://nscalculators.com/fha-loan-calculator/",
+      "clicks": 0,
+      "impressions": 9,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 66.78
+    },
+    {
+      "key": "https://nscalculators.com/mpg-calculator/",
+      "clicks": 0,
+      "impressions": 9,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 67.11
+    },
+    {
+      "key": "https://nscalculators.com/psi-to-ksi-calculator/",
+      "clicks": 0,
+      "impressions": 8,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 44.0
+    },
+    {
+      "key": "https://nscalculators.com/kilometers-to-feet-calculator/",
+      "clicks": 0,
+      "impressions": 8,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 59.5
+    },
+    {
+      "key": "https://nscalculators.com/truck-payload-calculator/",
+      "clicks": 0,
+      "impressions": 7,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 60.14
+    },
+    {
+      "key": "https://nscalculators.com/kilograms-to-grams-calculator/",
+      "clicks": 0,
+      "impressions": 7,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 60.71
+    },
+    {
+      "key": "https://nscalculators.com/sq-yards-to-sq-feet-calculator/",
+      "clicks": 0,
+      "impressions": 7,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 70.86
+    },
+    {
+      "key": "https://nscalculators.com/payback-period-calculator/",
+      "clicks": 0,
+      "impressions": 6,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 56.33
+    },
+    {
+      "key": "https://nscalculators.com/fitness-and-health-calculator/",
+      "clicks": 0,
+      "impressions": 6,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 69.0
+    },
+    {
+      "key": "https://nscalculators.com/micrograms-to-milligrams-calculator/",
+      "clicks": 0,
+      "impressions": 6,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 72.0
+    },
+    {
+      "key": "https://nscalculators.com/statistics-calculator/",
+      "clicks": 0,
+      "impressions": 6,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 76.0
+    },
+    {
+      "key": "https://nscalculators.com/grains-to-grams-calculator/",
+      "clicks": 0,
+      "impressions": 5,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 46.2
+    },
+    {
+      "key": "https://nscalculators.com/watts-to-kilowatts-calculator/",
+      "clicks": 0,
+      "impressions": 5,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 62.8
+    },
+    {
+      "key": "https://nscalculators.com/grams-to-grains-calculator/",
+      "clicks": 0,
+      "impressions": 5,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 63.0
+    },
+    {
+      "key": "https://nscalculators.com/geodesic-dome-material-calculator/",
+      "clicks": 0,
+      "impressions": 5,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 69.6
+    },
+    {
+      "key": "https://nscalculators.com/compound-interest-calculator/",
+      "clicks": 0,
+      "impressions": 5,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 77.0
+    },
+    {
+      "key": "https://nscalculators.com/sq-kilometers-to-sq-miles-calculator/",
+      "clicks": 0,
+      "impressions": 5,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 78.6
+    },
+    {
+      "key": "https://nscalculators.com/centimeters-to-kilometers-calculator/",
+      "clicks": 0,
+      "impressions": 5,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 86.0
+    },
+    {
+      "key": "https://nscalculators.com/pounds-to-ounces-calculator/",
+      "clicks": 0,
+      "impressions": 5,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 87.4
+    },
+    {
+      "key": "https://nscalculators.com/meters-to-kilometers-calculator/",
+      "clicks": 0,
+      "impressions": 5,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 89.4
+    },
+    {
+      "key": "https://nscalculators.com/body-fat-calculator/",
+      "clicks": 0,
+      "impressions": 4,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 1.0
+    },
+    {
+      "key": "https://nscalculators.com/calorie-calculator/",
+      "clicks": 0,
+      "impressions": 4,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 36.25
+    },
+    {
+      "key": "https://nscalculators.com/centimeters-to-meters-calculator/",
+      "clicks": 0,
+      "impressions": 4,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 53.75
+    },
+    {
+      "key": "https://nscalculators.com/rpm-to-hertz-calculator/",
+      "clicks": 0,
+      "impressions": 4,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 56.75
+    },
+    {
+      "key": "https://nscalculators.com/car-loan-payment-calculator-with-taxes/",
+      "clicks": 0,
+      "impressions": 4,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 71.25
+    },
+    {
+      "key": "https://nscalculators.com/miles-to-nautical-miles-calculator/",
+      "clicks": 0,
+      "impressions": 4,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 74.0
+    },
+    {
+      "key": "https://nscalculators.com/meters-to-inches-calculator/",
+      "clicks": 0,
+      "impressions": 4,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 84.25
+    },
+    {
+      "key": "https://nscalculators.com/yards-to-feet-calculator/",
+      "clicks": 0,
+      "impressions": 4,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 84.75
+    },
+    {
+      "key": "https://nscalculators.com/mortgage-amortization-calculator/",
+      "clicks": 0,
+      "impressions": 4,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 85.5
+    },
+    {
+      "key": "https://nscalculators.com/discount-calculator/",
+      "clicks": 0,
+      "impressions": 3,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 30.67
+    },
+    {
+      "key": "https://nscalculators.com/kilowatts-to-watts-calculator/",
+      "clicks": 0,
+      "impressions": 3,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 49.0
+    },
+    {
+      "key": "https://nscalculators.com/grains-to-ounces-calculator/",
+      "clicks": 0,
+      "impressions": 3,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 51.67
+    },
+    {
+      "key": "https://nscalculators.com/cd-calculator/",
+      "clicks": 0,
+      "impressions": 3,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 70.67
+    },
+    {
+      "key": "https://nscalculators.com/hours-to-minutes-calculator/",
+      "clicks": 0,
+      "impressions": 3,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 70.67
+    },
+    {
+      "key": "https://nscalculators.com/gpu-calculator/",
+      "clicks": 0,
+      "impressions": 3,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 72.67
+    },
+    {
+      "key": "https://nscalculators.com/permutation-and-combination-calculator/",
+      "clicks": 0,
+      "impressions": 3,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 73.0
+    },
+    {
+      "key": "https://nscalculators.com/canadian-mortgage-calculator/",
+      "clicks": 0,
+      "impressions": 3,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 79.67
+    },
+    {
+      "key": "https://nscalculators.com/nanometers-to-meters-calculator/",
+      "clicks": 0,
+      "impressions": 3,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 81.67
+    },
+    {
+      "key": "https://nscalculators.com/bar-to-psi-calculator/",
+      "clicks": 0,
+      "impressions": 3,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 86.67
+    },
+    {
+      "key": "https://nscalculators.com/months-to-years-calculator/",
+      "clicks": 0,
+      "impressions": 2,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 7.5
+    },
+    {
+      "key": "https://nscalculators.com/percent-error-calculator/",
+      "clicks": 0,
+      "impressions": 2,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 46.0
+    },
+    {
+      "key": "https://nscalculators.com/kilograms-to-ounces-calculator/",
+      "clicks": 0,
+      "impressions": 2,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 53.5
+    },
+    {
+      "key": "https://nscalculators.com/decimeters-to-centimeters-calculator/",
+      "clicks": 0,
+      "impressions": 2,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 74.5
+    },
+    {
+      "key": "https://nscalculators.com/investment-calculator/",
+      "clicks": 0,
+      "impressions": 2,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 91.5
+    },
+    {
+      "key": "https://nscalculators.com/conversion-calculator/",
+      "clicks": 0,
+      "impressions": 1,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 4.0
+    },
+    {
+      "key": "https://nscalculators.com/hours-to-years-calculator/",
+      "clicks": 0,
+      "impressions": 1,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 6.0
+    },
+    {
+      "key": "https://nscalculators.com/days-to-years-calculator/",
+      "clicks": 0,
+      "impressions": 1,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 10.0
+    },
+    {
+      "key": "https://nscalculators.com/health-calculators/",
+      "clicks": 0,
+      "impressions": 1,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 25.0
+    },
+    {
+      "key": "https://nscalculators.com/pounds-to-kilograms-calculator/",
+      "clicks": 0,
+      "impressions": 1,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 70.0
+    },
+    {
+      "key": "https://nscalculators.com/bolt-pattern-calculator/",
+      "clicks": 0,
+      "impressions": 1,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 71.0
+    },
+    {
+      "key": "https://nscalculators.com/inflation-calculator/",
+      "clicks": 0,
+      "impressions": 1,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 73.0
+    },
+    {
+      "key": "https://nscalculators.com/math-calculator/",
+      "clicks": 0,
+      "impressions": 1,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 79.0
+    },
+    {
+      "key": "https://nscalculators.com/psi-to-kilopascals-calculator/",
+      "clicks": 0,
+      "impressions": 1,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 80.0
+    },
+    {
+      "key": "https://nscalculators.com/science-calculators/",
+      "clicks": 0,
+      "impressions": 1,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 80.0
+    },
+    {
+      "key": "https://nscalculators.com/guides/calculate-square-footage-irregular-room/",
+      "clicks": 0,
+      "impressions": 1,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 83.0
+    },
+    {
+      "key": "https://nscalculators.com/meters-to-millimeters-calculator/",
+      "clicks": 0,
+      "impressions": 1,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 84.0
+    },
+    {
+      "key": "https://nscalculators.com/mass-calculator/",
+      "clicks": 0,
+      "impressions": 1,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 86.0
+    },
+    {
+      "key": "https://nscalculators.com/bmi-calculator/",
+      "clicks": 0,
+      "impressions": 1,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 91.0
+    },
+    {
+      "key": "https://nscalculators.com/centimeters-to-feet-calculator/",
+      "clicks": 0,
+      "impressions": 1,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 94.0
+    }
+  ],
+  "devices": [
+    {
+      "key": "\u79fb\u52a8\u8bbe\u5907",
+      "clicks": 2,
+      "impressions": 2134,
+      "ctr_percent_calculated": 0.09372071227741331,
+      "position_reported": 52.51
+    },
+    {
+      "key": "\u684c\u9762",
+      "clicks": 1,
+      "impressions": 5104,
+      "ctr_percent_calculated": 0.019592476489028215,
+      "position_reported": 55.33
+    },
+    {
+      "key": "\u5e73\u677f\u7535\u8111",
+      "clicks": 0,
+      "impressions": 37,
+      "ctr_percent_calculated": 0.0,
+      "position_reported": 34.86
+    }
+  ],
+  "daily_rows": [
+    {
+      "date": "2026-09-28",
+      "clicks": 0,
+      "impressions": 59,
+      "position_reported": 39.2
+    },
+    {
+      "date": "2026-09-29",
+      "clicks": 0,
+      "impressions": 77,
+      "position_reported": 29.1
+    },
+    {
+      "date": "2026-09-30",
+      "clicks": 0,
+      "impressions": 88,
+      "position_reported": 27.4
+    },
+    {
+      "date": "2026-10-01",
+      "clicks": 0,
+      "impressions": 140,
+      "position_reported": 36.8
+    },
+    {
+      "date": "2026-10-02",
+      "clicks": 0,
+      "impressions": 435,
+      "position_reported": 14.5
+    },
+    {
+      "date": "2026-10-03",
+      "clicks": 0,
+      "impressions": 316,
+      "position_reported": 19.2
+    },
+    {
+      "date": "2026-10-04",
+      "clicks": 0,
+      "impressions": 99,
+      "position_reported": 43.8
+    },
+    {
+      "date": "2026-10-05",
+      "clicks": 0,
+      "impressions": 123,
+      "position_reported": 36.7
+    },
+    {
+      "date": "2026-10-06",
+      "clicks": 0,
+      "impressions": 107,
+      "position_reported": 32.0
+    },
+    {
+      "date": "2026-10-07",
+      "clicks": 1,
+      "impressions": 92,
+      "position_reported": 30.8
+    },
+    {
+      "date": "2026-10-08",
+      "clicks": 0,
+      "impressions": 96,
+      "position_reported": 28.1
+    },
+    {
+      "date": "2026-10-09",
+      "clicks": 0,
+      "impressions": 102,
+      "position_reported": 35.0
+    },
+    {
+      "date": "2026-10-10",
+      "clicks": 0,
+      "impressions": 110,
+      "position_reported": 29.4
+    },
+    {
+      "date": "2026-10-11",
+      "clicks": 0,
+      "impressions": 89,
+      "position_reported": 33.9
+    },
+    {
+      "date": "2026-10-12",
+      "clicks": 0,
+      "impressions": 91,
+      "position_reported": 36.1
+    },
+    {
+      "date": "2026-10-13",
+      "clicks": 0,
+      "impressions": 119,
+      "position_reported": 38.7
+    },
+    {
+      "date": "2026-10-14",
+      "clicks": 1,
+      "impressions": 152,
+      "position_reported": 44.3
+    },
+    {
+      "date": "2026-10-15",
+      "clicks": 0,
+      "impressions": 235,
+      "position_reported": 56.3
+    },
+    {
+      "date": "2026-10-16",
+      "clicks": 0,
+      "impressions": 486,
+      "position_reported": 65.3
+    },
+    {
+      "date": "2026-10-17",
+      "clicks": 0,
+      "impressions": 439,
+      "position_reported": 62.5
+    },
+    {
+      "date": "2026-10-18",
+      "clicks": 0,
+      "impressions": 763,
+      "position_reported": 77.1
+    },
+    {
+      "date": "2026-10-19",
+      "clicks": 0,
+      "impressions": 364,
+      "position_reported": 62.3
+    },
+    {
+      "date": "2026-10-20",
+      "clicks": 0,
+      "impressions": 422,
+      "position_reported": 59.6
+    },
+    {
+      "date": "2026-10-21",
+      "clicks": 1,
+      "impressions": 409,
+      "position_reported": 56.3
+    },
+    {
+      "date": "2026-10-22",
+      "clicks": 0,
+      "impressions": 431,
+      "position_reported": 61.4
+    },
+    {
+      "date": "2026-10-23",
+      "clicks": 0,
+      "impressions": 383,
+      "position_reported": 67.1
+    },
+    {
+      "date": "2026-10-24",
+      "clicks": 0,
+      "impressions": 373,
+      "position_reported": 66.7
+    },
+    {
+      "date": "2026-10-25",
+      "clicks": 0,
+      "impressions": 675,
+      "position_reported": 73.8
+    }
+  ],
+  "limitations": [
+    "Clicks are not visitors or GA4 sessions. The daily-1000-visit objective is unproven.",
+    "Comparison windows are equal and non-overlapping. The older October 24 baseline overlaps the current window and is not a valid before/after control.",
+    "Query and page tables are separate aggregates. No query/page pairs are inferred from them.",
+    "Single query detail hits 1000 rows. Comparison union has a different row scope and is not proof of complete named-query coverage.",
+    "Exported zero impressions/positions in comparison can represent unavailable detail, not a proven newly gained/lost query.",
+    "Average position changes with query mix. Three versus two clicks is too small to establish a reliable treatment effect.",
+    "This window ends before the October 27-28 repairs. Most recent releases cannot be evaluated with it.",
+    "Observed site impressions are not US monthly market search volume. Raw archives and account identifiers are not published."
+  ]
+}
