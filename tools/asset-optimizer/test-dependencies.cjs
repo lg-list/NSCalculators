@@ -1,0 +1,3 @@
+const assert=require('node:assert/strict'),{inspect}=require('./inspect-dependencies.cjs');
+const x=inspect('function alpha(){return beta()} function beta(){return 1} function calc(engine){switch(engine){case "a":return alpha();case "b":return beta();default:return null}}');
+assert.equal(x.functionCount,3);assert.deepEqual(x.functions.find(f=>f.name==='alpha').references,['beta']);assert.deepEqual(x.functions.find(f=>f.name==='calc').references,['alpha','beta']);assert.deepEqual(x.dispatch[0].cases,['"a"','"b"','default']);assert.equal(x.dispatch[0].function,'calc');console.log('Dependency inventory fixture passed.');

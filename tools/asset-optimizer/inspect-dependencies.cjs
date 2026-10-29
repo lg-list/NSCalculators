@@ -1,0 +1,12 @@
+// Analysis only: never rewrites production JavaScript or treats coverage as dead code.
+const fs=require('node:fs'),path=require('node:path'),acorn=require('acorn');
+function inspect(source){
+ const ast=acorn.parse(source,{ecmaVersion:2020}),declarations=new Map();
+ for(const node of ast.body)if(node.type==='FunctionDeclaration')declarations.set(node.id.name,node);
+ function dependencies(root){const refs=new Set();function walk(node){if(!node||typeof node!=='object')return;if(node.type==='Identifier'&&declarations.has(node.name)&&node!==root.id)refs.add(node.name);for(const [key,value]of Object.entries(node)){if(['start','end','id'].includes(key))continue;if(Array.isArray(value))value.forEach(walk);else if(value&&typeof value==='object')walk(value)}}walk(root);return [...refs].sort()}
+ const functions=[...declarations].map(([name,node])=>({name,sourceCharacters:node.end-node.start,references:dependencies(node)}));
+ const dispatch=[];function walk(node,parent){if(!node||typeof node!=='object')return;if(node.type==='SwitchStatement')dispatch.push({function:parent,discriminant:source.slice(node.discriminant.start,node.discriminant.end),cases:node.cases.map(c=>c.test?source.slice(c.test.start,c.test.end):'default')});if(node.type==='FunctionDeclaration')parent=node.id.name;for(const [key,value]of Object.entries(node)){if(['start','end'].includes(key))continue;if(Array.isArray(value))value.forEach(n=>walk(n,parent));else if(value&&typeof value==='object')walk(value,parent)}}walk(ast,'top-level');
+ return{sourceCharacters:source.length,topLevelStatements:ast.body.length,functionCount:functions.length,functions:functions.sort((a,b)=>b.sourceCharacters-a.sourceCharacters),dispatch,limitations:['Identifier references are conservative, not a lexical binding or executable reachability proof.','Shared dispatch and event listeners must be specialized or isolated before dropping engine functions.','No dynamic access, callback, browser interaction or async-loading correctness is certified.']};
+}
+module.exports={inspect};
+if(require.main===module){const input=process.argv[2]||'doc-work/discovery-build/assets/calculator.js',output=process.argv[3]||'doc-work/calculator-dependencies.json';if(path.resolve(input)===path.resolve(output))throw Error('Refusing to overwrite source');fs.writeFileSync(output,JSON.stringify(inspect(fs.readFileSync(input,'utf8')),null,2));console.log(output)}
