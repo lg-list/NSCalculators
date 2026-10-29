@@ -58,6 +58,9 @@ jobs:
       - name: Check public indexation signal parser
         run: node scripts/test_live_indexation_signals.cjs
 
+      - name: Check comparable asking-price benchmark
+        run: node scripts/test_car_comparables.cjs dist/assets/calculator.js
+
       - name: Check structured data and breadcrumb target consistency
         run: python scripts/check_schema_contract.py dist
 
