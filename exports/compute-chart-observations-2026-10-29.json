@@ -1,0 +1,183 @@
+{
+  "before": {
+    "checks": [
+      {
+        "width": 390,
+        "slug": "gpu-calculator",
+        "count": 1,
+        "summary": "FP32 compute\n30.72 TFLOPS\nTheoretical peak estimate.\nBandwidth\n672 GB/s\nMemory throughput estimate.\nEfficiency\n0.096 TFLOPS/W\nCompute divided by board power.\nBoost clock\n2.5 GHz\nEntered boost frequency.",
+        "chartText": [
+          "3%",
+          "65.7%",
+          "31.3%",
+          "$1,022.72",
+          "total",
+          "TFLOPS (3%)",
+          "$30.72",
+          "Bandwidth (65.7%)",
+          "$672.00",
+          "Power (31.3%)",
+          "$320.00"
+        ]
+      },
+      {
+        "width": 390,
+        "slug": "ai-compute-calculator",
+        "count": 1,
+        "summary": "Training compute\n145.83 PFLOP-days\nApproximate total training work.\nTraining time\n6.58 days\nWall-clock time at entered throughput.\nGPU hours\n10,111\nGPU count times wall-clock hours.\nEnergy use\n12,639 kWh\nCluster power times hours.",
+        "chartText": [
+          "44.2%",
+          "55.2%",
+          "$22,896.09",
+          "total",
+          "PFLOP-days (0.6%)",
+          "$145.83",
+          "GPU hours (44.2%)",
+          "$10,111.22",
+          "Energy kWh (55.2%)",
+          "$12,639.03"
+        ]
+      },
+      {
+        "width": 390,
+        "slug": "ai-cost-calculator",
+        "count": 1,
+        "summary": "Billing-period cost\n$1,650.00\nInput plus output token cost.\nDaily cost\n$55.00\nAverage cost per day.\nInput token cost\n$750.00\nPrompt/context portion.\nOutput token cost\n$900.00\nGenerated response portion.",
+        "chartText": [
+          "44%",
+          "52.8%",
+          "3.2%",
+          "$1,705",
+          "total",
+          "Input cost (44%)",
+          "$750.00",
+          "Output cost (52.8%)",
+          "$900.00",
+          "Daily cost (3.2%)",
+          "$55.00"
+        ]
+      }
+    ],
+    "errors": []
+  },
+  "local_after": {
+    "checks": [
+      {
+        "width": 1366,
+        "slug": "gpu-calculator",
+        "count": 0,
+        "summary": "FP32 compute\n30.72 TFLOPS\nTheoretical peak estimate.\nBandwidth\n672 GB/s\nMemory throughput estimate.\nEfficiency\n0.096 TFLOPS/W\nCompute divided by board power.\nBoost clock\n2.5 GHz\nEntered boost frequency.",
+        "chartText": []
+      },
+      {
+        "width": 1366,
+        "slug": "ai-compute-calculator",
+        "count": 0,
+        "summary": "Training compute\n145.83 PFLOP-days\nApproximate total training work.\nTraining time\n6.58 days\nWall-clock time at entered throughput.\nGPU hours\n10,111\nGPU count times wall-clock hours.\nEnergy use\n12,639 kWh\nCluster power times hours.",
+        "chartText": []
+      },
+      {
+        "width": 1366,
+        "slug": "ai-cost-calculator",
+        "count": 1,
+        "summary": "Billing-period cost\n$1,650.00\nInput plus output token cost.\nDaily cost\n$55.00\nAverage cost per day.\nInput token cost\n$750.00\nPrompt/context portion.\nOutput token cost\n$900.00\nGenerated response portion.",
+        "chartText": [
+          "45.5%",
+          "54.5%",
+          "$1,650",
+          "total cost",
+          "Input cost (45.5%)",
+          "$750.00",
+          "Output cost (54.5%)",
+          "$900.00",
+          "45.5%",
+          "54.5%",
+          "$55",
+          "total cost",
+          "Input cost (45.5%)",
+          "$25.00",
+          "Output cost (54.5%)",
+          "$30.00"
+        ]
+      },
+      {
+        "width": 390,
+        "slug": "gpu-calculator",
+        "count": 0,
+        "summary": "FP32 compute\n30.72 TFLOPS\nTheoretical peak estimate.\nBandwidth\n672 GB/s\nMemory throughput estimate.\nEfficiency\n0.096 TFLOPS/W\nCompute divided by board power.\nBoost clock\n2.5 GHz\nEntered boost frequency.",
+        "chartText": []
+      },
+      {
+        "width": 390,
+        "slug": "ai-compute-calculator",
+        "count": 0,
+        "summary": "Training compute\n145.83 PFLOP-days\nApproximate total training work.\nTraining time\n6.58 days\nWall-clock time at entered throughput.\nGPU hours\n10,111\nGPU count times wall-clock hours.\nEnergy use\n12,639 kWh\nCluster power times hours.",
+        "chartText": []
+      },
+      {
+        "width": 390,
+        "slug": "ai-cost-calculator",
+        "count": 1,
+        "summary": "Billing-period cost\n$1,650.00\nInput plus output token cost.\nDaily cost\n$55.00\nAverage cost per day.\nInput token cost\n$750.00\nPrompt/context portion.\nOutput token cost\n$900.00\nGenerated response portion.",
+        "chartText": [
+          "45.5%",
+          "54.5%",
+          "$1,650",
+          "total cost",
+          "Input cost (45.5%)",
+          "$750.00",
+          "Output cost (54.5%)",
+          "$900.00",
+          "45.5%",
+          "54.5%",
+          "$55",
+          "total cost",
+          "Input cost (45.5%)",
+          "$25.00",
+          "Output cost (54.5%)",
+          "$30.00"
+        ]
+      },
+      {
+        "width": 320,
+        "slug": "gpu-calculator",
+        "count": 0,
+        "summary": "FP32 compute\n30.72 TFLOPS\nTheoretical peak estimate.\nBandwidth\n672 GB/s\nMemory throughput estimate.\nEfficiency\n0.096 TFLOPS/W\nCompute divided by board power.\nBoost clock\n2.5 GHz\nEntered boost frequency.",
+        "chartText": []
+      },
+      {
+        "width": 320,
+        "slug": "ai-compute-calculator",
+        "count": 0,
+        "summary": "Training compute\n145.83 PFLOP-days\nApproximate total training work.\nTraining time\n6.58 days\nWall-clock time at entered throughput.\nGPU hours\n10,111\nGPU count times wall-clock hours.\nEnergy use\n12,639 kWh\nCluster power times hours.",
+        "chartText": []
+      },
+      {
+        "width": 320,
+        "slug": "ai-cost-calculator",
+        "count": 1,
+        "summary": "Billing-period cost\n$1,650.00\nInput plus output token cost.\nDaily cost\n$55.00\nAverage cost per day.\nInput token cost\n$750.00\nPrompt/context portion.\nOutput token cost\n$900.00\nGenerated response portion.",
+        "chartText": [
+          "45.5%",
+          "54.5%",
+          "$1,650",
+          "total cost",
+          "Input cost (45.5%)",
+          "$750.00",
+          "Output cost (54.5%)",
+          "$900.00",
+          "45.5%",
+          "54.5%",
+          "$55",
+          "total cost",
+          "Input cost (45.5%)",
+          "$25.00",
+          "Output cost (54.5%)",
+          "$30.00"
+        ]
+      }
+    ],
+    "errors": []
+  },
+  "scope": "Public browser canvas-text and DOM observations; example inputs, not provider pricing."
+}
