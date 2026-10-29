@@ -35,7 +35,8 @@
       "separate_page_observation": {"impressions": 266, "clicks": 0, "average_position": 79.44},
       "query_page_pair_observed": false,
       "action": "Audit the full projection and withdrawal modes, invalid/Clear behavior and currently stated tax-year assumptions. Preserve the already tested employer-match work. Confirm exact-query/page evidence before changing targeting.",
-      "status": "functionality_repair_validated_pending_deployment",
+      "status": "deployed_changes_require_later_measurement",
+      "deployment": {"commit": "8c96b7bc54bb488633483f5486e45bc40a760f73", "pages_run": 40687297613, "conclusion": "success", "production_browser_widths": [1366, 390, 320]},
       "repair_report": "../reports/seo/k401-validation-2026-10-28.md",
       "guardrail": "The query and page counts are separate aggregates. Verify current IRS primary sources before tax-limit changes; do not add location clones from low-count place-name queries."
     },

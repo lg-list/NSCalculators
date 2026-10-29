@@ -5283,6 +5283,14 @@ def calculator_page(site, calc, related):
         content = content.replace('<h2>Frequently asked questions</h2>', '<p>Estimating loose aggregate instead? The <a href="/gravel-calculator/">gravel calculator</a> separates measured volume from supplier-density weight and optional material cost.</p><h2>Frequently asked questions</h2>', 1)
     if calc.get("slug") in ("gravel-calculator", "square-footage-calculator"):
         content = content.replace('<h2>Frequently asked questions</h2>', '<p>Buying mulch by volume? The <a href="/mulch-calculator/">mulch calculator</a> estimates bulk yards and whole bags from entered area, added depth and the bag label, with separate material-price scenarios.</p><h2>Frequently asked questions</h2>', 1)
+    retirement_next_steps = {
+        "401k-calculator": '<h2>Continue your retirement estimate</h2><p>Comparing account scenarios? The <a href="/ira-calculator/">IRA calculator</a> compares traditional IRA, Roth IRA and taxable-account outcomes under its stated tax assumptions. For a separate required-withdrawal estimate, use the <a href="/rmd-calculator/">RMD calculator</a>; the 401(k) balance projection above does not calculate a required minimum distribution.</p>',
+        "ira-calculator": '<h2>Continue your retirement estimate</h2><p>Model workplace contributions separately with the <a href="/401k-calculator/">401(k) calculator and employer-match mode</a>. For a required-withdrawal estimate rather than an account-growth comparison, use the <a href="/rmd-calculator/">RMD calculator</a>. Each tool has its own timing and tax assumptions; its outputs are not interchangeable.</p>',
+        "pension-calculator": '<h2>Continue your retirement estimate</h2><p>For a separate account-growth scenario, use the <a href="/ira-calculator/">IRA calculator</a>; its traditional, Roth and taxable-account comparisons answer a different question from the pension quotes above. For an own-account required-withdrawal estimate, use the <a href="/rmd-calculator/">RMD calculator</a> and check its account and table assumptions. Neither tool determines whether a pension lump sum is eligible for a rollover.</p>',
+        "rmd-calculator": '<h2>Continue your retirement estimate</h2><p>For account-growth comparisons rather than a required withdrawal, use the <a href="/ira-calculator/">IRA calculator</a>. To model salary-based deposits and employer matching separately, use the <a href="/401k-calculator/">401(k) calculator</a>. Their growth projections do not replace the RMD calculation or its account-specific inputs.</p>',
+    }
+    if calc.get("slug") in retirement_next_steps:
+        content = content.replace('<h2>Frequently asked questions</h2>', retirement_next_steps[calc["slug"]] + '<h2>Frequently asked questions</h2>', 1)
     extra = analysis_extra_html(calc)
     calculator_asset_version = calculator_assets()[1]
     if calc.get("engine") == "loan_page":
