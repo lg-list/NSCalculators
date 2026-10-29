@@ -1,0 +1,3062 @@
+{
+  "checkedAt": "2026-10-29T14:51:32.333Z",
+  "sitemap": "https://nscalculators.com/sitemap.xml",
+  "pages": [
+    {
+      "url": "https://nscalculators.com/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/"
+      ],
+      "h1": 1,
+      "title": "Free Online Calculators | Mortgage, Loan &amp; Unit Converters",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/401k-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/401k-calculator/"
+      ],
+      "h1": 1,
+      "title": "401(k) Calculator: Balance, Match &amp; Withdrawal",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/about/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/about/"
+      ],
+      "h1": 1,
+      "title": "About NS Calculators | NS Calculators",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/acres-to-hectares-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/acres-to-hectares-calculator/"
+      ],
+      "h1": 1,
+      "title": "Acres To Hectares Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/acres-to-sq-feet-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/acres-to-sq-feet-calculator/"
+      ],
+      "h1": 1,
+      "title": "Acres To Square Feet Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/acres-to-sq-meters-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/acres-to-sq-meters-calculator/"
+      ],
+      "h1": 1,
+      "title": "Acres To Square Meters Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/acres-to-sq-miles-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/acres-to-sq-miles-calculator/"
+      ],
+      "h1": 1,
+      "title": "Acres To Square Miles Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/age-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/age-calculator/"
+      ],
+      "h1": 1,
+      "title": "Age Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/ai-compute-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/ai-compute-calculator/"
+      ],
+      "h1": 1,
+      "title": "AI Compute Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/ai-cost-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/ai-cost-calculator/"
+      ],
+      "h1": 1,
+      "title": "AI Cost Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/amortization-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/amortization-calculator/"
+      ],
+      "h1": 1,
+      "title": "Amortization Calculator with Extra Payments &amp; Schedule",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/amps-to-watts-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/amps-to-watts-calculator/"
+      ],
+      "h1": 1,
+      "title": "Amps to Watts Calculator: DC, 1-Phase &amp; 3-Phase",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/area-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/area-calculator/"
+      ],
+      "h1": 1,
+      "title": "Area Calculator: Square Feet, 8 Shapes &amp; Formulas",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/army-body-fat-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/army-body-fat-calculator/"
+      ],
+      "h1": 1,
+      "title": "Army Body Fat Calculator: Current WHtR Standard",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/auto-loan-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/auto-loan-calculator/"
+      ],
+      "h1": 1,
+      "title": "Auto Loan Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/automotive-calculators/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/automotive-calculators/"
+      ],
+      "h1": 1,
+      "title": "Free Automotive Calculators | NS Calculators",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/average-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/average-calculator/"
+      ],
+      "h1": 1,
+      "title": "Average Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/average-return-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/average-return-calculator/"
+      ],
+      "h1": 1,
+      "title": "Average Return Calculator: Cash Flow &amp; Annualized",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/bar-to-psi-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/bar-to-psi-calculator/"
+      ],
+      "h1": 1,
+      "title": "Bar To Psi Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/basic-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/basic-calculator/"
+      ],
+      "h1": 1,
+      "title": "Basic Calculator with Memory &amp; History",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/bits-to-bytes-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/bits-to-bytes-calculator/"
+      ],
+      "h1": 1,
+      "title": "Bits To Bytes Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/bmi-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/bmi-calculator/"
+      ],
+      "h1": 1,
+      "title": "BMI Calculator for Adults: US &amp; Metric Units",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/bmr-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/bmr-calculator/"
+      ],
+      "h1": 1,
+      "title": "Bmr Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/board-foot-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/board-foot-calculator/"
+      ],
+      "h1": 1,
+      "title": "Board Foot Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/boat-loan-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/boat-loan-calculator/"
+      ],
+      "h1": 1,
+      "title": "Boat Loan Calculator: Payments, Down Payment &amp; Costs",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/body-fat-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/body-fat-calculator/"
+      ],
+      "h1": 1,
+      "title": "Body Fat Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/bolt-pattern-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/bolt-pattern-calculator/"
+      ],
+      "h1": 1,
+      "title": "Bolt Pattern Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/bottleneck-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/bottleneck-calculator/"
+      ],
+      "h1": 1,
+      "title": "PC Bottleneck Calculator: CPU vs GPU Checker",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/breaker-size-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/breaker-size-calculator/"
+      ],
+      "h1": 1,
+      "title": "Breaker Size Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/business-loan-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/business-loan-calculator/"
+      ],
+      "h1": 1,
+      "title": "Business Loan Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/bytes-to-gigabytes-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/bytes-to-gigabytes-calculator/"
+      ],
+      "h1": 1,
+      "title": "Bytes To Gigabytes Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/bytes-to-megabytes-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/bytes-to-megabytes-calculator/"
+      ],
+      "h1": 1,
+      "title": "Bytes To Megabytes Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/calorie-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/calorie-calculator/"
+      ],
+      "h1": 1,
+      "title": "Calorie Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/calories-burned-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/calories-burned-calculator/"
+      ],
+      "h1": 1,
+      "title": "Calories Burned Calculator: Exercise &amp; Activity",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/calories-to-joules-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/calories-to-joules-calculator/"
+      ],
+      "h1": 1,
+      "title": "Calories To Joules Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/calories-to-kilocalories-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/calories-to-kilocalories-calculator/"
+      ],
+      "h1": 1,
+      "title": "Calories To Kilocalories Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/calories-to-kilojoules-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/calories-to-kilojoules-calculator/"
+      ],
+      "h1": 1,
+      "title": "Calories To Kilojoules Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/canadian-mortgage-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/canadian-mortgage-calculator/"
+      ],
+      "h1": 1,
+      "title": "Canadian Mortgage Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/car-depreciation-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/car-depreciation-calculator/"
+      ],
+      "h1": 1,
+      "title": "Car Depreciation Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/car-loan-payment-calculator-with-taxes/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/car-loan-payment-calculator-with-taxes/"
+      ],
+      "h1": 1,
+      "title": "Car Loan Payment Calculator With Taxes | NS Calculators",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/car-resale-value-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/car-resale-value-calculator/"
+      ],
+      "h1": 1,
+      "title": "Future Car Resale Value Calculator &amp; Equity Estimate",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/car-trade-in-value-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/car-trade-in-value-calculator/"
+      ],
+      "h1": 1,
+      "title": "Car Trade-In Value Calculator: Offers &amp; Equity",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/carbohydrate-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/carbohydrate-calculator/"
+      ],
+      "h1": 1,
+      "title": "Carbohydrate Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/cash-back-or-low-interest-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/cash-back-or-low-interest-calculator/"
+      ],
+      "h1": 1,
+      "title": "Cash Back Or Low Interest Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/cd-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/cd-calculator/"
+      ],
+      "h1": 1,
+      "title": "CD Calculator: Interest, APY &amp; Maturity Value",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/centimeters-to-feet-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/centimeters-to-feet-calculator/"
+      ],
+      "h1": 1,
+      "title": "Centimeters To Feet Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/centimeters-to-inches-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/centimeters-to-inches-calculator/"
+      ],
+      "h1": 1,
+      "title": "Centimeters To Inches Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/centimeters-to-kilometers-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/centimeters-to-kilometers-calculator/"
+      ],
+      "h1": 1,
+      "title": "Centimeters To Kilometers Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/centimeters-to-meters-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/centimeters-to-meters-calculator/"
+      ],
+      "h1": 1,
+      "title": "Centimeters To Meters Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/centimeters-to-millimeters-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/centimeters-to-millimeters-calculator/"
+      ],
+      "h1": 1,
+      "title": "Centimeters To Millimeters Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/commission-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/commission-calculator/"
+      ],
+      "h1": 1,
+      "title": "Commission Calculator: Rate, Tiered &amp; Split Commission",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/compound-interest-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/compound-interest-calculator/"
+      ],
+      "h1": 1,
+      "title": "Compound Interest Calculator with Monthly Contributions",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/concrete-volume-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/concrete-volume-calculator/"
+      ],
+      "h1": 1,
+      "title": "Concrete Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/construction-calculators/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/construction-calculators/"
+      ],
+      "h1": 1,
+      "title": "Free Construction Calculators | NS Calculators",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/contact/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/contact/"
+      ],
+      "h1": 1,
+      "title": "Contact | NS Calculators",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/conversion-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/conversion-calculator/"
+      ],
+      "h1": 1,
+      "title": "Conversion Calculator: Length, Weight, Volume &amp; More",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/conversion-calculators/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/conversion-calculators/"
+      ],
+      "h1": 1,
+      "title": "Free Conversion Calculators | NS Calculators",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/cu-feet-to-cu-meters-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/cu-feet-to-cu-meters-calculator/"
+      ],
+      "h1": 1,
+      "title": "Cubic Feet to Cubic Meters Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/cu-feet-to-liters-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/cu-feet-to-liters-calculator/"
+      ],
+      "h1": 1,
+      "title": "Cubic Feet To Liters Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/cu-meters-to-cu-feet-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/cu-meters-to-cu-feet-calculator/"
+      ],
+      "h1": 1,
+      "title": "Cubic Meters To Cubic Feet Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/date-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/date-calculator/"
+      ],
+      "h1": 1,
+      "title": "Date Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/day-counter/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/day-counter/"
+      ],
+      "h1": 1,
+      "title": "Day Counter | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/day-of-the-week-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/day-of-the-week-calculator/"
+      ],
+      "h1": 1,
+      "title": "Day Of The Week Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/days-to-hours-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/days-to-hours-calculator/"
+      ],
+      "h1": 1,
+      "title": "Days To Hours Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/days-to-months-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/days-to-months-calculator/"
+      ],
+      "h1": 1,
+      "title": "Days To Months Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/days-to-seconds-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/days-to-seconds-calculator/"
+      ],
+      "h1": 1,
+      "title": "Days To Seconds Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/days-to-weeks-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/days-to-weeks-calculator/"
+      ],
+      "h1": 1,
+      "title": "Days To Weeks Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/days-to-years-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/days-to-years-calculator/"
+      ],
+      "h1": 1,
+      "title": "Days To Years Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/debt-payoff-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/debt-payoff-calculator/"
+      ],
+      "h1": 1,
+      "title": "Debt Payoff Calculator: Snowball vs Avalanche",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/decimeters-to-centimeters-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/decimeters-to-centimeters-calculator/"
+      ],
+      "h1": 1,
+      "title": "Decimeters To Centimeters Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/decimeters-to-meters-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/decimeters-to-meters-calculator/"
+      ],
+      "h1": 1,
+      "title": "Decimeters To Meters Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/deck-board-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/deck-board-calculator/"
+      ],
+      "h1": 1,
+      "title": "Deck Board Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/degrees-to-radians-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/degrees-to-radians-calculator/"
+      ],
+      "h1": 1,
+      "title": "Degrees To Radians Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/depreciation-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/depreciation-calculator/"
+      ],
+      "h1": 1,
+      "title": "Depreciation Calculator: Straight-Line &amp; Declining Balance",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/dice-roller/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/dice-roller/"
+      ],
+      "h1": 1,
+      "title": "Dice Roller | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/discount-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/discount-calculator/"
+      ],
+      "h1": 1,
+      "title": "Discount Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/down-payment-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/down-payment-calculator/"
+      ],
+      "h1": 1,
+      "title": "Down Payment Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/due-date-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/due-date-calculator/"
+      ],
+      "h1": 1,
+      "title": "Due Date Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/electrical-calculators/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/electrical-calculators/"
+      ],
+      "h1": 1,
+      "title": "Free Electrical Calculators | NS Calculators",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/electrical-load-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/electrical-load-calculator/"
+      ],
+      "h1": 1,
+      "title": "Electrical Load Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/f150-bed-dimensions/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/f150-bed-dimensions/"
+      ],
+      "h1": 1,
+      "title": "Ford F-150 Bed Dimensions: 5.5, 6.5 &amp; 8 ft",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/feet-to-centimeters-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/feet-to-centimeters-calculator/"
+      ],
+      "h1": 1,
+      "title": "Feet To Centimeters Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/feet-to-inches-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/feet-to-inches-calculator/"
+      ],
+      "h1": 1,
+      "title": "Feet To Inches Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/feet-to-meters-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/feet-to-meters-calculator/"
+      ],
+      "h1": 1,
+      "title": "Feet to Meters Calculator (ft to m)",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/feet-to-miles-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/feet-to-miles-calculator/"
+      ],
+      "h1": 1,
+      "title": "Feet To Miles Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/feet-to-yards-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/feet-to-yards-calculator/"
+      ],
+      "h1": 1,
+      "title": "Feet To Yards Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/finance-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/finance-calculator/"
+      ],
+      "h1": 1,
+      "title": "Finance Calculator: PV, FV, PMT, Rate &amp; Periods",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/financial-calculators/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/financial-calculators/"
+      ],
+      "h1": 1,
+      "title": "Free Financial Calculators | NS Calculators",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/flooring-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/flooring-calculator/"
+      ],
+      "h1": 1,
+      "title": "Flooring Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/fraction-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/fraction-calculator/"
+      ],
+      "h1": 1,
+      "title": "Fraction Calculator: Add, Subtract, Multiply &amp; Divide",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/future-value-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/future-value-calculator/"
+      ],
+      "h1": 1,
+      "title": "Future Value Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/gallons-to-cups-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/gallons-to-cups-calculator/"
+      ],
+      "h1": 1,
+      "title": "Gallons To Cups Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/gallons-to-liters-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/gallons-to-liters-calculator/"
+      ],
+      "h1": 1,
+      "title": "Gallons To Liters Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/gallons-to-quarts-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/gallons-to-quarts-calculator/"
+      ],
+      "h1": 1,
+      "title": "Gallons To Quarts Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/geodesic-dome-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/geodesic-dome-calculator/"
+      ],
+      "h1": 1,
+      "title": "Geodesic Dome Calculator: Area, Volume &amp; Height",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/geodesic-dome-material-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/geodesic-dome-material-calculator/"
+      ],
+      "h1": 1,
+      "title": "Geodesic Dome Material Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/geodesic-dome-size-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/geodesic-dome-size-calculator/"
+      ],
+      "h1": 1,
+      "title": "Geodesic Dome Size Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/geodesic-dome-surface-area-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/geodesic-dome-surface-area-calculator/"
+      ],
+      "h1": 1,
+      "title": "Geodesic Dome Surface Area Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/gigabytes-to-bytes-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/gigabytes-to-bytes-calculator/"
+      ],
+      "h1": 1,
+      "title": "Gigabytes To Bytes Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/gigabytes-to-megabytes-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/gigabytes-to-megabytes-calculator/"
+      ],
+      "h1": 1,
+      "title": "Gigabytes To Megabytes Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/gpa-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/gpa-calculator/"
+      ],
+      "h1": 1,
+      "title": "Gpa Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/gpu-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/gpu-calculator/"
+      ],
+      "h1": 1,
+      "title": "GPU Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/grade-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/grade-calculator/"
+      ],
+      "h1": 1,
+      "title": "Grade Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/grains-to-grams-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/grains-to-grams-calculator/"
+      ],
+      "h1": 1,
+      "title": "Grains To Grams Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/grains-to-ounces-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/grains-to-ounces-calculator/"
+      ],
+      "h1": 1,
+      "title": "Grains To Ounces Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/grams-to-grains-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/grams-to-grains-calculator/"
+      ],
+      "h1": 1,
+      "title": "Grams To Grains Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/grams-to-kilograms-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/grams-to-kilograms-calculator/"
+      ],
+      "h1": 1,
+      "title": "Grams To Kilograms Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/grams-to-micrograms-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/grams-to-micrograms-calculator/"
+      ],
+      "h1": 1,
+      "title": "Grams To Micrograms Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/grams-to-milligrams-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/grams-to-milligrams-calculator/"
+      ],
+      "h1": 1,
+      "title": "Grams To Milligrams Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/grams-to-ounces-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/grams-to-ounces-calculator/"
+      ],
+      "h1": 1,
+      "title": "Grams To Ounces Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/grams-to-pounds-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/grams-to-pounds-calculator/"
+      ],
+      "h1": 1,
+      "title": "Grams To Pounds Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/grams-to-troy-ounces-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/grams-to-troy-ounces-calculator/"
+      ],
+      "h1": 1,
+      "title": "Grams To Troy Ounces Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/gravel-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/gravel-calculator/"
+      ],
+      "h1": 1,
+      "title": "Gravel Calculator: Cubic Yards, US Tons &amp; Material Cost",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/guides/calculate-square-footage-irregular-room/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/guides/calculate-square-footage-irregular-room/"
+      ],
+      "h1": 1,
+      "title": "Irregular Room Square Footage: Step-by-Step | NS Calculators",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/guides/used-car-value-vs-trade-in/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/guides/used-car-value-vs-trade-in/"
+      ],
+      "h1": 1,
+      "title": "Used Car Value vs. Trade-In Value | NS Calculators",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/health-calculators/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/health-calculators/"
+      ],
+      "h1": 1,
+      "title": "Free Health Calculators | NS Calculators",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/healthy-weight-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/healthy-weight-calculator/"
+      ],
+      "h1": 1,
+      "title": "Healthy Weight Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/hectares-to-acres-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/hectares-to-acres-calculator/"
+      ],
+      "h1": 1,
+      "title": "Hectares To Acres Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/home-equity-loan-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/home-equity-loan-calculator/"
+      ],
+      "h1": 1,
+      "title": "Home Equity Loan Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/horsepower-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/horsepower-calculator/"
+      ],
+      "h1": 1,
+      "title": "Horsepower Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/horsepower-to-kilowatts-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/horsepower-to-kilowatts-calculator/"
+      ],
+      "h1": 1,
+      "title": "Horsepower To Kilowatts Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/hours-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/hours-calculator/"
+      ],
+      "h1": 1,
+      "title": "Hours Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/hours-to-minutes-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/hours-to-minutes-calculator/"
+      ],
+      "h1": 1,
+      "title": "Hours To Minutes Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/hours-to-years-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/hours-to-years-calculator/"
+      ],
+      "h1": 1,
+      "title": "Hours To Years Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/house-affordability-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/house-affordability-calculator/"
+      ],
+      "h1": 1,
+      "title": "House Affordability Calculator: How Much Home Can I Afford?",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/ideal-weight-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/ideal-weight-calculator/"
+      ],
+      "h1": 1,
+      "title": "Ideal Weight Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/inches-to-centimeters-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/inches-to-centimeters-calculator/"
+      ],
+      "h1": 1,
+      "title": "Inches To Centimeters Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/inches-to-meters-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/inches-to-meters-calculator/"
+      ],
+      "h1": 1,
+      "title": "Inches To Meters Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/inches-to-miles-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/inches-to-miles-calculator/"
+      ],
+      "h1": 1,
+      "title": "Inches To Miles Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/inches-to-millimeters-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/inches-to-millimeters-calculator/"
+      ],
+      "h1": 1,
+      "title": "Inches To Millimeters Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/inches-to-yards-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/inches-to-yards-calculator/"
+      ],
+      "h1": 1,
+      "title": "Inches To Yards Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/inflation-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/inflation-calculator/"
+      ],
+      "h1": 1,
+      "title": "Inflation Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/interest-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/interest-calculator/"
+      ],
+      "h1": 1,
+      "title": "Interest Calculator: Simple vs Compound Interest",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/investment-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/investment-calculator/"
+      ],
+      "h1": 1,
+      "title": "Investment Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/ip-subnet-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/ip-subnet-calculator/"
+      ],
+      "h1": 1,
+      "title": "Ip Subnet Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/ira-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/ira-calculator/"
+      ],
+      "h1": 1,
+      "title": "IRA Calculator: Traditional vs Roth &amp; Taxable Savings",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/joules-to-calories-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/joules-to-calories-calculator/"
+      ],
+      "h1": 1,
+      "title": "Joules To Calories Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/kilobytes-to-gigabytes-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/kilobytes-to-gigabytes-calculator/"
+      ],
+      "h1": 1,
+      "title": "Kilobytes To Gigabytes Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/kilocalories-to-calories-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/kilocalories-to-calories-calculator/"
+      ],
+      "h1": 1,
+      "title": "Kilocalories To Calories Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/kilograms-to-grams-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/kilograms-to-grams-calculator/"
+      ],
+      "h1": 1,
+      "title": "Kilograms To Grams Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/kilograms-to-ounces-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/kilograms-to-ounces-calculator/"
+      ],
+      "h1": 1,
+      "title": "Kilograms To Ounces Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/kilograms-to-pounds-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/kilograms-to-pounds-calculator/"
+      ],
+      "h1": 1,
+      "title": "Kilograms To Pounds Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/kilograms-to-stones-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/kilograms-to-stones-calculator/"
+      ],
+      "h1": 1,
+      "title": "Kilograms To Stones Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/kilojoules-to-calories-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/kilojoules-to-calories-calculator/"
+      ],
+      "h1": 1,
+      "title": "Kilojoules To Calories Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/kilometers-per-hour-to-miles-per-hour-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/kilometers-per-hour-to-miles-per-hour-calculator/"
+      ],
+      "h1": 1,
+      "title": "Kilometers Per Hour To Miles Per Hour Calculator | NS Calculators",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/kilometers-to-feet-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/kilometers-to-feet-calculator/"
+      ],
+      "h1": 1,
+      "title": "Kilometers To Feet Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/kilometers-to-meters-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/kilometers-to-meters-calculator/"
+      ],
+      "h1": 1,
+      "title": "Kilometers To Meters Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/kilometers-to-miles-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/kilometers-to-miles-calculator/"
+      ],
+      "h1": 1,
+      "title": "Kilometers To Miles Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/kilowatts-to-horsepower-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/kilowatts-to-horsepower-calculator/"
+      ],
+      "h1": 1,
+      "title": "Kilowatts To Horsepower Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/kilowatts-to-watts-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/kilowatts-to-watts-calculator/"
+      ],
+      "h1": 1,
+      "title": "Kilowatts To Watts Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/knots-to-mach-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/knots-to-mach-calculator/"
+      ],
+      "h1": 1,
+      "title": "Knots To Mach Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/knots-to-miles-per-hour-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/knots-to-miles-per-hour-calculator/"
+      ],
+      "h1": 1,
+      "title": "Knots To Miles Per Hour Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/liters-to-cu-inches-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/liters-to-cu-inches-calculator/"
+      ],
+      "h1": 1,
+      "title": "Liters to Cubic Inches Calculator (L to cu in)",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/liters-to-cu-meters-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/liters-to-cu-meters-calculator/"
+      ],
+      "h1": 1,
+      "title": "Liters To Cubic Meters Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/liters-to-gallons-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/liters-to-gallons-calculator/"
+      ],
+      "h1": 1,
+      "title": "Liters To Gallons Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/liters-to-milliliters-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/liters-to-milliliters-calculator/"
+      ],
+      "h1": 1,
+      "title": "Liters To Milliliters Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/loan-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/loan-calculator/"
+      ],
+      "h1": 1,
+      "title": "Loan Calculator: Payment &amp; Interest | NS Calculators",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/mach-to-knots-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/mach-to-knots-calculator/"
+      ],
+      "h1": 1,
+      "title": "Mach To Knots Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/macro-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/macro-calculator/"
+      ],
+      "h1": 1,
+      "title": "Macro Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/marriage-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/marriage-calculator/"
+      ],
+      "h1": 1,
+      "title": "Marriage Tax Calculator: Joint vs Single Estimate",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/math-calculators/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/math-calculators/"
+      ],
+      "h1": 1,
+      "title": "Free Math Calculators | NS Calculators",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/mean-median-mode-range-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/mean-median-mode-range-calculator/"
+      ],
+      "h1": 1,
+      "title": "Mean Median Mode Range Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/megabytes-to-gigabytes-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/megabytes-to-gigabytes-calculator/"
+      ],
+      "h1": 1,
+      "title": "Megabytes To Gigabytes Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/meters-to-centimeters-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/meters-to-centimeters-calculator/"
+      ],
+      "h1": 1,
+      "title": "Meters To Centimeters Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/meters-to-feet-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/meters-to-feet-calculator/"
+      ],
+      "h1": 1,
+      "title": "Meters To Feet Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/meters-to-inches-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/meters-to-inches-calculator/"
+      ],
+      "h1": 1,
+      "title": "Meters To Inches Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/meters-to-kilometers-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/meters-to-kilometers-calculator/"
+      ],
+      "h1": 1,
+      "title": "Meters To Kilometers Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/meters-to-miles-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/meters-to-miles-calculator/"
+      ],
+      "h1": 1,
+      "title": "Meters To Miles Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/meters-to-millimeters-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/meters-to-millimeters-calculator/"
+      ],
+      "h1": 1,
+      "title": "Meters To Millimeters Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/meters-to-yards-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/meters-to-yards-calculator/"
+      ],
+      "h1": 1,
+      "title": "Meters To Yards Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/methodology/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/methodology/"
+      ],
+      "h1": 1,
+      "title": "Methodology | NS Calculators",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/micrograms-to-grams-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/micrograms-to-grams-calculator/"
+      ],
+      "h1": 1,
+      "title": "Micrograms To Grams Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/micrograms-to-milligrams-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/micrograms-to-milligrams-calculator/"
+      ],
+      "h1": 1,
+      "title": "Micrograms To Milligrams Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/miles-per-hour-to-kilometers-per-hour-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/miles-per-hour-to-kilometers-per-hour-calculator/"
+      ],
+      "h1": 1,
+      "title": "Miles Per Hour To Kilometers Per Hour Calculator | NS Calculators",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/miles-to-kilometers-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/miles-to-kilometers-calculator/"
+      ],
+      "h1": 1,
+      "title": "Miles To Kilometers Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/miles-to-meters-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/miles-to-meters-calculator/"
+      ],
+      "h1": 1,
+      "title": "Miles To Meters Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/miles-to-nautical-miles-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/miles-to-nautical-miles-calculator/"
+      ],
+      "h1": 1,
+      "title": "Miles To Nautical Miles Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/milligrams-to-grams-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/milligrams-to-grams-calculator/"
+      ],
+      "h1": 1,
+      "title": "Milligrams To Grams Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/milligrams-to-micrograms-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/milligrams-to-micrograms-calculator/"
+      ],
+      "h1": 1,
+      "title": "Milligrams To Micrograms Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/milligrams-to-ounces-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/milligrams-to-ounces-calculator/"
+      ],
+      "h1": 1,
+      "title": "Milligrams To Ounces Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/milliliters-to-liters-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/milliliters-to-liters-calculator/"
+      ],
+      "h1": 1,
+      "title": "Milliliters To Liters Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/millimeters-to-centimeters-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/millimeters-to-centimeters-calculator/"
+      ],
+      "h1": 1,
+      "title": "Millimeters To Centimeters Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/millimeters-to-feet-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/millimeters-to-feet-calculator/"
+      ],
+      "h1": 1,
+      "title": "Millimeters To Feet Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/millimeters-to-inches-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/millimeters-to-inches-calculator/"
+      ],
+      "h1": 1,
+      "title": "Millimeters To Inches Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/millimeters-to-meters-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/millimeters-to-meters-calculator/"
+      ],
+      "h1": 1,
+      "title": "Millimeters To Meters Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/mils-to-inches-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/mils-to-inches-calculator/"
+      ],
+      "h1": 1,
+      "title": "Mils To Inches Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/mining-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/mining-calculator/"
+      ],
+      "h1": 1,
+      "title": "Mining Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/minutes-to-days-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/minutes-to-days-calculator/"
+      ],
+      "h1": 1,
+      "title": "Minutes To Days Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/minutes-to-seconds-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/minutes-to-seconds-calculator/"
+      ],
+      "h1": 1,
+      "title": "Minutes To Seconds Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/minutes-to-years-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/minutes-to-years-calculator/"
+      ],
+      "h1": 1,
+      "title": "Minutes To Years Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/months-to-weeks-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/months-to-weeks-calculator/"
+      ],
+      "h1": 1,
+      "title": "Months To Weeks Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/months-to-years-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/months-to-years-calculator/"
+      ],
+      "h1": 1,
+      "title": "Months To Years Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/mortgage-amortization-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/mortgage-amortization-calculator/"
+      ],
+      "h1": 1,
+      "title": "Mortgage Amortization Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/mortgage-calculator-uk/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/mortgage-calculator-uk/"
+      ],
+      "h1": 1,
+      "title": "Mortgage Calculator UK | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/mortgage-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/mortgage-calculator/"
+      ],
+      "h1": 1,
+      "title": "Mortgage Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/mortgage-payoff-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/mortgage-payoff-calculator/"
+      ],
+      "h1": 1,
+      "title": "Mortgage Payoff Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/mpg-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/mpg-calculator/"
+      ],
+      "h1": 1,
+      "title": "MPG Calculator: Gas Mileage, L/100 km &amp; Fuel Cost",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/mulch-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/mulch-calculator/"
+      ],
+      "h1": 1,
+      "title": "Mulch Calculator: Cubic Yards, Bags &amp; Material Cost",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/nanometers-to-meters-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/nanometers-to-meters-calculator/"
+      ],
+      "h1": 1,
+      "title": "Nanometers To Meters Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/nanometers-to-millimeters-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/nanometers-to-millimeters-calculator/"
+      ],
+      "h1": 1,
+      "title": "Nanometers To Millimeters Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/nautical-miles-to-kilometers-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/nautical-miles-to-kilometers-calculator/"
+      ],
+      "h1": 1,
+      "title": "Nautical Miles To Kilometers Calculator | NS Calculators",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/nautical-miles-to-miles-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/nautical-miles-to-miles-calculator/"
+      ],
+      "h1": 1,
+      "title": "Nautical Miles To Miles Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/new-vs-used-car-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/new-vs-used-car-calculator/"
+      ],
+      "h1": 1,
+      "title": "New vs Used Car Calculator: Compare Ownership Costs",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/ounces-to-grams-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/ounces-to-grams-calculator/"
+      ],
+      "h1": 1,
+      "title": "Ounces To Grams Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/ounces-to-pounds-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/ounces-to-pounds-calculator/"
+      ],
+      "h1": 1,
+      "title": "Ounces To Pounds Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/pace-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/pace-calculator/"
+      ],
+      "h1": 1,
+      "title": "Pace Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/password-generator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/password-generator/"
+      ],
+      "h1": 1,
+      "title": "Password Generator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/payback-period-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/payback-period-calculator/"
+      ],
+      "h1": 1,
+      "title": "Payback Period Calculator: Discounted &amp; Cash Flow",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/payload-capacity-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/payload-capacity-calculator/"
+      ],
+      "h1": 1,
+      "title": "Payload Capacity Calculator: GVWR, Cargo &amp; Tongue Weight",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/payment-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/payment-calculator/"
+      ],
+      "h1": 1,
+      "title": "Payment Calculator: Monthly Payment or Loan Term",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/pension-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/pension-calculator/"
+      ],
+      "h1": 1,
+      "title": "Pension Calculator: Lump Sum, Survivor &amp; Retirement Age",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/percent-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/percent-calculator/"
+      ],
+      "h1": 1,
+      "title": "Percentage Calculator: Change, Difference &amp; More",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/percent-error-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/percent-error-calculator/"
+      ],
+      "h1": 1,
+      "title": "Percent Error Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/percent-off-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/percent-off-calculator/"
+      ],
+      "h1": 1,
+      "title": "Percent Off Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/personal-loan-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/personal-loan-calculator/"
+      ],
+      "h1": 1,
+      "title": "Personal Loan Calculator: Payments, Fees &amp; Net Proceeds",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/pounds-to-grams-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/pounds-to-grams-calculator/"
+      ],
+      "h1": 1,
+      "title": "Pounds To Grams Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/pounds-to-kilograms-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/pounds-to-kilograms-calculator/"
+      ],
+      "h1": 1,
+      "title": "Pounds To Kilograms Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/pounds-to-ounces-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/pounds-to-ounces-calculator/"
+      ],
+      "h1": 1,
+      "title": "Pounds To Ounces Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/power-supply-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/power-supply-calculator/"
+      ],
+      "h1": 1,
+      "title": "Power Supply Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/power-to-weight-ratio-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/power-to-weight-ratio-calculator/"
+      ],
+      "h1": 1,
+      "title": "Power To Weight Ratio Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/pregnancy-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/pregnancy-calculator/"
+      ],
+      "h1": 1,
+      "title": "Pregnancy Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/privacy-policy/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/privacy-policy/"
+      ],
+      "h1": 1,
+      "title": "Privacy Policy | NS Calculators",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/private-party-car-value-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/private-party-car-value-calculator/"
+      ],
+      "h1": 1,
+      "title": "Private Party Car Value Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/protein-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/protein-calculator/"
+      ],
+      "h1": 1,
+      "title": "Protein Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/psi-to-bar-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/psi-to-bar-calculator/"
+      ],
+      "h1": 1,
+      "title": "Psi To Bar Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/psi-to-kilopascals-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/psi-to-kilopascals-calculator/"
+      ],
+      "h1": 1,
+      "title": "Psi To Kilopascals Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/psi-to-ksi-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/psi-to-ksi-calculator/"
+      ],
+      "h1": 1,
+      "title": "Psi To Ksi Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/pythagorean-theorem-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/pythagorean-theorem-calculator/"
+      ],
+      "h1": 1,
+      "title": "Pythagorean Theorem Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/quarts-to-cups-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/quarts-to-cups-calculator/"
+      ],
+      "h1": 1,
+      "title": "Quarts To Cups Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/quarts-to-liters-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/quarts-to-liters-calculator/"
+      ],
+      "h1": 1,
+      "title": "Quarts To Liters Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/radians-to-degrees-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/radians-to-degrees-calculator/"
+      ],
+      "h1": 1,
+      "title": "Radians To Degrees Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/rafter-length-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/rafter-length-calculator/"
+      ],
+      "h1": 1,
+      "title": "Rafter Length Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/random-number-generator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/random-number-generator/"
+      ],
+      "h1": 1,
+      "title": "Random Number Generator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/ratio-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/ratio-calculator/"
+      ],
+      "h1": 1,
+      "title": "Ratio Calculator: Simplify, Solve &amp; Split Ratios",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/repayment-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/repayment-calculator/"
+      ],
+      "h1": 1,
+      "title": "Repayment Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/retirement-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/retirement-calculator/"
+      ],
+      "h1": 1,
+      "title": "Retirement Calculator: Savings, Income &amp; Withdrawal Plan",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/right-triangle-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/right-triangle-calculator/"
+      ],
+      "h1": 1,
+      "title": "Right Triangle Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/rmd-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/rmd-calculator/"
+      ],
+      "h1": 1,
+      "title": "RMD Calculator: 2026 Required Minimum Distribution",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/roman-numeral-converter/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/roman-numeral-converter/"
+      ],
+      "h1": 1,
+      "title": "Roman Numeral Converter: Numbers, Dates &amp; Steps",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/roof-pitch-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/roof-pitch-calculator/"
+      ],
+      "h1": 1,
+      "title": "Roof Pitch Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/roth-ira-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/roth-ira-calculator/"
+      ],
+      "h1": 1,
+      "title": "Roth Ira Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/rpm-to-hertz-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/rpm-to-hertz-calculator/"
+      ],
+      "h1": 1,
+      "title": "Rpm To Hertz Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/salary-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/salary-calculator/"
+      ],
+      "h1": 1,
+      "title": "Salary Calculator: Hourly, Monthly &amp; Annual Pay",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/salary-increase-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/salary-increase-calculator/"
+      ],
+      "h1": 1,
+      "title": "Salary Increase Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/sales-tax-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/sales-tax-calculator/"
+      ],
+      "h1": 1,
+      "title": "Sales Tax Calculator: Add or Reverse Tax | NS Calculators",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/sample-size-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/sample-size-calculator/"
+      ],
+      "h1": 1,
+      "title": "Sample Size Calculator: Confidence &amp; Margin of Error",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/savings-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/savings-calculator/"
+      ],
+      "h1": 1,
+      "title": "Savings Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/science-calculators/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/science-calculators/"
+      ],
+      "h1": 1,
+      "title": "Free Science Calculators | NS Calculators",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/scientific-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/scientific-calculator/"
+      ],
+      "h1": 1,
+      "title": "Scientific Calculator: DEG, RAD, Trig &amp; Logs",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/seconds-to-days-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/seconds-to-days-calculator/"
+      ],
+      "h1": 1,
+      "title": "Seconds To Days Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/seconds-to-hours-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/seconds-to-hours-calculator/"
+      ],
+      "h1": 1,
+      "title": "Seconds To Hours Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/simple-interest-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/simple-interest-calculator/"
+      ],
+      "h1": 1,
+      "title": "Simple Interest Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/social-security-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/social-security-calculator/"
+      ],
+      "h1": 1,
+      "title": "Social Security Calculator: Claim Age &amp; Benefits",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/sq-feet-to-acres-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/sq-feet-to-acres-calculator/"
+      ],
+      "h1": 1,
+      "title": "Square Feet to Acres Calculator (sq ft to Acres)",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/sq-feet-to-sq-meters-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/sq-feet-to-sq-meters-calculator/"
+      ],
+      "h1": 1,
+      "title": "Square Feet To Square Meters Calculator | NS Calculators",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/sq-feet-to-sq-yards-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/sq-feet-to-sq-yards-calculator/"
+      ],
+      "h1": 1,
+      "title": "Square Feet To Square Yards Calculator | NS Calculators",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/sq-inches-to-sq-feet-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/sq-inches-to-sq-feet-calculator/"
+      ],
+      "h1": 1,
+      "title": "Square Inches To Square Feet Calculator | NS Calculators",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/sq-inches-to-sq-meters-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/sq-inches-to-sq-meters-calculator/"
+      ],
+      "h1": 1,
+      "title": "Square Inches To Square Meters Calculator | NS Calculators",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/sq-kilometers-to-sq-miles-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/sq-kilometers-to-sq-miles-calculator/"
+      ],
+      "h1": 1,
+      "title": "Square Kilometers To Square Miles Calculator | NS Calculators",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/sq-meters-to-acres-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/sq-meters-to-acres-calculator/"
+      ],
+      "h1": 1,
+      "title": "Square Meters To Acres Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/sq-meters-to-sq-feet-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/sq-meters-to-sq-feet-calculator/"
+      ],
+      "h1": 1,
+      "title": "Square Meters To Square Feet Calculator | NS Calculators",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/sq-meters-to-sq-kilometers-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/sq-meters-to-sq-kilometers-calculator/"
+      ],
+      "h1": 1,
+      "title": "Square Meters To Square Kilometers Calculator | NS Calculators",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/sq-miles-to-sq-kilometers-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/sq-miles-to-sq-kilometers-calculator/"
+      ],
+      "h1": 1,
+      "title": "Square Miles To Square Kilometers Calculator | NS Calculators",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/sq-yards-to-sq-feet-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/sq-yards-to-sq-feet-calculator/"
+      ],
+      "h1": 1,
+      "title": "Square Yards To Square Feet Calculator | NS Calculators",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/square-footage-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/square-footage-calculator/"
+      ],
+      "h1": 1,
+      "title": "Square Footage Calculator: Rooms, Walls &amp; Materials",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/standard-deviation-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/standard-deviation-calculator/"
+      ],
+      "h1": 1,
+      "title": "Standard Deviation Calculator: Sample &amp; Population",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/statistics-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/statistics-calculator/"
+      ],
+      "h1": 1,
+      "title": "Statistics Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/stones-to-kilograms-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/stones-to-kilograms-calculator/"
+      ],
+      "h1": 1,
+      "title": "Stones To Kilograms Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/stones-to-pounds-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/stones-to-pounds-calculator/"
+      ],
+      "h1": 1,
+      "title": "Stones to Pounds Calculator: Stone &amp; lb Converter",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/stud-spacing-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/stud-spacing-calculator/"
+      ],
+      "h1": 1,
+      "title": "Stud Spacing Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/student-loan-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/student-loan-calculator/"
+      ],
+      "h1": 1,
+      "title": "Student Loan Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/take-home-pay-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/take-home-pay-calculator/"
+      ],
+      "h1": 1,
+      "title": "Take Home Pay Calculator 2026 | NS Calculators",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/tdee-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/tdee-calculator/"
+      ],
+      "h1": 1,
+      "title": "Tdee Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/teaspoons-to-tablespoons-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/teaspoons-to-tablespoons-calculator/"
+      ],
+      "h1": 1,
+      "title": "Teaspoons To Tablespoons Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/terms/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/terms/"
+      ],
+      "h1": 1,
+      "title": "Terms of Use | NS Calculators",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/tile-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/tile-calculator/"
+      ],
+      "h1": 1,
+      "title": "Tile Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/tile-spacer-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/tile-spacer-calculator/"
+      ],
+      "h1": 1,
+      "title": "Tile Spacer Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/time-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/time-calculator/"
+      ],
+      "h1": 1,
+      "title": "Time Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/time-date-calculators/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/time-date-calculators/"
+      ],
+      "h1": 1,
+      "title": "Free Time &amp; Date Calculators | NS Calculators",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/time-duration-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/time-duration-calculator/"
+      ],
+      "h1": 1,
+      "title": "Time Duration Calculator: Hours, Minutes &amp; Seconds",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/tip-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/tip-calculator/"
+      ],
+      "h1": 1,
+      "title": "Tip Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/tire-size-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/tire-size-calculator/"
+      ],
+      "h1": 1,
+      "title": "Tire Size Calculator: Compare Tires &amp; Speedometer",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/tongue-weight-percentage-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/tongue-weight-percentage-calculator/"
+      ],
+      "h1": 1,
+      "title": "Tongue Weight Percentage Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/towing-capacity-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/towing-capacity-calculator/"
+      ],
+      "h1": 1,
+      "title": "Towing Capacity Calculator: GCWR, Payload &amp; Hitch Limits",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/trailer-payload-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/trailer-payload-calculator/"
+      ],
+      "h1": 1,
+      "title": "Trailer Payload Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/trailer-tongue-weight-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/trailer-tongue-weight-calculator/"
+      ],
+      "h1": 1,
+      "title": "Trailer Tongue Weight Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/trailer-weight-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/trailer-weight-calculator/"
+      ],
+      "h1": 1,
+      "title": "Trailer Weight Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/triangle-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/triangle-calculator/"
+      ],
+      "h1": 1,
+      "title": "Triangle Calculator: Sides, Angles, Area &amp; Perimeter",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/trip-fuel-cost-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/trip-fuel-cost-calculator/"
+      ],
+      "h1": 1,
+      "title": "Fuel Cost Calculator: Trip Gas Cost &amp; Split",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/troy-ounces-to-grams-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/troy-ounces-to-grams-calculator/"
+      ],
+      "h1": 1,
+      "title": "Troy Ounces To Grams Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/truck-payload-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/truck-payload-calculator/"
+      ],
+      "h1": 1,
+      "title": "Truck Payload Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/used-car-value-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/used-car-value-calculator/"
+      ],
+      "h1": 1,
+      "title": "Used Car Value Calculator: Free Price Estimate",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/va-mortgage-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/va-mortgage-calculator/"
+      ],
+      "h1": 1,
+      "title": "VA Mortgage Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/voltage-drop-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/voltage-drop-calculator/"
+      ],
+      "h1": 1,
+      "title": "Voltage Drop Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/volume-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/volume-calculator/"
+      ],
+      "h1": 1,
+      "title": "Volume Calculator: 11 Shapes, Formulas &amp; Units",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/watts-to-amps-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/watts-to-amps-calculator/"
+      ],
+      "h1": 1,
+      "title": "Watts to Amps Calculator: DC, 1-Phase &amp; 3-Phase",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/watts-to-kilowatts-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/watts-to-kilowatts-calculator/"
+      ],
+      "h1": 1,
+      "title": "Watts To Kilowatts Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/weeks-to-months-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/weeks-to-months-calculator/"
+      ],
+      "h1": 1,
+      "title": "Weeks to Months Calculator: Convert Weeks &amp; Months",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/wheel-offset-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/wheel-offset-calculator/"
+      ],
+      "h1": 1,
+      "title": "Wheel Offset Calculator: Fitment, Poke &amp; Backspacing",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/wire-size-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/wire-size-calculator/"
+      ],
+      "h1": 1,
+      "title": "Wire Size Calculator: AWG, Amps &amp; Voltage Drop",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/yards-to-feet-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/yards-to-feet-calculator/"
+      ],
+      "h1": 1,
+      "title": "Yards To Feet Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/yards-to-inches-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/yards-to-inches-calculator/"
+      ],
+      "h1": 1,
+      "title": "Yards To Inches Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/yards-to-meters-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/yards-to-meters-calculator/"
+      ],
+      "h1": 1,
+      "title": "Yards To Meters Calculator | Free Online Calculator",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/years-to-minutes-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/years-to-minutes-calculator/"
+      ],
+      "h1": 1,
+      "title": "Years to Minutes Calculator: 365, Leap &amp; Average Year",
+      "failures": []
+    },
+    {
+      "url": "https://nscalculators.com/z-score-calculator/",
+      "status": 200,
+      "canonical": [
+        "https://nscalculators.com/z-score-calculator/"
+      ],
+      "h1": 1,
+      "title": "Z Score Calculator | Free Online Calculator",
+      "failures": []
+    }
+  ],
+  "duplicateTitles": [],
+  "limitations": [
+    "Public HTTP and HTML signals only; not Google indexing or rendered calculator correctness.",
+    "No JavaScript analytics requests are sent.",
+    "Network failures are recorded without being labeled Google crawl failures."
+  ]
+}

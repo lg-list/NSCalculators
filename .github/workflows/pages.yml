@@ -55,6 +55,9 @@ jobs:
       - name: Check sitemap eligibility and crawl paths
         run: python scripts/check_indexation_contract.py dist
 
+      - name: Check public indexation signal parser
+        run: node scripts/test_live_indexation_signals.cjs
+
       - name: Check structured data and breadcrumb target consistency
         run: python scripts/check_schema_contract.py dist
 

@@ -1,0 +1,10 @@
+const assert=require('node:assert/strict'),{signals}=require('./audit_live_indexation.cjs');
+const url='https://nscalculators.com/example/',html='<title>Example</title><link rel="canonical" href="'+url+'"><meta name="description" content="A calculation."><h1>Example</h1>';
+assert.deepEqual(signals(html,{},url).failures,[]);
+for(const name of ['robots','googlebot'])assert.ok(signals(html+'<meta name="'+name+'" content="noindex,follow">',{},url).failures.includes('noindex'));
+assert.ok(signals(html,{'x-robots-tag':'googlebot: noindex'},url).failures.includes('noindex'));
+assert.ok(signals(html.replace(url,'https://old.example/'),{},url).failures.includes('canonical'));
+assert.ok(signals(html+'<h1>Duplicate</h1>',{},url).failures.includes('h1'));
+assert.ok(signals(html.replace('A calculation.',''),{},url).failures.includes('description'));
+assert.ok(signals(html.replace('Example</title>','</title>'),{},url).failures.includes('title'));
+console.log('8 public indexation-signal checks passed.');

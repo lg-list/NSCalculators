@@ -1,5 +1,11 @@
 # Search Console measurement access
 
+## Update: October 29
+
+After the connector package changed to 3.0.6, a single read-only account check still returned `payment_required` / `subscription_required`. No purchase or account change followed. The former browser-use binding is not currently exposed; the Windows helper inventory showed Chrome, but its first state request was stopped because the current browser URL could not be established reliably. No Google report contents, fresh totals, new export, submission or setting change resulted. Do not infer lost ownership or a Google crawl failure from these access failures. Avoid repeating the paid request until access changes.
+
+A separate public Playwright HTTP audit on October 29 checked all 305 sitemap URLs successfully. This establishes live HTTP/HTML signal health at the time checked, not Google's index coverage. See `public-indexation-2026-10-29.md` and its original observation JSON.
+
 ## Update: October 28
 
 The existing signed-in in-app tab is readable again through the supported browser UI. The US text-based Web report for September 28–October 25 and its August 31–September 27 comparison were downloaded as original CSV ZIPs and reconciled. Browser actions remain slow and a download observation timed out, but the actual downloaded comparison archive was found and its country, device, date headers and SHA-256 verified. Do not restart a completed download merely because its observation handle expired.
