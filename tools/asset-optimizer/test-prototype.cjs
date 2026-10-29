@@ -1,0 +1,5 @@
+const assert=require('node:assert/strict'),vm=require('node:vm'),{specialize}=require('./prototype-engine.cjs');
+const source='function renderGenericFromEngine(engine){let result=0;if(engine==="a"){result=1}else if(engine!=="b"){result=3}else{result=2}if(Math.random()<0)result=9;return result}';
+for(const engine of ['a','b','c']){const result=specialize(source,engine),context={Math:{random:()=>1}};vm.createContext(context);vm.runInContext(result.code,context);assert.equal(context.renderGenericFromEngine(engine),{a:1,b:2,c:3}[engine]);assert.throws(()=>context.renderGenericFromEngine('other'),/mismatch/);assert.ok(result.code.includes('Math.random()'));assert.ok(result.pruned>0)}
+assert.throws(()=>specialize('function unrelated(){}','a'),/boundary/);console.log('Renderer specialization fixture passed: branches, unknown tests and mismatch guard.');
+const nested=specialize('function renderGenericFromEngine(e){return function(e){if(e==="other")return 7;return 8}}','a'),context={};vm.createContext(context);vm.runInContext(nested.code,context);assert.equal(context.renderGenericFromEngine('a')('other'),7);assert.equal(context.renderGenericFromEngine('a')('a'),8);
