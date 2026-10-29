@@ -1,8 +1,11 @@
 import argparse
+import json
 from hashlib import sha256
 from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import parse_qs, urlparse
+
+SPECIALIZED = {row['asset']: row['slug'] + '/index.html' for row in json.loads((Path(__file__).resolve().parents[1] / 'tools/asset-optimizer/engine-assets.json').read_text())}
 
 
 class CalculatorScriptParser(HTMLParser):
@@ -13,7 +16,7 @@ class CalculatorScriptParser(HTMLParser):
     def handle_starttag(self, tag, attrs):
         if tag == "script":
             src = dict(attrs).get("src", "")
-            if urlparse(src).path.endswith(("/assets/calculator.js", "/assets/calculator-401k.js")):
+            if urlparse(src).path.endswith(tuple('/assets/' + name for name in ['calculator.js', *SPECIALIZED])):
                 self.sources.append(src)
 
 
@@ -24,15 +27,17 @@ def check_assets(root):
     for html in root.rglob("*.html"):
         parser = CalculatorScriptParser()
         parser.feed(html.read_text(encoding="utf-8"))
-        if (root / 'assets/calculator-401k.js').exists() and html.relative_to(root).as_posix() == '401k-calculator/index.html':
-            if len(parser.sources) != 1 or not urlparse(parser.sources[0]).path.endswith('/assets/calculator-401k.js'):
-                raise ValueError('401k page must use exactly one specialized runtime')
+        for asset, target in SPECIALIZED.items():
+            if (root / 'assets' / asset).exists() and html.relative_to(root).as_posix() == target:
+                if len(parser.sources) != 1 or not urlparse(parser.sources[0]).path.endswith('/assets/' + asset):
+                    raise ValueError(target + ' must use exactly one specialized runtime')
         for src in parser.sources:
             expected = version
-            if urlparse(src).path.endswith('/assets/calculator-401k.js'):
-                if html.relative_to(root).as_posix() != '401k-calculator/index.html':
+            asset = Path(urlparse(src).path).name
+            if asset in SPECIALIZED:
+                if html.relative_to(root).as_posix() != SPECIALIZED[asset]:
                     raise ValueError(f"{html}: specialized runtime on unsupported page")
-                expected = sha256((root / 'assets/calculator-401k.js').read_bytes()).hexdigest()[:16]
+                expected = sha256((root / 'assets' / asset).read_bytes()).hexdigest()[:16]
             if parse_qs(urlparse(src).query).get("v") != [expected]:
                 raise ValueError(f"{html}: calculator bundle version does not match {version}: {src}")
             checked += 1

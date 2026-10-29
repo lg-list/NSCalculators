@@ -1,0 +1,15 @@
+const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),{chromium}=require('playwright');
+(async()=>{const live=process.argv.includes('--live'),root=path.resolve('doc-work/discovery-build'),origin=live?'https://nscalculators.com':'http://ns.local',browser=await chromium.launch();try{
+const context=await browser.newContext();await context.route('**/*',r=>{const u=new URL(r.request().url());if(/google-analytics|googletagmanager/.test(u.hostname))return r.abort();if(live)return r.continue();const file=path.join(root,decodeURIComponent(u.pathname),u.pathname.endsWith('/')?'index.html':'');if(u.hostname!=='ns.local'||!file.startsWith(root+path.sep)||!fs.existsSync(file))return r.abort();return r.fulfill({body:fs.readFileSync(file),contentType:({'.html':'text/html','.js':'text/javascript','.css':'text/css','.json':'application/json','.svg':'image/svg+xml'})[path.extname(file)]||'text/plain'})});
+const p=await context.newPage(),errors=[],checks=[];p.on('pageerror',e=>errors.push(e.message));
+for(const width of [1366,390,320]){await p.setViewportSize({width,height:844});assert.equal((await p.goto(origin+'/area-calculator/',{waitUntil:'networkidle'})).status(),200);assert.match(await p.locator('#result').innerText(),/^240/);
+for(const shape of await p.locator('#geo_shape option').evaluateAll(xs=>xs.map(x=>x.value))){await p.locator('#geo_shape').selectOption(shape);assert.equal(await p.evaluate(()=>geometryAreaProjection().valid),true,shape);assert.doesNotMatch(await p.locator('#result').innerText(),/Unable to calculate|Check inputs/)}
+await p.locator('#geo_shape').selectOption('sector');await p.locator('#geo_angle').fill('360');await p.locator('#geo_angle').press('Enter');assert.match(await p.locator('#result').innerText(),/37\.69911184 ft perimeter/);assert.match(await p.locator('#result').innerText(),/Full circle/);assert.match(await p.locator('#genericTable').innerText(),/37\.6991118431 ft/);
+if(!live)await p.screenshot({path:`doc-work/area-boundary-${width}.png`});
+await p.locator('#geo_angle').fill('90');await p.locator('#geo_angle').press('Enter');assert.match(await p.locator('#result').innerText(),/21\.42477796 ft perimeter/);
+await p.locator('#geo_shape').selectOption('sss');for(const [id,value]of Object.entries({geo_a:'100000000',geo_b:'100000000',geo_c:'0.00000001'}))await p.locator('#'+id).fill(value);await p.locator('#geo_a').press('Enter');assert.match(await p.locator('#result').innerText(),/^0\.5 ft/);
+await p.locator('#geo_c').fill('200000000');await p.locator('#geo_a').press('Enter');assert.match(await p.locator('#result').innerText(),/triangle inequality/);
+assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);checks.push({width,fullCirclePerimeter:37.69911184,quarterCirclePerimeter:21.42477796,thinTriangleArea:.5});
+}
+assert.deepEqual(errors,[]);console.log(JSON.stringify({live,checks,errors}));
+}finally{await browser.close()}})().catch(e=>{console.error(e);process.exit(1)});

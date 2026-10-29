@@ -1,0 +1,4 @@
+[
+  {"slug":"401k-calculator","engine":"401k_advanced","asset":"calculator-401k.js"},
+  {"slug":"area-calculator","engine":"area_advanced","asset":"calculator-area.js"}
+]
