@@ -1,0 +1,91 @@
+{
+  "profile": {
+    "cpu": 4,
+    "latency": 150,
+    "download": 1600000,
+    "width": 390,
+    "height": 844,
+    "repeats": 3,
+    "localGzipServer": true
+  },
+  "samples": [
+    {
+      "round": 1,
+      "variant": "control",
+      "lcp": 728,
+      "longest": 207,
+      "script": [
+        {
+          "encoded": 141082,
+          "decoded": 500087,
+          "duration": 950.3000000000466
+        }
+      ]
+    },
+    {
+      "round": 1,
+      "variant": "candidate",
+      "lcp": 736,
+      "longest": 212,
+      "script": [
+        {
+          "encoded": 92602,
+          "decoded": 315146,
+          "duration": 688.5
+        }
+      ]
+    },
+    {
+      "round": 2,
+      "variant": "candidate",
+      "lcp": 696,
+      "longest": 190,
+      "script": [
+        {
+          "encoded": 92602,
+          "decoded": 315146,
+          "duration": 691.9000000001397
+        }
+      ]
+    },
+    {
+      "round": 2,
+      "variant": "control",
+      "lcp": 716,
+      "longest": 188,
+      "script": [
+        {
+          "encoded": 141082,
+          "decoded": 500087,
+          "duration": 935.4000000001397
+        }
+      ]
+    },
+    {
+      "round": 3,
+      "variant": "control",
+      "lcp": 700,
+      "longest": 181,
+      "script": [
+        {
+          "encoded": 141082,
+          "decoded": 500087,
+          "duration": 944
+        }
+      ]
+    },
+    {
+      "round": 3,
+      "variant": "candidate",
+      "lcp": 712,
+      "longest": 183,
+      "script": [
+        {
+          "encoded": 92602,
+          "decoded": 315146,
+          "duration": 697.0999999998603
+        }
+      ]
+    }
+  ]
+}

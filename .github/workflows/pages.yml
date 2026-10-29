@@ -157,6 +157,12 @@ jobs:
       - name: Check 401k projections, withdrawals and mode validation
         run: node scripts/test_k401_projection.cjs dist/assets/calculator.js
 
+      - name: Check delivered 401k runtime
+        run: |
+          node tools/asset-optimizer/test-prototype.cjs
+          node scripts/test_k401_projection.cjs dist/assets/calculator-401k.js
+          node scripts/test_401k_match.cjs dist/assets/calculator-401k.js
+
       - name: Check amortization accounting, dates and extra payments
         run: node scripts/test_amortization.cjs dist/assets/calculator.js
 
