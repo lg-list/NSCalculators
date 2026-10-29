@@ -1,0 +1,301 @@
+{
+  "date": "2026-10-29T14:19:27.606Z",
+  "profile": {
+    "width": 390,
+    "height": 844,
+    "cpuSlowdown": 4,
+    "latencyMs": 150,
+    "downloadBitsPerSecond": 1600000,
+    "uploadBitsPerSecond": 750000,
+    "cacheDisabled": true,
+    "analyticsBlocked": true,
+    "repeatsPerPage": 3,
+    "observerWindowAfterNetworkIdleMs": 1500
+  },
+  "limitations": [
+    "Not a US regional test or physical phone.",
+    "Lab loading samples only; no field CWV or interaction/INP result.",
+    "Initial unused-code coverage excludes later interaction paths and cannot justify deleting functions."
+  ],
+  "samples": [
+    {
+      "slug": "area-calculator",
+      "repeat": 1,
+      "httpStatus": 200,
+      "status": "complete",
+      "lcp": 1820,
+      "shifts": 0,
+      "longestTask": 175,
+      "fcp": 1820,
+      "ttfb": 842.3000000000466,
+      "overflow": false,
+      "resources": [
+        {
+          "url": "https://nscalculators.com/assets/site.css?v=89eaa86f0de2ffbd",
+          "encoded": 15714,
+          "decoded": 99093
+        },
+        {
+          "url": "https://nscalculators.com/assets/calculator.js?v=718d9bfce62c3877",
+          "encoded": 141647,
+          "decoded": 500087
+        }
+      ],
+      "firstInputTop": 500.25,
+      "calculatorCoverage": {
+        "coveredCharacters": 30918,
+        "totalCharacters": 499902,
+        "unusedFraction": 0.9381518777680425
+      },
+      "errors": []
+    },
+    {
+      "slug": "area-calculator",
+      "repeat": 2,
+      "httpStatus": 200,
+      "status": "complete",
+      "lcp": 1672,
+      "shifts": 0,
+      "longestTask": 142,
+      "fcp": 1672,
+      "ttfb": 847.0999999999767,
+      "overflow": false,
+      "resources": [
+        {
+          "url": "https://nscalculators.com/assets/site.css?v=89eaa86f0de2ffbd",
+          "encoded": 15714,
+          "decoded": 99093
+        },
+        {
+          "url": "https://nscalculators.com/assets/calculator.js?v=718d9bfce62c3877",
+          "encoded": 141647,
+          "decoded": 500087
+        }
+      ],
+      "firstInputTop": 500.25,
+      "calculatorCoverage": {
+        "coveredCharacters": 30918,
+        "totalCharacters": 499902,
+        "unusedFraction": 0.9381518777680425
+      },
+      "errors": []
+    },
+    {
+      "slug": "area-calculator",
+      "repeat": 3,
+      "httpStatus": 200,
+      "status": "complete",
+      "lcp": 1120,
+      "shifts": 0,
+      "longestTask": 150,
+      "fcp": 1120,
+      "ttfb": 572.5,
+      "overflow": false,
+      "resources": [
+        {
+          "url": "https://nscalculators.com/assets/site.css?v=89eaa86f0de2ffbd",
+          "encoded": 15714,
+          "decoded": 99093
+        },
+        {
+          "url": "https://nscalculators.com/assets/calculator.js?v=718d9bfce62c3877",
+          "encoded": 141647,
+          "decoded": 500087
+        }
+      ],
+      "firstInputTop": 500.25,
+      "calculatorCoverage": {
+        "coveredCharacters": 30918,
+        "totalCharacters": 499902,
+        "unusedFraction": 0.9381518777680425
+      },
+      "errors": []
+    },
+    {
+      "slug": "mortgage-calculator",
+      "repeat": 1,
+      "httpStatus": 200,
+      "status": "complete",
+      "lcp": 1220,
+      "shifts": 0,
+      "longestTask": 224,
+      "fcp": 1220,
+      "ttfb": 577.1000000000931,
+      "overflow": false,
+      "resources": [
+        {
+          "url": "https://nscalculators.com/assets/site.css?v=89eaa86f0de2ffbd",
+          "encoded": 15714,
+          "decoded": 99093
+        },
+        {
+          "url": "https://nscalculators.com/assets/calculator.js?v=718d9bfce62c3877",
+          "encoded": 141647,
+          "decoded": 500087
+        }
+      ],
+      "firstInputTop": 305.40625,
+      "calculatorCoverage": {
+        "coveredCharacters": 31244,
+        "totalCharacters": 499902,
+        "unusedFraction": 0.9374997499509904
+      },
+      "errors": []
+    },
+    {
+      "slug": "mortgage-calculator",
+      "repeat": 2,
+      "httpStatus": 200,
+      "status": "complete",
+      "lcp": 904,
+      "shifts": 0,
+      "longestTask": 208,
+      "fcp": 904,
+      "ttfb": 277.20000000006985,
+      "overflow": false,
+      "resources": [
+        {
+          "url": "https://nscalculators.com/assets/site.css?v=89eaa86f0de2ffbd",
+          "encoded": 15714,
+          "decoded": 99093
+        },
+        {
+          "url": "https://nscalculators.com/assets/calculator.js?v=718d9bfce62c3877",
+          "encoded": 141647,
+          "decoded": 500087
+        }
+      ],
+      "firstInputTop": 305.40625,
+      "calculatorCoverage": {
+        "coveredCharacters": 31244,
+        "totalCharacters": 499902,
+        "unusedFraction": 0.9374997499509904
+      },
+      "errors": []
+    },
+    {
+      "slug": "mortgage-calculator",
+      "repeat": 3,
+      "httpStatus": 200,
+      "status": "complete",
+      "lcp": 1740,
+      "shifts": 0,
+      "longestTask": 215,
+      "fcp": 1740,
+      "ttfb": 966.8000000000466,
+      "overflow": false,
+      "resources": [
+        {
+          "url": "https://nscalculators.com/assets/site.css?v=89eaa86f0de2ffbd",
+          "encoded": 15714,
+          "decoded": 99093
+        },
+        {
+          "url": "https://nscalculators.com/assets/calculator.js?v=718d9bfce62c3877",
+          "encoded": 141647,
+          "decoded": 500087
+        }
+      ],
+      "firstInputTop": 305.40625,
+      "calculatorCoverage": {
+        "coveredCharacters": 31244,
+        "totalCharacters": 499902,
+        "unusedFraction": 0.9374997499509904
+      },
+      "errors": []
+    },
+    {
+      "slug": "401k-calculator",
+      "repeat": 1,
+      "httpStatus": 200,
+      "status": "complete",
+      "lcp": 2616,
+      "shifts": 0,
+      "longestTask": 207,
+      "fcp": 2616,
+      "ttfb": 1944.4000000000233,
+      "overflow": false,
+      "resources": [
+        {
+          "url": "https://nscalculators.com/assets/site.css?v=89eaa86f0de2ffbd",
+          "encoded": 15714,
+          "decoded": 99093
+        },
+        {
+          "url": "https://nscalculators.com/assets/calculator.js?v=718d9bfce62c3877",
+          "encoded": 141647,
+          "decoded": 500087
+        }
+      ],
+      "firstInputTop": 353.5625,
+      "calculatorCoverage": {
+        "coveredCharacters": 33810,
+        "totalCharacters": 499902,
+        "unusedFraction": 0.9323667438818009
+      },
+      "errors": []
+    },
+    {
+      "slug": "401k-calculator",
+      "repeat": 2,
+      "httpStatus": 200,
+      "status": "complete",
+      "lcp": 2068,
+      "shifts": 0,
+      "longestTask": 182,
+      "fcp": 2068,
+      "ttfb": 969.2000000000698,
+      "overflow": false,
+      "resources": [
+        {
+          "url": "https://nscalculators.com/assets/site.css?v=89eaa86f0de2ffbd",
+          "encoded": 15714,
+          "decoded": 99093
+        },
+        {
+          "url": "https://nscalculators.com/assets/calculator.js?v=718d9bfce62c3877",
+          "encoded": 141647,
+          "decoded": 500087
+        }
+      ],
+      "firstInputTop": 353.5625,
+      "calculatorCoverage": {
+        "coveredCharacters": 33810,
+        "totalCharacters": 499902,
+        "unusedFraction": 0.9323667438818009
+      },
+      "errors": []
+    },
+    {
+      "slug": "401k-calculator",
+      "repeat": 3,
+      "httpStatus": 200,
+      "status": "complete",
+      "lcp": 932,
+      "shifts": 0,
+      "longestTask": 189,
+      "fcp": 932,
+      "ttfb": 269.4000000000233,
+      "overflow": false,
+      "resources": [
+        {
+          "url": "https://nscalculators.com/assets/site.css?v=89eaa86f0de2ffbd",
+          "encoded": 15714,
+          "decoded": 99093
+        },
+        {
+          "url": "https://nscalculators.com/assets/calculator.js?v=718d9bfce62c3877",
+          "encoded": 141647,
+          "decoded": 500087
+        }
+      ],
+      "firstInputTop": 353.5625,
+      "calculatorCoverage": {
+        "coveredCharacters": 33810,
+        "totalCharacters": 499902,
+        "unusedFraction": 0.9323667438818009
+      },
+      "errors": []
+    }
+  ]
+}
