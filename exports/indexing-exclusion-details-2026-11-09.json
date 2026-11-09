@@ -1,0 +1,26 @@
+{
+  "observed_on": "2026-11-09",
+  "property": "sc-domain:nscalculators.com",
+  "report_updated": "2026-11-06",
+  "scope": "https://nscalculators.com/sitemap.xml",
+  "source": "Rendered Search Console report and stored URL Inspection result; no submission or live test",
+  "other_canonical": {
+    "url": "https://nscalculators.com/mortgage-payoff-calculator/",
+    "last_crawl_display": "2026-10-14 21:15:50",
+    "agent": "Googlebot smartphone",
+    "crawl_allowed": true,
+    "fetch": "successful",
+    "indexing_allowed": true,
+    "user_canonical": "https://nscalculators.com/mortgage-payoff-calculator/",
+    "google_canonical": "https://lg-list.github.io/NSCalculators/mortgage-payoff-calculator/",
+    "referrer": "https://nscalculators.com/mortgage-calculator-uk/"
+  },
+  "crawled_not_indexed": [{"url": "https://nscalculators.com/watts-to-kilowatts-calculator/", "last_crawled_display": "2026-10-15"}],
+  "discovered_not_indexed": [
+    "/centimeters-to-inches-calculator/", "/contact/", "/days-to-seconds-calculator/", "/days-to-weeks-calculator/",
+    "/guides/used-car-value-vs-trade-in/", "/kilograms-to-stones-calculator/", "/kilowatts-to-horsepower-calculator/",
+    "/meters-to-feet-calculator/", "/mortgage-calculator-uk/", "/new-vs-used-car-calculator/", "/savings-calculator/"
+  ],
+  "discovered_last_crawl_display": "Not applicable for all 11",
+  "limitations": ["Property-wide indexing observations are not US keyword demand.", "Stored inspection is not a current Google crawl.", "Public response verification is separate from Google's indexing decision.", "No request indexing, validation, sitemap submission or account change performed."]
+}

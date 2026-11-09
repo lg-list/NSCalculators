@@ -24,7 +24,8 @@ RMD_UNIFORM_LIFE_TABLE = ROOT / "src" / "data" / "rmd-uniform-lifetime-table.jso
 CONCRETE_BAG_YIELDS = ((40, "0.30"), (50, "0.375"), (60, "0.45"), (80, "0.60"), (90, "0.675"))
 # Verified significant content dates, not build/deploy dates. Restoration and
 # methodology changes: 5becd87046, 3defecfc13, f07dec8071 (October 26).
-SITEMAP_LASTMOD = {"/gravel-calculator/": "2026-10-26", "/mulch-calculator/": "2026-10-26"}
+SITEMAP_LASTMOD = {"/gravel-calculator/": "2026-10-26", "/mulch-calculator/": "2026-10-26",
+                   "/watts-to-kilowatts-calculator/": "2026-11-09"}
 
 
 def sitemap_url_entry(site, path):
@@ -1253,6 +1254,8 @@ def seo_keywords(calc):
 
 
 def seo_title(calc):
+    if calc.get("slug") == "watts-to-kilowatts-calculator":
+        return "Watts to Kilowatts Calculator: W to kW Conversion"
     if calc.get("slug") == "ira-calculator":
         return "IRA Calculator: Traditional vs Roth & Taxable Savings"
     if calc.get("slug") == "towing-capacity-calculator":
@@ -1403,6 +1406,8 @@ def seo_title(calc):
 
 
 def seo_description(calc):
+    if calc.get("slug") == "watts-to-kilowatts-calculator":
+        return "Convert watts to kilowatts by dividing by 1,000. Check W to kW examples, appliance power values, and the difference between kW and kWh."
     if calc.get("slug") == "ira-calculator":
         return "Use this IRA calculator to compare Traditional vs Roth IRA and taxable savings on an equal pre-tax budget. View modeled after-tax balances and annual schedules."
     if calc.get("slug") == "pension-calculator":
@@ -3220,6 +3225,18 @@ def priority_length_copy(calc):
 
 
 def conversion_copy(calc):
+    if calc.get("slug") == "watts-to-kilowatts-calculator":
+        return """
+<h2>How to convert watts to kilowatts</h2><p>Divide the power in watts (W) by 1,000 to obtain kilowatts (kW). Enter the watt value above, then select Calculate. This changes the unit used to express the same power; it does not change the device's electricity use.</p>
+<p class="formula">Power in kW = power in W / 1,000. Exactly 1 kW = 1,000 W.</p>
+<p>The prefix kilo means one thousand in the <a href="https://www.nist.gov/pml/owm/metric-si-prefixes" rel="external noopener">NIST SI prefix reference</a>. Use lowercase k and uppercase W: kW. The factor is defined, although an appliance's measured power may vary.</p>
+<h2>Worked example: 1,500 watts to kW</h2><p>For a device drawing 1,500 W, calculate 1,500 / 1,000 = <strong>1.5 kW</strong>. If it maintains that draw for two hours, its energy use is 1.5 x 2 = 3 kWh. The first result is power; the second includes time and is energy. These are arithmetic examples, not typical consumption ratings.</p>
+<h2>Watts to kilowatts conversion table</h2><div class="table-scroll"><table class="data-table"><thead><tr><th scope="col">Watts (W)</th><th scope="col">Kilowatts (kW)</th></tr></thead><tbody><tr><td>1</td><td>0.001</td></tr><tr><td>60</td><td>0.06</td></tr><tr><td>100</td><td>0.1</td></tr><tr><td>500</td><td>0.5</td></tr><tr><td>1,000</td><td>1</td></tr><tr><td>1,500</td><td>1.5</td></tr><tr><td>2,000</td><td>2</td></tr><tr><td>7,200</td><td>7.2</td></tr><tr><td>10,000</td><td>10</td></tr></tbody></table></div>
+<h2>kW versus kWh on an electricity bill</h2><p>kW measures power at a moment; kWh measures energy over time. For a constant power draw, energy in kWh = watts / 1,000 x operating hours. When power changes, add the energy for each interval. The <a href="https://www.eia.gov/energyexplained/electricity/measuring-electricity.php" rel="external noopener">US Energy Information Administration explains power and energy units</a>.</p>
+<p>At an illustrative energy rate of $0.20 per kWh, the 3 kWh example costs $0.60 in energy charges. Your tariff may also include fixed charges, time-of-use rates, taxes or demand charges. A nameplate rating alone does not reveal runtime, thermostat cycling or total monthly cost.</p>
+<h2>Choose the right electrical input</h2><p>For a US appliance label marked in W, enter that number directly. Voltage and frequency do not change the W-to-kW factor. A label in VA or kVA gives apparent power, which is not necessarily real power in W or kW; AC power factor is needed to relate them. If your label gives voltage and current instead, use the <a href="/amps-to-watts-calculator/">amps to watts calculator</a> with the appropriate circuit and power factor.</p>
+<p>For the reverse operation, multiply kW by 1,000 using the <a href="/kilowatts-to-watts-calculator/">kilowatts to watts calculator</a>. To relate real power to current, use the <a href="/watts-to-amps-calculator/">watts to amps calculator</a>. None of these conversions establishes a safe breaker size, wire rating or generator capacity.</p>
+<h2>Frequently asked questions</h2><h3>How many kW is 1,000 watts?</h3><p>Exactly 1 kW. Divide 1,000 by 1,000.</p><h3>How many watts are in 5 kW?</h3><p>5,000 W. Multiply 5 by 1,000 for the reverse conversion.</p><h3>Do I divide by 1,024?</h3><p>No. Kilo is a decimal prefix here, so divide by 1,000. Binary storage conventions do not apply to electrical power.</p><h3>Can this calculate my electricity bill?</h3><p>The calculator converts power only. To estimate energy charges, also supply operating time and your applicable price per kWh, accounting for changes in power and tariff. Keep kW and kWh separate.</p>"""
     if calc.get("engine") != "linear_convert":
         return None
     source = ""
