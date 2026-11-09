@@ -22,6 +22,19 @@ SEO_STRATEGY = ROOT / "exports" / "seo-keyword-strategy-2026-09-05.json"
 RMD_JOINT_LIFE_TABLE = ROOT / "src" / "data" / "rmd-joint-life-table.json"
 RMD_UNIFORM_LIFE_TABLE = ROOT / "src" / "data" / "rmd-uniform-lifetime-table.json"
 CONCRETE_BAG_YIELDS = ((40, "0.30"), (50, "0.375"), (60, "0.45"), (80, "0.60"), (90, "0.675"))
+# Verified significant content dates, not build/deploy dates. Restoration and
+# methodology changes: 5becd87046, 3defecfc13, f07dec8071 (October 26).
+SITEMAP_LASTMOD = {"/gravel-calculator/": "2026-10-26", "/mulch-calculator/": "2026-10-26"}
+
+
+def sitemap_url_entry(site, path):
+    modified = SITEMAP_LASTMOD.get(path)
+    if modified:
+        date.fromisoformat(modified)
+    suffix = f"<lastmod>{modified}</lastmod>" if modified else ""
+    return f"  <url><loc>{escape(site_url(site, path))}</loc>{suffix}</url>"
+
+
 PUBLIC_BASE_PATH = os.environ.get("PUBLIC_BASE_PATH", "").strip().rstrip("/")
 PUBLIC_SITE_DOMAIN = os.environ.get("PUBLIC_SITE_DOMAIN", "").strip()
 GA4_MEASUREMENT_ID = os.environ.get("GA4_MEASUREMENT_ID", "G-19CY1VWHFM").strip()
@@ -8934,7 +8947,7 @@ def build():
         '<?xml version="1.0" encoding="UTF-8"?>',
         '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
     ]
-    sitemap.extend(f"  <url><loc>{h(site_url(site, u))}</loc></url>" for u in urls)
+    sitemap.extend(sitemap_url_entry(site, u) for u in urls)
     sitemap.append("</urlset>")
     write(DIST / "sitemap.xml", "\n".join(sitemap) + "\n")
     validate_internal_links(site)

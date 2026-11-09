@@ -1,0 +1,29 @@
+{
+  "checkedAt": "2026-11-09T08:06:51.109Z",
+  "rows": [
+    {
+      "url": "https://nscalculators.com/gravel-calculator/",
+      "status": 200,
+      "inSitemap": true,
+      "canonical": [
+        "https://nscalculators.com/gravel-calculator/"
+      ],
+      "h1": 1,
+      "title": "Gravel Calculator: Cubic Yards, US Tons &amp; Material Cost",
+      "failures": [],
+      "xRobotsTag": null
+    },
+    {
+      "url": "https://nscalculators.com/mulch-calculator/",
+      "status": 200,
+      "inSitemap": true,
+      "canonical": [
+        "https://nscalculators.com/mulch-calculator/"
+      ],
+      "h1": 1,
+      "title": "Mulch Calculator: Cubic Yards, Bags &amp; Material Cost",
+      "failures": [],
+      "xRobotsTag": null
+    }
+  ]
+}

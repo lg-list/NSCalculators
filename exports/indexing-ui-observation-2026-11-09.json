@@ -1,0 +1,13 @@
+{
+  "observed_on": "2026-11-09",
+  "property": "sc-domain:nscalculators.com",
+  "source": "Rendered Search Console indexing UI, no export or URL Inspection API",
+  "report_updated": "2026-11-06",
+  "all_known": {"indexed": 336, "not_indexed": 729, "reasons": {"noindex": 707, "redirect": 9, "google_selected_other_canonical": 1, "crawled_not_indexed": 1, "discovered_not_indexed": 11}},
+  "sitemap_scope": {"sitemap": "https://nscalculators.com/sitemap.xml", "indexed": 290, "not_indexed": 15, "reasons": {"noindex": 2, "discovered_not_indexed": 11, "google_selected_other_canonical": 1, "crawled_not_indexed": 1}},
+  "sitemap_noindex_examples": [
+    {"url": "https://nscalculators.com/gravel-calculator/", "last_crawled_display": "2026-10-17"},
+    {"url": "https://nscalculators.com/mulch-calculator/", "last_crawled_display": "2026-10-14"}
+  ],
+  "limitations": ["Indexing report is property-wide, not country-filtered search performance.", "Report dates and last-crawl dates are UI observations, not live URL Inspection results.", "Other excluded examples and Google-selected canonicals were not inspected in this turn.", "Current public responses are independently captured; no validation, submission or indexing request was made."]
+}
