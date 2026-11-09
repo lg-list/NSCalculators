@@ -1,0 +1,26 @@
+{
+  "observed_on": "2026-11-09",
+  "source": "Signed-in Search Console rendered browser UI; CSV not obtained",
+  "property": "sc-domain:nscalculators.com",
+  "country": "usa",
+  "search_type": "web_text_based",
+  "period": {"start": "2026-10-11", "end": "2026-11-07", "days": 28},
+  "totals": {"clicks": 2, "impressions_exact_tooltip": 5601, "impressions_rounded_display": 5600, "average_position_display": 63.7},
+  "selected_visible_query_rows": [
+    {"query": "401k calculator", "clicks": 0, "impressions": 132},
+    {"query": "trade-in calculator", "clicks": 0, "impressions": 112},
+    {"query": "personal loan calculator", "clicks": 0, "impressions": 57},
+    {"query": "boat loan calculator", "clicks": 0, "impressions": 46}
+  ],
+  "separate_unfiltered_observation": {"start": "2026-11-01", "end": "2026-11-07", "country_filter": null, "clicks": 0, "impressions": 6, "average_position_display": 4.3, "named_queries_visible": false},
+  "csv_export_obtained": false,
+  "daily_series_obtained": false,
+  "limitations": [
+    "Totals are rendered UI observations, not a reconciled CSV baseline.",
+    "The 28-day US period overlaps the prior September 28-October 25 measurement; do not calculate a treatment effect from them.",
+    "The separate seven-day report had no country filter and must not be labeled US demand.",
+    "Visible named query rows are incomplete and not query/page pairs.",
+    "Six impressions are a material low-volume signal to investigate, not proof of deindexing or its cause.",
+    "CSV download click timed out; no new named performance ZIP was found in Downloads. No export retry or indexing submission followed."
+  ]
+}
