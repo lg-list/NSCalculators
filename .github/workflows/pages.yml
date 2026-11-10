@@ -55,6 +55,9 @@ jobs:
       - name: Check sitemap eligibility and crawl paths
         run: python scripts/check_indexation_contract.py dist
 
+      - name: Check linear conversion validation and precision
+        run: node scripts/test_linear_conversion.cjs dist/assets/calculator.js
+
       - name: Check public indexation signal parser
         run: node scripts/test_live_indexation_signals.cjs
 
