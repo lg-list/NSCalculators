@@ -1,0 +1,23 @@
+{
+  "observed_on": "2026-11-10",
+  "property": "sc-domain:nscalculators.com",
+  "source": "Rendered Search Console reports and stored URL Inspection; no live test or submission",
+  "manual_actions": {"display": "未检测到任何问题", "meaning": "No issues detected in current report"},
+  "security_issues": {"display": "未检测到任何问题", "meaning": "No issues detected in current report"},
+  "area_inspection": {
+    "url": "https://nscalculators.com/area-calculator/",
+    "indexed": true,
+    "last_crawl_display": "2026-09-17 22:20:42",
+    "agent": "Googlebot smartphone",
+    "crawl_allowed": true,
+    "fetch": "successful",
+    "indexing_allowed": true,
+    "user_canonical": "https://nscalculators.com/area-calculator/",
+    "google_canonical_display": "所检查的网址",
+    "sitemap": "https://nscalculators.com/sitemap.xml",
+    "referring_page": "https://nscalculators.com/distance-calculator/",
+    "https": true,
+    "valid_breadcrumb_items": 1
+  },
+  "limitations": ["Current issue reports do not exclude algorithmic ranking changes or past incidents.", "Stored Area crawl predates subsequent upgrades; it is not a current Google fetch.", "One indexed page does not establish sitewide indexing or visibility recovery.", "No account settings, validation, indexing request, appeal or sitemap submission changed."]
+}

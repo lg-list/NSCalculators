@@ -25,7 +25,9 @@ CONCRETE_BAG_YIELDS = ((40, "0.30"), (50, "0.375"), (60, "0.45"), (80, "0.60"), 
 # Verified significant content dates, not build/deploy dates. Restoration and
 # methodology changes: 5becd87046, 3defecfc13, f07dec8071 (October 26).
 SITEMAP_LASTMOD = {"/gravel-calculator/": "2026-10-26", "/mulch-calculator/": "2026-10-26",
-                   "/watts-to-kilowatts-calculator/": "2026-11-09"}
+                   "/watts-to-kilowatts-calculator/": "2026-11-09",
+                   # Area measurement records/export: d817f8c967, not a deploy date.
+                   "/area-calculator/": "2026-10-25"}
 
 
 def sitemap_url_entry(site, path):
