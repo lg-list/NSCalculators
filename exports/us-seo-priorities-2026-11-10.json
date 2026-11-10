@@ -1,0 +1,14 @@
+{
+  "as_of": "2026-11-10",
+  "country": "USA",
+  "evidence": "us-search-daily-observation-2026-11-10.json",
+  "primary_constraint": "US impressions fall to near zero after October 26, cause unverified",
+  "us_monthly_market_search_volume": null,
+  "priorities": [
+    {"priority": 1, "action": "Compare equal US page/date windows spanning October 27, then inspect stored Google canonical and crawl evidence for formerly visible URLs", "status": "next_read_only_analysis"},
+    {"priority": 2, "action": "Read manual-action and security reports, without altering settings or assuming a penalty", "status": "next_read_only_analysis"},
+    {"priority": 3, "action": "Audit historical deployments only against a specific reproducible signal; current public response success does not rule out past failures", "status": "evidence_gated"},
+    {"priority": 4, "action": "Continue calculator quality improvements using US query/page demand; keep title treatments stable without comparable post-change evidence", "status": "active_quality_backlog"}
+  ],
+  "guardrails": ["No automatic rollback based solely on date correlation", "No bulk removal of quality noindex", "No thin-page expansion", "No account changes, external submissions, spending or outreach without specific approval", "No ranking-recovery claim from five impressions"]
+}

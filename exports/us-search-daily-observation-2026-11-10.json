@@ -1,0 +1,171 @@
+{
+  "observed_on": "2026-11-10",
+  "property": "sc-domain:nscalculators.com",
+  "country": "USA",
+  "search_type": "Web text",
+  "source": "Rendered Search Console UI, manually transcribed visible daily rows; not CSV export",
+  "range": {
+    "start": "2026-10-12",
+    "end": "2026-11-08",
+    "clicks": 2,
+    "impressions": 5512,
+    "average_position_display": 64.2
+  },
+  "recent_7": {
+    "start": "2026-11-02",
+    "end": "2026-11-08",
+    "clicks": 0,
+    "impressions": 5,
+    "average_position_display": 3,
+    "page_table": "No data"
+  },
+  "daily": [
+    {
+      "date": "2026-10-12",
+      "clicks": 0,
+      "impressions": 91
+    },
+    {
+      "date": "2026-10-13",
+      "clicks": 0,
+      "impressions": 119
+    },
+    {
+      "date": "2026-10-14",
+      "clicks": 1,
+      "impressions": 152
+    },
+    {
+      "date": "2026-10-15",
+      "clicks": 0,
+      "impressions": 235
+    },
+    {
+      "date": "2026-10-16",
+      "clicks": 0,
+      "impressions": 486
+    },
+    {
+      "date": "2026-10-17",
+      "clicks": 0,
+      "impressions": 439
+    },
+    {
+      "date": "2026-10-18",
+      "clicks": 0,
+      "impressions": 763
+    },
+    {
+      "date": "2026-10-19",
+      "clicks": 0,
+      "impressions": 364
+    },
+    {
+      "date": "2026-10-20",
+      "clicks": 0,
+      "impressions": 422
+    },
+    {
+      "date": "2026-10-21",
+      "clicks": 1,
+      "impressions": 409
+    },
+    {
+      "date": "2026-10-22",
+      "clicks": 0,
+      "impressions": 431
+    },
+    {
+      "date": "2026-10-23",
+      "clicks": 0,
+      "impressions": 383
+    },
+    {
+      "date": "2026-10-24",
+      "clicks": 0,
+      "impressions": 373
+    },
+    {
+      "date": "2026-10-25",
+      "clicks": 0,
+      "impressions": 675
+    },
+    {
+      "date": "2026-10-26",
+      "clicks": 0,
+      "impressions": 164
+    },
+    {
+      "date": "2026-10-27",
+      "clicks": 0,
+      "impressions": 0
+    },
+    {
+      "date": "2026-10-28",
+      "clicks": 0,
+      "impressions": 1
+    },
+    {
+      "date": "2026-10-29",
+      "clicks": 0,
+      "impressions": 0
+    },
+    {
+      "date": "2026-10-30",
+      "clicks": 0,
+      "impressions": 0
+    },
+    {
+      "date": "2026-10-31",
+      "clicks": 0,
+      "impressions": 0
+    },
+    {
+      "date": "2026-11-01",
+      "clicks": 0,
+      "impressions": 0
+    },
+    {
+      "date": "2026-11-02",
+      "clicks": 0,
+      "impressions": 3
+    },
+    {
+      "date": "2026-11-03",
+      "clicks": 0,
+      "impressions": 0
+    },
+    {
+      "date": "2026-11-04",
+      "clicks": 0,
+      "impressions": 0
+    },
+    {
+      "date": "2026-11-05",
+      "clicks": 0,
+      "impressions": 2
+    },
+    {
+      "date": "2026-11-06",
+      "clicks": 0,
+      "impressions": 0
+    },
+    {
+      "date": "2026-11-07",
+      "clicks": 0,
+      "impressions": 0
+    },
+    {
+      "date": "2026-11-08",
+      "clicks": 0,
+      "impressions": 0
+    }
+  ],
+  "limitations": [
+    "Daily sums reconcile exactly to the displayed range totals.",
+    "Query and page rows are not complete totals; no recent page attribution is available.",
+    "Search Console data are not independent US monthly market search volumes.",
+    "Observed transition on October 26-27 does not establish a cause or penalty.",
+    "No export, account change, validation or indexing submission was made."
+  ]
+}
