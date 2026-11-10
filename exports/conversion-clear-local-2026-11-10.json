@@ -1,0 +1,89 @@
+{
+  "checks": [
+    {
+      "slug": "watts-to-kilowatts-calculator",
+      "width": 1366,
+      "before": "1.5 kilowatts\n\nConverted with the factor shown in the formula.",
+      "after": "1.5 kilowatts\n\nConverted with the factor shown in the formula.",
+      "preserved": true
+    },
+    {
+      "slug": "kilowatts-to-watts-calculator",
+      "width": 1366,
+      "before": "1,500,000 watts\n\nConverted with the factor shown in the formula.",
+      "after": "1,500,000 watts\n\nConverted with the factor shown in the formula.",
+      "preserved": true
+    },
+    {
+      "slug": "days-to-seconds-calculator",
+      "width": 1366,
+      "before": "129,600,000 seconds\n\nConverted with the factor shown in the formula.",
+      "after": "129,600,000 seconds\n\nConverted with the factor shown in the formula.",
+      "preserved": true
+    },
+    {
+      "slug": "kilograms-to-stones-calculator",
+      "width": 1366,
+      "before": "236.20956663 stones\n\nConverted with the factor shown in the formula.",
+      "after": "236.20956663 stones\n\nConverted with the factor shown in the formula.",
+      "preserved": true
+    },
+    {
+      "slug": "watts-to-kilowatts-calculator",
+      "width": 390,
+      "before": "1.5 kilowatts\n\nConverted with the factor shown in the formula.",
+      "after": "1.5 kilowatts\n\nConverted with the factor shown in the formula.",
+      "preserved": true
+    },
+    {
+      "slug": "kilowatts-to-watts-calculator",
+      "width": 390,
+      "before": "1,500,000 watts\n\nConverted with the factor shown in the formula.",
+      "after": "1,500,000 watts\n\nConverted with the factor shown in the formula.",
+      "preserved": true
+    },
+    {
+      "slug": "days-to-seconds-calculator",
+      "width": 390,
+      "before": "129,600,000 seconds\n\nConverted with the factor shown in the formula.",
+      "after": "129,600,000 seconds\n\nConverted with the factor shown in the formula.",
+      "preserved": true
+    },
+    {
+      "slug": "kilograms-to-stones-calculator",
+      "width": 390,
+      "before": "236.20956663 stones\n\nConverted with the factor shown in the formula.",
+      "after": "236.20956663 stones\n\nConverted with the factor shown in the formula.",
+      "preserved": true
+    },
+    {
+      "slug": "watts-to-kilowatts-calculator",
+      "width": 320,
+      "before": "1.5 kilowatts\n\nConverted with the factor shown in the formula.",
+      "after": "1.5 kilowatts\n\nConverted with the factor shown in the formula.",
+      "preserved": true
+    },
+    {
+      "slug": "kilowatts-to-watts-calculator",
+      "width": 320,
+      "before": "1,500,000 watts\n\nConverted with the factor shown in the formula.",
+      "after": "1,500,000 watts\n\nConverted with the factor shown in the formula.",
+      "preserved": true
+    },
+    {
+      "slug": "days-to-seconds-calculator",
+      "width": 320,
+      "before": "129,600,000 seconds\n\nConverted with the factor shown in the formula.",
+      "after": "129,600,000 seconds\n\nConverted with the factor shown in the formula.",
+      "preserved": true
+    },
+    {
+      "slug": "kilograms-to-stones-calculator",
+      "width": 320,
+      "before": "236.20956663 stones\n\nConverted with the factor shown in the formula.",
+      "after": "236.20956663 stones\n\nConverted with the factor shown in the formula.",
+      "preserved": true
+    }
+  ],
+  "errors": []
+}
