@@ -27,7 +27,12 @@ CONCRETE_BAG_YIELDS = ((40, "0.30"), (50, "0.375"), (60, "0.45"), (80, "0.60"), 
 SITEMAP_LASTMOD = {"/gravel-calculator/": "2026-10-26", "/mulch-calculator/": "2026-10-26",
                    "/watts-to-kilowatts-calculator/": "2026-11-09",
                    # Area measurement records/export: d817f8c967, not a deploy date.
-                   "/area-calculator/": "2026-10-25"}
+                   "/area-calculator/": "2026-10-25",
+                   # Verified feature/accuracy releases: 3ccf648c1d / 767906dc29,
+                   # d2546d1b33 and 8c96b7bc54, respectively.
+                   "/boat-loan-calculator/": "2026-10-26",
+                   "/personal-loan-calculator/": "2026-10-25",
+                   "/401k-calculator/": "2026-10-28"}
 
 
 def sitemap_url_entry(site, path):

@@ -1,0 +1,118 @@
+{
+  "observed_on": "2026-11-10",
+  "property": "sc-domain:nscalculators.com",
+  "country": "USA",
+  "search_type": "Web text",
+  "source": "Rendered Search Console custom comparison, visible page rows; not CSV export",
+  "before": {
+    "start": "2026-10-14",
+    "end": "2026-10-26",
+    "days": 13,
+    "clicks": 2,
+    "impressions": 5296,
+    "average_position_display": 65.3
+  },
+  "after": {
+    "start": "2026-10-27",
+    "end": "2026-11-08",
+    "days": 13,
+    "clicks": 0,
+    "impressions": 6,
+    "average_position_display": 12.2
+  },
+  "visible_pages": [
+    {
+      "url": "https://nscalculators.com/boat-loan-calculator/",
+      "before_clicks": 0,
+      "after_clicks": 0,
+      "before_impressions": 607,
+      "after_impressions": 0
+    },
+    {
+      "url": "https://nscalculators.com/personal-loan-calculator/",
+      "before_clicks": 0,
+      "after_clicks": 0,
+      "before_impressions": 488,
+      "after_impressions": 0
+    },
+    {
+      "url": "https://nscalculators.com/car-trade-in-value-calculator/",
+      "before_clicks": 0,
+      "after_clicks": 0,
+      "before_impressions": 352,
+      "after_impressions": 0
+    },
+    {
+      "url": "https://nscalculators.com/401k-calculator/",
+      "before_clicks": 0,
+      "after_clicks": 0,
+      "before_impressions": 281,
+      "after_impressions": 0
+    },
+    {
+      "url": "https://nscalculators.com/used-car-value-calculator/",
+      "before_clicks": 0,
+      "after_clicks": 0,
+      "before_impressions": 155,
+      "after_impressions": 0
+    },
+    {
+      "url": "https://nscalculators.com/rmd-calculator/",
+      "before_clicks": 0,
+      "after_clicks": 0,
+      "before_impressions": 144,
+      "after_impressions": 0
+    },
+    {
+      "url": "https://nscalculators.com/sq-feet-to-sq-meters-calculator/",
+      "before_clicks": 0,
+      "after_clicks": 0,
+      "before_impressions": 107,
+      "after_impressions": 0
+    },
+    {
+      "url": "https://nscalculators.com/miles-to-kilometers-calculator/",
+      "before_clicks": 0,
+      "after_clicks": 0,
+      "before_impressions": 99,
+      "after_impressions": 0
+    },
+    {
+      "url": "https://nscalculators.com/kilometers-to-miles-calculator/",
+      "before_clicks": 0,
+      "after_clicks": 0,
+      "before_impressions": 90,
+      "after_impressions": 0
+    },
+    {
+      "url": "https://nscalculators.com/private-party-car-value-calculator/",
+      "before_clicks": 0,
+      "after_clicks": 0,
+      "before_impressions": 84,
+      "after_impressions": 0
+    }
+  ],
+  "page_row_count_display": 107,
+  "boat_stored_inspection": {
+    "indexed": true,
+    "last_crawl_display": "2026-10-17 01:46:25",
+    "agent": "Googlebot smartphone",
+    "crawl_allowed": true,
+    "fetch": "successful",
+    "indexing_allowed": true,
+    "user_canonical": "https://nscalculators.com/boat-loan-calculator/",
+    "google_canonical_display": "Inspected URL",
+    "sitemap": "https://nscalculators.com/sitemap.xml",
+    "referring_page_display": "No referring page detected",
+    "https": true,
+    "valid_breadcrumb_items": 1
+  },
+  "limitations": [
+    "Only 10 of 107 page rows captured; not a complete page-level reconciliation.",
+    "Page totals are not joined to query totals; no query/page pairs established.",
+    "Comparison headline dates and totals read from metric buttons; chart accessibility description contained invalid dates and was not used.",
+    "Six after-period impressions cannot establish ranking improvement.",
+    "Stored Google inspection is not a live fetch or evidence of processed upgrades.",
+    "No validation, indexing request, sitemap submission or account change performed."
+  ]
+}

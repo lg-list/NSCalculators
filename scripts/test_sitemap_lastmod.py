@@ -13,6 +13,11 @@ class SitemapDates(unittest.TestCase):
             self.assertEqual(entry.findtext('loc'), 'https://nscalculators.com' + path)
         area = ET.fromstring(build.sitemap_url_entry(site, '/area-calculator/'))
         self.assertEqual(area.findtext('lastmod'), '2026-10-25')
+        for slug, modified in [('boat-loan-calculator', '2026-10-26'),
+                               ('personal-loan-calculator', '2026-10-25'),
+                               ('401k-calculator', '2026-10-28')]:
+            entry = ET.fromstring(build.sitemap_url_entry(site, '/' + slug + '/'))
+            self.assertEqual(entry.findtext('lastmod'), modified)
         self.assertNotIn('lastmod', build.sitemap_url_entry(site, '/mortgage-calculator/'))
         with patch.dict(build.SITEMAP_LASTMOD, {'/gravel-calculator/': 'invalid'}):
             with self.assertRaises(ValueError):
